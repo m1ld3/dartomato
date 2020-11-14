@@ -12,7 +12,6 @@
 #include <QBarSet>
 #include <QtCharts>
 #include <gamewindow.h>
-#include <QDebug>
 
 GroupBox_player::GroupBox_player(QWidget *parent, int player_nr, int game, int sets, int legs, bool singleIn,
                                  bool singleOut, bool doubleIn, bool doubleOut, bool masterIn,
@@ -274,10 +273,10 @@ void GroupBox_player::signalPlayerActiveButtonPressed()
 void GroupBox_player::on_pushButton_score_clicked()
 {
     if (Active && !Finished) {
-        scoreinput = new ScoreInput(this, StartVal, Score, Sets, Legs, SingleIn, SingleOut,
-                                                DoubleIn, DoubleOut, MasterIn, MasterOut);
-        scoreinput->setAttribute(Qt::WA_DeleteOnClose);
-        connect(scoreinput, SIGNAL (signalSubmitButtonPressed2(int&, int&, int&, QVector<QString>)), this, SLOT (signalSubmitButtonPressed2(int&, int&, int&, QVector<QString>)));
+        scoreinput = std::shared_ptr<ScoreInput>( new ScoreInput(this, StartVal, Score, Sets, Legs, SingleIn, SingleOut,
+                                                DoubleIn, DoubleOut, MasterIn, MasterOut));
+        //scoreinput->setAttribute(Qt::WA_DeleteOnClose);
+        connect(scoreinput.get(), SIGNAL (signalSubmitButtonPressed2(int&, int&, int&, QVector<QString>)), this, SLOT (signalSubmitButtonPressed2(int&, int&, int&, QVector<QString>)));
         scoreinput->show();
     } else if (Finished) {
         QMessageBox::about(this, "Warning", "Game already finished!");

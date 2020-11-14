@@ -63,7 +63,8 @@ private:
     Ui::GroupBox_player *ui;
     QString playername;
     DialogNameinput *dn;
-    ScoreInput *scoreinput;
+    std::shared_ptr<ScoreInput> scoreinput;
+    //ScoreInput *scoreinput = nullptr;
     PlayerClass *Player;
     int StartVal, Player_Nr, Sets, Legs, Score, mCurrentScore;
     bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Offensive, Active, Finished, SetBegin, LegBegin;
