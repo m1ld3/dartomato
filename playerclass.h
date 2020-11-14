@@ -10,6 +10,9 @@ class PlayerClass : public QObject
 public:
     PlayerClass(int startval, int numberofsets, int numberoflegs, int playername);
     int set_score(int& score);
+    void set_darts(QVector<QString> darts);
+    QVector<QVector<QString>> get_darts();
+    QVector<int> get_total_scores();
     void undo();
     void compute_averages(int numberofdarts);
     void compute_checkout(int checkoutattempts, int success);
@@ -87,6 +90,7 @@ private:
     QVector<int> arraybull;
     QVector<int> arrayones;
     QVector<int> arraymiss;
+    QVector<QVector<QString>> mThrownDarts;
     double avg1dart;  //  1-dart average
     double avg3dart;  //  3-dart average
     double checkout;  //  checkout percentage

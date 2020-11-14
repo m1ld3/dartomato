@@ -211,6 +211,7 @@ void GroupBox_player::signalSubmitButtonPressed2(int &score, int &numberofdarts,
     miss += std::count(darts.begin(),darts.end(),"d0");
     miss += std::count(darts.begin(),darts.end(),"t0");
     Score = Player->set_score(mCurrentScore);
+    Player->set_darts(darts);
     std::stringstream ss;
     ss << std::setw(3) << std::setfill('0') << mCurrentScore;
     std::string digits = ss.str();
@@ -578,10 +579,15 @@ void GroupBox_player::on_pushButton_stats_clicked()
     stats->setModal(true);
     QBarSet *setScores = new QBarSet("Scores");
     QBarSet *setDarts = new QBarSet("Single Darts");
-    *setScores << Player->get_180() << Player->get_160() << Player->get_140() << Player->get_120() <<
-                  Player->get_100() << Player->get_26() <<Player->get_11() << Player->get_7() << Player->get_3();
-    *setDarts << Player->get_t20() << Player->get_t19() << Player->get_t18() << Player->get_t17() <<
-                 Player->get_t16() << Player->get_t15() << Player->get_bull() << Player->get_ones() << Player->get_miss();
+    QVector<QVector<QString>> thrownDarts = Player->get_darts();
+    QVector<int> allScores = Player->get_total_scores();
+    std::map<int, int> score_counts;
+    for (auto score : allScores) ++score_counts[score];
+
+    //*setScores << Player->get_180() << Player->get_160() << Player->get_140() << Player->get_120() <<
+                  //Player->get_100() << Player->get_26() <<Player->get_11() << Player->get_7() << Player->get_3();
+    //*setDarts << Player->get_t20() << Player->get_t19() << Player->get_t18() << Player->get_t17() <<
+                 //Player->get_t16() << Player->get_t15() << Player->get_bull() << Player->get_ones() << Player->get_miss();
     QBarSeries *series = new QBarSeries();
     QBarSeries *series2 = new QBarSeries();
     series->append(setScores);
@@ -596,8 +602,14 @@ void GroupBox_player::on_pushButton_stats_clicked()
     chart2->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
     QStringList categories2;
-    categories << "180" << "160+" << "140+" << "120+" << "100+" << "26" << "11" << "7" << "3";
+    //categories << "180" << "160+" << "140+" << "120+" << "100+" << "26" << "11" << "7" << "3";
     categories2 << "T20" << "T19" << "T18" << "T17" << "T16" << "T15" << "Bull" << "1" << "Miss";
+    std::map<int, int>::iterator it;
+    for (it = score_counts.begin(); it != score_counts.end(); it++)
+    {
+        setScores->append(it->second);
+        categories.append(QString::number(it->first));
+    }
     QBarCategoryAxis *axisX = new QBarCategoryAxis();
     QBarCategoryAxis *axisX2 = new QBarCategoryAxis();
     axisX->append(categories);

@@ -71,6 +71,21 @@ int PlayerClass::set_score(int& score) {
     return remaining;
 }
 
+void PlayerClass::set_darts(QVector<QString> darts)
+{
+    mThrownDarts.append(darts);
+}
+
+QVector<QVector<QString>> PlayerClass::get_darts()
+{
+    return mThrownDarts;
+}
+
+QVector<int> PlayerClass::get_total_scores()
+{
+    return totalscores;
+}
+
 void PlayerClass::update_history() {
     score_total.push_back(score_leg);
 }
@@ -222,6 +237,7 @@ int PlayerClass::getPlayerName()
 }
 
 void PlayerClass::undoStep() {
+    mThrownDarts.pop_back();
     points_leg.pop_back();
     remaining = points_leg.back();
     score_leg.pop_back();

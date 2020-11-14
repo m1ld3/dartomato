@@ -99,6 +99,7 @@ private:
     QSoundEffect sound10;
     QSoundEffect sound11;
     QSoundEffect scoresound;
+
 };
 
 #endif // GROUPBOX_PLAYER_H
