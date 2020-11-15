@@ -9,6 +9,8 @@ StatsWindow::StatsWindow(QWidget *parent) :
     ui->chartView1->setMouseTracking(true);
     ui->chartView2->setMouseTracking(true);
     setAttribute(Qt::WA_DeleteOnClose);
+    ui->chartView1->setRubberBand( QChartView::HorizontalRubberBand);
+    ui->chartView2->setRubberBand( QChartView::HorizontalRubberBand);
 }
 
 StatsWindow::~StatsWindow()
@@ -34,7 +36,7 @@ void StatsWindow::setLabelCheckout(double checkout)
     ui->label_checkoutInput->setText(checkstr);
 }
 
-void StatsWindow::setChart(QChart *chart1, QChart *chart2)
+void StatsWindow::setChart(Chart *chart1, Chart *chart2)
 {
     ui->chartView1->setChart(chart1);
     ui->chartView2->setChart(chart2);

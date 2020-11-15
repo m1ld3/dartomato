@@ -326,7 +326,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QChartView" name="chartView1"/>
+        <widget class="ChartView" name="chartView1"/>
        </item>
       </layout>
      </widget>
@@ -336,7 +336,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QChartView" name="chartView2">
+        <widget class="ChartView" name="chartView2">
          <property name="locale">
           <locale language="German" country="Germany"/>
          </property>
@@ -350,9 +350,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QChartView</class>
+   <class>ChartView</class>
    <extends>QGraphicsView</extends>
-   <header>QtCharts</header>
+   <header>chartview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

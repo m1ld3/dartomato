@@ -94,19 +94,6 @@ GroupBox_player::GroupBox_player(QWidget *parent, int player_nr, int game, int s
 GroupBox_player::~GroupBox_player()
 {
     delete ui;
-//    delete anotherone;
-//    delete sexy69;
-//    delete sound1;
-//    delete sound2;
-//    delete sound3;
-//    delete sound4;
-//    delete sound5;
-//    delete sound6;
-//    delete sound7;
-//    delete sound8;
-//    delete sound9;
-//    delete sound10;
-//    delete sound11;
 }
 
 void GroupBox_player::setActive()
@@ -172,44 +159,6 @@ void GroupBox_player::signalSubmitButtonPressed2(int &score, int &numberofdarts,
     GroupBox_player::legstarted = true;
     GroupBox_player::setstarted = true;
     bool newset = false;
-    int score3 = 0;
-    int score7 = 0;
-    int score11 = 0;
-    int score26 = 0;
-    int score180 = 0;
-    int plus100 = 0;
-    int plus120 = 0;
-    int plus140 = 0;
-    int plus160 = 0;
-    switch (mCurrentScore)
-    {
-    case 0: numberofdarts = 3; break;
-    case 3: score3 += 1; break;
-    case 7: score7 += 1; break;
-    case 11: score11 += 1; break;
-    case 26: score26 += 1; break;
-    case 180: score180 += 1; break;
-    }
-    if (mCurrentScore >= 100 && mCurrentScore < 120) {
-        plus100 += 1;
-    } else if (mCurrentScore >= 120 && mCurrentScore < 140) {
-        plus120 += 1;
-    } else if (mCurrentScore >= 140 && mCurrentScore < 160) {
-        plus140 += 1;
-    } else if (mCurrentScore >= 160 && mCurrentScore < 180) {
-        plus160 += 1;
-    }
-    int t20 = std::count(darts.begin(),darts.end(),"t60");
-    int t19 = std::count(darts.begin(),darts.end(),"t57");
-    int t18 = std::count(darts.begin(),darts.end(),"t54");
-    int t17 = std::count(darts.begin(),darts.end(),"t51");
-    int t16 = std::count(darts.begin(),darts.end(),"t48");
-    int t15 = std::count(darts.begin(),darts.end(),"t45");
-    int bull = std::count(darts.begin(),darts.end(),"d50");
-    int ones = std::count(darts.begin(),darts.end(),"s1");
-    int miss = std::count(darts.begin(),darts.end(),"s0");
-    miss += std::count(darts.begin(),darts.end(),"d0");
-    miss += std::count(darts.begin(),darts.end(),"t0");
     Score = Player->set_score(mCurrentScore);
     Player->set_darts(darts);
     std::stringstream ss;
@@ -219,8 +168,6 @@ void GroupBox_player::signalSubmitButtonPressed2(int &score, int &numberofdarts,
     QString filepath = QString::fromStdString(strpath);
     scoresound.setSource(filepath);
     Player->compute_averages(numberofdarts);
-    Player->updateStats(score180, plus160, plus140, plus120, plus100, score26, score11, score7,
-                        score3, t20, t19, t18, t17, t16, t15, bull, ones, miss);
     if (Score == 0) {
         Player->compute_checkout(checkoutattempts, 1);
         newset = Player->increase_setslegs();
@@ -608,18 +555,12 @@ void GroupBox_player::on_pushButton_stats_clicked()
     QVector<int> allScores = Player->get_total_scores();
     std::map<int, int> score_counts;
     for (auto score : allScores) ++score_counts[score];
-
-    //*setScores << Player->get_180() << Player->get_160() << Player->get_140() << Player->get_120() <<
-                  //Player->get_100() << Player->get_26() <<Player->get_11() << Player->get_7() << Player->get_3();
-    //*setDarts << Player->get_t20() << Player->get_t19() << Player->get_t18() << Player->get_t17() <<
-                 //Player->get_t16() << Player->get_t15() << Player->get_bull() << Player->get_ones() << Player->get_miss();
     QBarSeries *series = new QBarSeries();
     QBarSeries *series2 = new QBarSeries();
     series->append(setScores);
-    series->setBarWidth(0.9);
     series2->append(setDarts);
-    QChart *chart = new QChart();
-    QChart *chart2 = new QChart();
+    Chart *chart = new Chart();
+    Chart *chart2 = new Chart();
     chart->addSeries(series);
     chart2->addSeries(series2);
     chart->setTitle("Scoring statistics");
@@ -628,8 +569,6 @@ void GroupBox_player::on_pushButton_stats_clicked()
     chart2->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
     QStringList categories2;
-    //categories << "180" << "160+" << "140+" << "120+" << "100+" << "26" << "11" << "7" << "3";
-    //categories2 << "T20" << "T19" << "T18" << "T17" << "T16" << "T15" << "Bull" << "1" << "Miss";
     std::map<int, int>::iterator it;
     for (it = score_counts.begin(); it != score_counts.end(); it++)
     {
@@ -650,28 +589,18 @@ void GroupBox_player::on_pushButton_stats_clicked()
     axisX->append(categories);
     if (categories2.size()) axisX2->setMin(categories2.first());
     axisX2->append(categories2);
-    auto axis = qobject_cast<QBarCategoryAxis*>(axisX);
-    auto categories_test = axis->categories();
-//    QString min = categories.at(n);
-//    QString max = categories.at(m);
     chart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
     chart2->addAxis(axisX2, Qt::AlignBottom);
     series2->attachAxis(axisX2);
     QValueAxis *axisY = new QValueAxis();
     QValueAxis *axisY2 = new QValueAxis();
-    //qreal max = static_cast<qreal>(std::max({Player->get_180(), Player->get_160(), Player->get_140(),
-    //                                         Player->get_120(), Player->get_100(), Player->get_26(),
-    //                                         Player->get_11(), Player->get_7(), Player->get_7()}));
     std::map<int, int>::iterator best = std::max_element(score_counts.begin(), score_counts.end(), [] (const std::pair<int, int>& a, const std::pair<int, int>& b)->bool{return a.second < b.second;});
     qreal max = static_cast<qreal>(best->second);
     axisY->setRange(0, max);
     axisY->setTickType(QValueAxis::TicksFixed);
     axisY->setTickCount(std::min(std::max(2,static_cast<int>(max)+1),10));
     axisY->setLabelFormat("%i");
-//    qreal max2 = static_cast<qreal>(std::max({Player->get_t20(), Player->get_t19(), Player->get_t18(),
-//                                              Player->get_t17(), Player->get_t16(), Player->get_t15(),
-//                                              Player->get_bull(), Player->get_ones(), Player->get_miss()}));
     std::map<QString, int>::iterator best2 = std::max_element(dart_counts.begin(), dart_counts.end(), [] (const std::pair<QString, int>& a, const std::pair<QString, int>& b)->bool{return a.second < b.second;});
     qreal max2 = static_cast<qreal>(best2->second);
     axisY2->setRange(0, max2);

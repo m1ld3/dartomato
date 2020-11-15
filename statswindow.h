@@ -4,7 +4,8 @@
 #include <QDialog>
 #include <QString>
 #include <QBarSet>
-#include <QtCharts>
+#include "chart.h"
+#include "chartview.h"
 
 class Callout;
 
@@ -22,7 +23,7 @@ public:
     void setLabel1DartAvg(double avg);
     void setLabel3DartAvg(double avg);
     void setLabelCheckout(double checkout);
-    void setChart(QChart *chart1, QChart *chart2);
+    void setChart(Chart *chart1, Chart *chart2);
     void setText(QString text);
 
 private:
