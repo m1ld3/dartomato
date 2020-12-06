@@ -17,17 +17,44 @@ void ScoreInput::setScore(int value, QChar type, int checkout) {
     if (Counter == 3) {
         scoreDart1->display(value);
         Undo[0] = value;
-        Dart[0] = type+QString::number(value);
+        if (!Busted)
+        {
+            Dart.append(type+QString::number(value));
+        }
+        else if (Busted)
+        {
+            Dart.append("S0");
+            Dart.append("S0");
+            Dart.append("S0");
+        }
         CheckoutAttempts[0] = checkout;
     } else if (Counter == 2) {
         scoreDart2->display(value);
         Undo[1] = value;
-        Dart[1] = type+QString::number(value);
+        if (!Busted)
+        {
+            Dart.append(type+QString::number(value));
+        }
+        else if (Busted)
+        {
+            Dart[0] = "S0";
+            Dart.append("S0");
+            Dart.append("S0");
+        }
         CheckoutAttempts[1] = checkout;
     } else if (Counter == 1) {
         scoreDart3->display(value);
         Undo[2] = value;
-        Dart[2] = type+QString::number(value);
+        if (!Busted)
+        {
+            Dart.append(type+QString::number(value));
+        }
+        else if (Busted)
+        {
+            Dart[0] = "S0";
+            Dart[1] = "S0";
+            Dart.append("S0");
+        }
         CheckoutAttempts[2] = checkout;
     }
 }
@@ -123,10 +150,10 @@ void ScoreInput::signalSegmentPressed(int &value, QChar &type)
                 } else if (MasterOut && (Score <= 60 && Score % 3 == 0 && Score > 2)) {
                     checkout = 1;
                 }
-                setScore(value, type, checkout);
-                currentscore->display(OldScore);
                 Stop = true;
                 Busted = true; // Überworfen
+                setScore(value, type, checkout);
+                currentscore->display(OldScore);
                 busted = new QSound(":/resources/sounds/busted.wav");
                 busted->play();
             }
@@ -151,7 +178,7 @@ void ScoreInput::signalSegmentPressed(int &value, QChar &type)
         if (Counter < 3) {
             Score += Undo[2-Counter];
             Undo[2-Counter] = 0;
-            Dart[2-Counter] = "";
+            Dart.pop_back();
             CheckoutAttempts[2-Counter] = 0;
             currentscore->display(Score);
             if (Counter == 2) {
@@ -184,7 +211,7 @@ ScoreInput::ScoreInput(QWidget *parent, int startval, int score, int sets, int l
     QDialog(parent),
     ui(new Ui::ScoreInput),
     StartVal(startval), Score(score), Sets(sets), Legs(legs), Counter(3), SingleIn(singleIn), SingleOut(singleOut),
-    DoubleIn(doubleIn), DoubleOut(doubleOut), MasterIn(masterIn), MasterOut(masterOut)
+    DoubleIn(doubleIn), DoubleOut(doubleOut), MasterIn(masterIn), MasterOut(masterOut), Dart({})
 {
     ui->setupUi(this);
     Stop = false;

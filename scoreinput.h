@@ -41,7 +41,7 @@ private:
     UndoButton *undoButton;
     SubmitButton *submitButton;
     QVector<int> Undo{0,0,0};
-    QVector<QString> Dart{"","",""};
+    QVector<QString> Dart;
     QVector<int> CheckoutAttempts;
     QGraphicsScene *mscene;
     QLabel *labelDart1;
