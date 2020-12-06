@@ -24,8 +24,6 @@ void ScoreInput::setScore(int value, QChar type, int checkout) {
         else if (Busted)
         {
             Dart.append("S0");
-            Dart.append("S0");
-            Dart.append("S0");
         }
         CheckoutAttempts[0] = checkout;
     } else if (Counter == 2) {
@@ -37,8 +35,6 @@ void ScoreInput::setScore(int value, QChar type, int checkout) {
         }
         else if (Busted)
         {
-            Dart[0] = "S0";
-            Dart.append("S0");
             Dart.append("S0");
         }
         CheckoutAttempts[1] = checkout;
@@ -51,8 +47,6 @@ void ScoreInput::setScore(int value, QChar type, int checkout) {
         }
         else if (Busted)
         {
-            Dart[0] = "S0";
-            Dart[1] = "S0";
             Dart.append("S0");
         }
         CheckoutAttempts[2] = checkout;
@@ -197,10 +191,12 @@ void ScoreInput::signalSegmentPressed(int &value, QChar &type)
     void ScoreInput::signalSubmitButtonPressed()
     {
         if (Stop) {
+            QVector<QString> darts;
+            Busted ? darts = {"S0", "S0", "S0"} : darts = Dart;
             int score = OldScore - currentscore->intValue();
             int numberofdarts = 3 - Counter;
             int checkoutattempts = std::accumulate(CheckoutAttempts.begin(), CheckoutAttempts.end(),0);
-            emit signalSubmitButtonPressed2(score, numberofdarts, checkoutattempts, Dart);
+            emit signalSubmitButtonPressed2(score, numberofdarts, checkoutattempts, darts);
         } else {
             QMessageBox::warning(this, "Score incomplete", "Please enter all darts.");
         }
