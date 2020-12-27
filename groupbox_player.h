@@ -55,6 +55,7 @@ public slots:
     void okButtonClicked(QString& name);
     void signalSubmitButtonPressed2(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
     void signalPlayerActiveButtonPressed();
+    void performUndo();
 private slots:
     void on_pushButton_stats_clicked();
     void on_pushButton_undo_clicked();

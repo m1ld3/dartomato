@@ -519,6 +519,25 @@ void GroupBox_player::play_offensive_sounds()
     }
 }
 
+void GroupBox_player::performUndo()
+{
+    Player->undo();
+    ui->lcdNumber->display(Player->get_remaining());
+    ui->lcdNumber_legs->display(Player->get_legs());
+    ui->lcdNumber_sets->display(Player->get_sets());
+    Score = Player->get_remaining();
+    QString avg1dart = QString::number(Player->get_avg1dart(),'f',3);
+    QString avg3dart = QString::number(Player->get_avg3dart(),'f',3);
+    QString checkout = QString::number(Player->get_checkout(),'f',3) + "%";
+    ui->label_1dartInput->setText(avg1dart);
+    ui->label_3dartInput->setText(avg3dart);
+    ui->label_checkoutInput->setText(checkout);
+    if (Finished) {
+        unsetFinished();
+    }
+    displayFinishes();
+}
+
 void GroupBox_player::on_pushButton_stats_clicked()
 {
     StatsWindow *stats = new StatsWindow;
@@ -641,21 +660,14 @@ void GroupBox_player::on_pushButton_stats_clicked()
 
 void GroupBox_player::on_pushButton_undo_clicked()
 {
-    Player->undo();
-    ui->lcdNumber->display(Player->get_remaining());
-    ui->lcdNumber_legs->display(Player->get_legs());
-    ui->lcdNumber_sets->display(Player->get_sets());
-    Score = Player->get_remaining();
-    QString avg1dart = QString::number(Player->get_avg1dart(),'f',3);
-    QString avg3dart = QString::number(Player->get_avg3dart(),'f',3);
-    QString checkout = QString::number(Player->get_checkout(),'f',3) + "%";
-    ui->label_1dartInput->setText(avg1dart);
-    ui->label_3dartInput->setText(avg3dart);
-    ui->label_checkoutInput->setText(checkout);
-    if (Finished) {
-        unsetFinished();
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
+                                                               tr("Are you sure you want to undo your last score?\n"),
+                                                               QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                               QMessageBox::No);
+    if (resBtn == QMessageBox::Yes)
+    {
+        performUndo();
     }
-    displayFinishes();
 }
 
 bool GroupBox_player::legstarted = false;
