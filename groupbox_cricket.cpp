@@ -1135,6 +1135,18 @@ void groupbox_cricket::setExtra20(int points)
 
 void groupbox_cricket::on_pushButton_undo_clicked()
 {
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
+                                                               tr("Are you sure you want to undo your last score?\n"),
+                                                               QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                               QMessageBox::No);
+    if (resBtn == QMessageBox::Yes)
+    {
+        performUndo();
+    }
+}
+
+void groupbox_cricket::performUndo()
+{
     Player->undo();
     Score = Player->getScore();
     ui->lcdNumber->display(Score);

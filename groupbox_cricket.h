@@ -95,6 +95,7 @@ public:
     void updateDarts(QVector<QString> darts);
     void playFailSounds();
     void setLcdLegs();
+    void performUndo();
 
 signals:
     void signalUpdatePlayer(QString type);
