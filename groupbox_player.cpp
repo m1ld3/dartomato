@@ -245,11 +245,13 @@ void GroupBox_player::unsetSetBegin()
 void GroupBox_player::setLegBegin()
 {
     LegBegin = true;
+    ui->label_pic->setStyleSheet("#label_pic { border: 5px solid red; }");
 }
 
 void GroupBox_player::unsetLegBegin()
 {
     LegBegin = false;
+    ui->label_pic->setStyleSheet("");
 }
 
 bool GroupBox_player::hasBegunLeg()
