@@ -26,27 +26,6 @@ public:
     int get_sets();
     void update_history();
     void resetScore();
-//    void updateStats(int score180, int plus160, int plus140, int plus120, int plus100, int score26,
-//                     int score11, int score7, int score3, int t20, int t19, int t18, int t17, int t16,
-//                     int t15, int bull, int ones, int miss);
-//    int get_180();
-//    int get_160();
-//    int get_140();
-//    int get_120();
-//    int get_100();
-//    int get_26();
-//    int get_11();
-//    int get_7();
-//    int get_3();
-//    int get_t20();
-//    int get_t19();
-//    int get_t18();
-//    int get_t17();
-//    int get_t16();
-//    int get_t15();
-//    int get_bull();
-//    int get_ones();
-//    int get_miss();
     void resetLegs();
     int getPlayerName();
     void undoStep();

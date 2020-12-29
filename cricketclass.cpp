@@ -102,9 +102,9 @@ void cricketclass::undoStep() {
     mExtra25 = mExtra25Array.back();
     setScore();
     mTotalDarts -= mNumberOfDartsArray.back();
+    mNumberOfHitsArray.pop_back();
     mTotalHits = mNumberOfHitsArray.back();
     mNumberOfDartsArray.pop_back();
-    mNumberOfHitsArray.pop_back();
     mLegWinArray.pop_back();
     if (mTotalDarts > 0) {
         mHitsPerRound = 3 * static_cast<double>(mTotalHits) / static_cast<double>(mTotalDarts);

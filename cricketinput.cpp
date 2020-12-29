@@ -1117,13 +1117,9 @@ void cricketinput::signalSegmentPressed(int &value, QChar &type)
                 mExtra19sArray.push_back(mExtra19s);
                 mExtra20sArray.push_back(mExtra20s);
                 mExtra25sArray.push_back(mExtra25s);
-                qInfo() << "mScore: " << mScore;
                 for (int i = 0; i < scores.size(); i++) {
-                    qInfo() << "scores[i]: " << scores[i];
                     result = result && scores[i] >= mScore;
                 }
-                qInfo() << "Result: " << result;
-                qInfo() << "Slots full?" << areSlotsFull();
                 if (areSlotsFull() && result) {
                     Stop = true;  // Game shot
                     QSound *gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
