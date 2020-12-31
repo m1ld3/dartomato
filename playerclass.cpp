@@ -86,42 +86,7 @@ void PlayerClass::undoStep() {
     checkoutattemptarray.pop_back();
     Checkouts -= checkoutarray.back();
     checkoutarray.pop_back();
-//    Score180 -= array180.back();
-//    array180.pop_back();
-//    Plus160 -= array160.back();
-//    array160.pop_back();
-//    Plus140 -= array140.back();
-//    array140.pop_back();
-//    Plus120 -= array120.back();
-//    array120.pop_back();
-//    Plus100 -= array100.back();
-//    array100.pop_back();
-//    Score26 -= array26.back();
-//    array26.pop_back();
-//    Score11 -= array11.back();
-//    array11.pop_back();
-//    Score7 -= array7.back();
-//    array7.pop_back();
-//    Score3 -= array3.back();
-//    array3.pop_back();
-//    T20 -= arrayt20.back();
-//    arrayt20.pop_back();
-//    T19 -= arrayt19.back();
-//    arrayt19.pop_back();
-//    T18 -= arrayt18.back();
-//    arrayt18.pop_back();
-//    T17 -= arrayt17.back();
-//    arrayt17.pop_back();
-//    T16 -= arrayt16.back();
-//    arrayt16.pop_back();
-//    T15 -= arrayt15.back();
-//    arrayt15.pop_back();
-//    Bull -= arraybull.back();
-//    arraybull.pop_back();
-//    Ones -= arrayones.back();
-//    arrayones.pop_back();
-//    Miss -= arraymiss.back();
-//    arraymiss.pop_back();
+
     if (CheckoutAttempts > 0) {
         checkout = (static_cast<double> (Checkouts) / static_cast<double> (CheckoutAttempts)) * 100.0;
     } else {
@@ -153,7 +118,7 @@ void PlayerClass::undo() {
         score_leg = score_total.back();
         score_total.pop_back();
         if (score_leg.size() > 0) {
-            if (points_leg.back() == 0) {
+            if (points_leg.back() == StartVal && points_leg.size() > 1) {
                 if (totallegs % margin_legs == 0) {
                     totallegs -= 1;
                     legs = margin_legs -1;
@@ -167,6 +132,7 @@ void PlayerClass::undo() {
             } else {
                 undoStep();
             }
+            points_leg.pop_back();
         }
     }
 }
