@@ -3,11 +3,12 @@
 
 #include <QGroupBox>
 #include "dialognameinput.h"
-#include "scoreinput.h"
+#include "dartboard.h"
 #include "playerclass.h"
 #include <QPixmap>
 #include <QSound>
 #include <QSoundEffect>
+
 class GameWindow;
 
 namespace Ui {
@@ -19,9 +20,9 @@ class GroupBox_player : public QGroupBox
     Q_OBJECT
 
 public:
-    explicit GroupBox_player(QWidget *parent = nullptr, int game = 501, int player_nr = 1, int sets = 1, int legs = 1,
+    explicit GroupBox_player(QWidget* parent = nullptr, int game = 501, int player_nr = 1, int sets = 1, int legs = 1,
                              bool singleIn = true, bool singleOut = false, bool doubleIn = false, bool doubleOut = false,
-                             bool masterIn = false, bool masterOut = false, bool offensive = false, PlayerClass *player = nullptr);
+                             bool masterIn = false, bool masterOut = false, bool offensive = false, PlayerClass* player = nullptr, DartBoard* dartboard = nullptr);
     ~GroupBox_player();
     void setActive();
     void setInactive();
@@ -42,6 +43,8 @@ public:
     void playFailSounds();
     void setLcdLegs();
     void play_offensive_sounds();
+    int getRemaining();
+    void submitScore(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
 
 signals:
     void signalUpdatePlayer(QString type);
@@ -51,9 +54,7 @@ signals:
 
 public slots:
     void on_pushButton_name_clicked();
-    void on_pushButton_score_clicked();
     void okButtonClicked(QString& name);
-    void signalSubmitButtonPressed2(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
     void signalPlayerActiveButtonPressed();
     void performUndo();
 private slots:
@@ -64,29 +65,14 @@ private:
     Ui::GroupBox_player *ui;
     QString playername;
     DialogNameinput *dn;
-    std::shared_ptr<ScoreInput> scoreinput;
-    //ScoreInput *scoreinput = nullptr;
     PlayerClass *Player;
-    int StartVal, Player_Nr, Sets, Legs, Score, mCurrentScore;
+    DartBoard * mDartBoard;
+    int StartVal, Player_Nr, Sets, Legs, Remaining, mCurrentScore;
     bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Offensive, Active, Finished, SetBegin, LegBegin;
     QPixmap pix = QPixmap(":/resources/img/darts.svg");
     static bool legstarted;
     static bool setstarted;
     GameWindow* mGameWindow;
-//    QSound *sexy69 = new QSound(":/resources/sounds/sexy69.wav");
-//    QSound *anotherone = new QSound(":/resources/sounds/anotherone.wav");
-//    QSound *sound1 = new QSound(":/resources/sounds/yousuck1.wav");
-//    QSound *sound2 = new QSound(":/resources/sounds/yousuck2.wav");
-//    QSound *sound3 = new QSound(":/resources/sounds/yousuck3.wav");
-//    QSound *sound4 = new QSound(":/resources/sounds/youfuckedup.wav");
-//    QSound *sound5 = new QSound(":/resources/sounds/poorjob.wav");
-//    QSound *sound6 = new QSound(":/resources/sounds/nichtgut.wav");
-//    QSound *sound7 = new QSound(":/resources/sounds/newwaytosuck.wav");
-//    QSound *sound8 = new QSound(":/resources/sounds/loser.wav");
-//    QSound *sound9 = new QSound(":/resources/sounds/littlegirl.wav");
-//    QSound *sound10 = new QSound(":/resources/sounds/gutschlecht.wav");
-//    QSound *sound11 = new QSound(":/resources/sounds/daswarscheisse.wav");
-
     QSoundEffect sexy69;
     QSoundEffect anotherone;
     QSoundEffect sound1;

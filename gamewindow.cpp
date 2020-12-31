@@ -7,7 +7,6 @@
 #include <QString>
 #include <QDebug>
 #include <QMessageBox>
-//#include <cstdlib>
 
 GameWindow::GameWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -24,23 +23,30 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
     NumberOfPlayers(numberofplayers), Game(game), Sets(sets), Legs(legs), SingleIn(singleIn),
     SingleOut(singleOut), DoubleIn(doubleIn), DoubleOut(doubleOut),
     MasterIn(masterIn), MasterOut(masterOut), CutThroat(cutthroat), Offensive(offensive),
-    mplayer(NumberOfPlayers, nullptr), mcricketplayer(NumberOfPlayers, nullptr)
+    mglayout(nullptr), mplayer(NumberOfPlayers, nullptr), mcricketplayer(NumberOfPlayers, nullptr), mDartBoard(nullptr)
 {
     ui->setupUi(this);
     QString text = QString::number(game);
 
     QWidget::setWindowTitle(game != 0 ? text : "Cricket");
-    mglayout = new QGridLayout;
-    ui->centralwidget->setLayout(mglayout);
-    if (game > 0) {
-        for (int i = 0;i < NumberOfPlayers; i++) {
+    if (game > 0)
+    {
+        for (int i = 0; i < NumberOfPlayers; i++)
+        {
             mplayer[i] = new PlayerClass(game,sets,legs, i+1);
             playerbox.push_back(new GroupBox_player(this, i+1, game, Sets, Legs, SingleIn,
                                                SingleOut, DoubleIn, DoubleOut, MasterIn,
                                                MasterOut, Offensive, mplayer[i]));
             playerbox[i]->setAttribute(Qt::WA_DeleteOnClose);
             playerbox[i]->setInactive();
-            mglayout->addWidget(playerbox[i],i<4 ? 0 : 1,i%4);
+            if ((i % 2) == 0)
+            {
+                ui->gridForLeftHandPlayers->addWidget(playerbox[i]);
+            }
+            else
+            {
+                ui->gridForRightHandPlayers->addWidget(playerbox[i]);
+            }
             connect(playerbox[i],SIGNAL(signalUpdatePlayer(QString)),this,SLOT(signalUpdatePlayer(QString)));
             connect(playerbox[i],SIGNAL(signalResetScores()),this,SLOT(signalResetScores()));
             connect(mplayer[i],SIGNAL(signalGameWon(int)),this,SLOT(signalGameWon(int)));
@@ -51,9 +57,15 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
         playerbox[ActivePlayer]->setSetBegin();
         playerbox[ActivePlayer]->setLegBegin();
         playerbox[ActivePlayer]->setActive();
-    } else {
-        //QVector<cricketclass*> player(NumberOfPlayers,nullptr);
-        for (int i = 0;i < NumberOfPlayers; i++) {
+        mDartBoard = new DartBoard(ui->graphicsViewDartBoard, game, game, singleIn, SingleOut, doubleIn, doubleOut, masterIn, masterOut);
+        mDartBoard->initDartBoard(game);
+        connect(mDartBoard, SIGNAL (signalSubmitButtonPressed2GameWindow(int&, int&, int&, QVector<QString>)), this, SLOT (submitButtonPressedSlot(int&, int&, int&, QVector<QString>)));
+    } else
+    {
+        mglayout = new QGridLayout;
+        ui->centralwidget->setLayout(mglayout);
+        for (int i = 0;i < NumberOfPlayers; i++)
+        {
             mcricketplayer[i] = new cricketclass(this, sets,legs, i+1, CutThroat);
             cricketbox.push_back(new groupbox_cricket(this, i+1, Sets, Legs, mcricketplayer[i], CutThroat, Offensive));
             cricketbox[i]->setAttribute(Qt::WA_DeleteOnClose);
@@ -75,7 +87,8 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
 GameWindow::~GameWindow()
 {
     delete ui;
-    delete mglayout;
+    if (mglayout) delete mglayout;
+    if (mDartBoard) delete mDartBoard;
     for (auto player : mplayer)
     {
         delete player;
@@ -162,6 +175,7 @@ void GameWindow::signalUpdatePlayer(QString type)
                 box->setLcdLegs();
             }
         }
+        mDartBoard->initDartBoard(playerbox[ActivePlayer]->getRemaining());
     } else if (cricketbox.size() > 0) {
         if (type == "default") {
             updatePlayer();
@@ -229,7 +243,6 @@ void GameWindow::signalGameWon(int playernumber)
         for (int i = 0; i < NumberOfPlayers; i++) {
             playerbox[i]->setFinished();
         }
-        playerbox[playernumber]->closeScoreInput();
         QString name = playerbox[playernumber]->getPlayerName();
         QString text = name + " has won the game. Congratulations!. ";
         QMessageBox::about(this,"Game finished", text);
@@ -299,6 +312,11 @@ void GameWindow::signalUpdateHistory()
         }
     }
 
+}
+
+void GameWindow::submitButtonPressedSlot(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts)
+{
+    playerbox[ActivePlayer]->submitScore(score, numberofdarts, checkoutattempts, darts);
 }
 
 bool GameWindow::isSlot15free(int player)

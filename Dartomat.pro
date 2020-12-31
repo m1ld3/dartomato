@@ -26,6 +26,7 @@ SOURCES += \
     chartview.cpp \
     cricketclass.cpp \
     cricketinput.cpp \
+    dartboard.cpp \
     dartboardsegment.cpp \
     dialognameinput.cpp \
     gamewindow.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     chartview.h \
     cricketclass.h \
     cricketinput.h \
+    dartboard.h \
     dartboardsegment.h \
     dartomatmain.h \
     dialognameinput.h \

@@ -6,6 +6,7 @@
 #include "groupbox_cricket.h"
 #include <QSound>
 #include <QGridLayout>
+#include "dartboard.h"
 
 class groupbox_cricket;
 
@@ -59,6 +60,7 @@ private slots:
     void signalGameWon(int playername);
     void signalInactivatePlayers(int player, bool legstarted, bool setstarted);
     void signalUpdateHistory();
+    void submitButtonPressedSlot(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
 
 private:
     Ui::GameWindow *ui;
@@ -71,6 +73,7 @@ private:
     QGridLayout *mglayout;
     QVector<PlayerClass*> mplayer;
     QVector<cricketclass*> mcricketplayer;
+    DartBoard * mDartBoard;
 };
 
 #endif // GAMEWINDOW_H
