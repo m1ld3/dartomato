@@ -31,12 +31,23 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
     QWidget::setWindowTitle(game != 0 ? text : "Cricket");
     if (game > 0)
     {
+        mDartBoard = new DartBoard(ui->graphicsViewDartBoard, game, game, singleIn, singleOut, doubleIn, doubleOut, masterIn, masterOut);
+        mDartBoard->initDartBoard(game);
+        connect(mDartBoard, SIGNAL (signalSubmitButtonPressed2GameWindow(int&, int&, int&, QVector<QString>)), this, SLOT (submitButtonPressedSlot(int&, int&, int&, QVector<QString>)));
+        connect(mDartBoard, SIGNAL (signalDisplayScore(int)), this, SLOT (displayScoreSlot(int)));
+        connect(mDartBoard, SIGNAL (signalDisplayDart1(int)), this, SLOT (displayDart1Slot(int)));
+        connect(mDartBoard, SIGNAL (signalDisplayDart2(int)), this, SLOT (displayDart2Slot(int)));
+        connect(mDartBoard, SIGNAL (signalDisplayDart3(int)), this, SLOT (displayDart3Slot(int)));
+        connect(mDartBoard, SIGNAL (signalEraseDart1()), this, SLOT (eraseDart1Slot()));
+        connect(mDartBoard, SIGNAL (signalEraseDart2()), this, SLOT (eraseDart2Slot()));
+        connect(mDartBoard, SIGNAL (signalEraseDart3()), this, SLOT (eraseDart3Slot()));
+        connect(mDartBoard, SIGNAL (signalUpdateFinishes(int, int)), this, SLOT (updateFinishesSlot(int, int)));
         for (int i = 0; i < NumberOfPlayers; i++)
         {
             mplayer[i] = new PlayerClass(game,sets,legs, i+1);
             playerbox.push_back(new GroupBox_player(this, i+1, game, Sets, Legs, SingleIn,
                                                SingleOut, DoubleIn, DoubleOut, MasterIn,
-                                               MasterOut, Offensive, mplayer[i]));
+                                               MasterOut, Offensive, mplayer[i], mDartBoard));
             playerbox[i]->setAttribute(Qt::WA_DeleteOnClose);
             playerbox[i]->setInactive();
             if ((i % 2) == 0)
@@ -57,9 +68,6 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
         playerbox[ActivePlayer]->setSetBegin();
         playerbox[ActivePlayer]->setLegBegin();
         playerbox[ActivePlayer]->setActive();
-        mDartBoard = new DartBoard(ui->graphicsViewDartBoard, game, game, singleIn, SingleOut, doubleIn, doubleOut, masterIn, masterOut);
-        mDartBoard->initDartBoard(game);
-        connect(mDartBoard, SIGNAL (signalSubmitButtonPressed2GameWindow(int&, int&, int&, QVector<QString>)), this, SLOT (submitButtonPressedSlot(int&, int&, int&, QVector<QString>)));
     } else
     {
         mglayout = new QGridLayout;
@@ -227,7 +235,7 @@ void GameWindow::signalResetScores()
     if (playerbox.size() > 0) {
         for (int i = 0; i < NumberOfPlayers; i++) {
             playerbox[i]->reset();
-            playerbox[i]->displayFinishes();
+            playerbox[i]->displayFinishes(playerbox[i]->getRemaining(), 3);
         }
     } else if (cricketbox.size() > 0) {
         for (int i = 0; i < NumberOfPlayers; i++) {
@@ -631,4 +639,54 @@ void GameWindow::updateDarts(int player)
             cricketbox[i]->updateDarts({""});
         }
     }
+}
+
+void GameWindow::on_submitButton_clicked()
+{
+    mDartBoard->submitScore();
+}
+
+void GameWindow::on_undoButton_clicked()
+{
+    mDartBoard->performUndo();
+}
+
+void GameWindow::displayScoreSlot(int score)
+{
+    ui->currentRemainingLCD->display(score);
+}
+
+void GameWindow::displayDart1Slot(int val)
+{
+    ui->dart1LCD->display(val);
+}
+
+void GameWindow::displayDart2Slot(int val)
+{
+    ui->dart2LCD->display(val);
+}
+
+void GameWindow::displayDart3Slot(int val)
+{
+    ui->dart3LCD->display(val);
+}
+
+void GameWindow::eraseDart1Slot()
+{
+    ui->dart1LCD->display("--");
+}
+
+void GameWindow::eraseDart2Slot()
+{
+    ui->dart2LCD->display("--");
+}
+
+void GameWindow::eraseDart3Slot()
+{
+    ui->dart3LCD->display("--");
+}
+
+void GameWindow::updateFinishesSlot(int score, int numberOfDarts)
+{
+    playerbox[ActivePlayer]->displayFinishes(score, numberOfDarts);
 }

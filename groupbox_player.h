@@ -39,7 +39,7 @@ public:
     bool hasBegunSet();
     void updateHistory();
     void resetLegs();
-    void displayFinishes();
+    void displayFinishes(int remaining, int numberOfDarts);
     void playFailSounds();
     void setLcdLegs();
     void play_offensive_sounds();

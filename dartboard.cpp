@@ -3,7 +3,7 @@
 #include <QSound>
 #include <QMessageBox>
 
-DartBoard::DartBoard(QGraphicsView * iGraphicsViewDartBoard, int iStartVal, int iScore, bool iSingleIn, bool iSingleOut,
+DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int iScore, bool iSingleIn, bool iSingleOut,
                      bool iDoubleIn, bool iDoubleOut, bool iMasterIn, bool iMasterOut)
     :
       StartVal(iStartVal), Score(iScore), Counter(3), SingleIn(iSingleIn), SingleOut(iSingleOut),
@@ -631,48 +631,9 @@ DartBoard::DartBoard(QGraphicsView * iGraphicsViewDartBoard, int iStartVal, int 
     labels->setZValue(1);
     labels->setScale(0.98);
     labels->setPos(10,10);
-
-    submitButton = new SubmitButton("Submit");
-    currentscore = new QLCDNumber(3);
-    undoButton = new UndoButton("Undo");
-    labelDart1 = new QLabel("1st");
-    labelDart2 = new QLabel("2nd");
-    labelDart3 = new QLabel("3rd");
-    scoreDart1 = new QLCDNumber(2);
-    scoreDart2 = new QLCDNumber(2);
-    scoreDart3 = new QLCDNumber(2);
-    scoreDart1->display("--");
-    scoreDart2->display("--");
-    scoreDart3->display("--");
-    labelDart1->setGeometry(720,0,30,50);
-    labelDart2->setGeometry(720,50,30,50);
-    labelDart3->setGeometry(720,100,30,50);
-    scoreDart1->setGeometry(750,0,50,50);
-    scoreDart2->setGeometry(750,50,50,50);
-    scoreDart3->setGeometry(750,100,50,50);
-    currentscore->setGeometry(0,0,100,100);
-    currentscore->setStyleSheet("QLCDNumber { color: darkblue; background-color: white }");
-    currentscore->display(Score);
-    scoreDart1->setStyleSheet("QLCDNumber { color: darkgreen; background-color: white }");
-    scoreDart2->setStyleSheet("QLCDNumber { color: darkgreen; background-color: white }");
-    scoreDart3->setStyleSheet("QLCDNumber { color: darkgreen; background-color: white }");
-    submitButton->setGeometry(0,750,100,50);
-    undoButton->setGeometry(700,750,100,50);
+    eraseAllDarts();
+    displayScore(Score);
     QFont font("System", 25);
-    submitButton->setFont(font);
-    labelDart1->setFont(font);
-    labelDart2->setFont(font);
-    labelDart3->setFont(font);
-    undoButton->setFont(font);
-    mscene->addWidget(submitButton);
-    mscene->addWidget(undoButton);
-    mscene->addWidget(currentscore);
-    mscene->addWidget(labelDart1);
-    mscene->addWidget(scoreDart1);
-    mscene->addWidget(labelDart2);
-    mscene->addWidget(scoreDart2);
-    mscene->addWidget(labelDart3);
-    mscene->addWidget(scoreDart3);
 
     connect(s20, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(s19, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
@@ -737,15 +698,14 @@ DartBoard::DartBoard(QGraphicsView * iGraphicsViewDartBoard, int iStartVal, int 
     connect(t2, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(t1, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(noscore, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
-    connect(undoButton, SIGNAL (signalUndoButtonPressed()), this, SLOT (signalUndoButtonPressed()));
-    connect(submitButton, SIGNAL (signalSubmitButtonPressed()), this, SLOT (signalSubmitButtonPressed()));
 }
 
 void DartBoard::setScore(int value, QChar type, int checkout) {
     Score -= value;
-    currentscore->display(Score);
+    displayScore(Score);
     if (Counter == 3) {
-        scoreDart1->display(value);
+        displayDart1(value);
+        emit signalUpdateFinishes(Score, 2);
         Undo[0] = value;
         if (!Busted)
         {
@@ -757,7 +717,8 @@ void DartBoard::setScore(int value, QChar type, int checkout) {
         }
         CheckoutAttempts[0] = checkout;
     } else if (Counter == 2) {
-        scoreDart2->display(value);
+        displayDart2(value);
+        emit signalUpdateFinishes(Score, 1);
         Undo[1] = value;
         if (!Busted)
         {
@@ -769,7 +730,7 @@ void DartBoard::setScore(int value, QChar type, int checkout) {
         }
         CheckoutAttempts[1] = checkout;
     } else if (Counter == 1) {
-        scoreDart3->display(value);
+        displayDart3(value);
         Undo[2] = value;
         if (!Busted)
         {
@@ -790,10 +751,8 @@ void DartBoard::initDartBoard(int score)
     Score = score;
     OldScore = Score;
     CheckoutAttempts = {0, 0, 0};
-    scoreDart1->display("--");
-    scoreDart2->display("--");
-    scoreDart3->display("--");
-    currentscore->display(score);
+    eraseAllDarts();
+    displayScore(Score);
     Counter = 3;
     Dart = {};
 }
@@ -856,7 +815,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                             checkout = 1;
                         }
                         setScore(value, type, checkout);
-                        currentscore->display(OldScore);
+                        displayScore(OldScore);
                         Stop = true; // Überwofen
                         Busted = true;
                         busted = new QSound(":/resources/sounds/busted.wav");
@@ -874,7 +833,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                             checkout = 1;
                         }
                         setScore(value, type, checkout);
-                        currentscore->display(OldScore);
+                        displayScore(OldScore);
                         Stop = true; // Überwofen
                         Busted = true;
                         busted = new QSound(":/resources/sounds/busted.wav");
@@ -892,7 +851,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                 Stop = true;
                 Busted = true; // Überworfen
                 setScore(value, type, checkout);
-                currentscore->display(OldScore);
+                displayScore(OldScore);
                 busted = new QSound(":/resources/sounds/busted.wav");
                 busted->play();
             }
@@ -912,20 +871,23 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
     if (gameshotsound && gameshotsound->isFinished()) delete gameshotsound;
 }
 
-void DartBoard::signalUndoButtonPressed()
+void DartBoard::performUndo()
 {
     if (Counter < 3) {
         Score += Undo[2-Counter];
         Undo[2-Counter] = 0;
         Dart.pop_back();
         CheckoutAttempts[2-Counter] = 0;
-        currentscore->display(Score);
+        displayScore(Score);
         if (Counter == 2) {
-            scoreDart1->display("--");
+            eraseDart1();
+            emit signalUpdateFinishes(Score, 3);
         } else if (Counter == 1) {
-            scoreDart2->display("--");
+            eraseDart2();
+            emit signalUpdateFinishes(Score, 2);
         } else if (Counter == 0) {
-            scoreDart3->display("--");
+            eraseDart3();
+            emit signalUpdateFinishes(Score, 1);
         }
         Counter++;
         Stop = false;
@@ -933,18 +895,60 @@ void DartBoard::signalUndoButtonPressed()
     }
 }
 
-void DartBoard::signalSubmitButtonPressed()
+void DartBoard::submitScore()
 {
     if (Stop) {
         QVector<QString> darts = Dart;
         if (Busted) darts = {"S0", "S0", "S0"};
-        int score = OldScore - currentscore->intValue();
+        int score = OldScore - Score;
         int numberofdarts = 3 - Counter;
         int checkoutattempts = std::accumulate(CheckoutAttempts.begin(), CheckoutAttempts.end(),0);
         emit signalSubmitButtonPressed2GameWindow(score, numberofdarts, checkoutattempts, darts);
     } else {
         QMessageBox::warning(this, "Score incomplete", "Please enter all darts.");
     }
+}
+
+void DartBoard::displayScore(int score)
+{
+    emit signalDisplayScore(score);
+}
+
+void DartBoard::displayDart1(int dartVal)
+{
+    emit signalDisplayDart1(dartVal);
+}
+
+void DartBoard::displayDart2(int dartVal)
+{
+    emit signalDisplayDart2(dartVal);
+}
+
+void DartBoard::displayDart3(int dartVal)
+{
+    emit signalDisplayDart3(dartVal);
+}
+
+void DartBoard::eraseAllDarts()
+{
+    eraseDart1();
+    eraseDart2();
+    eraseDart3();
+}
+
+void DartBoard::eraseDart1()
+{
+    emit signalEraseDart1();
+}
+
+void DartBoard::eraseDart2()
+{
+    emit signalEraseDart2();
+}
+
+void DartBoard::eraseDart3()
+{
+    emit signalEraseDart3();
 }
 
 

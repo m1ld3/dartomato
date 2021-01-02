@@ -15,4 +15,3 @@ void SubmitButton::mouseReleaseEvent(QMouseEvent *event)
 void SubmitButton::SubmitButtonPressed() {
     emit signalSubmitButtonPressed();
 }
-

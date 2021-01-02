@@ -61,6 +61,16 @@ private slots:
     void signalInactivatePlayers(int player, bool legstarted, bool setstarted);
     void signalUpdateHistory();
     void submitButtonPressedSlot(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
+    void on_submitButton_clicked();
+    void on_undoButton_clicked();
+    void displayScoreSlot(int score);
+    void displayDart1Slot(int val);
+    void displayDart2Slot(int val);
+    void displayDart3Slot(int val);
+    void eraseDart1Slot();
+    void eraseDart2Slot();
+    void eraseDart3Slot();
+    void updateFinishesSlot(int score, int numberOfDarts);
 
 private:
     Ui::GameWindow *ui;

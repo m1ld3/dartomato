@@ -2,13 +2,11 @@
 #define DARTBOARD_H
 
 #include <QDialog>
-#include <QGraphicsView>
 #include "dartboardsegment.h"
 #include <QLCDNumber>
-#include "undobutton.h"
-#include "submitbutton.h"
 #include <QGraphicsSvgItem>
 #include <QLabel>
+#include "dartboardview.h"
 
 
 class DartBoard : public QWidget
@@ -16,33 +14,40 @@ class DartBoard : public QWidget
     Q_OBJECT
 public slots:
     void signalSegmentPressed(int &value, QChar &type);
-    void signalUndoButtonPressed();
-    void signalSubmitButtonPressed();
 signals:
     void signalSubmitButtonPressed2GameWindow(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
     void signalSetScore2GroupBoxPlayer();
+    void signalEraseDart1();
+    void signalEraseDart2();
+    void signalEraseDart3();
+    void signalDisplayDart1(int val);
+    void signalDisplayDart2(int val);
+    void signalDisplayDart3(int val);
+    void signalDisplayScore(int score);
+    void signalUpdateFinishes(int score, int numberOfDarts);
 public:
-    DartBoard(QGraphicsView * iGraphicsViewDartBoard, int iStartVal, int iScore, bool iSingleIn, bool iSingleOut,
+    DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int iScore, bool iSingleIn, bool iSingleOut,
               bool iDoubleIn, bool iDoubleOut, bool iMasterIn, bool iMasterOut);
     void setScore(int value, QChar type, int checkout);
     void initDartBoard(int score);
+    void performUndo();
+    void submitScore();
+    void displayScore(int score);
+    void displayDart1(int dartVal);
+    void displayDart2(int dartVal);
+    void displayDart3(int dartVal);
+    void eraseAllDarts();
+    void eraseDart1();
+    void eraseDart2();
+    void eraseDart3();
 private:
     QGraphicsView* view;
     int StartVal, Score, Counter, OldScore;
     bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Stop, Busted;
-    QLCDNumber *currentscore;
-    QLCDNumber *scoreDart1;
-    QLCDNumber *scoreDart2;
-    QLCDNumber *scoreDart3;
-    UndoButton *undoButton;
-    SubmitButton *submitButton;
     QVector<int> Undo{0,0,0};
     QVector<QString> Dart;
     QVector<int> CheckoutAttempts;
     QGraphicsScene *mscene;
-    QLabel *labelDart1;
-    QLabel *labelDart2;
-    QLabel *labelDart3;
 };
 
 #endif // DARTBOARD_H

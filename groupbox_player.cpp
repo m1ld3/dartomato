@@ -43,7 +43,7 @@ GroupBox_player::GroupBox_player(QWidget *parent, int player_nr, int game, int s
     ui->label_3dartInput->setText(avg3dart);
     ui->label_checkoutInput->setText(checkout);
     connect(ui->label_pic,SIGNAL(signalPlayerActiveButtonPressed()),this,SLOT(signalPlayerActiveButtonPressed()));
-    displayFinishes();
+    displayFinishes(Remaining, 3);
     mGameWindow = dynamic_cast<GameWindow*>(parent);
     sexy69.setSource(QUrl("qrc:/resources/sounds/sexy69.wav"));
     sexy69.setLoopCount(1);
@@ -193,7 +193,7 @@ void GroupBox_player::submitScore(int &score, int &numberofdarts, int &checkouta
     ui->label_1dartInput->setText(avg1dart);
     ui->label_3dartInput->setText(avg3dart);
     ui->label_checkoutInput->setText(checkout);
-    displayFinishes();
+    displayFinishes(Remaining, 3);
 }
 
 void GroupBox_player::signalPlayerActiveButtonPressed()
@@ -205,24 +205,10 @@ void GroupBox_player::signalPlayerActiveButtonPressed()
         if (reply == QMessageBox::Yes) {
             emit signalInactivatePlayers(Player->getPlayerName(),GroupBox_player::legstarted, GroupBox_player::setstarted);
             setActive();
+            mDartBoard->initDartBoard(Remaining);
         }
     }
 }
-
-//void GroupBox_player::on_pushButton_score_clicked()
-//{
-//    if (Active && !Finished) {
-//        scoreinput = std::shared_ptr<ScoreInput>( new ScoreInput(this, StartVal, Score, Sets, Legs, SingleIn, SingleOut,
-//                                                DoubleIn, DoubleOut, MasterIn, MasterOut));
-//        //scoreinput->setAttribute(Qt::WA_DeleteOnClose);
-//        connect(scoreinput.get(), SIGNAL (signalSubmitButtonPressed2GroupBoxPlayer(int&, int&, int&, QVector<QString>)), this, SLOT (submitButtonPressedSlot(int&, int&, int&, QVector<QString>)));
-//        scoreinput->show();
-//    } else if (Finished) {
-//        QMessageBox::about(this, "Warning", "Game already finished!");
-//    } else {
-//        QMessageBox::about(this, "Warning", "It's not your turn!");
-//    }
-//}
 
 void GroupBox_player::setSetBegin()
 {
@@ -266,7 +252,7 @@ void GroupBox_player::resetLegs()
     Player->resetLegs();
 }
 
-void GroupBox_player::displayFinishes()
+void GroupBox_player::displayFinishes(int remaining, int numberOfDarts)
 {
     QVector<int> vals = {60,57,54,51,50,48,45,42,40,39,38,36,36,34,33,32,30,30,28,27,
                          26,25,24,24,22,21,20,20,19,18,18,18,17,16,16,15,15,14,14,13,
@@ -286,24 +272,27 @@ void GroupBox_player::displayFinishes()
     ui->textBrowser->setText("Possible finishes");
     if (SingleOut) {
         for (int i = 0; i < vals.size(); i++) {
-            if (Remaining - vals[i] == 0) {
+            if (remaining - vals[i] == 0) {
                 QString text = valslabels[i];
                 ui->textBrowser->append(text);
             }
         }
-        for (int i = 0; i < vals.size(); i++) {
-            for (int j = 0; j < vals.size(); j++) {
-                if (Remaining - vals[i]-vals[j] == 0) {
-                    QString text = valslabels[i] + "   " + valslabels[j];
-                    ui->textBrowser->append(text);
+        if (numberOfDarts > 1)
+        {
+            for (int i = 0; i < vals.size(); i++) {
+                for (int j = 0; j < vals.size(); j++) {
+                    if (remaining - vals[i]-vals[j] == 0) {
+                        QString text = valslabels[i] + "   " + valslabels[j];
+                        ui->textBrowser->append(text);
+                    }
                 }
             }
         }
-        if (Remaining > 50) {
+        if (remaining > 50 && numberOfDarts > 2) {
             for (int i = 0; i < vals.size(); i++) {
                 for (int j = 0; j < vals.size(); j++) {
                     for (int k = 0; k < vals.size(); k++) {
-                        if (Remaining - vals[i]-vals[j]-vals[k] == 0) {
+                        if (remaining - vals[i]-vals[j]-vals[k] == 0) {
                             QString text = valslabels[i] + "   " + valslabels[j] + "   " + valslabels[k];
                             ui->textBrowser->append(text);
                         }
@@ -313,24 +302,27 @@ void GroupBox_player::displayFinishes()
         }
     } else if (DoubleOut) {
         for (int i = 0; i < doubles.size(); i++) {
-            if (Remaining - doubles[i] == 0) {
+            if (remaining - doubles[i] == 0) {
                 QString text = doubleslabels[i];
                 ui->textBrowser->append(text);
             }
         }
-        for (int i = vals.size()-1; i >= 0; i--) {
-            for (int j = 0; j < doubles.size(); j++) {
-                if (Remaining - vals[i]-doubles[j] == 0) {
-                    QString text = valslabels[i] + "   " + doubleslabels[j];
-                    ui->textBrowser->append(text);
+        if (numberOfDarts > 1)
+        {
+            for (int i = vals.size()-1; i >= 0; i--) {
+                for (int j = 0; j < doubles.size(); j++) {
+                    if (remaining - vals[i]-doubles[j] == 0) {
+                        QString text = valslabels[i] + "   " + doubleslabels[j];
+                        ui->textBrowser->append(text);
+                    }
                 }
             }
         }
-        if (Remaining > 50) {
+        if (remaining > 50 && numberOfDarts > 2) {
             for (int i = 0; i < vals.size(); i++) {
                 for (int j = 0; j < vals.size(); j++) {
                     for (int k = 0; k < doubles.size(); k++) {
-                        if (Remaining - vals[i]-vals[j]-doubles[k] == 0) {
+                        if (remaining - vals[i]-vals[j]-doubles[k] == 0) {
                             QString text = valslabels[i] + "   " + valslabels[j] + "   " + doubleslabels[k];
                             ui->textBrowser->append(text);
                         }
@@ -340,24 +332,27 @@ void GroupBox_player::displayFinishes()
         }
     } else if (MasterOut) {
         for (int i = 0; i < triples.size(); i++) {
-            if (Remaining - vals[i] == 0) {
+            if (remaining - vals[i] == 0) {
                 QString text = tripleslabels[i];
                 ui->textBrowser->append(text);
             }
         }
-        for (int i = 0; i < vals.size(); i++) {
-            for (int j = 0; j < triples.size(); j++) {
-                if (Remaining - vals[i]-triples[j] == 0) {
-                    QString text = valslabels[i] + "   " + tripleslabels[j];
-                    ui->textBrowser->append(text);
+        if (numberOfDarts > 1)
+        {
+            for (int i = 0; i < vals.size(); i++) {
+                for (int j = 0; j < triples.size(); j++) {
+                    if (remaining - vals[i]-triples[j] == 0) {
+                        QString text = valslabels[i] + "   " + tripleslabels[j];
+                        ui->textBrowser->append(text);
+                    }
                 }
             }
         }
-        if (Remaining > 50) {
+        if (remaining > 50 && numberOfDarts > 2) {
             for (int i = 0; i < vals.size(); i++) {
                 for (int j = 0; j < vals.size(); j++) {
                     for (int k = 0; k < triples.size(); k++) {
-                        if (Remaining - vals[i]-vals[j]-triples[k] == 0) {
+                        if (remaining - vals[i]-vals[j]-triples[k] == 0) {
                             QString text = valslabels[i] + "   " + valslabels[j] + "   " + tripleslabels[k];
                             ui->textBrowser->append(text);
                         }
@@ -521,10 +516,11 @@ int GroupBox_player::getRemaining()
 void GroupBox_player::performUndo()
 {
     Player->undo();
-    ui->lcdNumber->display(Player->get_remaining());
+    Remaining = Player->get_remaining();
+    ui->lcdNumber->display(Remaining);
+    mDartBoard->initDartBoard(Remaining);
     ui->lcdNumber_legs->display(Player->get_legs());
     ui->lcdNumber_sets->display(Player->get_sets());
-    Remaining = Player->get_remaining();
     QString avg1dart = QString::number(Player->get_avg1dart(),'f',3);
     QString avg3dart = QString::number(Player->get_avg3dart(),'f',3);
     QString checkout = QString::number(Player->get_checkout(),'f',3) + "%";
@@ -534,7 +530,7 @@ void GroupBox_player::performUndo()
     if (Finished) {
         unsetFinished();
     }
-    displayFinishes();
+    displayFinishes(Remaining, 3);
 }
 
 void GroupBox_player::on_pushButton_stats_clicked()

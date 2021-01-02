@@ -28,6 +28,7 @@ SOURCES += \
     cricketinput.cpp \
     dartboard.cpp \
     dartboardsegment.cpp \
+    dartboardview.cpp \
     dialognameinput.cpp \
     gamewindow.cpp \
     groupbox_cricket.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
     cricketinput.h \
     dartboard.h \
     dartboardsegment.h \
+    dartboardview.h \
     dartomatmain.h \
     dialognameinput.h \
     gamewindow.h \

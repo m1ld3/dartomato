@@ -412,6 +412,12 @@
            <height>100</height>
           </size>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>200</width>
+           <height>200</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <pointsize>8</pointsize>
