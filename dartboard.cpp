@@ -900,8 +900,16 @@ void DartBoard::submitScore()
 {
     if (Stop) {
         QVector<QString> darts = Dart;
-        if (Busted) darts = {"S0", "S0", "S0"};
-        int score = OldScore - Score;
+        int score;
+        if (Busted)
+        {
+            darts = {"S0", "S0", "S0"};
+            score = 0;
+        }
+        else
+        {
+            score = OldScore - Score;
+        }
         int numberofdarts = 3 - Counter;
         int checkoutattempts = std::accumulate(CheckoutAttempts.begin(), CheckoutAttempts.end(),0);
         emit signalSubmitButtonPressed2GameWindow(score, numberofdarts, checkoutattempts, darts);
