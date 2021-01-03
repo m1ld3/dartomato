@@ -42,6 +42,7 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
         connect(mDartBoard, SIGNAL (signalEraseDart2()), this, SLOT (eraseDart2Slot()));
         connect(mDartBoard, SIGNAL (signalEraseDart3()), this, SLOT (eraseDart3Slot()));
         connect(mDartBoard, SIGNAL (signalUpdateFinishes(int, int)), this, SLOT (updateFinishesSlot(int, int)));
+        connect(mDartBoard, SIGNAL (signalSetFocusToSubmitButton()), this, SLOT (setFocusToSubmitButtonSlot()));
         for (int i = 0; i < NumberOfPlayers; i++)
         {
             mplayer[i] = new PlayerClass(game,sets,legs, i+1);
@@ -72,6 +73,7 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
         eraseDart1Slot();
         eraseDart2Slot();
         eraseDart3Slot();
+        ui->submitButton->setAutoDefault(true);
     } else
     {
         mglayout = new QGridLayout;
@@ -693,4 +695,9 @@ void GameWindow::eraseDart3Slot()
 void GameWindow::updateFinishesSlot(int score, int numberOfDarts)
 {
     playerbox[ActivePlayer]->displayFinishes(score, numberOfDarts);
+}
+
+void GameWindow::setFocusToSubmitButtonSlot()
+{
+    ui->submitButton->setFocus();
 }

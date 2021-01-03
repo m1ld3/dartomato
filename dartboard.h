@@ -25,6 +25,7 @@ signals:
     void signalDisplayDart3(int val);
     void signalDisplayScore(int score);
     void signalUpdateFinishes(int score, int numberOfDarts);
+    void signalSetFocusToSubmitButton();
 public:
     DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int iScore, bool iSingleIn, bool iSingleOut,
               bool iDoubleIn, bool iDoubleOut, bool iMasterIn, bool iMasterOut);

@@ -858,6 +858,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
             Counter--;
             if (Counter == 0) {
                 Stop = true;
+                emit signalSetFocusToSubmitButton();
             }
         }
     } else if (Busted) {

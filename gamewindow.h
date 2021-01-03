@@ -71,6 +71,7 @@ private slots:
     void eraseDart2Slot();
     void eraseDart3Slot();
     void updateFinishesSlot(int score, int numberOfDarts);
+    void setFocusToSubmitButtonSlot();
 
 private:
     Ui::GameWindow *ui;
