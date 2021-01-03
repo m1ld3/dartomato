@@ -68,6 +68,10 @@ GameWindow::GameWindow(QWidget *parent, int numberofplayers, int game, int sets,
         playerbox[ActivePlayer]->setSetBegin();
         playerbox[ActivePlayer]->setLegBegin();
         playerbox[ActivePlayer]->setActive();
+        displayScoreSlot(playerbox[ActivePlayer]->getRemaining());
+        eraseDart1Slot();
+        eraseDart2Slot();
+        eraseDart3Slot();
     } else
     {
         mglayout = new QGridLayout;
