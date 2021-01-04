@@ -799,6 +799,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
             } else if (Score == value) {
                 if (SingleOut) {
                     Stop = true;  // Game shot
+                    emit signalSetFocusToSubmitButton();
                     gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
                     gameshotsound->play();
                     checkout = 1;
@@ -806,6 +807,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                 } else if (DoubleOut) {
                     if (type == 'd') {
                         Stop = true; // Game shot
+                        emit signalSetFocusToSubmitButton();
                         gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
                         gameshotsound->play();
                         checkout = 1;
@@ -818,6 +820,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                         displayScore(OldScore);
                         Stop = true; // Überwofen
                         Busted = true;
+                        emit signalSetFocusToSubmitButton();
                         busted = new QSound(":/resources/sounds/busted.wav");
                         busted->play();
                     }
@@ -836,6 +839,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                         displayScore(OldScore);
                         Stop = true; // Überwofen
                         Busted = true;
+                        emit signalSetFocusToSubmitButton();
                         busted = new QSound(":/resources/sounds/busted.wav");
                         busted->play();
                     }
@@ -850,6 +854,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                 }
                 Stop = true;
                 Busted = true; // Überworfen
+                emit signalSetFocusToSubmitButton();
                 setScore(value, type, checkout);
                 displayScore(OldScore);
                 busted = new QSound(":/resources/sounds/busted.wav");
