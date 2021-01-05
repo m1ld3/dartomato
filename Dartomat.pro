@@ -46,6 +46,7 @@ SOURCES += \
 HEADERS += \
     chart.h \
     chartview.h \
+    checkoutlists.h \
     cricketclass.h \
     cricketinput.h \
     dartboard.h \
