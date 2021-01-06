@@ -1,0 +1,126 @@
+/******************************************************************************
+
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+
+*******************************************************************************/
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <set>
+
+using namespace std;
+
+void displayFinishes(int remaining, int numberOfDarts, bool SingleOut, bool MasterOut)
+{
+    const vector<int> vals = {60,57,54,51,50,48,45,42,40,39,38,36,36,34,33,32,30,30,28,27,
+                              26,25,24,24,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1};
+    const vector<int> vals_reduced = {60,57,54,51,50,48,45,42,40,39,38,36,34,33,32,30,28,27,26,25,24,
+                                      22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1};
+    const vector<int> triples = {60,57,54,51,48,45,42,39,36,33,30,27,24,21,18,15,12,9,6,3};
+    const vector<string> valslabels = {"T20","T19","T18","T17","D25","T16","T15","T14","D20",
+                                       "T13","D19","T12","D18","D17","T11","D16","T10","D15",
+                                       "D14","T09","D13","S25","T08","D12","D11","T07","S20",
+                                       "S19","S18","S17","S16","S15","S14","S13","S12","S11",
+                                       "S10","S09","S08","S07","S06","S05","S04","S03","S02","S01"};
+    const vector<string> valslabels_reduced = {"T20","T19","T18","T17","D25","T16","T15","T14","D20",
+                                               "T13","D19","T12","D17","T11","D16","T10","D14","T09",
+                                               "D13","S25","T08","D11","T07","S20","S19","S18","S17",
+                                               "S16","S15","S14","S13","S12","S11","S10","S09","S08",
+                                               "S07","S06","S05","S04","S03","S02","S01"};
+    const vector<string> tripleslabels = {"T20","T19","T18","T17","T16","T15","T14","T13","T12","T11",
+                                          "T10","T09","T08","T07","T06","T05","T04","T03","T02","T01"};
+    vector<string> oneCheckout;
+    set<vector<string>> checkoutSet;
+    if (SingleOut) {
+        for (int i = 0; i < vals.size(); i++) {
+            if (remaining - vals[i] == 0) {
+                oneCheckout = {valslabels[i]};
+                sort (oneCheckout.rbegin(), oneCheckout.rend()); 
+                checkoutSet.insert(oneCheckout);
+            }
+        }
+        if (numberOfDarts > 1)
+        {
+            for (int i = 0; i < vals_reduced.size(); i++) {
+                for (int j = 0; j < vals.size(); j++) {
+                    if (remaining - vals_reduced[i]-vals[j] == 0) {
+                        oneCheckout = {valslabels_reduced[i], valslabels[j]};
+                        sort (oneCheckout.rbegin(), oneCheckout.rend()); 
+                        checkoutSet.insert(oneCheckout);
+                    }
+                }
+            }
+        }
+        if (remaining > 50 && numberOfDarts > 2) {
+            for (int i = 0; i < vals_reduced.size(); i++) {
+                for (int j = 0; j < vals_reduced.size(); j++) {
+                    for (int k = 0; k < vals.size(); k++) {
+                        if (remaining - vals_reduced[i]-vals_reduced[j]-vals[k] == 0) {
+                            oneCheckout = {valslabels_reduced[i], valslabels_reduced[j], valslabels[k]};
+                            sort (oneCheckout.rbegin(), oneCheckout.rend()); 
+                            checkoutSet.insert(oneCheckout);
+                        }
+                    }
+                }
+            }
+        }
+    } else if (MasterOut) {
+        for (int i = 0; i < triples.size(); i++) {
+            if (remaining - triples[i] == 0) {
+                oneCheckout = {tripleslabels[i]};
+                sort (oneCheckout.rbegin(), oneCheckout.rend()); 
+                checkoutSet.insert(oneCheckout);
+            }
+        }
+        if (numberOfDarts > 1)
+        {
+            for (int i = 0; i < vals_reduced.size(); i++) {
+                for (int j = 0; j < triples.size(); j++) {
+                    if (remaining - vals_reduced[i]-triples[j] == 0) {
+
+                        oneCheckout = {valslabels_reduced[i], tripleslabels[j]};
+                        sort (oneCheckout.rbegin(), oneCheckout.rend()); 
+                        checkoutSet.insert(oneCheckout);
+                    }
+                }
+            }
+        }
+        if (remaining > 50 && numberOfDarts > 2) {
+            for (int i = 0; i < vals_reduced.size(); i++) {
+                for (int j = 0; j < vals_reduced.size(); j++) {
+                    for (int k = 0; k < triples.size(); k++) {
+                        if (remaining - vals_reduced[i]-vals_reduced[j]-triples[k] == 0) {
+                            oneCheckout = {valslabels_reduced[i], valslabels_reduced[j], tripleslabels[k]};
+                            sort (oneCheckout.rbegin(), oneCheckout.rend()); 
+                            checkoutSet.insert(oneCheckout);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for (auto elem : checkoutSet)
+    {
+        for (auto dart : elem)
+        {
+            cout << dart << "   ";
+        }
+        cout << endl;
+    }
+}
+
+
+int main()
+{
+    for (int score = 180; score > 0; score--)
+    {
+        cout << score << ":" << endl;
+        displayFinishes(score, 3, false, true);
+        cout << endl;
+    }
+    return 0;
+}
