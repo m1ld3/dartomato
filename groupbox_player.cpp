@@ -257,66 +257,41 @@ void GroupBox_player::displayFinishes(int remaining, int numberOfDarts)
 {
     ui->textBrowser->clear();
     ui->textBrowser->setText("Checkouts:");
-    if (SingleOut) {
-        for (int i = 0; i < vals.size(); i++) {
-            if (remaining - vals[i] == 0) {
-                QString text = valslabels[i];
-                ui->textBrowser->append(text);
+    if (SingleOut)
+    {
+        if (singleoutSingleDartCheckoutList.find(remaining) != singleoutSingleDartCheckoutList.end())
+        {
+            QVector<QString> checkouts = singleoutSingleDartCheckoutList.find(remaining).value();
+            for (auto checkout : checkouts)
+            {
+                ui->textBrowser->append(checkout);
             }
         }
         if (numberOfDarts > 1)
         {
-            for (int i = 0; i < vals.size(); i++) {
-                for (int j = 0; j < vals.size(); j++) {
-                    if (remaining - vals[i]-vals[j] == 0) {
-                        QString text = valslabels[i] + "   " + valslabels[j];
-                        ui->textBrowser->append(text);
-                    }
+            if (singleoutTwoDartCheckoutList.find(remaining) != singleoutTwoDartCheckoutList.end())
+            {
+                QVector<QString> checkouts = singleoutTwoDartCheckoutList.find(remaining).value();
+                for (auto checkout : checkouts)
+                {
+                    ui->textBrowser->append(checkout);
                 }
             }
         }
-        if (remaining > 50 && numberOfDarts > 2) {
-            for (int i = 0; i < vals.size(); i++) {
-                for (int j = 0; j < vals.size(); j++) {
-                    for (int k = 0; k < vals.size(); k++) {
-                        if (remaining - vals[i]-vals[j]-vals[k] == 0) {
-                            QString text = valslabels[i] + "   " + valslabels[j] + "   " + valslabels[k];
-                            ui->textBrowser->append(text);
-                        }
-                    }
+        if (numberOfDarts >2)
+        {
+            if (singleoutThreeDartCheckoutList.find(remaining) != singleoutThreeDartCheckoutList.end())
+            {
+                QVector<QString> checkouts = singleoutThreeDartCheckoutList.find(remaining).value();
+                for (auto checkout : checkouts)
+                {
+                    ui->textBrowser->append(checkout);
                 }
             }
         }
-    } else if (DoubleOut) {
-//        for (int i = 0; i < doubles.size(); i++) {
-//            if (remaining - doubles[i] == 0) {
-//                QString text = doubleslabels[i];
-//                ui->textBrowser->append(text);
-//            }
-//        }
-//        if (numberOfDarts > 1)
-//        {
-//            for (int i = vals.size()-1; i >= 0; i--) {
-//                for (int j = 0; j < doubles.size(); j++) {
-//                    if (remaining - vals[i]-doubles[j] == 0) {
-//                        QString text = valslabels[i] + "   " + doubleslabels[j];
-//                        ui->textBrowser->append(text);
-//                    }
-//                }
-//            }
-//        }
-//        if (remaining > 50 && numberOfDarts > 2) {
-//            for (int i = 0; i < vals.size(); i++) {
-//                for (int j = 0; j < vals.size(); j++) {
-//                    for (int k = 0; k < doubles.size(); k++) {
-//                        if (remaining - vals[i]-vals[j]-doubles[k] == 0) {
-//                            QString text = valslabels[i] + "   " + valslabels[j] + "   " + doubleslabels[k];
-//                            ui->textBrowser->append(text);
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    }
+    else if (DoubleOut)
+    {
         if (doubleoutSingleDartCheckoutList.find(remaining) != doubleoutSingleDartCheckoutList.end())
         {
             QVector<QString> checkouts = doubleoutSingleDartCheckoutList.find(remaining).value();
@@ -347,33 +322,36 @@ void GroupBox_player::displayFinishes(int remaining, int numberOfDarts)
                 }
             }
         }
-    } else if (MasterOut) {
-        for (int i = 0; i < triples.size(); i++) {
-            if (remaining - vals[i] == 0) {
-                QString text = tripleslabels[i];
-                ui->textBrowser->append(text);
+    }
+    else if (MasterOut)
+    {
+        if (masteroutSingleDartCheckoutList.find(remaining) != masteroutSingleDartCheckoutList.end())
+        {
+            QVector<QString> checkouts = masteroutSingleDartCheckoutList.find(remaining).value();
+            for (auto checkout : checkouts)
+            {
+                ui->textBrowser->append(checkout);
             }
         }
         if (numberOfDarts > 1)
         {
-            for (int i = 0; i < vals.size(); i++) {
-                for (int j = 0; j < triples.size(); j++) {
-                    if (remaining - vals[i]-triples[j] == 0) {
-                        QString text = valslabels[i] + "   " + tripleslabels[j];
-                        ui->textBrowser->append(text);
-                    }
+            if (masteroutTwoDartCheckoutList.find(remaining) != masteroutTwoDartCheckoutList.end())
+            {
+                QVector<QString> checkouts = masteroutTwoDartCheckoutList.find(remaining).value();
+                for (auto checkout : checkouts)
+                {
+                    ui->textBrowser->append(checkout);
                 }
             }
         }
-        if (remaining > 50 && numberOfDarts > 2) {
-            for (int i = 0; i < vals.size(); i++) {
-                for (int j = 0; j < vals.size(); j++) {
-                    for (int k = 0; k < triples.size(); k++) {
-                        if (remaining - vals[i]-vals[j]-triples[k] == 0) {
-                            QString text = valslabels[i] + "   " + valslabels[j] + "   " + tripleslabels[k];
-                            ui->textBrowser->append(text);
-                        }
-                    }
+        if (numberOfDarts >2)
+        {
+            if (masteroutThreeDartCheckoutList.find(remaining) != masteroutThreeDartCheckoutList.end())
+            {
+                QVector<QString> checkouts = masteroutThreeDartCheckoutList.find(remaining).value();
+                for (auto checkout : checkouts)
+                {
+                    ui->textBrowser->append(checkout);
                 }
             }
         }
