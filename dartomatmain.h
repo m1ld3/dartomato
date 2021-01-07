@@ -2,7 +2,8 @@
 #define DARTOMATMAIN_H
 
 #include <QMainWindow>
-#include "gamewindow.h"
+#include "xo1mainwindow.h"
+#include "cricketmainwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DartomatMain; }
@@ -23,7 +24,8 @@ private slots:
 
 private:
     Ui::DartomatMain *ui;
-    GameWindow *gw;
+    X01MainWindow *x01MainWindow;
+    CricketMainWindow * cricketMainWindow;
 
 };
 #endif // DARTOMATMAIN_H

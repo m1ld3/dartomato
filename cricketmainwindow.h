@@ -1,29 +1,25 @@
-#ifndef GAMEWINDOW_H
-#define GAMEWINDOW_H
+#ifndef CRICKETMAINWINDOW_H
+#define CRICKETMAINWINDOW_H
 
 #include <QMainWindow>
-#include "groupbox_player.h"
 #include "groupbox_cricket.h"
 #include <QSound>
 #include <QGridLayout>
-#include "dartboard.h"
 
 class groupbox_cricket;
 
 namespace Ui {
-class GameWindow;
+class CricketMainWindow;
 }
 
-class GameWindow : public QMainWindow
+class CricketMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit GameWindow(QWidget *parent = nullptr);
-    explicit GameWindow(QWidget *parent = nullptr, int numberofplayers = 1, int game = 501, int sets = 1, int legs = 1,
-                        bool singleIn = true, bool singleOut = false, bool doubleIn = false, bool doubleOut = false,
-                        bool masterIn = false, bool masterOut = false, bool cutthroat = false, bool offensive = false);
-    ~GameWindow();
+    explicit CricketMainWindow(QWidget *parent = nullptr);
+    explicit CricketMainWindow(QWidget *parent = nullptr, int numberofplayers = 1, int sets = 1, int legs = 1, bool cutthroat = false, bool offensive = false);
+    ~CricketMainWindow();
     void updatePlayer();
     void closeEvent(QCloseEvent *event) override;
     void setActivePlayer(int player);
@@ -60,31 +56,14 @@ private slots:
     void signalGameWon(int playername);
     void signalInactivatePlayers(int player, bool legstarted, bool setstarted);
     void signalUpdateHistory();
-    void submitButtonPressedSlot(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
-    void on_submitButton_clicked();
-    void on_undoButton_clicked();
-    void displayScoreSlot(int score);
-    void displayDart1Slot(int val);
-    void displayDart2Slot(int val);
-    void displayDart3Slot(int val);
-    void eraseDart1Slot();
-    void eraseDart2Slot();
-    void eraseDart3Slot();
-    void updateFinishesSlot(int score, int numberOfDarts);
-    void setFocusToSubmitButtonSlot();
 
 private:
-    Ui::GameWindow *ui;
-    GroupBox_player *gb;
+    Ui::CricketMainWindow *ui;
     groupbox_cricket *gbc;
-    int NumberOfPlayers, Game, Sets, Legs, ActivePlayer;
-    bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, CutThroat, Offensive;
-    QVector<GroupBox_player*> playerbox;
+    int NumberOfPlayers, Sets, Legs, ActivePlayer;
+    bool CutThroat, Offensive;
     QVector<groupbox_cricket*> cricketbox;
-    QGridLayout *mglayout;
-    QVector<PlayerClass*> mplayer;
     QVector<cricketclass*> mcricketplayer;
-    DartBoard * mDartBoard;
 };
 
-#endif // GAMEWINDOW_H
+#endif // CRICKETMAINWINDOW_H

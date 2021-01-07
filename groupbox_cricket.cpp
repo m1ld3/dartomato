@@ -8,13 +8,12 @@
 #include <QString>
 #include <algorithm>
 
-groupbox_cricket::groupbox_cricket(QWidget *parent, int player_nr,
-    int sets, int legs, cricketclass *player, bool cutthroat, bool offensive) :
-    QGroupBox(parent), ui(new Ui::groupbox_cricket), Player(player),
-    Player_Nr(player_nr -1), Sets(sets), Legs(legs), Score(0),
-    Finished(false), SetBegin(false), LegBegin(false), CutThroat(cutthroat), Offensive(offensive),
-    mTotalHits(0), mSlot15(0), mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0), mSlot20(0), mSlot25(0),
-    mExtra15(0), mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0)
+groupbox_cricket::groupbox_cricket(QWidget *parent, int player_nr, int sets, int legs,
+                                   cricketclass *player, bool cutthroat, bool offensive)
+    : QGroupBox(parent), ui(new Ui::groupbox_cricket), Player(player), Player_Nr(player_nr -1), Sets(sets)
+    , Legs(legs), Score(0), Finished(false), SetBegin(false), LegBegin(false), CutThroat(cutthroat)
+    , Offensive(offensive), mTotalHits(0), mSlot15(0), mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0)
+    , mSlot20(0), mSlot25(0), mExtra15(0), mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0)
 {
     ui->setupUi(this);
     ui->lcdNumber->setDigitCount(4);
@@ -33,13 +32,16 @@ groupbox_cricket::groupbox_cricket(QWidget *parent, int player_nr,
     ui->label_hitsPerRound->setText(hpr);
     int w = 80;
     int h = 80;
-    if (Active) {
+    if (Active)
+    {
         ui->label_pic->setPixmap(pix.scaled(w,h,Qt::KeepAspectRatio));
-    } else {
+    }
+    else
+    {
         ui->label_pic->clear();
     }
     connect(ui->label_pic,SIGNAL(signalPlayerActiveButtonPressed()),this,SLOT(signalPlayerActiveButtonPressed()));
-    mGameWindow = dynamic_cast<GameWindow*>(parent);
+    mGameWindow = dynamic_cast<CricketMainWindow*>(parent);
 }
 
 groupbox_cricket::~groupbox_cricket()
@@ -129,71 +131,100 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
     mExtra20 = Player->getExtra20();
     mExtra25 = Player->getExtra25();
     int newhits = mTotalHits;
-    if (!CutThroat) {
+    if (!CutThroat)
+    {
         QString dart = "0";
-        for (int i = 0; i < darts.size(); i++) {
-            if (darts[i].size() > 0) {
+        for (int i = 0; i < darts.size(); i++)
+        {
+            if (darts[i].size() > 0)
+            {
                 dart = darts[i];
             }
             QChar type = dart[0];
-            if (type == 't') {
+            if (type == 't')
+            {
                 hits = 3;
-            } else if (type == 'd') {
+            }
+            else if (type == 'd')
+            {
                 hits = 2;
-            } else {
+            }
+            else
+            {
                 hits = 1;
             }
             QString temp = dart.remove(0,1);
             int val = temp.toInt();
-            switch (val) {
-                case 15:
-                    if (mSlot15 < 3) {
-                        if (mSlot15 + hits <= 3) {
-                            mSlot15 += hits;
-                            setLabel15(mSlot15);
-                            mTotalHits += hits;
-                        } else {
-                            hits_old = hits;
-                            hits -= 3 - mSlot15;
-                            mSlot15 = 3;
-                            setLabel15(mSlot15);
-                            if (mGameWindow->isSlot15free(Player_Nr)) {
-                                mExtra15 += hits * 15;
-                                setLabelExtra15(mExtra15);
-                                mTotalHits += hits_old;
-                            } else {
-                                mTotalHits += hits;
-                            }
-                        }
-                    } else {
-                        if (mGameWindow->isSlot15free(Player_Nr)) {
+            switch (val)
+            {
+            case 15:
+                if (mSlot15 < 3)
+                {
+                    if (mSlot15 + hits <= 3)
+                    {
+                        mSlot15 += hits;
+                        setLabel15(mSlot15);
+                        mTotalHits += hits;
+                    }
+                    else
+                    {
+                        hits_old = hits;
+                        hits -= 3 - mSlot15;
+                        mSlot15 = 3;
+                        setLabel15(mSlot15);
+                        if (mGameWindow->isSlot15free(Player_Nr))
+                        {
                             mExtra15 += hits * 15;
                             setLabelExtra15(mExtra15);
+                            mTotalHits += hits_old;
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
+                }
+                else
+                {
+                    if (mGameWindow->isSlot15free(Player_Nr))
+                    {
+                        mExtra15 += hits * 15;
+                        setLabelExtra15(mExtra15);
+                        mTotalHits += hits;
+                    }
+                }
                 break;
             case 16:
-                if (mSlot16 < 3) {
-                    if (mSlot16 + hits <= 3) {
+                if (mSlot16 < 3)
+                {
+                    if (mSlot16 + hits <= 3)
+                    {
                         mSlot16 += hits;
                         setLabel16(mSlot16);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot16;
                         mSlot16 = 3;
                         setLabel16(mSlot16);
-                        if (mGameWindow->isSlot16free(Player_Nr)) {
+                        if (mGameWindow->isSlot16free(Player_Nr))
+                        {
                             mExtra16 += hits * 16;
                             setLabelExtra16(mExtra16);
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot16free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot16free(Player_Nr))
+                    {
                         mExtra16 += hits * 16;
                         setLabelExtra16(mExtra16);
                         mTotalHits += hits;
@@ -201,26 +232,36 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
                 }
                 break;
             case 17:
-                if (mSlot17 < 3) {
-                    if (mSlot17 + hits <= 3) {
+                if (mSlot17 < 3)
+                {
+                    if (mSlot17 + hits <= 3)
+                    {
                         mSlot17 += hits;
                         setLabel17(mSlot17);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot17;
                         mSlot17 = 3;
                         setLabel17(mSlot17);
-                        if (mGameWindow->isSlot17free(Player_Nr)) {
+                        if (mGameWindow->isSlot17free(Player_Nr))
+                        {
                             mExtra17 += hits * 17;
                             setLabelExtra17(mExtra17);
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot17free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot17free(Player_Nr))
+                    {
                         mExtra17 += hits * 17;
                         setLabelExtra17(mExtra17);
                         mTotalHits += hits;
@@ -228,26 +269,36 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
                 }
                 break;
             case 18:
-                if (mSlot18 < 3) {
-                    if (mSlot18 + hits <= 3) {
+                if (mSlot18 < 3)
+                {
+                    if (mSlot18 + hits <= 3)
+                    {
                         mSlot18 += hits;
                         setLabel18(mSlot18);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot18;
                         mSlot18 = 3;
                         setLabel18(mSlot18);
-                        if (mGameWindow->isSlot18free(Player_Nr)) {
+                        if (mGameWindow->isSlot18free(Player_Nr))
+                        {
                             mExtra18 += hits * 18;
                             setLabelExtra18(mExtra18);
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot18free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot18free(Player_Nr))
+                    {
                         mExtra18 += hits * 18;
                         setLabelExtra18(mExtra18);
                         mTotalHits += hits;
@@ -255,26 +306,36 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
                 }
                 break;
             case 19:
-                if (mSlot19 < 3) {
-                    if (mSlot19 + hits <= 3) {
+                if (mSlot19 < 3)
+                {
+                    if (mSlot19 + hits <= 3)
+                    {
                         mSlot19 += hits;
                         setLabel19(mSlot19);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot19;
                         mSlot19 = 3;
                         setLabel19(mSlot19);
-                        if (mGameWindow->isSlot19free(Player_Nr)) {
+                        if (mGameWindow->isSlot19free(Player_Nr))
+                        {
                             mExtra19 += hits * 19;
                             setLabelExtra19(mExtra19);
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot19free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot19free(Player_Nr))
+                    {
                         mExtra19 += hits * 19;
                         setLabelExtra19(mExtra19);
                         mTotalHits += hits;
@@ -282,26 +343,36 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
                 }
                 break;
             case 20:
-                if (mSlot20 < 3) {
-                    if (mSlot20 + hits <= 3) {
+                if (mSlot20 < 3)
+                {
+                    if (mSlot20 + hits <= 3)
+                    {
                         mSlot20 += hits;
                         setLabel20(mSlot20);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot20;
                         mSlot20 = 3;
                         setLabel20(mSlot20);
-                        if (mGameWindow->isSlot20free(Player_Nr)) {
+                        if (mGameWindow->isSlot20free(Player_Nr))
+                        {
                             mExtra20 += hits * 20;
                             setLabelExtra20(mExtra20);
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot20free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot20free(Player_Nr))
+                    {
                         mExtra20 += hits * 20;
                         setLabelExtra20(mExtra20);
                         mTotalHits += hits;
@@ -309,26 +380,36 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
                 }
                 break;
             case 25:
-                if (mSlot25 < 3) {
-                    if (mSlot25 + hits <= 3) {
+                if (mSlot25 < 3)
+                {
+                    if (mSlot25 + hits <= 3)
+                    {
                         mSlot25 += hits;
                         setLabel25(mSlot25);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot25;
                         mSlot25 = 3;
                         setLabel25(mSlot25);
-                        if (mGameWindow->isSlot25free(Player_Nr)) {
+                        if (mGameWindow->isSlot25free(Player_Nr))
+                        {
                             mExtra25 += hits * 25;
                             setLabelExtra25(mExtra25);
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot25free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot25free(Player_Nr))
+                    {
                         mExtra25 += hits * 25;
                         setLabelExtra25(mExtra25);
                         mTotalHits += hits;
@@ -354,7 +435,9 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
         Player->setExtra25(mExtra25);
         Player->setScore();
         Score = Player->getScore();
-    } else { // if (CutThroat)
+    }
+    else
+    { // if (CutThroat)
         int Extra15CT = 0;
         int Extra16CT = 0;
         int Extra17CT = 0;
@@ -363,191 +446,269 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
         int Extra20CT = 0;
         int Extra25CT = 0;
         QString dart = "0";
-        for (int i = 0; i < darts.size(); i++) {
-            if (darts[i].size() > 0) {
+        for (int i = 0; i < darts.size(); i++)
+        {
+            if (darts[i].size() > 0)
+            {
                 dart = darts[i];
             }
             QChar type = dart[0];
-            if (type == 't') {
+            if (type == 't')
+            {
                 hits = 3;
-            } else if (type == 'd') {
+            }
+            else if (type == 'd')
+            {
                 hits = 2;
-            } else {
+            }
+            else
+            {
                 hits = 1;
             }
             QString temp = dart.remove(0,1);
             int val = temp.toInt();
-            switch (val) {
+            switch (val)
+            {
             case 15:
-                if (mSlot15 < 3) {
-                    if (mSlot15 + hits <= 3) {
+                if (mSlot15 < 3)
+                {
+                    if (mSlot15 + hits <= 3)
+                    {
                         mSlot15 += hits;
                         setLabel15(mSlot15);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot15;
                         mSlot15 = 3;
                         setLabel15(mSlot15);
-                        if (mGameWindow->isSlot15free(Player_Nr)) {
+                        if (mGameWindow->isSlot15free(Player_Nr))
+                        {
                             Extra15CT += hits * 15;
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot15free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot15free(Player_Nr))
+                    {
                         Extra15CT += hits * 15;
                         mTotalHits += hits;
                     }
                 }
                 break;
             case 16:
-                if (mSlot16 < 3) {
-                    if (mSlot16 + hits <= 3) {
+                if (mSlot16 < 3)
+                {
+                    if (mSlot16 + hits <= 3)
+                    {
                         mSlot16 += hits;
                         setLabel16(mSlot16);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot16;
                         mSlot16 = 3;
                         setLabel16(mSlot16);
-                        if (mGameWindow->isSlot16free(Player_Nr)) {
+                        if (mGameWindow->isSlot16free(Player_Nr))
+                        {
                             Extra16CT += hits * 16;
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot16free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot16free(Player_Nr))
+                    {
                         Extra16CT += hits * 16;
                         mTotalHits += hits;
                     }
                 }
                 break;
             case 17:
-                if (mSlot17 < 3) {
-                    if (mSlot17 + hits <= 3) {
+                if (mSlot17 < 3)
+                {
+                    if (mSlot17 + hits <= 3)
+                    {
                         mSlot17 += hits;
                         setLabel17(mSlot17);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot17;
                         mSlot17 = 3;
                         setLabel17(mSlot17);
-                        if (mGameWindow->isSlot17free(Player_Nr)) {
+                        if (mGameWindow->isSlot17free(Player_Nr))
+                        {
                             Extra17CT += hits * 17;
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot17free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot17free(Player_Nr))
+                    {
                         Extra17CT += hits * 17;
                         mTotalHits += hits;
                     }
                 }
                 break;
             case 18:
-                if (mSlot18 < 3) {
-                    if (mSlot18 + hits <= 3) {
+                if (mSlot18 < 3)
+                {
+                    if (mSlot18 + hits <= 3)
+                    {
                         mSlot18 += hits;
                         setLabel18(mSlot18);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot18;
                         mSlot18 = 3;
                         setLabel18(mSlot18);
-                        if (mGameWindow->isSlot18free(Player_Nr)) {
+                        if (mGameWindow->isSlot18free(Player_Nr))
+                        {
                             Extra18CT += hits * 18;
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot18free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot18free(Player_Nr))
+                    {
                         Extra18CT += hits * 18;
                         mTotalHits += hits;
                     }
                 }
                 break;
             case 19:
-                if (mSlot19 < 3) {
-                    if (mSlot19 + hits <= 3) {
+                if (mSlot19 < 3)
+                {
+                    if (mSlot19 + hits <= 3)
+                    {
                         mSlot19 += hits;
                         setLabel19(mSlot19);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot19;
                         mSlot19 = 3;
                         setLabel19(mSlot19);
-                        if (mGameWindow->isSlot19free(Player_Nr)) {
+                        if (mGameWindow->isSlot19free(Player_Nr))
+                        {
                             Extra19CT += hits * 19;
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot19free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot19free(Player_Nr))
+                    {
                         Extra19CT += hits * 19;
                         mTotalHits += hits;
                     }
                 }
                 break;
             case 20:
-                if (mSlot20 < 3) {
-                    if (mSlot20 + hits <= 3) {
+                if (mSlot20 < 3)
+                {
+                    if (mSlot20 + hits <= 3)
+                    {
                         mSlot20 += hits;
                         setLabel20(mSlot20);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot20;
                         mSlot20 = 3;
                         setLabel20(mSlot20);
-                        if (mGameWindow->isSlot20free(Player_Nr)) {
+                        if (mGameWindow->isSlot20free(Player_Nr))
+                        {
                             Extra20CT += hits * 20;
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot20free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot20free(Player_Nr))
+                    {
                         Extra20CT += hits * 20;
                         mTotalHits += hits;
                     }
                 }
                 break;
             case 25:
-                if (mSlot25 < 3) {
-                    if (mSlot25 + hits <= 3) {
+                if (mSlot25 < 3)
+                {
+                    if (mSlot25 + hits <= 3)
+                    {
                         mSlot25 += hits;
                         setLabel25(mSlot25);
                         mTotalHits += hits;
-                    } else {
+                    }
+                    else
+                    {
                         hits_old = hits;
                         hits -= 3 - mSlot25;
                         mSlot25 = 3;
                         setLabel25(mSlot25);
-                        if (mGameWindow->isSlot25free(Player_Nr)) {
+                        if (mGameWindow->isSlot25free(Player_Nr))
+                        {
                             Extra25CT += hits * 25;
                             mTotalHits += hits_old;
-                        } else {
+                        }
+                        else
+                        {
                             mTotalHits += hits;
                         }
                     }
-                } else {
-                    if (mGameWindow->isSlot25free(Player_Nr)) {
+                }
+                else
+                {
+                    if (mGameWindow->isSlot25free(Player_Nr))
+                    {
                         Extra25CT += hits * 25;
                         mTotalHits += hits;
                     }
@@ -573,55 +734,73 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
         mGameWindow->setScores();
         Score = Player->getScore();
     }
-    if (mTotalHits == newhits && Offensive) {
+    if (mTotalHits == newhits && Offensive)
+    {
         playFailSounds();
     }
     Player->compute_hits_per_round(numberofdarts, mTotalHits);
     Player->update_darts(darts);
     QString hpr = QString::number(Player->get_hits_per_round(),'f',3);
     ui->label_hitsPerRound->setText(hpr);
-    if (!CutThroat) {
-        if (scoreinput->areSlotsFull() && mGameWindow->isScoreBigger(Score)) {  // leg won
+    if (!CutThroat)
+    {
+        if (scoreinput->areSlotsFull() && mGameWindow->isScoreBigger(Score))
+        {  // leg won
             newset = Player->increase_setslegs();
             Player->setLegWinArray(true);
             emit signalUpdateHistory();
             emit signalResetScores();
-            if (Active && !newset) {
+            if (Active && !newset)
+            {
                 emit signalUpdatePlayer("leg");
                 groupbox_cricket::legstarted = false;
-            } else if (Active && newset) {
+            }
+            else if (Active && newset)
+            {
                 emit signalUpdatePlayer("set");
                 groupbox_cricket::setstarted = false;
                 groupbox_cricket::legstarted = false;
             }
             ui->lcdNumber_legs->display(Player->get_legs());
             ui->lcdNumber_sets->display(Player->get_sets());
-        } else {
-            if (Active) {
+        }
+        else
+        {
+            if (Active)
+            {
                 emit signalUpdatePlayer("default");
             }
             Player->setLegWinArray(false);
             mGameWindow->updateLabels();
         }
-    } else {
+    }
+    else
+    {
         mGameWindow->updateDarts(Player->get_player_name());
-        if (scoreinput->areSlotsFull() && mGameWindow->isScoreSmaller(Score)) {  // leg won
+        if (scoreinput->areSlotsFull() && mGameWindow->isScoreSmaller(Score))
+        {  // leg won
             newset = Player->increase_setslegs();
             Player->setLegWinArray(true);
             emit signalUpdateHistory();
             emit signalResetScores();
-            if (Active && !newset) {
+            if (Active && !newset)
+            {
                 emit signalUpdatePlayer("leg");
                 groupbox_cricket::legstarted = false;
-            } else if (Active && newset) {
+            }
+            else if (Active && newset)
+            {
                 emit signalUpdatePlayer("set");
                 groupbox_cricket::setstarted = false;
                 groupbox_cricket::legstarted = false;
             }
             ui->lcdNumber_legs->display(Player->get_legs());
             ui->lcdNumber_sets->display(Player->get_sets());
-        } else {
-            if (Active) {
+        }
+        else
+        {
+            if (Active)
+            {
                 emit signalUpdatePlayer("default");
             }
             Player->setLegWinArray(false);
@@ -635,11 +814,13 @@ void groupbox_cricket::signalSubmitButtonPressed2(int &numberofdarts, QVector<QS
 
 void groupbox_cricket::signalPlayerActiveButtonPressed()
 {
-    if (!Active) {
+    if (!Active)
+    {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Change player order", "Do you really want to change the player order?",
                               QMessageBox::Yes|QMessageBox::No);
-        if (reply == QMessageBox::Yes) {
+        if (reply == QMessageBox::Yes)
+        {
             emit signalInactivatePlayers(Player->get_player_name(),groupbox_cricket::legstarted, groupbox_cricket::setstarted);
             setActive();
         }
@@ -648,14 +829,19 @@ void groupbox_cricket::signalPlayerActiveButtonPressed()
 
 void groupbox_cricket::on_pushButton_score_clicked()
 {
-    if (Active && !Finished) {
+    if (Active && !Finished)
+    {
         scoreinput = new cricketinput(this, Sets, Legs, Player, mGameWindow, CutThroat);
         scoreinput->setAttribute(Qt::WA_DeleteOnClose);
         connect(scoreinput, SIGNAL (signalSubmitButtonPressed2(int&, QVector<QString>)), this, SLOT (signalSubmitButtonPressed2(int&, QVector<QString>)));
         scoreinput->show();
-    } else if (Finished) {
+    }
+    else if (Finished)
+    {
         QMessageBox::about(this, "Warning", "Game already finished!");
-    } else {
+    }
+    else
+    {
         QMessageBox::about(this, "Warning", "It's not your turn!");
     }
  }
@@ -902,7 +1088,8 @@ void groupbox_cricket::setLabel15(int hits)
 {
     int w = 25;
     int h = 25;
-    switch (hits) {
+    switch (hits)
+    {
     default:
         ui->label_15slot1->clear();
         ui->label_15slot2->clear();
@@ -926,7 +1113,8 @@ void groupbox_cricket::setLabel16(int hits)
 {
     int w = 25;
     int h = 25;
-    switch (hits) {
+    switch (hits)
+    {
     default:
         ui->label_16slot1->clear();
         ui->label_16slot2->clear();
@@ -950,7 +1138,8 @@ void groupbox_cricket::setLabel17(int hits)
 {
     int w = 25;
     int h = 25;
-    switch (hits) {
+    switch (hits)
+    {
     default:
         ui->label_17slot1->clear();
         ui->label_17slot2->clear();
@@ -974,7 +1163,8 @@ void groupbox_cricket::setLabel18(int hits)
 {
     int w = 25;
     int h = 25;
-    switch (hits) {
+    switch (hits)
+    {
     default:
         ui->label_18slot1->clear();
         ui->label_18slot2->clear();
@@ -998,7 +1188,8 @@ void groupbox_cricket::setLabel19(int hits)
 {
     int w = 25;
     int h = 25;
-    switch (hits) {
+    switch (hits)
+    {
     default:
         ui->label_19slot1->clear();
         ui->label_19slot2->clear();
@@ -1022,7 +1213,8 @@ void groupbox_cricket::setLabel20(int hits)
 {
     int w = 25;
     int h = 25;
-    switch (hits) {
+    switch (hits)
+    {
     default:
         ui->label_20slot1->clear();
         ui->label_20slot2->clear();
@@ -1046,7 +1238,8 @@ void groupbox_cricket::setLabel25(int hits)
 {
     int w = 25;
     int h = 25;
-    switch (hits) {
+    switch (hits)
+    {
     default:
         ui->label_25slot1->clear();
         ui->label_25slot2->clear();
@@ -1075,13 +1268,17 @@ void groupbox_cricket::setLegHistory()
 {
     QVector<QVector<QString>> legscores = Player->getMScoreLegs();
     QVector<QVector<QVector<QString>>> totalscores = Player->getmScoringHistory();
-    if (legscores.size() == 0 && totalscores.size() > 0) {
+    if (legscores.size() == 0 && totalscores.size() > 0)
+    {
         legscores = totalscores.last();
     }
-    if (CutThroat) {
+    if (CutThroat)
+    {
         QVector<QVector<QString>> temp = {};
-        for (int i = 0; i < legscores.size(); i++) {
-            if (legscores[i].last() != "") {
+        for (int i = 0; i < legscores.size(); i++)
+        {
+            if (legscores[i].last() != "")
+            {
                 temp.push_back(legscores[i]);
             }
         }
@@ -1089,24 +1286,35 @@ void groupbox_cricket::setLegHistory()
         legscores = temp;
     }
     ui->textBrowser->clear();
-    for (int i = 0; i < legscores.size(); i++) {
-        for (int j = 0; j < legscores[i].size(); j++) {
+    for (int i = 0; i < legscores.size(); i++)
+    {
+        for (int j = 0; j < legscores[i].size(); j++)
+        {
             QString temp = legscores[i][j];
-            if (temp.size() > 1) {
-                if (temp[1] == '0') {
+            if (temp.size() > 1)
+            {
+                if (temp[1] == '0')
+                {
                     legscores[i][j] = " 0";
-                } else {
+                }
+                else
+                {
                     legscores[i][j][0] = legscores[i][j][0].toUpper();
                 }
             }
         }
-        if (legscores[i].size() == 3) {
+        if (legscores[i].size() == 3)
+        {
             QString line = QString::number(i+1) + ": " + legscores[i][0] + "  " + legscores[i][1] + "  " + legscores[i][2];
             ui->textBrowser->append(line);
-        } else if (legscores[i].size() == 2) {
+        }
+        else if (legscores[i].size() == 2)
+        {
             QString line = QString::number(i+1) + ": " + legscores[i][0] + "  " + legscores[i][1];
             ui->textBrowser->append(line);
-        } else {
+        }
+        else
+        {
             QString line = QString::number(i+1) + ": " + legscores[i][0];
             ui->textBrowser->append(line);
         }
@@ -1170,7 +1378,8 @@ void groupbox_cricket::performUndo()
     QString hpr = QString::number(Player->get_hits_per_round(),'f',3);
     ui->label_hitsPerRound->setText(hpr);
     setLegHistory();
-    if (Finished) {
+    if (Finished)
+    {
         unsetFinished();
     }
 }
@@ -1179,9 +1388,11 @@ void groupbox_cricket::signalSetLabelSlot(int hits, int slot)
 {
     int w = 25;
     int h = 25;
-    switch (slot) {
+    switch (slot)
+    {
     case 15:
-        switch (hits) {
+        switch (hits)
+        {
         default:
             ui->label_15slot1->clear();
             ui->label_15slot2->clear();
@@ -1201,7 +1412,8 @@ void groupbox_cricket::signalSetLabelSlot(int hits, int slot)
         }
         break;
     case 16:
-        switch (hits) {
+        switch (hits)
+        {
         default:
             ui->label_16slot1->clear();
             ui->label_16slot2->clear();
@@ -1221,7 +1433,8 @@ void groupbox_cricket::signalSetLabelSlot(int hits, int slot)
         }
         break;
     case 17:
-        switch (hits) {
+        switch (hits)
+        {
         default:
             ui->label_17slot1->clear();
             ui->label_17slot2->clear();
@@ -1241,7 +1454,8 @@ void groupbox_cricket::signalSetLabelSlot(int hits, int slot)
         }
         break;
     case 18:
-        switch (hits) {
+        switch (hits)
+        {
         default:
             ui->label_18slot1->clear();
             ui->label_18slot2->clear();
@@ -1261,7 +1475,8 @@ void groupbox_cricket::signalSetLabelSlot(int hits, int slot)
         }
         break;
     case 19:
-        switch (hits) {
+        switch (hits)
+        {
         default:
             ui->label_19slot1->clear();
             ui->label_19slot2->clear();
@@ -1281,7 +1496,8 @@ void groupbox_cricket::signalSetLabelSlot(int hits, int slot)
         }
         break;
     case 20:
-        switch (hits) {
+        switch (hits)
+        {
         default:
             ui->label_20slot1->clear();
             ui->label_20slot2->clear();
@@ -1301,7 +1517,8 @@ void groupbox_cricket::signalSetLabelSlot(int hits, int slot)
         }
         break;
     case 25:
-        switch (hits) {
+        switch (hits)
+        {
         default:
             ui->label_25slot1->clear();
             ui->label_25slot2->clear();
@@ -1394,7 +1611,8 @@ void groupbox_cricket::playFailSounds()
 {
     std::srand(static_cast<unsigned> (std::time(0)));
     int rnd = 1 + (std::rand() % 12);
-    switch (rnd) {
+    switch (rnd)
+    {
     case 1:
         sound1->play();
         break;

@@ -2,9 +2,9 @@
 #define CRICKETCLASS_H
 
 #include <QObject>
-#include "gamewindow.h"
+#include "cricketmainwindow.h"
 
-class GameWindow;
+class CricketMainWindow;
 
 class cricketclass : public QObject
 {
@@ -66,7 +66,7 @@ public slots:
 signals:
     void signal_game_won(int playername);
 private:
-    GameWindow* mGameWindow;
+    CricketMainWindow* mGameWindow;
     int mSets;   //  sets won
     int mLegs;   //  legs won per set
     int mTotalLegs;  //  total legs won

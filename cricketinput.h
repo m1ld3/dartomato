@@ -10,7 +10,7 @@
 #include <QLabel>
 #include <QGraphicsSvgItem>
 
-class GameWindow;
+class CricketMainWindow;
 class cricketclass;
 
 namespace Ui {
@@ -33,7 +33,7 @@ signals:
     void signalSubmitButtonPressed2(int &numberofdarts, QVector<QString> darts);
     void signalSetLabelSlot(int hits, int slot);
 public:
-    cricketinput(QWidget *parent = nullptr, int sets = 1, int legs = 1, cricketclass* player = nullptr, GameWindow* gamewindow = nullptr, bool cutthroat = false);
+    cricketinput(QWidget *parent = nullptr, int sets = 1, int legs = 1, cricketclass* player = nullptr, CricketMainWindow* gamewindow = nullptr, bool cutthroat = false);
     ~cricketinput();
 private:
     Ui::cricketinput *ui;
@@ -58,7 +58,7 @@ private:
     SubmitButton *submitButton;
     QVector<QString> Dart{"","",""};
     cricketclass* Player;
-    GameWindow* mGameWindow;
+    CricketMainWindow* mGameWindow;
     int mSlot15, mSlot16, mSlot17, mSlot18, mSlot19, mSlot20, mSlot25;
     int mExtra15, mExtra16, mExtra17, mExtra18, mExtra19, mExtra20, mExtra25;
     int mScore;

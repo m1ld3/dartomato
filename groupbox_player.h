@@ -9,7 +9,7 @@
 #include <QSound>
 #include <QSoundEffect>
 
-class GameWindow;
+class X01MainWindow;
 
 namespace Ui {
 class GroupBox_player;
@@ -72,7 +72,7 @@ private:
     QPixmap pix = QPixmap(":/resources/img/darts.svg");
     static bool legstarted;
     static bool setstarted;
-    GameWindow* mGameWindow;
+    X01MainWindow* mGameWindow;
     QSoundEffect sexy69;
     QSoundEffect anotherone;
     QSoundEffect sound1;

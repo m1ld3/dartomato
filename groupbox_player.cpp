@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <QBarSet>
 #include <QtCharts>
-#include <gamewindow.h>
+#include <xo1mainwindow.h>
 #include <checkoutlists.h>
 
 GroupBox_player::GroupBox_player(QWidget *parent, int player_nr, int game, int sets, int legs, bool singleIn,
@@ -45,7 +45,7 @@ GroupBox_player::GroupBox_player(QWidget *parent, int player_nr, int game, int s
     ui->label_checkoutInput->setText(checkout);
     connect(ui->label_pic,SIGNAL(signalPlayerActiveButtonPressed()),this,SLOT(signalPlayerActiveButtonPressed()));
     displayFinishes(Remaining, 3);
-    mGameWindow = dynamic_cast<GameWindow*>(parent);
+    mGameWindow = dynamic_cast<X01MainWindow*>(parent);
     sexy69.setSource(QUrl("qrc:/resources/sounds/sexy69.wav"));
     sexy69.setLoopCount(1);
     sexy69.setVolume(1);

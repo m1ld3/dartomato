@@ -39,15 +39,25 @@ void DartomatMain::on_pushButton_startgame_clicked()
     bool masterOut = ui->radioButton_Mout->isChecked();
     bool cutthroat = ui->checkBoxCutThroat->isChecked();
     bool offensive = ui->checkBoxOffensive->isChecked();
-    gw = new GameWindow(this,numberofplayers, game, sets, legs, singleIn, singleOut, doubleIn, doubleOut, masterIn, masterOut, cutthroat, offensive);
-    gw->setAttribute(Qt::WA_DeleteOnClose);
-    gw->show();
+    if (game > 0)
+    {
+        x01MainWindow = new X01MainWindow(this, numberofplayers, game, sets, legs, singleIn, singleOut, doubleIn, doubleOut, masterIn, masterOut, offensive);
+        x01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
+        x01MainWindow->show();
+    }
+    else
+    {
+        cricketMainWindow = new CricketMainWindow(this, numberofplayers, sets, legs, cutthroat, offensive);
+        cricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+        cricketMainWindow->show();
+    }
     if (gameon->isFinished()) delete gameon;
 }
 
 void DartomatMain::on_comboBox_game_currentIndexChanged(const QString &arg1)
 {
-    if (arg1 == "Cricket") {
+    if (arg1 == "Cricket")
+    {
         ui->radioButton_Sin->setVisible(false);
         ui->radioButton_Din->setVisible(false);
         ui->radioButton_Min->setVisible(false);
@@ -55,7 +65,9 @@ void DartomatMain::on_comboBox_game_currentIndexChanged(const QString &arg1)
         ui->radioButton_Dout->setVisible(false);
         ui->radioButton_Mout->setVisible(false);
         ui->checkBoxCutThroat->setVisible(true);
-    } else {
+    }
+    else
+    {
         ui->radioButton_Sin->setVisible(true);
         ui->radioButton_Din->setVisible(true);
         ui->radioButton_Min->setVisible(true);

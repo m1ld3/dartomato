@@ -12,7 +12,7 @@ cricketclass::cricketclass(QWidget* parent, int numberofsets, int numberoflegs, 
     mSlot20Array({0}), mSlot25Array({0}), mExtra15Array({0}), mExtra16Array({0}), mExtra17Array({0}),
     mExtra18Array({0}), mExtra19Array({0}), mExtra20Array({0}), mExtra25Array({0}), mScoreArray({0}), mLegWinArray({false})
 {
-    mGameWindow = dynamic_cast<GameWindow*>(parent);
+    mGameWindow = dynamic_cast<CricketMainWindow*>(parent);
     mMarginLegs = std::ceil(numberoflegs/2.0);
     mMarginSets = std::ceil(numberofsets/2.0);
     mHitsPerRound = compute_hits_per_round(0,0);

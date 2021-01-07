@@ -26,11 +26,11 @@ SOURCES += \
     chartview.cpp \
     cricketclass.cpp \
     cricketinput.cpp \
+    cricketmainwindow.cpp \
     dartboard.cpp \
     dartboardsegment.cpp \
     dartboardview.cpp \
     dialognameinput.cpp \
-    gamewindow.cpp \
     groupbox_cricket.cpp \
     groupbox_player.cpp \
     main.cpp \
@@ -38,10 +38,10 @@ SOURCES += \
     myqspinbox.cpp \
     playeractivebutton.cpp \
     playerclass.cpp \
-    scoreinput.cpp \
     statswindow.cpp \
     submitbutton.cpp \
-    undobutton.cpp
+    undobutton.cpp \
+    xo1mainwindow.cpp
 
 HEADERS += \
     chart.h \
@@ -49,31 +49,31 @@ HEADERS += \
     checkoutlists.h \
     cricketclass.h \
     cricketinput.h \
+    cricketmainwindow.h \
     dartboard.h \
     dartboardsegment.h \
     dartboardview.h \
     dartomatmain.h \
     dialognameinput.h \
-    gamewindow.h \
     groupbox_cricket.h \
     groupbox_player.h \
     myqspinbox.h \
     playeractivebutton.h \
     playerclass.h \
-    scoreinput.h \
     statswindow.h \
     submitbutton.h \
-    undobutton.h
+    undobutton.h \
+    xo1mainwindow.h
 
 FORMS += \
     dartomatmain.ui \
     dialognameinput.ui \
-    gamewindow.ui \
     groupbox_cricket.ui \
     groupbox_player.ui \
-    scoreinput.ui \
     statswindow.ui \
-    cricketinput.ui
+    cricketinput.ui \
+    cricketmainwindow.ui \
+    xo1mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -6,7 +6,9 @@
 #include "cricketinput.h"
 #include "cricketclass.h"
 #include <QPixmap>
-class GameWindow;
+#include <QSound>
+
+class CricketMainWindow;
 
 namespace Ui {
 class groupbox_cricket;
@@ -123,7 +125,7 @@ private:
     static bool legstarted;
     static bool setstarted;
     QPixmap pix = QPixmap(":/resources/img/darts.svg");
-    GameWindow* mGameWindow;
+    CricketMainWindow* mGameWindow;
     int mTotalHits;
     int mSlot15, mSlot16, mSlot17, mSlot18, mSlot19, mSlot20, mSlot25,
     mExtra15, mExtra16, mExtra17, mExtra18, mExtra19, mExtra20, mExtra25;
