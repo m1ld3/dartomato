@@ -2,8 +2,6 @@
 #include "ui_cricketinput.h"
 #include <QGraphicsPathItem>
 #include <QPushButton>
-#include <QLabel>
-#include <QLCDNumber>
 #include <QLineEdit>
 #include <QGraphicsLinearLayout>
 #include <QtDebug>
@@ -34,9 +32,7 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
 {
     ui->setupUi(this);
     Stop = false;
-    labelScoreDart1 = nullptr;
-    labelScoreDart2 = nullptr;
-    labelScoreDart3 = nullptr;
+    ui->submitButton->setAutoDefault(true);
     mscene = new QGraphicsScene(0,0,800,800, ui->graphicsView_dartboard);
     mscene->setSceneRect(0,0,800,800);
     ui->graphicsView_dartboard->setRenderHint(QPainter::SmoothPixmapTransform, true);
@@ -529,22 +525,22 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
     DartboardSegment * s19 = new DartboardSegment(p_s19,19,"beige");
     DartboardSegment * s18 = new DartboardSegment(p_s18,18);
     DartboardSegment * s17 = new DartboardSegment(p_s17,17,"beige");
-    DartboardSegment * s14 = new DartboardSegment(p_s14,14);
-    DartboardSegment * s13 = new DartboardSegment(p_s13,13);
-    DartboardSegment * s12 = new DartboardSegment(p_s12,12);
-    DartboardSegment * s11 = new DartboardSegment(p_s11,11,"beige");
+    DartboardSegment * s14 = new DartboardSegment(p_s14,0);
+    DartboardSegment * s13 = new DartboardSegment(p_s13,0);
+    DartboardSegment * s12 = new DartboardSegment(p_s12,0);
+    DartboardSegment * s11 = new DartboardSegment(p_s11,0,"beige");
     DartboardSegment * s16 = new DartboardSegment(p_s16,16,"beige");
     DartboardSegment * s15 = new DartboardSegment(p_s15,15,"beige");
-    DartboardSegment * s10 = new DartboardSegment(p_s10,10);
-    DartboardSegment * s9 = new DartboardSegment(p_s9,9,"beige");
-    DartboardSegment * s8 = new DartboardSegment(p_s8,8);
-    DartboardSegment * s7 = new DartboardSegment(p_s7,7);
-    DartboardSegment * s6 = new DartboardSegment(p_s6,6,"beige");
-    DartboardSegment * s5 = new DartboardSegment(p_s5,5,"beige");
-    DartboardSegment * s4 = new DartboardSegment(p_s4,4,"beige");
-    DartboardSegment * s3 = new DartboardSegment(p_s3,3);
-    DartboardSegment * s2 = new DartboardSegment(p_s2,2);
-    DartboardSegment * s1 = new DartboardSegment(p_s1,1,"beige");
+    DartboardSegment * s10 = new DartboardSegment(p_s10,0);
+    DartboardSegment * s9 = new DartboardSegment(p_s9,0,"beige");
+    DartboardSegment * s8 = new DartboardSegment(p_s8,0);
+    DartboardSegment * s7 = new DartboardSegment(p_s7,0);
+    DartboardSegment * s6 = new DartboardSegment(p_s6,0,"beige");
+    DartboardSegment * s5 = new DartboardSegment(p_s5,0,"beige");
+    DartboardSegment * s4 = new DartboardSegment(p_s4,0,"beige");
+    DartboardSegment * s3 = new DartboardSegment(p_s3,0);
+    DartboardSegment * s2 = new DartboardSegment(p_s2,0);
+    DartboardSegment * s1 = new DartboardSegment(p_s1,0,"beige");
     DartboardSegment * sbull = new DartboardSegment(p_sbull,25,"green");
     DartboardSegment * d20 = new DartboardSegment(p_d20,40,"red",'d');
     DartboardSegment * d19 = new DartboardSegment(p_d19,38,"green",'d');
@@ -552,20 +548,20 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
     DartboardSegment * d17 = new DartboardSegment(p_d17,34,"green",'d');
     DartboardSegment * d16 = new DartboardSegment(p_d16,32,"green",'d');
     DartboardSegment * d15 = new DartboardSegment(p_d15,30,"green",'d');
-    DartboardSegment * d14 = new DartboardSegment(p_d14,28,"red",'d');
-    DartboardSegment * d13 = new DartboardSegment(p_d13,26,"red",'d');
-    DartboardSegment * d12 = new DartboardSegment(p_d12,24,"red",'d');
-    DartboardSegment * d11 = new DartboardSegment(p_d11,22,"green",'d');
-    DartboardSegment * d10 = new DartboardSegment(p_d10,20,"red",'d');
-    DartboardSegment * d9 = new DartboardSegment(p_d9,18,"green",'d');
-    DartboardSegment * d8 = new DartboardSegment(p_d8,16,"red",'d');
-    DartboardSegment * d7 = new DartboardSegment(p_d7,14,"red",'d');
-    DartboardSegment * d6 = new DartboardSegment(p_d6,12,"green",'d');
-    DartboardSegment * d5 = new DartboardSegment(p_d5,10,"green",'d');
-    DartboardSegment * d4 = new DartboardSegment(p_d4,8,"green",'d');
-    DartboardSegment * d3 = new DartboardSegment(p_d3,6,"red",'d');
-    DartboardSegment * d2 = new DartboardSegment(p_d2,4,"red",'d');
-    DartboardSegment * d1 = new DartboardSegment(p_d1,2,"green",'d');
+    DartboardSegment * d14 = new DartboardSegment(p_d14,0,"red",'d');
+    DartboardSegment * d13 = new DartboardSegment(p_d13,0,"red",'d');
+    DartboardSegment * d12 = new DartboardSegment(p_d12,0,"red",'d');
+    DartboardSegment * d11 = new DartboardSegment(p_d11,0,"green",'d');
+    DartboardSegment * d10 = new DartboardSegment(p_d10,0,"red",'d');
+    DartboardSegment * d9 = new DartboardSegment(p_d9,0,"green",'d');
+    DartboardSegment * d8 = new DartboardSegment(p_d8,0,"red",'d');
+    DartboardSegment * d7 = new DartboardSegment(p_d7,0,"red",'d');
+    DartboardSegment * d6 = new DartboardSegment(p_d6,0,"green",'d');
+    DartboardSegment * d5 = new DartboardSegment(p_d5,0,"green",'d');
+    DartboardSegment * d4 = new DartboardSegment(p_d4,0,"green",'d');
+    DartboardSegment * d3 = new DartboardSegment(p_d3,0,"red",'d');
+    DartboardSegment * d2 = new DartboardSegment(p_d2,0,"red",'d');
+    DartboardSegment * d1 = new DartboardSegment(p_d1,0,"green",'d');
     DartboardSegment * dbull = new DartboardSegment(p_dbull,50,"red",'d');
     DartboardSegment * t20 = new DartboardSegment(p_t20,60,"red",'t');
     DartboardSegment * t19 = new DartboardSegment(p_t19,57,"green",'t');
@@ -573,20 +569,20 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
     DartboardSegment * t17 = new DartboardSegment(p_t17,51,"green",'t');
     DartboardSegment * t16 = new DartboardSegment(p_t16,48,"green",'t');
     DartboardSegment * t15 = new DartboardSegment(p_t15,45,"green",'t');
-    DartboardSegment * t14 = new DartboardSegment(p_t14,42,"red",'t');
-    DartboardSegment * t13 = new DartboardSegment(p_t13,39,"red",'t');
-    DartboardSegment * t12 = new DartboardSegment(p_t12,36,"red",'t');
-    DartboardSegment * t11 = new DartboardSegment(p_t11,33,"green",'t');
-    DartboardSegment * t10 = new DartboardSegment(p_t10,30,"red",'t');
-    DartboardSegment * t9 = new DartboardSegment(p_t9,27,"green",'t');
-    DartboardSegment * t8 = new DartboardSegment(p_t8,24,"red",'t');
-    DartboardSegment * t7 = new DartboardSegment(p_t7,21,"red",'t');
-    DartboardSegment * t6 = new DartboardSegment(p_t6,18,"green",'t');
-    DartboardSegment * t5 = new DartboardSegment(p_t5,15,"green",'t');
-    DartboardSegment * t4 = new DartboardSegment(p_t4,12,"green",'t');
-    DartboardSegment * t3 = new DartboardSegment(p_t3,9,"red",'t');
-    DartboardSegment * t2 = new DartboardSegment(p_t2,6,"red",'t');
-    DartboardSegment * t1 = new DartboardSegment(p_t1,3,"green",'t');
+    DartboardSegment * t14 = new DartboardSegment(p_t14,0,"red",'t');
+    DartboardSegment * t13 = new DartboardSegment(p_t13,0,"red",'t');
+    DartboardSegment * t12 = new DartboardSegment(p_t12,0,"red",'t');
+    DartboardSegment * t11 = new DartboardSegment(p_t11,0,"green",'t');
+    DartboardSegment * t10 = new DartboardSegment(p_t10,0,"red",'t');
+    DartboardSegment * t9 = new DartboardSegment(p_t9,0,"green",'t');
+    DartboardSegment * t8 = new DartboardSegment(p_t8,0,"red",'t');
+    DartboardSegment * t7 = new DartboardSegment(p_t7,0,"red",'t');
+    DartboardSegment * t6 = new DartboardSegment(p_t6,0,"green",'t');
+    DartboardSegment * t5 = new DartboardSegment(p_t5,0,"green",'t');
+    DartboardSegment * t4 = new DartboardSegment(p_t4,0,"green",'t');
+    DartboardSegment * t3 = new DartboardSegment(p_t3,0,"red",'t');
+    DartboardSegment * t2 = new DartboardSegment(p_t2,0,"red",'t');
+    DartboardSegment * t1 = new DartboardSegment(p_t1,0,"green",'t');
     DartboardSegment * noscore = new DartboardSegment(p_noscore);
     QGraphicsSvgItem * labels = new QGraphicsSvgItem(":/resources/img/dartboard.svg");
     labels->setElementId("label");
@@ -659,40 +655,6 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
     labels->setScale(0.98);
     labels->setPos(10,10);
 
-    submitButton = new SubmitButton("Submit");
-    undoButton = new UndoButton("Undo");
-    mlabelDart1 = new QLabel("1st");
-    mlabelDart2 = new QLabel("2nd");
-    mlabelDart3 = new QLabel("3rd");
-    labelScoreDart1 = new QLabel("---");
-    labelScoreDart2 = new QLabel("---");
-    labelScoreDart3 = new QLabel("---");
-    mlabelDart1->setGeometry(720,0,30,50);
-    mlabelDart2->setGeometry(720,50,30,50);
-    mlabelDart3->setGeometry(720,100,30,50);
-    labelScoreDart1->setGeometry(750,0,50,50);
-    labelScoreDart2->setGeometry(750,50,50,50);
-    labelScoreDart3->setGeometry(750,100,50,50);
-    labelScoreDart1->setStyleSheet("QLabel { color: darkgreen; font: 18pt}");
-    labelScoreDart2->setStyleSheet("QLabel { color: darkgreen; font: 18pt}");
-    labelScoreDart3->setStyleSheet("QLabel { color: darkgreen; font: 18pt}");
-    submitButton->setGeometry(0,750,100,50);
-    undoButton->setGeometry(700,750,100,50);
-    QFont font("System", 25);
-    submitButton->setFont(font);
-    mlabelDart1->setFont(font);
-    mlabelDart2->setFont(font);
-    mlabelDart3->setFont(font);
-    undoButton->setFont(font);
-    mscene->addWidget(submitButton);
-    mscene->addWidget(undoButton);
-    mscene->addWidget(mlabelDart1);
-    mscene->addWidget(mlabelDart2);
-    mscene->addWidget(mlabelDart3);
-    mscene->addWidget(labelScoreDart1);
-    mscene->addWidget(labelScoreDart2);
-    mscene->addWidget(labelScoreDart3);
-
     connect(s20, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(s19, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(s18, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
@@ -756,8 +718,6 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
     connect(t2, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(t1, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(noscore, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
-    connect(undoButton, SIGNAL (signalUndoButtonPressed()), this, SLOT (signalUndoButtonPressed()));
-    connect(submitButton, SIGNAL (signalSubmitButtonPressed()), this, SLOT (signalSubmitButtonPressed()));
 }
 
 cricketinput::~cricketinput()
@@ -781,19 +741,19 @@ void cricketinput::setScore(int value, QChar type)
         if (Counter == 3)
         {
             QString temp = type.toUpper()+QString::number(value);
-            labelScoreDart1->setText(temp);
+            ui->labelScoreDart1->setText(temp);
             Dart[0] = type + QString::number(value);
         }
         else if (Counter == 2)
         {
             QString temp = type.toUpper()+QString::number(value);
-            labelScoreDart2->setText(temp);
+            ui->labelScoreDart2->setText(temp);
             Dart[1] = type + QString::number(value);
         }
         else if (Counter == 1)
         {
             QString temp = type.toUpper()+QString::number(value);
-            labelScoreDart3->setText(temp);
+            ui->labelScoreDart3->setText(temp);
             Dart[2] = type + QString::number(value);
         }
     }
@@ -801,17 +761,17 @@ void cricketinput::setScore(int value, QChar type)
     {
         if (Counter == 3)
         {
-            labelScoreDart1->setNum(0);
+            ui->labelScoreDart1->setText("X");
             Dart[0] = type + QString::number(value);
         }
         else if (Counter == 2)
         {
-            labelScoreDart2->setNum(0);
+            ui->labelScoreDart2->setText("X");
             Dart[1] = type + QString::number(value);
         }
         else if (Counter == 1)
         {
-            labelScoreDart3->setNum(0);
+            ui->labelScoreDart3->setText("X");
             Dart[2] = type + QString::number(value);
         }
     }
@@ -1037,12 +997,14 @@ void cricketinput::signalSegmentPressed(int &value, QChar &type)
                     Stop = true;  // Game shot
                     QSound *gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
                     gameshotsound->play();
+                    ui->submitButton->setFocus();
                     if (gameshotsound->isFinished()) delete gameshotsound;
                 }
                 Counter--;
                 if (Counter == 0)
                 {
                     Stop = true;
+                    ui->submitButton->setFocus();
                 }
             }
         }
@@ -1284,12 +1246,14 @@ void cricketinput::signalSegmentPressed(int &value, QChar &type)
                     Stop = true;  // Game shot
                     QSound *gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
                     gameshotsound->play();
+                    ui->submitButton->setFocus();
                     if (gameshotsound->isFinished()) delete gameshotsound;
                 }
                 Counter--;
                 if (Counter == 0)
                 {
                     Stop = true;
+                    ui->submitButton->setFocus();
                 }
             }
         }
@@ -1318,83 +1282,83 @@ void cricketinput::signalSegmentPressed(int &value, QChar &type)
     mExtra25Array.push_back(mExtra25);
 }
 
-    void cricketinput::signalUndoButtonPressed()
+void cricketinput::on_submitButton_clicked()
+{
+    if (Stop)
     {
-        if (Counter < 3)
-        {
-            Dart[2-Counter] = "";
-            mSlot15Array.pop_back();
-            mSlot16Array.pop_back();
-            mSlot17Array.pop_back();
-            mSlot18Array.pop_back();
-            mSlot19Array.pop_back();
-            mSlot20Array.pop_back();
-            mSlot25Array.pop_back();
-            mExtra15Array.pop_back();
-            mExtra16Array.pop_back();
-            mExtra17Array.pop_back();
-            mExtra18Array.pop_back();
-            mExtra19Array.pop_back();
-            mExtra20Array.pop_back();
-            mExtra25Array.pop_back();
-            mSlot15 = mSlot15Array.back();
-            mSlot16 = mSlot16Array.back();
-            mSlot17 = mSlot17Array.back();
-            mSlot18 = mSlot18Array.back();
-            mSlot19 = mSlot19Array.back();
-            mSlot20 = mSlot20Array.back();
-            mSlot25 = mSlot25Array.back();
-            mExtra15 = mExtra15Array.back();
-            mExtra16 = mExtra16Array.back();
-            mExtra17 = mExtra17Array.back();
-            mExtra18 = mExtra18Array.back();
-            mExtra19 = mExtra19Array.back();
-            mExtra20 = mExtra20Array.back();
-            mExtra25 = mExtra25Array.back();
-            if (mCutThroat)
-            {
-                mExtra15sArray.pop_back();
-                mExtra16sArray.pop_back();
-                mExtra17sArray.pop_back();
-                mExtra18sArray.pop_back();
-                mExtra19sArray.pop_back();
-                mExtra20sArray.pop_back();
-                mExtra25sArray.pop_back();
-                mExtra15s = mExtra15sArray.back();
-                mExtra16s = mExtra16sArray.back();
-                mExtra17s = mExtra17sArray.back();
-                mExtra18s = mExtra18sArray.back();
-                mExtra19s = mExtra19sArray.back();
-                mExtra20s = mExtra20sArray.back();
-                mExtra25s = mExtra25sArray.back();
-            }
-
-            if (Counter == 2)
-            {
-                labelScoreDart1->setText("---");
-            }
-            else if (Counter == 1)
-            {
-                labelScoreDart2->setText("---");
-            }
-            else if (Counter == 0)
-            {
-                labelScoreDart3->setText("---");
-            }
-            Counter++;
-            Stop = false;
-        }
+        int numberofdarts = 3 - Counter;
+        emit signalSubmitButtonPressed2(numberofdarts, Dart);
     }
-
-    void cricketinput::signalSubmitButtonPressed()
+    else
     {
-        if (Stop)
-        {
-            int numberofdarts = 3 - Counter;
-            emit signalSubmitButtonPressed2(numberofdarts, Dart);
-        }
-        else
-        {
-            QMessageBox::warning(this, "Score incomplete", "Please enter all darts.");
-        }
+        QMessageBox::warning(this, "Score incomplete", "Please enter all darts.");
     }
+}
+
+void cricketinput::on_undoButton_clicked()
+{
+    if (Counter < 3)
+    {
+        Dart[2-Counter] = "";
+        mSlot15Array.pop_back();
+        mSlot16Array.pop_back();
+        mSlot17Array.pop_back();
+        mSlot18Array.pop_back();
+        mSlot19Array.pop_back();
+        mSlot20Array.pop_back();
+        mSlot25Array.pop_back();
+        mExtra15Array.pop_back();
+        mExtra16Array.pop_back();
+        mExtra17Array.pop_back();
+        mExtra18Array.pop_back();
+        mExtra19Array.pop_back();
+        mExtra20Array.pop_back();
+        mExtra25Array.pop_back();
+        mSlot15 = mSlot15Array.back();
+        mSlot16 = mSlot16Array.back();
+        mSlot17 = mSlot17Array.back();
+        mSlot18 = mSlot18Array.back();
+        mSlot19 = mSlot19Array.back();
+        mSlot20 = mSlot20Array.back();
+        mSlot25 = mSlot25Array.back();
+        mExtra15 = mExtra15Array.back();
+        mExtra16 = mExtra16Array.back();
+        mExtra17 = mExtra17Array.back();
+        mExtra18 = mExtra18Array.back();
+        mExtra19 = mExtra19Array.back();
+        mExtra20 = mExtra20Array.back();
+        mExtra25 = mExtra25Array.back();
+        if (mCutThroat)
+        {
+            mExtra15sArray.pop_back();
+            mExtra16sArray.pop_back();
+            mExtra17sArray.pop_back();
+            mExtra18sArray.pop_back();
+            mExtra19sArray.pop_back();
+            mExtra20sArray.pop_back();
+            mExtra25sArray.pop_back();
+            mExtra15s = mExtra15sArray.back();
+            mExtra16s = mExtra16sArray.back();
+            mExtra17s = mExtra17sArray.back();
+            mExtra18s = mExtra18sArray.back();
+            mExtra19s = mExtra19sArray.back();
+            mExtra20s = mExtra20sArray.back();
+            mExtra25s = mExtra25sArray.back();
+        }
+
+        if (Counter == 2)
+        {
+            ui->labelScoreDart1->setText("---");
+        }
+        else if (Counter == 1)
+        {
+            ui->labelScoreDart2->setText("---");
+        }
+        else if (Counter == 0)
+        {
+            ui->labelScoreDart3->setText("---");
+        }
+        Counter++;
+        Stop = false;
+    }
+}

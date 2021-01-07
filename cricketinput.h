@@ -27,33 +27,26 @@ public:
     bool areSlotsFull();
 public slots:
     void signalSegmentPressed(int &value, QChar &type);
-    void signalUndoButtonPressed();
-    void signalSubmitButtonPressed();
 signals:
     void signalSubmitButtonPressed2(int &numberofdarts, QVector<QString> darts);
     void signalSetLabelSlot(int hits, int slot);
 public:
     cricketinput(QWidget *parent = nullptr, int sets = 1, int legs = 1, cricketclass* player = nullptr, CricketMainWindow* gamewindow = nullptr, bool cutthroat = false);
     ~cricketinput();
+private slots:
+    void on_submitButton_clicked();
+    void on_undoButton_clicked();
+
 private:
     Ui::cricketinput *ui;
     QGraphicsView* view;
     QGraphicsScene *mscene;
     QGraphicsSvgItem *labels;
-    QLabel *labelDart1;
-    QLabel *labelDart2;
-    QLabel *labelDart3;
     int Sets, Legs, Counter;
     bool Stop;
     QLCDNumber *scoreDart1;
     QLCDNumber *scoreDart2;
     QLCDNumber *scoreDart3;
-    QLabel *labelScoreDart1;
-    QLabel *labelScoreDart2;
-    QLabel *labelScoreDart3;
-    QLabel *mlabelDart1;
-    QLabel *mlabelDart2;
-    QLabel *mlabelDart3;
     UndoButton *undoButton;
     SubmitButton *submitButton;
     QVector<QString> Dart{"","",""};

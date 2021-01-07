@@ -1295,7 +1295,7 @@ void groupbox_cricket::setLegHistory()
             {
                 if (temp[1] == '0')
                 {
-                    legscores[i][j] = " 0";
+                    legscores[i][j] = " X";
                 }
                 else
                 {
