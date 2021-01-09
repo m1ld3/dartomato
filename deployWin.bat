@@ -1,0 +1,1 @@
+call H:\QT\5.15.2\mingw81_64\bin\windeployqt.exe C:\Users\Michi\Desktop\QT\build-Dartomat-Desktop_Qt_5_15_2_MinGW_64_bit-Release\release\Dartomat.exe --no-translations

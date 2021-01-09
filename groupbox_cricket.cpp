@@ -10,7 +10,7 @@
 
 groupbox_cricket::groupbox_cricket(QWidget *parent, int player_nr, int sets, int legs,
                                    cricketclass *player, bool cutthroat, bool offensive)
-    : QGroupBox(parent), ui(new Ui::groupbox_cricket), Player(player), Player_Nr(player_nr -1), Sets(sets)
+    : QGroupBox(parent), ui(new Ui::groupbox_cricket), Player(player), Player_Nr(player_nr - 1), Sets(sets)
     , Legs(legs), Score(0), Finished(false), SetBegin(false), LegBegin(false), CutThroat(cutthroat)
     , Offensive(offensive), mTotalHits(0), mSlot15(0), mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0)
     , mSlot20(0), mSlot25(0), mExtra15(0), mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0)
@@ -28,8 +28,8 @@ groupbox_cricket::groupbox_cricket(QWidget *parent, int player_nr, int sets, int
     setLabelExtra25(Player->getExtra25());
     QString text = "Player " + QString::number(player_nr);
     ui->label_playername->setText(text);
-    QString hpr = QString::number(Player->get_hits_per_round(),'f',3);
-    ui->label_hitsPerRound->setText(hpr);
+    QString hitsPerRound = QString::number(Player->get_hits_per_round(),'f',3);
+    ui->label_hitsPerRound->setText(hitsPerRound);
     int w = 80;
     int h = 80;
     if (Active)
