@@ -313,9 +313,6 @@
         <property name="minimum">
          <number>1</number>
         </property>
-        <property name="maximum">
-         <number>15</number>
-        </property>
         <property name="singleStep">
          <number>2</number>
         </property>
@@ -392,9 +389,6 @@
         </property>
         <property name="minimum">
          <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>15</number>
         </property>
         <property name="singleStep">
          <number>2</number>
