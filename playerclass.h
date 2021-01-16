@@ -55,10 +55,10 @@ private:
     int PlayerName;  //  instance of player
     int StartVal;
     int TotalDarts;  //  total amount of thrown darts
-    QVector<int> score_leg;  //  all scores of current leg
-    QVector<int> points_leg;  //  all intermediate remaining points of current leg
-    QVector<QVector<int>> score_total;  //  complete scoring history of the current game
-    QVector<int> totalscores;  //  all scores in one vector
+    QVector<int> mScoresOfCurrentLeg;  //  all scores of current leg
+    QVector<int> mRemainingPointsOfCurrentLeg;  //  all intermediate remaining points of current leg
+    QVector<QVector<int>> mAllScoresOfAllLegs;  //  complete scoring history of the current game
+    QVector<int> mAllScoresFlat;  //  all scores in one vector
     QVector<int> numberofdartsarray;
     QVector<int> checkoutattemptarray;
     QVector<int> checkoutarray;

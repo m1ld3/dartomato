@@ -7,10 +7,10 @@ PlayerClass::PlayerClass(int startval, int setnumber, int legnumber, int playern
     checkout(0.0), CheckoutAttempts(0), Checkouts(0), numberoflegs(legnumber),
     numberofsets(setnumber), margin_legs(std::ceil(numberoflegs/2.0)),
     margin_sets(std::ceil(numberofsets/2.0)), PlayerName(playername-1),
-    StartVal(startval), TotalDarts(0), score_leg({}), score_total({}),
-    totalscores({}), numberofdartsarray({}), checkoutattemptarray({}), checkoutarray({}), mThrownDarts({})
+    StartVal(startval), TotalDarts(0), mScoresOfCurrentLeg({}), mAllScoresOfAllLegs({}),
+    mAllScoresFlat({}), numberofdartsarray({}), checkoutattemptarray({}), checkoutarray({}), mThrownDarts({})
 {
-    points_leg.push_back(remaining);
+    mRemainingPointsOfCurrentLeg.push_back(remaining);
     compute_averages(0);
     compute_checkout(0, 0);
 }
@@ -31,10 +31,10 @@ bool PlayerClass::increase_setslegs() {
 }
 
 int PlayerClass::set_score(int& score) {
-    score_leg.push_back(score);
-    totalscores.push_back(score);
+    mScoresOfCurrentLeg.push_back(score);
+    mAllScoresFlat.push_back(score);
     remaining -= score;
-    points_leg.push_back(remaining);
+    mRemainingPointsOfCurrentLeg.push_back(remaining);
     return remaining;
 }
 
@@ -50,18 +50,18 @@ QVector<QVector<QString>> PlayerClass::get_darts()
 
 QVector<int> PlayerClass::get_total_scores()
 {
-    return totalscores;
+    return mAllScoresFlat;
 }
 
 void PlayerClass::update_history() {
-    score_total.push_back(score_leg);
+    mAllScoresOfAllLegs.push_back(mScoresOfCurrentLeg);
 }
 
 void PlayerClass::resetScore()
 {
     remaining = StartVal;
-    points_leg.push_back(remaining);
-    score_leg = {};
+    mRemainingPointsOfCurrentLeg.push_back(remaining);
+    mScoresOfCurrentLeg = {};
 }
 
 void PlayerClass::resetLegs()
@@ -76,10 +76,10 @@ int PlayerClass::getPlayerName()
 
 void PlayerClass::undoStep() {
     mThrownDarts.pop_back();
-    points_leg.pop_back();
-    remaining = points_leg.back();
-    score_leg.pop_back();
-    totalscores.pop_back();
+    mRemainingPointsOfCurrentLeg.pop_back();
+    remaining = mRemainingPointsOfCurrentLeg.back();
+    mScoresOfCurrentLeg.pop_back();
+    mAllScoresFlat.pop_back();
     TotalDarts -= numberofdartsarray.back();
     numberofdartsarray.pop_back();
     CheckoutAttempts -= checkoutattemptarray.back();
@@ -94,7 +94,7 @@ void PlayerClass::undoStep() {
     }
     double n = static_cast<double>(TotalDarts);
     if (TotalDarts > 0) {
-        avg1dart = std::accumulate(totalscores.begin(),totalscores.end(), 0.0)/n;
+        avg1dart = std::accumulate(mAllScoresFlat.begin(),mAllScoresFlat.end(), 0.0)/n;
     } else {
         avg1dart = 0.0;
     }
@@ -103,22 +103,22 @@ void PlayerClass::undoStep() {
 
 QVector<QVector<int> > PlayerClass::getScoreTotal()
 {
-    return score_total;
+    return mAllScoresOfAllLegs;
 }
 
 QVector<int> PlayerClass::getScoreLeg()
 {
-    return score_leg;
+    return mScoresOfCurrentLeg;
 }
 
 void PlayerClass::undo() {
-    if (score_leg.size() > 0) {
+    if (mScoresOfCurrentLeg.size() > 0) {
         undoStep();
-    } else if (score_total.size() > 0) {
-        score_leg = score_total.back();
-        score_total.pop_back();
-        if (score_leg.size() > 0) {
-            if (points_leg.back() == StartVal && points_leg.size() > 1) {
+    } else if (mAllScoresOfAllLegs.size() > 0) {
+        mScoresOfCurrentLeg = mAllScoresOfAllLegs.back();
+        mAllScoresOfAllLegs.pop_back();
+        if (mScoresOfCurrentLeg.size() > 0) {
+            if (mRemainingPointsOfCurrentLeg.back() == StartVal && mRemainingPointsOfCurrentLeg.at(mRemainingPointsOfCurrentLeg.size()-2) == 0) {
                 if (totallegs % margin_legs == 0) {
                     totallegs -= 1;
                     legs = margin_legs -1;
@@ -132,7 +132,7 @@ void PlayerClass::undo() {
             } else {
                 undoStep();
             }
-            points_leg.pop_back();
+            mRemainingPointsOfCurrentLeg.pop_back();
         }
     }
 }
@@ -142,7 +142,7 @@ void PlayerClass::compute_averages(int numberofdarts) {
     numberofdartsarray.push_back(numberofdarts);
     double n = static_cast<double>(TotalDarts);
     if (TotalDarts > 0) {
-        avg1dart = std::accumulate(totalscores.begin(),totalscores.end(), 0.0)/n;
+        avg1dart = std::accumulate(mAllScoresFlat.begin(),mAllScoresFlat.end(), 0.0)/n;
     } else {
         avg1dart = 0.0;
     }
@@ -175,12 +175,12 @@ double PlayerClass::get_checkout() {
 
 QVector<int> PlayerClass::get_LegScores()
 {
-    return score_leg;
+    return mScoresOfCurrentLeg;
 }
 
 QVector<QVector<int>> PlayerClass::get_TotalScores()
 {
-    return score_total;
+    return mAllScoresOfAllLegs;
 }
 
 int PlayerClass::get_remaining()

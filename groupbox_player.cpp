@@ -513,7 +513,10 @@ void GroupBox_player::performUndo()
     Player->undo();
     Remaining = Player->get_remaining();
     ui->lcdNumber->display(Remaining);
-    mDartBoard->initDartBoard(Remaining);
+    if (Active)
+    {
+        mDartBoard->initDartBoard(Remaining);
+    }
     ui->lcdNumber_legs->display(Player->get_legs());
     ui->lcdNumber_sets->display(Player->get_sets());
     QString avg1dart = QString::number(Player->get_avg1dart(),'f',3);
