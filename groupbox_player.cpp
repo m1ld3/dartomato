@@ -569,8 +569,6 @@ void GroupBox_player::on_pushButton_stats_clicked()
     for (auto score : allScores) ++score_counts[score];
     QBarSeries *series = new QBarSeries();
     QBarSeries *series2 = new QBarSeries();
-    series->append(setScores);
-    series2->append(setDarts);
     Chart *chart = new Chart();
     Chart *chart2 = new Chart();
     chart->addSeries(series);
@@ -581,48 +579,66 @@ void GroupBox_player::on_pushButton_stats_clicked()
     chart2->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
     QStringList categories2;
-    std::map<int, int>::iterator it;
-    for (it = score_counts.begin(); it != score_counts.end(); it++)
+    if (allScores.size() > 0)
     {
-        setScores->append(it->second);
-        categories.append(QString::number(it->first));
+        series->append(setScores);
+        std::map<int, int>::iterator it;
+        for (it = score_counts.begin(); it != score_counts.end(); it++)
+        {
+            setScores->append(it->second);
+            categories.append(QString::number(it->first));
+        }
+        QBarCategoryAxis *axisX = new QBarCategoryAxis();
+        if (categories.size()) axisX->setMin(categories.first());
+        axisX->append(categories);
+        chart->addAxis(axisX, Qt::AlignBottom);
+        series->attachAxis(axisX);
+        QValueAxis *axisY = new QValueAxis();
+        std::map<int, int>::iterator best = std::max_element(score_counts.begin(), score_counts.end(), [] (const std::pair<int, int>& a, const std::pair<int, int>& b)->bool{return a.second < b.second;});
+        qreal max = static_cast<qreal>(best->second);
+        axisY->setRange(0, max);
+        axisY->setTickType(QValueAxis::TicksFixed);
+        axisY->setTickCount(std::min(std::max(2,static_cast<int>(max)+1),10));
+        axisY->setLabelFormat("%i");
+        chart->addAxis(axisY, Qt::AlignLeft);
+        series->attachAxis(axisY);
+        QObject::connect(setScores, &QBarSet::hovered,this,[setScores](bool status, int index){
+            QPoint p = QCursor::pos();
+            if (status) {
+                QToolTip::showText(p,QString::number(setScores->at(index)));
+            }
+        });
     }
-    std::map<QString, int>::iterator it2;
-    int idx = 0;
-    for (it2 = dart_counts.begin(); it2 != dart_counts.end(); it2++)
+    if (thrownDarts.size() > 0)
     {
-        setDarts->append(it2->second);
-        categories2.append(it2->first);
-        idx++;
+        series2->append(setDarts);
+        std::map<QString, int>::iterator it2;
+        for (it2 = dart_counts.begin(); it2 != dart_counts.end(); it2++)
+        {
+            setDarts->append(it2->second);
+            categories2.append(it2->first);
+        }
+        QBarCategoryAxis *axisX2 = new QBarCategoryAxis();
+        if (categories2.size()) axisX2->setMin(categories2.first());
+        axisX2->append(categories2);
+        chart2->addAxis(axisX2, Qt::AlignBottom);
+        series2->attachAxis(axisX2);
+        QValueAxis *axisY2 = new QValueAxis();
+        std::map<QString, int>::iterator best2 = std::max_element(dart_counts.begin(), dart_counts.end(), [] (const std::pair<QString, int>& a, const std::pair<QString, int>& b)->bool{return a.second < b.second;});
+        qreal max2 = static_cast<qreal>(best2->second);
+        axisY2->setRange(0, max2);
+        axisY2->setTickType(QValueAxis::TicksFixed);
+        axisY2->setTickCount(std::min(std::max(2,static_cast<int>(max2)+1),10));
+        axisY2->setLabelFormat("%i");
+        chart2->addAxis(axisY2, Qt::AlignLeft);
+        series2->attachAxis(axisY2);
+        QObject::connect(setDarts, &QBarSet::hovered,this,[setDarts](bool status, int index){
+            QPoint p = QCursor::pos();
+            if (status) {
+                QToolTip::showText(p,QString::number(setDarts->at(index)));
+            }
+        });
     }
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    QBarCategoryAxis *axisX2 = new QBarCategoryAxis();
-    if (categories.size()) axisX->setMin(categories.first());
-    axisX->append(categories);
-    if (categories2.size()) axisX2->setMin(categories2.first());
-    axisX2->append(categories2);
-    chart->addAxis(axisX, Qt::AlignBottom);
-    series->attachAxis(axisX);
-    chart2->addAxis(axisX2, Qt::AlignBottom);
-    series2->attachAxis(axisX2);
-    QValueAxis *axisY = new QValueAxis();
-    QValueAxis *axisY2 = new QValueAxis();
-    std::map<int, int>::iterator best = std::max_element(score_counts.begin(), score_counts.end(), [] (const std::pair<int, int>& a, const std::pair<int, int>& b)->bool{return a.second < b.second;});
-    qreal max = static_cast<qreal>(best->second);
-    axisY->setRange(0, max);
-    axisY->setTickType(QValueAxis::TicksFixed);
-    axisY->setTickCount(std::min(std::max(2,static_cast<int>(max)+1),10));
-    axisY->setLabelFormat("%i");
-    std::map<QString, int>::iterator best2 = std::max_element(dart_counts.begin(), dart_counts.end(), [] (const std::pair<QString, int>& a, const std::pair<QString, int>& b)->bool{return a.second < b.second;});
-    qreal max2 = static_cast<qreal>(best2->second);
-    axisY2->setRange(0, max2);
-    axisY2->setTickType(QValueAxis::TicksFixed);
-    axisY2->setTickCount(std::min(std::max(2,static_cast<int>(max2)+1),10));
-    axisY2->setLabelFormat("%i");
-    chart->addAxis(axisY, Qt::AlignLeft);
-    chart2->addAxis(axisY2, Qt::AlignLeft);
-    series->attachAxis(axisY);
-    series2->attachAxis(axisY2);
     stats->setChart(chart, chart2);
     stats->setLabel1DartAvg(Player->get_avg1dart());
     stats->setLabel3DartAvg(Player->get_avg3dart());
@@ -637,18 +653,6 @@ void GroupBox_player::on_pushButton_stats_clicked()
         stats->setText(line);
     }
     stats->show();
-    QObject::connect(setScores, &QBarSet::hovered,this,[setScores](bool status, int index){
-        QPoint p = QCursor::pos();
-        if (status) {
-            QToolTip::showText(p,QString::number(setScores->at(index)));
-        }
-    });
-    QObject::connect(setDarts, &QBarSet::hovered,this,[setDarts](bool status, int index){
-        QPoint p = QCursor::pos();
-        if (status) {
-            QToolTip::showText(p,QString::number(setDarts->at(index)));
-        }
-    });
 }
 
 void GroupBox_player::on_pushButton_undo_clicked()
