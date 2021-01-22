@@ -29,8 +29,6 @@ public:
     void resetLegs();
     int getPlayerName();
     void undoStep();
-
-    QVector<QVector<int>> getScoreTotal();
     QVector<int> getScoreLeg();
 
 public slots:

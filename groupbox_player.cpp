@@ -1,7 +1,6 @@
 #include "groupbox_player.h"
 #include "ui_groupbox_player.h"
 #include "dialognameinput.h"
-#include "statswindow.h"
 #include "QPixmap"
 #include <QDebug>
 #include <sstream>
@@ -531,9 +530,26 @@ void GroupBox_player::performUndo()
     displayFinishes(Remaining, 3);
 }
 
+void GroupBox_player::slotUpdateLegHistory(int index, StatsWindow *stats)
+{
+    stats->clearText();
+    QVector<int> legscores = Player->get_LegScores();
+    QVector<QVector<int>> totalscores = Player->get_TotalScores();
+    if (legscores.size()) totalscores.append(legscores);
+    if (totalscores.size() >= index + 1)
+    {
+        for (int i = 0; i < totalscores.at(index).size(); i++)
+        {
+            QString line = QString::number(i+1) + ": " + QString::number(totalscores.at(index)[i]);
+            stats->setText(line);
+        }
+    }
+}
+
 void GroupBox_player::on_pushButton_stats_clicked()
 {
     StatsWindow *stats = new StatsWindow;
+    connect(stats,SIGNAL(signalUpdateLegHistory(int,StatsWindow*)),this,SLOT(slotUpdateLegHistory(int, StatsWindow*)));
     stats->setAttribute(Qt::WA_DeleteOnClose);
     stats->setModal(true);
     QBarSet *setScores = new QBarSet("Scores");
@@ -645,13 +661,12 @@ void GroupBox_player::on_pushButton_stats_clicked()
     stats->setLabelCheckout(Player->get_checkout());
     QVector<int> legscores = Player->get_LegScores();
     QVector<QVector<int>> totalscores = Player->get_TotalScores();
+    int numberOfLegs = 0;
     if (legscores.size() == 0 && totalscores.size() > 0) {
         legscores = totalscores.last();
     }
-    for (int i = 0; i < legscores.size(); i++) {
-        QString line = QString::number(i+1) + ": " + QString::number(legscores[i]);
-        stats->setText(line);
-    }
+    numberOfLegs = legscores.size() > 0 ? totalscores.size() + 1 : totalscores.size();
+    stats->initLegSelector(numberOfLegs);
     stats->show();
 }
 

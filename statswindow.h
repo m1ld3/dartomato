@@ -25,6 +25,13 @@ public:
     void setLabelCheckout(double checkout);
     void setChart(Chart *chart1, Chart *chart2);
     void setText(QString text);
+    void clearText();
+    void initLegSelector(int numberOfLegs);
+signals:
+    void signalUpdateLegHistory(int index, StatsWindow* stats);
+
+private slots:
+    void on_legSelector_currentIndexChanged(int index);
 
 private:
     Ui::StatsWindow *ui;

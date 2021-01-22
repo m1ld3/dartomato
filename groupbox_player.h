@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QSound>
 #include <QSoundEffect>
+#include "statswindow.h"
 
 class X01MainWindow;
 
@@ -57,6 +58,7 @@ public slots:
     void okButtonClicked(QString& name);
     void signalPlayerActiveButtonPressed();
     void performUndo();
+    void slotUpdateLegHistory(int index, StatsWindow *stats);
 private slots:
     void on_pushButton_stats_clicked();
     void on_pushButton_undo_clicked();

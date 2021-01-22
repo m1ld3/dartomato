@@ -87,13 +87,13 @@
           <widget class="QLabel" name="label_3dartInput">
            <property name="minimumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>50</height>
             </size>
            </property>
@@ -115,13 +115,13 @@
           <widget class="QLabel" name="label_checkoutInput">
            <property name="minimumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>50</height>
             </size>
            </property>
@@ -211,13 +211,13 @@
           <widget class="QLabel" name="label_1dartInput">
            <property name="minimumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>50</height>
             </size>
            </property>
@@ -239,13 +239,13 @@
           <widget class="QLabel" name="label_highest_checkout_input">
            <property name="minimumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>50</height>
             </size>
            </property>
@@ -335,13 +335,13 @@
           <widget class="QLabel" name="label_highest_score_input">
            <property name="minimumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>50</height>
             </size>
            </property>
@@ -363,13 +363,13 @@
           <widget class="QLabel" name="label_checkout_attempts_input">
            <property name="minimumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>50</width>
+             <width>55</width>
              <height>50</height>
             </size>
            </property>
@@ -409,7 +409,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab3">
       <attribute name="title">
@@ -452,13 +452,13 @@
             <widget class="QLabel" name="label_best_leg_input">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>50</height>
               </size>
              </property>
@@ -528,13 +528,13 @@
             <widget class="QLabel" name="label_worst_leg_input">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>50</height>
               </size>
              </property>
@@ -604,13 +604,13 @@
             <widget class="QLabel" name="label_leg_avg_input">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>50</height>
               </size>
              </property>
@@ -680,13 +680,13 @@
             <widget class="QLabel" name="label_worst_leg_input_2">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>50</height>
               </size>
              </property>

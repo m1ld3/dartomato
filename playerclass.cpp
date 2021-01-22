@@ -101,11 +101,6 @@ void PlayerClass::undoStep() {
     avg3dart = 3 * avg1dart;
 }
 
-QVector<QVector<int> > PlayerClass::getScoreTotal()
-{
-    return mAllScoresOfAllLegs;
-}
-
 QVector<int> PlayerClass::getScoreLeg()
 {
     return mScoresOfCurrentLeg;
