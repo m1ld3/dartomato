@@ -20,8 +20,12 @@ public:
     double get_avg3dart();
     double get_checkout();
     QVector<int> get_LegScores();
+    QVector<QVector<QString>> get_LegDarts();
     QVector<QVector<int>> get_TotalScores();
+    QVector<QVector<QVector<QString>>> getThrownDartsOfAllLegs();
     int get_remaining();
+    QVector<int> get_LegRemaining();
+    QVector<QVector<int>> get_RemainingOfAllLegs();
     int get_legs();
     int get_sets();
     void update_history();
@@ -30,6 +34,7 @@ public:
     int getPlayerName();
     void undoStep();
     QVector<int> getScoreLeg();
+    QString getCheckoutAttempts();
 
 public slots:
     bool increase_setslegs();
@@ -55,12 +60,15 @@ private:
     int TotalDarts;  //  total amount of thrown darts
     QVector<int> mScoresOfCurrentLeg;  //  all scores of current leg
     QVector<int> mRemainingPointsOfCurrentLeg;  //  all intermediate remaining points of current leg
+    QVector<QVector<int>> mRemainingPointsOfAllLegs;
     QVector<QVector<int>> mAllScoresOfAllLegs;  //  complete scoring history of the current game
     QVector<int> mAllScoresFlat;  //  all scores in one vector
     QVector<int> numberofdartsarray;
     QVector<int> checkoutattemptarray;
     QVector<int> checkoutarray;
-    QVector<QVector<QString>> mThrownDarts;
+    QVector<QVector<QString>> mThrownDartsOfCurrentLeg;
+    QVector<QVector<QString>> mThrownDartsOfAllLegsFlat;
+    QVector<QVector<QVector<QString>>> mThrownDartsOfAllLegs;
 };
 
 #endif // PLAYERCLASS_H

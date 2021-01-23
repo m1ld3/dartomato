@@ -533,6 +533,8 @@ void GroupBox_player::performUndo()
 void GroupBox_player::slotUpdateLegHistory(int index, StatsWindow *stats)
 {
     stats->clearText();
+    stats->setLabelLeg1DartAvg(0.0);
+    stats->setLabelLeg3DartAvg(0.0);
     QVector<int> legscores = Player->get_LegScores();
     QVector<QVector<int>> totalscores = Player->get_TotalScores();
     if (legscores.size()) totalscores.append(legscores);
@@ -543,7 +545,27 @@ void GroupBox_player::slotUpdateLegHistory(int index, StatsWindow *stats)
             QString line = QString::number(i+1) + ": " + QString::number(totalscores.at(index)[i]);
             stats->setText(line);
         }
+        QVector<QVector<QString>> legdarts = Player->get_LegDarts();
+        QVector<QVector<QVector<QString>>> totaldarts = Player->getThrownDartsOfAllLegs();
+        if (legdarts.size()) totaldarts.append(legdarts);
+        int numberOfDarts = (totaldarts.at(index).size() - 1) * 3 + totaldarts.at(index).back().size();
+        double avg1dart = std::accumulate(totalscores.at(index).begin(), totalscores.at(index).end(), 0.0)/numberOfDarts;
+        double avg3dart = 3 * avg1dart;
+        stats->setLabelLeg1DartAvg(avg1dart);
+        stats->setLabelLeg3DartAvg(avg3dart);
     }
+}
+
+double GroupBox_player::computeAverage(QVector<int> vector)
+{
+    double avg;
+    double n = static_cast<double>(vector.size());
+    if (n > 0) {
+        avg = std::accumulate(vector.begin(), vector.end(), 0.0)/n;
+    } else {
+        avg = 0.0;
+    }
+    return avg;
 }
 
 void GroupBox_player::on_pushButton_stats_clicked()
@@ -595,12 +617,22 @@ void GroupBox_player::on_pushButton_stats_clicked()
     chart2->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
     QStringList categories2;
+    int the180s = 0, plus160 = 0, plus140 = 0, plus120 = 0, plus100 = 0, plus80 = 0, plus60 = 0, plus40 = 0, plus20 = 0;
     if (allScores.size() > 0)
     {
         series->append(setScores);
         std::map<int, int>::iterator it;
         for (it = score_counts.begin(); it != score_counts.end(); it++)
         {
+            if (it->first >= 20 && it->first < 40)   plus20 += it->second;
+            if (it->first >= 40 && it->first < 60)   plus40 += it->second;
+            if (it->first >= 60 && it->first < 80)   plus60 += it->second;
+            if (it->first >= 80 && it->first < 100)  plus80 += it->second;
+            if (it->first >= 100 && it->first < 120) plus100 += it->second;
+            if (it->first >= 120 && it->first < 140) plus120 += it->second;
+            if (it->first >= 140 && it->first < 160) plus140 += it->second;
+            if (it->first >= 160 && it->first < 180) plus160 += it->second;
+            if (it->first == 180) the180s += it->second;
             setScores->append(it->second);
             categories.append(QString::number(it->first));
         }
@@ -659,6 +691,16 @@ void GroupBox_player::on_pushButton_stats_clicked()
     stats->setLabel1DartAvg(Player->get_avg1dart());
     stats->setLabel3DartAvg(Player->get_avg3dart());
     stats->setLabelCheckout(Player->get_checkout());
+    stats->setLabelCheckoutAttempts(Player->getCheckoutAttempts());
+    stats->setLabel20s(plus20);
+    stats->setLabel40s(plus40);
+    stats->setLabel60s(plus60);
+    stats->setLabel80s(plus80);
+    stats->setLabel100s(plus100);
+    stats->setLabel120s(plus120);
+    stats->setLabel140s(plus140);
+    stats->setLabel160s(plus160);
+    stats->setLabel180s(the180s);
     QVector<int> legscores = Player->get_LegScores();
     QVector<QVector<int>> totalscores = Player->get_TotalScores();
     int numberOfLegs = 0;
@@ -667,6 +709,33 @@ void GroupBox_player::on_pushButton_stats_clicked()
     }
     numberOfLegs = legscores.size() > 0 ? totalscores.size() + 1 : totalscores.size();
     stats->initLegSelector(numberOfLegs);
+    legscores = Player->get_LegScores();
+    totalscores = Player->get_TotalScores();
+    QVector<QVector<QString>> legdarts = Player->get_LegDarts();
+    QVector<QVector<QVector<QString>>> darts = Player->getThrownDartsOfAllLegs();
+    QVector<int> legremaining = Player->get_LegRemaining();
+    QVector<QVector<int>> totalremaining = Player->get_RemainingOfAllLegs();
+    if (legscores.size()) totalscores.append(legscores);
+    if (legremaining.size()) totalremaining.append(legremaining);
+    if (legdarts.size()) darts.append(legdarts);
+    QVector<int> dartCountOfWonLegs = {};
+    QVector<int> allCheckouts = {};
+    for (int idx = 0; idx < totalremaining.size(); idx++)
+    {
+        if (totalremaining.at(idx).back() == 0)
+        {
+            dartCountOfWonLegs.append((darts.at(idx).size() - 1) * 3 + darts.at(idx).back().size());
+            allCheckouts.append(totalscores.at(idx).back());
+        }
+    }
+    stats->setLabelLegAvg(computeAverage(dartCountOfWonLegs));
+    int bestLeg = *std::max_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
+    int worstLeg = *std::min_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
+    int highestCheckout = *std::max_element(allCheckouts.begin(), allCheckouts.end());
+    stats->setLabelHighestCheckout(highestCheckout);
+    stats->setLabelBestLeg(bestLeg);
+    stats->setLabelWorstLeg(worstLeg);
+
     stats->show();
 }
 

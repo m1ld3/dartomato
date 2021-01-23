@@ -46,6 +46,7 @@ public:
     void play_offensive_sounds();
     int getRemaining();
     void submitScore(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
+    double computeAverage(QVector<int> scoresOfLeg);
 
 signals:
     void signalUpdatePlayer(QString type);

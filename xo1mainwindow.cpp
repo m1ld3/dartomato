@@ -76,11 +76,11 @@ X01MainWindow::~X01MainWindow()
 {
     delete ui;
     if (mDartBoard) delete mDartBoard;
-    for (auto player : mplayer)
+    for (auto &player : mplayer)
     {
         delete player;
     }
-    for (auto box : playerbox)
+    for (auto &box : playerbox)
     {
         delete box;
     }
@@ -162,7 +162,7 @@ void X01MainWindow::signalUpdatePlayer(QString type)
                 break;
             }
         }
-        for (auto box: playerbox)
+        for (auto &box: playerbox)
         {
             box->resetLegs();
             box->setLcdLegs();
