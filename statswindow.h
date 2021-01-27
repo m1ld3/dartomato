@@ -39,6 +39,7 @@ public:
     void setLabel60s(int count);
     void setLabel40s(int count);
     void setLabel20s(int count);
+    void setLabel0s(int count);
     void setChart(Chart *chart1, Chart *chart2);
     void setText(QString text);
     void clearText();

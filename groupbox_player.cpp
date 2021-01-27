@@ -617,13 +617,14 @@ void GroupBox_player::on_pushButton_stats_clicked()
     chart2->setAnimationOptions(QChart::SeriesAnimations);
     QStringList categories;
     QStringList categories2;
-    int the180s = 0, plus160 = 0, plus140 = 0, plus120 = 0, plus100 = 0, plus80 = 0, plus60 = 0, plus40 = 0, plus20 = 0;
+    int the180s = 0, plus160 = 0, plus140 = 0, plus120 = 0, plus100 = 0, plus80 = 0, plus60 = 0, plus40 = 0, plus20 = 0, plus0 = 0;
     if (allScores.size() > 0)
     {
         series->append(setScores);
         std::map<int, int>::iterator it;
         for (it = score_counts.begin(); it != score_counts.end(); it++)
         {
+            if (it->first >=  0 && it->first < 20)   plus0  += it->second;
             if (it->first >= 20 && it->first < 40)   plus20 += it->second;
             if (it->first >= 40 && it->first < 60)   plus40 += it->second;
             if (it->first >= 60 && it->first < 80)   plus60 += it->second;
@@ -692,6 +693,7 @@ void GroupBox_player::on_pushButton_stats_clicked()
     stats->setLabel3DartAvg(Player->get_avg3dart());
     stats->setLabelCheckout(Player->get_checkout());
     stats->setLabelCheckoutAttempts(Player->getCheckoutAttempts());
+    stats->setLabel0s(plus0);
     stats->setLabel20s(plus20);
     stats->setLabel40s(plus40);
     stats->setLabel60s(plus60);
@@ -729,8 +731,8 @@ void GroupBox_player::on_pushButton_stats_clicked()
         }
     }
     stats->setLabelLegAvg(computeAverage(dartCountOfWonLegs));
-    int bestLeg = *std::max_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
-    int worstLeg = *std::min_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
+    int bestLeg = *std::min_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
+    int worstLeg = *std::max_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
     int highestCheckout = *std::max_element(allCheckouts.begin(), allCheckouts.end());
     stats->setLabelHighestCheckout(highestCheckout);
     stats->setLabelBestLeg(bestLeg);

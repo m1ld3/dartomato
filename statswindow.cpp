@@ -119,6 +119,11 @@ void StatsWindow::setLabel20s(int count)
     ui->label_20p_input->setText(QString::number(count));
 }
 
+void StatsWindow::setLabel0s(int count)
+{
+    ui->label_0p_input->setText(QString::number(count));
+}
+
 void StatsWindow::setChart(Chart *chart1, Chart *chart2)
 {
     ui->chartView1->setChart(chart1);
