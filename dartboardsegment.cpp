@@ -116,6 +116,11 @@ void DartboardSegment::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     painter->drawPath(Path);
 }
 
+QPainterPath DartboardSegment::shape() const
+{
+    return Path;
+}
+
 void DartboardSegment::segmentPressed() {
     emit signalSegmentPressed(Value,Type);
 

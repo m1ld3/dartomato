@@ -245,10 +245,13 @@ DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int 
     p_s1.lineTo(400+320*cos(M_PI*81/180),400-320*sin(M_PI*81/180));
     p_s1.arcTo(400-200,400-200,2*200,2*200,81,-18);
 
-    p_sbull.moveTo(400+40,400);
-    p_sbull.arcTo(400-40,400-40,2*40,2*40,0,360);
-    p_sbull.moveTo(400+20,400);
-    p_sbull.arcTo(400-20,400-20,2*20,2*20,0,360);
+//    p_sbull.moveTo(400+40,400);
+//    p_sbull.arcTo(400-40,400-40,2*40,2*40,0,360);
+//    p_sbull.moveTo(400+20,400);
+//    p_sbull.arcTo(400-20,400-20,2*20,2*20,0,360);
+
+    p_sbull.addEllipse(QRect(400-40,400-40,80,80));
+    p_sbull.addEllipse(QRect(400-20,400-20,40,40));
 
     p_d20.moveTo(400+320*cos(M_PI*81/180),400-320*sin(M_PI*81/180));
     p_d20.lineTo(400+340*cos(M_PI*81/180),400-340*sin(M_PI*81/180));
@@ -493,10 +496,8 @@ DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int 
     p_t1.lineTo(400+180*cos(M_PI*81/180),400-180*sin(M_PI*81/180));
     p_t1.arcTo(400-180,400-180,2*180,2*180,81,-18);
 
-    p_noscore.moveTo(800,400);
-    p_noscore.arcTo(0,0,800,800,0,360);
-    p_noscore.moveTo(400+342,400);
-    p_noscore.arcTo(400-342,400-342,342*2,342*2,0,360);
+    p_noscore.addEllipse(QRect(0,0,800,800));
+    p_noscore.addEllipse(QRect(58,58,684,684));
 
     DartboardSegment * s20 = new DartboardSegment(p_s20,20);
     DartboardSegment * s19 = new DartboardSegment(p_s19,19,"beige");
@@ -633,7 +634,6 @@ DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int 
     labels->setPos(10,10);
     eraseAllDarts();
     displayScore(Score);
-    QFont font("System", 25);
 
     connect(s20, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(s19, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
