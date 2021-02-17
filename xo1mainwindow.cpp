@@ -186,6 +186,7 @@ void X01MainWindow::signalGameWon(int playernumber)
     {
         playerbox[i]->setFinished();
     }
+    mDartBoard->setFinished();
     QString name = playerbox[playernumber]->getPlayerName();
     QString text = name + " has won the game. Congratulations!. ";
     QMessageBox::about(this,"Game finished", text);

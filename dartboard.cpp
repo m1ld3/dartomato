@@ -7,7 +7,7 @@ DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int 
                      bool iDoubleIn, bool iDoubleOut, bool iMasterIn, bool iMasterOut)
     :
       StartVal(iStartVal), Score(iScore), Counter(3), SingleIn(iSingleIn), SingleOut(iSingleOut),
-      DoubleIn(iDoubleIn), DoubleOut(iDoubleOut), MasterIn(iMasterIn), MasterOut(iMasterOut), Dart({})
+      DoubleIn(iDoubleIn), DoubleOut(iDoubleOut), MasterIn(iMasterIn), MasterOut(iMasterOut), Finished(false), Dart({})
 {
     CheckoutAttempts = {0, 0, 0};
     mscene = new QGraphicsScene(0,0,800,800, iGraphicsViewDartBoard);
@@ -244,11 +244,6 @@ DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int 
     p_s1.arcTo(400-320,400-320,2*320,2*320,63,18);
     p_s1.lineTo(400+320*cos(M_PI*81/180),400-320*sin(M_PI*81/180));
     p_s1.arcTo(400-200,400-200,2*200,2*200,81,-18);
-
-//    p_sbull.moveTo(400+40,400);
-//    p_sbull.arcTo(400-40,400-40,2*40,2*40,0,360);
-//    p_sbull.moveTo(400+20,400);
-//    p_sbull.arcTo(400-20,400-20,2*20,2*20,0,360);
 
     p_sbull.addEllipse(QRect(400-40,400-40,80,80));
     p_sbull.addEllipse(QRect(400-20,400-20,40,40));
@@ -759,6 +754,11 @@ void DartBoard::initDartBoard(int score)
 
 void DartBoard::signalSegmentPressed(int &value, QChar &type)
 {
+    if (Finished)
+    {
+        QMessageBox::warning(this, "","Game already finished!");
+        return;
+    }
     QVector<int> array {23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59};
     int checkout = 0;
     QSound * busted = nullptr;
@@ -918,8 +918,13 @@ void DartBoard::submitScore()
         int numberofdarts = 3 - Counter;
         int checkoutattempts = std::accumulate(CheckoutAttempts.begin(), CheckoutAttempts.end(),0);
         emit signalSubmitButtonPressed2GameWindow(score, numberofdarts, checkoutattempts, darts);
-    } else {
+    } else if (!Finished)
+    {
         QMessageBox::warning(this, "Score incomplete", "Please enter all darts.");
+    }
+    else
+    {
+        QMessageBox::warning(this, "","Game already finished!");
     }
 }
 
@@ -963,6 +968,16 @@ void DartBoard::eraseDart2()
 void DartBoard::eraseDart3()
 {
     emit signalEraseDart3();
+}
+
+void DartBoard::setFinished()
+{
+    Finished = true;
+}
+
+void DartBoard::unsetFinished()
+{
+    Finished = false;
 }
 
 

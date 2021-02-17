@@ -526,6 +526,7 @@ void GroupBox_player::performUndo()
     ui->label_checkoutInput->setText(checkout);
     if (Finished) {
         unsetFinished();
+        mDartBoard->unsetFinished();
     }
     displayFinishes(Remaining, 3);
 }

@@ -41,10 +41,12 @@ public:
     void eraseDart1();
     void eraseDart2();
     void eraseDart3();
+    void setFinished();
+    void unsetFinished();
 private:
     QGraphicsView* view;
     int StartVal, Score, Counter, OldScore;
-    bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Stop, Busted;
+    bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Stop, Busted, Finished;
     QVector<int> Undo{0,0,0};
     QVector<QString> Dart;
     QVector<int> CheckoutAttempts;
