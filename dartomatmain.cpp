@@ -3,18 +3,20 @@
 #include <QPushButton>
 #include <QVector>
 #include <QGridLayout>
-#include <QSound>
+#include <QSoundEffect>
 #include <QDebug>
 
 DartomatMain::DartomatMain(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::DartomatMain)
+    , gameon(this)
 {
     ui->setupUi(this);
     ui->radioButton_Sin->setChecked(true);
     ui->radioButton_Dout->setChecked(true);
     ui->comboBox_game->setCurrentIndex(1);
     ui->checkBoxCutThroat->setVisible(false);
+    gameon.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
 }
 
 DartomatMain::~DartomatMain()
@@ -25,8 +27,6 @@ DartomatMain::~DartomatMain()
 
 void DartomatMain::on_pushButton_startgame_clicked()
 {
-    QSound *gameon = new QSound(":/resources/sounds/gameon.wav");
-    gameon->play();
     int game = (ui->comboBox_game->itemText(ui->comboBox_game->currentIndex())).toInt();
     int numberofplayers = ui->comboBox_players->currentIndex() + 1;
     int sets = ui->spinBox_sets->value();
@@ -51,7 +51,7 @@ void DartomatMain::on_pushButton_startgame_clicked()
         cricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
         cricketMainWindow->show();
     }
-    if (gameon->isFinished()) delete gameon;
+    gameon.play();
 }
 
 void DartomatMain::on_comboBox_game_currentIndexChanged(const QString &arg1)

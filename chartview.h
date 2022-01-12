@@ -4,7 +4,6 @@
 #include <QtCharts/QChartView>
 #include <QtWidgets/QRubberBand>
 
-QT_CHARTS_USE_NAMESPACE
 
 class ChartView : public QChartView
 {

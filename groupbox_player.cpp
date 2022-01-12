@@ -8,8 +8,12 @@
 #include <QMessageBox>
 #include <QString>
 #include <algorithm>
-#include <QBarSet>
-#include <QtCharts>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QChart>
+#include <QtCharts/QBarCategoryAxis>
+#include <QToolTip>
+#include <QtCharts/QValueAxis>
 #include <xo1mainwindow.h>
 #include <checkoutlists.h>
 
@@ -46,46 +50,18 @@ GroupBox_player::GroupBox_player(QWidget *parent, int player_nr, int game, int s
     displayFinishes(Remaining, 3);
     mGameWindow = dynamic_cast<X01MainWindow*>(parent);
     sexy69.setSource(QUrl("qrc:/resources/sounds/sexy69.wav"));
-    sexy69.setLoopCount(1);
-    sexy69.setVolume(1);
     anotherone.setSource(QUrl("qrc:/resources/sounds/anotherone.wav"));
-    anotherone.setLoopCount(1);
-    anotherone.setVolume(1);
     sound1.setSource(QUrl("qrc:/resources/sounds/yousuck1.wav"));
-    sound1.setLoopCount(1);
-    sound1.setVolume(1);
     sound2.setSource(QUrl("qrc:/resources/sounds/yousuck2.wav"));
-    sound2.setLoopCount(1);
-    sound2.setVolume(1);
     sound3.setSource(QUrl("qrc:/resources/sounds/yousuck3.wav"));
-    sound3.setLoopCount(1);
-    sound3.setVolume(1);
     sound4.setSource(QUrl("qrc:/resources/sounds/youfuckedup.wav"));
-    sound4.setLoopCount(1);
-    sound4.setVolume(1);
     sound5.setSource(QUrl("qrc:/resources/sounds/poorjob.wav"));
-    sound5.setLoopCount(1);
-    sound5.setVolume(1);
     sound6.setSource(QUrl("qrc:/resources/sounds/nichtgut.wav"));
-    sound6.setLoopCount(1);
-    sound6.setVolume(1);
     sound7.setSource(QUrl("qrc:/resources/sounds/newwaytosuck.wav"));
-    sound7.setLoopCount(1);
-    sound7.setVolume(1);
     sound8.setSource(QUrl("qrc:/resources/sounds/loser.wav"));
-    sound8.setLoopCount(1);
-    sound8.setVolume(1);
     sound9.setSource(QUrl("qrc:/resources/sounds/littlegirl.wav"));
-    sound9.setLoopCount(1);
-    sound9.setVolume(1);
     sound10.setSource(QUrl("qrc:/resources/sounds/gutschlecht.wav"));
-    sound10.setLoopCount(1);
-    sound10.setVolume(1);
     sound11.setSource(QUrl("qrc:/resources/sounds/daswarscheisse.wav"));
-    sound11.setLoopCount(1);
-    sound11.setVolume(1);
-    scoresound.setLoopCount(1);
-    scoresound.setVolume(1);
     connect(&scoresound, &QSoundEffect::playingChanged, this, [this]{
                 if(!scoresound.isPlaying() && Offensive) play_offensive_sounds();
     });
@@ -159,7 +135,7 @@ void GroupBox_player::submitScore(int &score, int &numberofdarts, int &checkouta
     std::stringstream ss;
     ss << std::setw(3) << std::setfill('0') << mCurrentScore;
     std::string digits = ss.str();
-    std::string strpath = "qrc:/resources/sounds/" + digits +".wav";
+    std::string strpath = "qrc:/resources/sounds/" + digits + ".wav";
     QString filepath = QString::fromStdString(strpath);
     scoresound.setSource(filepath);
     Player->compute_averages(numberofdarts);
@@ -585,12 +561,12 @@ void GroupBox_player::on_pushButton_stats_clicked()
     }
     for (auto &dart : thrownDarts_flat)
     {
-        if (dart[0] == "d")
+        if (dart[0] == 'd')
         {
             QString temp = dart.remove(0,1);
             dart = "D" + QString::number(temp.toInt() / 2);
         }
-        else if (dart[0] == "t")
+        else if (dart[0] == 't')
         {
             QString temp = dart.remove(0,1);
             dart = "T" + QString::number(temp.toInt() / 3);

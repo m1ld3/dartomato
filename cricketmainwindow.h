@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "groupbox_cricket.h"
-#include <QSound>
+#include <QSoundEffect>
 #include <QGridLayout>
 
 class groupbox_cricket;

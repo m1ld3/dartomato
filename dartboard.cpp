@@ -1,13 +1,23 @@
 #include "dartboard.h"
 #include <cmath>
-#include <QSound>
 #include <QMessageBox>
 
 DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int iScore, bool iSingleIn, bool iSingleOut,
                      bool iDoubleIn, bool iDoubleOut, bool iMasterIn, bool iMasterOut)
     :
-      StartVal(iStartVal), Score(iScore), Counter(3), SingleIn(iSingleIn), SingleOut(iSingleOut),
-      DoubleIn(iDoubleIn), DoubleOut(iDoubleOut), MasterIn(iMasterIn), MasterOut(iMasterOut), Finished(false), Dart({})
+      StartVal(iStartVal)
+    , Score(iScore)
+    , Counter(3)
+    , SingleIn(iSingleIn)
+    , SingleOut(iSingleOut)
+    , DoubleIn(iDoubleIn)
+    , DoubleOut(iDoubleOut)
+    , MasterIn(iMasterIn)
+    , MasterOut(iMasterOut)
+    , Finished(false)
+    , Dart({})
+    , busted(this)
+    , gameshotsound(this)
 {
     CheckoutAttempts = {0, 0, 0};
     mscene = new QGraphicsScene(0,0,800,800, iGraphicsViewDartBoard);
@@ -693,6 +703,8 @@ DartBoard::DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int 
     connect(t2, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(t1, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(noscore, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
+    busted.setSource(QUrl("qrc:/resources/sounds/busted.wav"));
+    gameshotsound.setSource(QUrl("qrc:/resources/sounds/gameshot.wav"));
 }
 
 void DartBoard::setScore(int value, QChar type, int checkout) {
@@ -761,8 +773,6 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
     }
     QVector<int> array {23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59};
     int checkout = 0;
-    QSound * busted = nullptr;
-    QSound * gameshotsound = nullptr;
     if (!Stop) {
         if (Counter > 0) {
             if (Score == StartVal) {
@@ -800,16 +810,14 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                 if (SingleOut) {
                     Stop = true;  // Game shot
                     emit signalSetFocusToSubmitButton();
-                    gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
-                    gameshotsound->play();
+                    gameshotsound.play();
                     checkout = 1;
                     setScore(value, type, checkout);
                 } else if (DoubleOut) {
                     if (type == 'd') {
                         Stop = true; // Game shot
                         emit signalSetFocusToSubmitButton();
-                        gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
-                        gameshotsound->play();
+                        gameshotsound.play();
                         checkout = 1;
                         setScore(value, type, checkout);
                     } else {
@@ -821,15 +829,13 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                         Stop = true; // Überwofen
                         Busted = true;
                         emit signalSetFocusToSubmitButton();
-                        busted = new QSound(":/resources/sounds/busted.wav");
-                        busted->play();
+                        busted.play();
                     }
                 } else if (MasterOut) {
                     if (type == 't') {
                         checkout = 1;
                         Stop = true; // Game shot
-                        gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
-                        gameshotsound->play();
+                        gameshotsound.play();
                         setScore(value, type, checkout);
                     } else {
                         if (Score <= 60 && Score % 3 == 0 && Score > 2) {
@@ -840,8 +846,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                         Stop = true; // Überwofen
                         Busted = true;
                         emit signalSetFocusToSubmitButton();
-                        busted = new QSound(":/resources/sounds/busted.wav");
-                        busted->play();
+                        busted.play();
                     }
                 }
             } else {
@@ -857,8 +862,7 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
                 emit signalSetFocusToSubmitButton();
                 setScore(value, type, checkout);
                 displayScore(OldScore);
-                busted = new QSound(":/resources/sounds/busted.wav");
-                busted->play();
+                busted.play();
             }
             Counter--;
             if (Counter == 0) {
@@ -873,8 +877,6 @@ void DartBoard::signalSegmentPressed(int &value, QChar &type)
     } else if (Score > 0 && Counter == 0) {
         QMessageBox::warning(this, "Warning", "You only have three darts!");
     }
-    if (busted && busted->isFinished()) delete busted;
-    if (gameshotsound && gameshotsound->isFinished()) delete gameshotsound;
 }
 
 void DartBoard::performUndo()

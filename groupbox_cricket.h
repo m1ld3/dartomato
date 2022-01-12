@@ -6,7 +6,7 @@
 #include "cricketinput.h"
 #include "cricketclass.h"
 #include <QPixmap>
-#include <QSound>
+#include <QSoundEffect>
 
 class CricketMainWindow;
 
@@ -129,16 +129,16 @@ private:
     int mTotalHits;
     int mSlot15, mSlot16, mSlot17, mSlot18, mSlot19, mSlot20, mSlot25,
     mExtra15, mExtra16, mExtra17, mExtra18, mExtra19, mExtra20, mExtra25;
-    QSound *sound1 = new QSound(":/resources/sounds/yousuck1.wav");
-    QSound *sound2 = new QSound(":/resources/sounds/yousuck2.wav");
-    QSound *sound3 = new QSound(":/resources/sounds/yousuck3.wav");
-    QSound *sound4 = new QSound(":/resources/sounds/youfuckedup.wav");
-    QSound *sound5 = new QSound(":/resources/sounds/poorjob.wav");
-    QSound *sound6 = new QSound(":/resources/sounds/nichtgut.wav");
-    QSound *sound7 = new QSound(":/resources/sounds/newwaytosuck.wav");
-    QSound *sound8 = new QSound(":/resources/sounds/loser.wav");
-    QSound *sound9 = new QSound(":/resources/sounds/littlegirl.wav");
-    QSound *sound10 = new QSound(":/resources/sounds/gutschlecht.wav");
-    QSound *sound11 = new QSound(":/resources/sounds/daswarscheisse.wav");
+    QSoundEffect sound1;
+    QSoundEffect sound2;
+    QSoundEffect sound3;
+    QSoundEffect sound4;
+    QSoundEffect sound5;
+    QSoundEffect sound6;
+    QSoundEffect sound7;
+    QSoundEffect sound8;
+    QSoundEffect sound9;
+    QSoundEffect sound10;
+    QSoundEffect sound11;
 };
 #endif // GROUPBOX_CRICKET_H

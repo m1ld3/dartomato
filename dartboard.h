@@ -7,7 +7,7 @@
 #include <QGraphicsSvgItem>
 #include <QLabel>
 #include "dartboardview.h"
-
+#include <QSoundEffect>
 
 class DartBoard : public QWidget
 {
@@ -51,6 +51,8 @@ private:
     QVector<QString> Dart;
     QVector<int> CheckoutAttempts;
     QGraphicsScene *mscene;
+    QSoundEffect busted;
+    QSoundEffect gameshotsound;
 };
 
 #endif // DARTBOARD_H

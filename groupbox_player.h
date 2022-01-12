@@ -6,7 +6,6 @@
 #include "dartboard.h"
 #include "playerclass.h"
 #include <QPixmap>
-#include <QSound>
 #include <QSoundEffect>
 #include "statswindow.h"
 
@@ -90,7 +89,6 @@ private:
     QSoundEffect sound10;
     QSoundEffect sound11;
     QSoundEffect scoresound;
-
 };
 
 #endif // GROUPBOX_PLAYER_H

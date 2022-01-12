@@ -1,7 +1,8 @@
-#include "chart.h"
+#include <QtCharts/QChart>
 #include <QtWidgets/QGesture>
 #include <QtWidgets/QGraphicsScene>
 #include <QtWidgets/QGraphicsView>
+#include "chart.h"
 
 Chart::Chart(QGraphicsItem *parent, Qt::WindowFlags wFlags)
     : QChart(QChart::ChartTypeCartesian, parent, wFlags)

@@ -7,7 +7,6 @@
 #include <QtDebug>
 #include <cmath>
 #include <QMessageBox>
-#include <QSound>
 #include <QVector>
 #include "cricketclass.h"
 
@@ -29,6 +28,7 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
     , mExtra19Array({mExtra19}), mExtra20Array({mExtra20}), mExtra25Array({mExtra25}), mExtra15sArray({mExtra15s})
     , mExtra16sArray({mExtra16s}), mExtra17sArray({mExtra17s}), mExtra18sArray({mExtra18s}), mExtra19sArray({mExtra19s})
     , mExtra20sArray({mExtra20s}), mExtra25sArray({mExtra25s})
+    , gameshotsound(this)
 {
     ui->setupUi(this);
     Stop = false;
@@ -718,6 +718,7 @@ cricketinput::cricketinput(QWidget *parent, int sets, int legs, cricketclass* pl
     connect(t2, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(t1, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
     connect(noscore, SIGNAL (signalSegmentPressed(int&, QChar&)), this, SLOT (signalSegmentPressed(int&, QChar&)));
+    gameshotsound.setSource(QUrl("qrc:/resources/sounds/gameshot.wav"));
 }
 
 cricketinput::~cricketinput()
@@ -995,10 +996,8 @@ void cricketinput::signalSegmentPressed(int &value, QChar &type)
                 if (areSlotsFull() && mGameWindow->isScoreBigger(mScore))
                 {
                     Stop = true;  // Game shot
-                    QSound *gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
-                    gameshotsound->play();
+                    gameshotsound.play();
                     ui->submitButton->setFocus();
-                    if (gameshotsound->isFinished()) delete gameshotsound;
                 }
                 Counter--;
                 if (Counter == 0)
@@ -1244,10 +1243,8 @@ void cricketinput::signalSegmentPressed(int &value, QChar &type)
                 if (areSlotsFull() && result)
                 {
                     Stop = true;  // Game shot
-                    QSound *gameshotsound = new QSound("qrc:/resources/sounds/gameshot.wav");
-                    gameshotsound->play();
+                    gameshotsound.play();
                     ui->submitButton->setFocus();
-                    if (gameshotsound->isFinished()) delete gameshotsound;
                 }
                 Counter--;
                 if (Counter == 0)

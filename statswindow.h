@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QString>
-#include <QBarSet>
+#include <QtCharts/QBarSet>
 #include "chart.h"
 #include "chartview.h"
 

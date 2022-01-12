@@ -9,6 +9,7 @@
 #include "submitbutton.h"
 #include <QLabel>
 #include <QGraphicsSvgItem>
+#include <QSoundEffect>
 
 class CricketMainWindow;
 class cricketclass;
@@ -60,7 +61,7 @@ private:
     QVector<int> mSlot15Array, mSlot16Array, mSlot17Array, mSlot18Array, mSlot19Array, mSlot20Array, mSlot25Array;
     QVector<int> mExtra15Array, mExtra16Array, mExtra17Array, mExtra18Array, mExtra19Array, mExtra20Array, mExtra25Array;
     QVector<QVector<int>> mExtra15sArray, mExtra16sArray, mExtra17sArray, mExtra18sArray, mExtra19sArray, mExtra20sArray, mExtra25sArray;
-
+    QSoundEffect gameshotsound;
 };
 
 #endif // CRICKETINPUT_H

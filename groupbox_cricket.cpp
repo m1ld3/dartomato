@@ -3,7 +3,7 @@
 #include <QMessageBox>
 #include "dialognameinput.h"
 #include <QDebug>
-#include <QSound>
+#include <QSoundEffect>
 #include <string>
 #include <QString>
 #include <algorithm>
@@ -14,6 +14,17 @@ groupbox_cricket::groupbox_cricket(QWidget *parent, int player_nr, int sets, int
     , Legs(legs), Score(0), Finished(false), SetBegin(false), LegBegin(false), CutThroat(cutthroat)
     , Offensive(offensive), mTotalHits(0), mSlot15(0), mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0)
     , mSlot20(0), mSlot25(0), mExtra15(0), mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0)
+    , sound1(this)
+    , sound2(this)
+    , sound3(this)
+    , sound4(this)
+    , sound5(this)
+    , sound6(this)
+    , sound7(this)
+    , sound8(this)
+    , sound9(this)
+    , sound10(this)
+    , sound11(this)
 {
     ui->setupUi(this);
     ui->lcdNumber->setDigitCount(4);
@@ -42,22 +53,23 @@ groupbox_cricket::groupbox_cricket(QWidget *parent, int player_nr, int sets, int
     }
     connect(ui->label_pic,SIGNAL(signalPlayerActiveButtonPressed()),this,SLOT(signalPlayerActiveButtonPressed()));
     mGameWindow = dynamic_cast<CricketMainWindow*>(parent);
+
+    sound1.setSource(QUrl("qrc:/resources/sounds/yousuck1.wav"));
+    sound2.setSource(QUrl("qrc:/resources/sounds/yousuck2.wav"));
+    sound3.setSource(QUrl("qrc:/resources/sounds/yousuck3.wav"));
+    sound4.setSource(QUrl("qrc:/resources/sounds/youfuckedup.wav"));
+    sound5.setSource(QUrl("qrc:/resources/sounds/poorjob.wav"));
+    sound6.setSource(QUrl("qrc:/resources/sounds/nichtgut.wav"));
+    sound7.setSource(QUrl("qrc:/resources/sounds/newwaytosuck.wav"));
+    sound8.setSource(QUrl("qrc:/resources/sounds/loser.wav"));
+    sound9.setSource(QUrl("qrc:/resources/sounds/littlegirl.wav"));
+    sound10.setSource(QUrl("qrc:/resources/sounds/gutschlecht.wav"));
+    sound11.setSource(QUrl("qrc:/resources/sounds/daswarscheisse.wav"));
 }
 
 groupbox_cricket::~groupbox_cricket()
 {
     delete ui;
-    delete sound1;
-    delete sound2;
-    delete sound3;
-    delete sound4;
-    delete sound5;
-    delete sound6;
-    delete sound7;
-    delete sound8;
-    delete sound9;
-    delete sound10;
-    delete sound11;
 }
 
 void groupbox_cricket::setActive()
@@ -1614,37 +1626,37 @@ void groupbox_cricket::playFailSounds()
     switch (rnd)
     {
     case 1:
-        sound1->play();
+        sound1.play();
         break;
     case 2:
-        sound2->play();
+        sound2.play();
         break;
     case 3:
-        sound3->play();
+        sound3.play();
         break;
     case 4:
-        sound4->play();
+        sound4.play();
         break;
     case 5:
-        sound5->play();
+        sound5.play();
         break;
     case 6:
-        sound6->play();
+        sound6.play();
         break;
     case 7:
-        sound7->play();
+        sound7.play();
         break;
     case 8:
-        sound8->play();
+        sound8.play();
         break;
     case 9:
-        sound9->play();
+        sound9.play();
         break;
     case 10:
-        sound10->play();
+        sound10.play();
         break;
     case 11:
-        sound11->play();
+        sound11.play();
         break;
     default: {}
     }

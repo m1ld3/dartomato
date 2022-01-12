@@ -26,6 +26,6 @@ private:
     Ui::DartomatMain *ui;
     X01MainWindow *x01MainWindow;
     CricketMainWindow * cricketMainWindow;
-
+    QSoundEffect gameon;
 };
 #endif // DARTOMATMAIN_H

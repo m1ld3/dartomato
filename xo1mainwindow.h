@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include "groupbox_player.h"
-#include <QSound>
+#include <QSoundEffect>
 #include "dartboard.h"
 
 namespace Ui {
