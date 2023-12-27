@@ -5,17 +5,22 @@
 #include <QPushButton>
 #include <QMouseEvent>
 
-class UndoButton : public QPushButton
+class CUndoButton : public QPushButton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    UndoButton(const QString &text, QWidget *parent = nullptr);
-    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
+  CUndoButton(const QString &text, QWidget *parent = nullptr);
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
 private slots:
-    void UndoButtonPressed();
+
+  void undo_button_pressed();
+
 signals:
-    void signalUndoButtonPressed();
+
+  void signal_undo_button_pressed();
 };
 
-#endif // UNDOBUTTON_H
+#endif  // UNDOBUTTON_H

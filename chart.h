@@ -7,22 +7,20 @@ QT_BEGIN_NAMESPACE
 class QGestureEvent;
 QT_END_NAMESPACE
 
-//![1]
-class Chart : public QChart
-//![1]
+class CChart : public QChart
 {
 public:
-    explicit Chart(QGraphicsItem *parent = nullptr, Qt::WindowFlags wFlags = {});
-    ~Chart();
+
+  explicit CChart(QGraphicsItem *iParent = nullptr, Qt::WindowFlags iWindowFlags = {});
+  ~CChart() override = default;
 
 protected:
-    bool sceneEvent(QEvent *event);
+
+  bool sceneEvent(QEvent *iEvent) override;
 
 private:
-    bool gestureEvent(QGestureEvent *event);
 
-private:
-
+  bool gesture_event(QGestureEvent *iEvent);
 };
 
-#endif // CHART_H
+#endif  // CHART_H

@@ -4,13 +4,15 @@
 #include "QGraphicsView"
 
 
-class DartBoardView : public QGraphicsView
+class CDartBoardView : public QGraphicsView
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    DartBoardView(QWidget * parent = 0);
-    void resizeEvent(QResizeEvent *event) override;
-    ~DartBoardView();
+
+  CDartBoardView(QWidget * iParent = 0);
+  void resizeEvent(QResizeEvent * iEvent) override;
+  ~CDartBoardView() override = default;
 };
 
-#endif // DARTBOARDVIEW_H
+#endif  // DARTBOARDVIEW_H

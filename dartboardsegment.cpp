@@ -4,133 +4,126 @@
 #include <QPen>
 #include <QString>
 
-DartboardSegment::DartboardSegment(const QPainterPath &path, const int value, QString color, QChar type, QGraphicsPathItem *parent)
-    : QObject(), QGraphicsPathItem(path, parent)
+CDartBoardSegment::CDartBoardSegment(const QPainterPath & iPath, const uint32_t iVal, QString && iColor, QChar iType, QGraphicsPathItem * iParent)
+  : QObject()
+  , QGraphicsPathItem(iPath, iParent)
 {
-    Value = value;
-    Pressed = false;
-    Hover = false;
-    Dragging = false;
-    Color = color;
-    Path = path;
-    Type = type;
-    setAcceptHoverEvents(true);
+  mValue = iVal;
+  mPressed = false;
+  mHover = false;
+  mDragging = false;
+  mColor = iColor;
+  mPath = iPath;
+  mType = iType;
+  setAcceptHoverEvents(true);
 }
 
-DartboardSegment::~DartboardSegment()
-{}
-
-void DartboardSegment::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void CDartBoardSegment::mouseMoveEvent(QGraphicsSceneMouseEvent * iEvent)
 {
-    if (!contains(mapToItem(this, event->pos())) && Pressed)
+  if (!contains(mapToItem(this, iEvent->pos())) && mPressed)
+  {
+    mDragging = true;
+  }
+  else
+  {
+    mDragging = false;
+  }
+  update();
+  QGraphicsItem::mouseMoveEvent(iEvent);
+}
+
+void CDartBoardSegment::mousePressEvent(QGraphicsSceneMouseEvent * iEvent)
+{
+  if (iEvent->button() == Qt::LeftButton)
+  {
+    mPressed = true;
+    update();
+  }
+}
+
+void CDartBoardSegment::mouseReleaseEvent(QGraphicsSceneMouseEvent * iEvent)
+{
+  if (iEvent->button() == Qt::LeftButton)
+  {
+    mPressed = false;
+    if (mDragging)
     {
-    //if (Pressed)  {
-        Dragging = true;
+      mDragging = false;
     }
     else
     {
-        Dragging = false;
+      update();
+      CDartBoardSegment::segment_pressed();
     }
-    update();
-    QGraphicsItem::mouseMoveEvent(event);
+  }
 }
 
-void DartboardSegment::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void CDartBoardSegment::hoverEnterEvent(QGraphicsSceneHoverEvent * iEvent)
 {
-    if (event->button() == Qt::LeftButton)  {
-        Pressed = true;
-        update();
-    }
+  mHover = true;
+  update();
+  QGraphicsItem::hoverEnterEvent(iEvent);
 }
 
-void DartboardSegment::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void CDartBoardSegment::hoverLeaveEvent(QGraphicsSceneHoverEvent * iEvent)
 {
-   if (event->button() == Qt::LeftButton)
-   {
-       Pressed = false;
-       if (Dragging)
-       {
-           Dragging = false;
-       }
-       else
-       {
-           update();
-           DartboardSegment::segmentPressed();
-       }
-   }
+  mHover = false;
+  update();
+  QGraphicsItem::hoverLeaveEvent(iEvent);
 }
 
-void DartboardSegment::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void CDartBoardSegment::paint(QPainter * iPainter, const QStyleOptionGraphicsItem * iOption, QWidget * iWidget)
 {
-    Hover = true;
-    update();
-    QGraphicsItem::hoverEnterEvent(event);
+  Q_UNUSED(iOption);
+  Q_UNUSED(iWidget);
+  QBrush brush(Qt::SolidPattern);
+
+  if (mPressed && !mDragging)
+  {
+    iPainter->setPen(QPen(Qt::blue, 4));
+    setZValue(1);
+  } else
+  {
+    iPainter->setPen(QPen(Qt::gray, 4));
+    setZValue(0);
+  }
+
+  if (mHover)
+  {
+    if (mColor == "black")       brush.setColor(QColor::fromRgb(80,80,80));
+    else if (mColor == "beige")  brush.setColor(QColor::fromRgb(165,165,140));
+    else if (mColor == "red")    brush.setColor(Qt::red);
+    else if (mColor == "green")  brush.setColor(Qt::green);
+    else                         brush.setColor(Qt::white);
+  }
+  else
+  {
+    if (mColor == "black")       brush.setColor(Qt::black);
+    else if (mColor == "beige")  brush.setColor(QColor::fromRgb(215,215,190));
+    else if (mColor == "red")    brush.setColor(QColor::fromRgb(180,50,0));
+    else if (mColor == "green")  brush.setColor(Qt::darkGreen);
+    else                         brush.setColor(Qt::white);
+  }
+
+  iPainter->fillPath(mPath,brush);
+  iPainter->drawPath(mPath);
 }
 
-void DartboardSegment::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+QPainterPath CDartBoardSegment::shape() const
 {
-    Hover = false;
-    update();
-    QGraphicsItem::hoverLeaveEvent(event);
+  return mPath;
 }
 
-void DartboardSegment::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CDartBoardSegment::segment_pressed()
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-    QBrush brush(Qt::SolidPattern);
-
-    if (Pressed && !Dragging) {
-        painter->setPen(QPen(Qt::blue,4));
-        setZValue(1);
-    } else {
-        painter->setPen(QPen(Qt::gray,4));
-        setZValue(0);
-    }
-
-    if (Hover) {
-        if (Color == "black") {
-            brush.setColor(QColor::fromRgb(80,80,80));
-        } else if (Color == "beige") {
-            brush.setColor(QColor::fromRgb(165,165,140));
-        } else if (Color == "red") {
-            brush.setColor(Qt::red);
-        } else if (Color == "green") {
-            brush.setColor(Qt::green);
-        } else
-            brush.setColor(Qt::white);
-    } else {
-        if (Color == "black") {
-            brush.setColor(Qt::black);
-        } else if (Color == "beige") {
-            brush.setColor(QColor::fromRgb(215,215,190));
-        } else if (Color == "red") {
-            brush.setColor(QColor::fromRgb(180,50,0));
-        } else if (Color == "green") {
-            brush.setColor(Qt::darkGreen);
-        } else {
-            brush.setColor(Qt::white);
-        }
-    }
-    painter->fillPath(Path,brush);
-    painter->drawPath(Path);
+  emit signal_segment_pressed(mValue, mType);
 }
 
-QPainterPath DartboardSegment::shape() const
+QRectF CDartBoardSegment::boundingRect() const
 {
-    return Path;
-}
-
-void DartboardSegment::segmentPressed() {
-    emit signalSegmentPressed(Value,Type);
-
-}
-
-QRectF DartboardSegment::boundingRect() const
-{
-    QPainterPathStroker stroker;
-    stroker.setWidth(4.0);
-    QPainterPath boundingPath = stroker.createStroke(Path);
-    return boundingPath.boundingRect();
+  QPainterPathStroker stroker;
+  stroker.setWidth(4.0);
+  QPainterPath boundingPath = stroker.createStroke(mPath);
+  return boundingPath.boundingRect();
 }
 

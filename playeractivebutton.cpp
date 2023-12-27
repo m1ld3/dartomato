@@ -1,16 +1,17 @@
 #include "playeractivebutton.h"
 
-PlayerActiveButton::PlayerActiveButton(QWidget *parent) :
+CPlayerActiveButton::CPlayerActiveButton(QWidget *parent) :
     QLabel(parent)
 {}
 
-void PlayerActiveButton::mouseReleaseEvent(QMouseEvent *event)
+void CPlayerActiveButton::mouseReleaseEvent(QMouseEvent * iEvent)
 {
-    Q_UNUSED(event);
-    PlayerActiveButton::PlayerActiveButtonPressed();
+  Q_UNUSED(iEvent);
+  CPlayerActiveButton::player_active_button_pressed();
 }
 
-void PlayerActiveButton::PlayerActiveButtonPressed() {
-    emit signalPlayerActiveButtonPressed();
+void CPlayerActiveButton::player_active_button_pressed()
+{
+  emit signal_player_active_button_pressed();
 }
 

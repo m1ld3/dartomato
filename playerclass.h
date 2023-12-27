@@ -4,71 +4,76 @@
 #include <QVector>
 #include <QObject>
 
-class PlayerClass : public QObject
+class CPlayerClass : public QObject
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    PlayerClass(int startval, int numberofsets, int numberoflegs, int playername);
-    int set_score(int& score);
-    void set_darts(QVector<QString> darts);
-    QVector<QVector<QString>> get_darts();
-    QVector<int> get_total_scores();
-    void undo();
-    void compute_averages(int numberofdarts);
-    void compute_checkout(int checkoutattempts, int success);
-    double get_avg1dart();
-    double get_avg3dart();
-    double get_checkout();
-    QVector<int> get_LegScores();
-    QVector<QVector<QString>> get_LegDarts();
-    QVector<QVector<int>> get_TotalScores();
-    QVector<QVector<QVector<QString>>> getThrownDartsOfAllLegs();
-    int get_remaining();
-    QVector<int> get_LegRemaining();
-    QVector<QVector<int>> get_RemainingOfAllLegs();
-    int get_legs();
-    int get_sets();
-    void update_history();
-    void resetScore();
-    void resetLegs();
-    int getPlayerName();
-    void undoStep();
-    QVector<int> getScoreLeg();
-    QString getCheckoutAttempts();
+
+  CPlayerClass(uint32_t iStartVal, uint32_t iNumberOfSets, uint32_t iNumberOfLegs, uint32_t iPlayerNumber);
+  uint32_t set_score(uint32_t iScore);
+  void set_darts(QVector<QString> iDarts);
+  QVector<QVector<QString>> get_darts() const;
+  QVector<uint32_t> get_total_scores_flat() const;
+  void undo();
+  void compute_averages(uint32_t iNumberOfDarts);
+  void compute_checkout(uint32_t iCheckoutAttempts, uint32_t iSuccess);
+  double get_avg1dart() const;
+  double get_avg3dart() const;
+  double get_checkout() const;
+  QVector<uint32_t> get_leg_scores() const;
+  QVector<QVector<QString>> get_leg_darts() const;
+  QVector<QVector<uint32_t>> get_total_scores() const;
+  QVector<QVector<QVector<QString>>> get_thrown_darts_of_all_legs() const;
+  uint32_t get_remaining() const;
+  QVector<uint32_t> get_leg_remaining() const;
+  QVector<QVector<uint32_t>> get_remaining_of_all_legs();
+  uint32_t get_legs() const;
+  uint32_t get_sets() const;
+  void update_history();
+  void reset_score();
+  void reset_legs();
+  uint32_t get_player_number() const;
+  void perform_undo_step();
+  QVector<uint32_t> get_score_leg() const;
+  QString get_checkout_attempts() const;
 
 public slots:
-    bool increase_setslegs();
+
+  bool increase_setslegs();
 
 signals:
-    void signalGameWon(int playername);
+
+  void signal_game_won(uint32_t iPlayerNumber);
 
 private:
-    int sets;   //  sets won
-    int legs;   //  legs won per set
-    int totallegs;  //  total legs won
-    int remaining;  //  current remaining points
-    double avg1dart;  //  1-dart average
-    double avg3dart;  //  3-dart average
-    double checkout;  //  checkout percentage
-    int CheckoutAttempts;  // checkout attempts
-    int Checkouts;  //  successful checkouts
-    int numberoflegs;  //  best of "numberoflegs" legs mode
-    int numberofsets;  //  best of "numberofsets" sets mode
-    int margin_legs, margin_sets;  //  required legs/sets to win for one set
-    int PlayerName;  //  instance of player
-    int StartVal;
-    int TotalDarts;  //  total amount of thrown darts
-    QVector<int> mScoresOfCurrentLeg;  //  all scores of current leg
-    QVector<int> mRemainingPointsOfCurrentLeg;  //  all intermediate remaining points of current leg
-    QVector<QVector<int>> mRemainingPointsOfAllLegs;
-    QVector<QVector<int>> mAllScoresOfAllLegs;  //  complete scoring history of the current game
-    QVector<int> mAllScoresFlat;  //  all scores in one vector
-    QVector<int> numberofdartsarray;
-    QVector<int> checkoutattemptarray;
-    QVector<int> checkoutarray;
-    QVector<QVector<QString>> mThrownDartsOfCurrentLeg;
-    QVector<QVector<QString>> mThrownDartsOfAllLegsFlat;
-    QVector<QVector<QVector<QString>>> mThrownDartsOfAllLegs;
+
+  uint32_t mSets;   // sets won
+  uint32_t mLegs;   // legs won per set
+  uint32_t mTotalLegs;  // total legs won
+  uint32_t mRemaining;  // current remaining points
+  double mAvg1Dart;  // 1-dart average
+  double mAvg3Dart;  // 3-dart average
+  double mCheckout;  // checkout percentage
+  uint32_t mCheckoutAttempts;  // checkout attempts
+  uint32_t mCheckouts;  // successful checkouts
+  uint32_t mNumberOfLegs;  // best of "numberoflegs" legs mode
+  uint32_t mNumberOfSets;  // best of "numberofsets" sets mode
+  uint32_t mMarginLegs, mMarginSets;  // required legs/sets to win per set/game
+  uint32_t mPlayerNumber;  // instance of player
+  uint32_t mStartVal;
+  uint32_t mTotalDarts;  // total amount of thrown darts
+  QVector<uint32_t> mScoresOfCurrentLeg;  // all scores of current leg
+  QVector<uint32_t> mRemainingPointsOfCurrentLeg;  // all intermediate remaining points of current leg
+  QVector<QVector<uint32_t>> mRemainingPointsOfAllLegs;
+  QVector<QVector<uint32_t>> mAllScoresOfAllLegs;  // complete scoring history of the current game
+  QVector<uint32_t> mAllScoresFlat;  // all scores in one vector
+  QVector<uint32_t> mNumberOfDartsArray;
+  QVector<uint32_t> mCheckoutAttemptsArray;
+  QVector<uint32_t> mCheckoutsArray;
+  QVector<QVector<QString>> mThrownDartsOfCurrentLeg;
+  QVector<QVector<QString>> mThrownDartsOfAllLegsFlat;
+  QVector<QVector<QVector<QString>>> mThrownDartsOfAllLegs;
 };
 
-#endif // PLAYERCLASS_H
+#endif  // PLAYERCLASS_H

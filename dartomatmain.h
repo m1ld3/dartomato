@@ -6,26 +6,31 @@
 #include "cricketmainwindow.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class DartomatMain; }
+namespace Ui
+{
+  class CDartomatMain;
+}
 QT_END_NAMESPACE
 
-class DartomatMain : public QMainWindow
+class CDartomatMain : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    DartomatMain(QWidget *parent = nullptr);
-    ~DartomatMain();
 
+  CDartomatMain(QWidget *parent = nullptr);
+  ~CDartomatMain();
 
 private slots:
-    void on_pushButton_startgame_clicked();
-    void on_comboBox_game_currentIndexChanged(const QString &arg1);
+
+  void on_pushButton_startgame_clicked();
 
 private:
-    Ui::DartomatMain *ui;
-    X01MainWindow *x01MainWindow;
-    CricketMainWindow * cricketMainWindow;
-    QSoundEffect gameon;
+
+  Ui::CDartomatMain * mUi;
+  CX01MainWindow * mX01MainWindow;
+  CCricketMainWindow * mCricketMainWindow;
+  QSoundEffect mGameOnSound;
 };
-#endif // DARTOMATMAIN_H
+
+#endif  // DARTOMATMAIN_H

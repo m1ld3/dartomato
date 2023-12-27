@@ -3,17 +3,22 @@
 
 #include <QLabel>
 
-class PlayerActiveButton : public QLabel
+class CPlayerActiveButton : public QLabel
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    PlayerActiveButton(QWidget *parent = nullptr);
-    void PlayerActiveButtonPressed();
+
+  CPlayerActiveButton(QWidget * iParent = nullptr);
+  void player_active_button_pressed();
 
 signals:
-    void signalPlayerActiveButtonPressed();
+
+  void signal_player_active_button_pressed();
+
 protected:
-    void mouseReleaseEvent(QMouseEvent *event) override;
+
+  void mouseReleaseEvent(QMouseEvent * iEvent) override;
 };
 
-#endif // PLAYERACTIVEBUTTON_H
+#endif  // PLAYERACTIVEBUTTON_H

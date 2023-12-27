@@ -9,50 +9,58 @@
 #include "dartboardview.h"
 #include <QSoundEffect>
 
-class DartBoard : public QWidget
+class CDartBoard : public QWidget
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public slots:
-    void signalSegmentPressed(int &value, QChar &type);
+
+  void signalSegmentPressed(uint32_t & iValue, QChar & iType);
+
 signals:
-    void signalSubmitButtonPressed2GameWindow(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
-    void signalSetScore2GroupBoxPlayer();
-    void signalEraseDart1();
-    void signalEraseDart2();
-    void signalEraseDart3();
-    void signalDisplayDart1(int val);
-    void signalDisplayDart2(int val);
-    void signalDisplayDart3(int val);
-    void signalDisplayScore(int score);
-    void signalUpdateFinishes(int score, int numberOfDarts);
-    void signalSetFocusToSubmitButton();
+
+  void signal_submit_button_pressed_to_game_window(uint32_t &iScore, uint32_t &iNumberOfDarts, uint32_t &iCheckoutAttempts, QVector<QString> iDarts);
+  void signal_set_score_to_group_box_player();
+  void signal_erase_dart1();
+  void signal_erase_dart2();
+  void signal_erase_dart3();
+  void signal_display_dart1(uint32_t iVal);
+  void signal_display_dart2(uint32_t iVal);
+  void signal_display_dart3(uint32_t iVal);
+  void signal_display_score(uint32_t iScore);
+  void signal_update_finishes(uint32_t iScore, uint32_t iNumberOfDarts);
+  void signal_set_focus_to_submit_button();
+
 public:
-    DartBoard(DartBoardView * iGraphicsViewDartBoard, int iStartVal, int iScore, bool iSingleIn, bool iSingleOut,
-              bool iDoubleIn, bool iDoubleOut, bool iMasterIn, bool iMasterOut);
-    void setScore(int value, QChar type, int checkout);
-    void initDartBoard(int score);
-    void performUndo();
-    void submitScore();
-    void displayScore(int score);
-    void displayDart1(int dartVal);
-    void displayDart2(int dartVal);
-    void displayDart3(int dartVal);
-    void eraseAllDarts();
-    void eraseDart1();
-    void eraseDart2();
-    void eraseDart3();
-    void setFinished();
-    void unsetFinished();
+
+  CDartBoard(CDartBoardView * iGraphicsViewDartBoard, uint32_t iStartVal, uint32_t iScore, bool iSingleIn, bool iSingleOut,
+             bool iDoubleIn, bool iDoubleOut, bool iMasterIn, bool iMasterOut);
+  void set_score(uint32_t iVal, QChar iType, uint32_t iCheckout);
+  void init_dartboard(uint32_t iScore);
+  void perform_undo();
+  void submit_score();
+  void display_score(uint32_t iScore);
+  void display_dart1(uint32_t iVal);
+  void display_dart2(uint32_t iVal);
+  void display_dart3(uint32_t iVal);
+  void erase_all_darts();
+  void erase_dart1();
+  void erase_dart2();
+  void erase_dart3();
+  void set_finished();
+  void unset_finished();
+
 private:
-    QGraphicsView* view;
-    int StartVal, Score, Counter, OldScore;
-    bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Stop, Busted, Finished;
-    QVector<int> Undo{0,0,0};
-    QVector<QString> Dart;
-    QVector<int> CheckoutAttempts;
-    QGraphicsScene *mscene;
-    QSoundEffect busted;
-    QSoundEffect gameshotsound;
+
+  QGraphicsView* mView;
+  uint32_t mStartVal, mScore, mCounter, mOldScore;
+  bool mSingleIn, mSingleOut, mDoubleIn, mDoubleOut, mMasterIn, mMasterOut, mStop, mBusted, mFinished;
+  QVector<uint32_t> mUndo{0,0,0};
+  QVector<QString> mDarts;
+  QVector<uint32_t> mCheckoutAttempts;
+  QGraphicsScene *mScene;
+  QSoundEffect mBustedSound;
+  QSoundEffect mGameShotSound;
 };
 
-#endif // DARTBOARD_H
+#endif  // DARTBOARD_H

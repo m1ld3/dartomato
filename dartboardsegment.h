@@ -4,35 +4,43 @@
 #include <QGraphicsItem>
 #include <QPainter>
 
-class DartboardSegment : public QObject, public QGraphicsPathItem
+class CDartBoardSegment : public QObject, public QGraphicsPathItem
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    DartboardSegment(const QPainterPath &path, const int value = 0, QString clr = "black", QChar type = 's', QGraphicsPathItem *parent = nullptr);
-    ~DartboardSegment();
+
+  CDartBoardSegment(const QPainterPath & iPath, const uint32_t iVal = 0, QString && iColor = "black", QChar iType = 's', QGraphicsPathItem * iParent = nullptr);
+  ~CDartBoardSegment() override = default;
+
 protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
-    virtual QPainterPath shape() const override;
-    QRectF boundingRect() const override;
+
+  virtual void mousePressEvent(QGraphicsSceneMouseEvent * iEvent) override;
+  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * iEvent) override;
+  virtual void hoverEnterEvent(QGraphicsSceneHoverEvent * iEvent) override;
+  virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent * iEvent) override;
+  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * iEvent) override;
+  virtual void paint(QPainter * iPainter, const QStyleOptionGraphicsItem * iOption, QWidget * iWidget = nullptr) override;
+  virtual QPainterPath shape() const override;
+  QRectF boundingRect() const override;
+
 private slots:
-    void segmentPressed();
+
+  void segment_pressed();
+
 signals:
-    void signalSegmentPressed(int &segmentval, QChar &type);
+
+  void signal_segment_pressed(uint32_t & iSegmentVal, QChar & iType);
+
 private:
-    int Value;
-    QString Color;
-    bool Pressed;
-    bool Hover;
-    bool Dragging;
-    QPainterPath Path;
-    QChar Type;
+
+  uint32_t mValue;
+  QString mColor;
+  bool mPressed;
+  bool mHover;
+  bool mDragging;
+  QPainterPath mPath;
+  QChar mType;
 };
 
-
-#endif // DARTBOARDSEGMENT_H
+#endif  // DARTBOARDSEGMENT_H

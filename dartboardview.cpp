@@ -1,16 +1,12 @@
 #include "dartboardview.h"
 
-DartBoardView::DartBoardView(QWidget * parent)
-    : QGraphicsView(parent)
+CDartBoardView::CDartBoardView(QWidget * iParent)
+  : QGraphicsView(iParent)
 {}
 
-
-
-void DartBoardView::resizeEvent(QResizeEvent *event)
+void CDartBoardView::resizeEvent(QResizeEvent * iEvent)
 {
-    fitInView(0, 0, 800, 800, Qt::KeepAspectRatio);
-    QGraphicsView::resizeEvent(event);
+  fitInView(0, 0, 800, 800, Qt::KeepAspectRatio);
+  QGraphicsView::resizeEvent(iEvent);
 }
 
-DartBoardView::~DartBoardView()
-{}

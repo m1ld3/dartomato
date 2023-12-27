@@ -4,40 +4,34 @@
 #include <QtWidgets/QGraphicsView>
 #include "chart.h"
 
-Chart::Chart(QGraphicsItem *parent, Qt::WindowFlags wFlags)
-    : QChart(QChart::ChartTypeCartesian, parent, wFlags)
+CChart::CChart(QGraphicsItem * iParent, Qt::WindowFlags iWindowFlags)
+  : QChart(QChart::ChartTypeCartesian, iParent, iWindowFlags)
 {
-    // Seems that QGraphicsView (QChartView) does not grab gestures.
-    // They can only be grabbed here in the QGraphicsWidget (QChart).
-    grabGesture(Qt::PanGesture);
-    grabGesture(Qt::PinchGesture);
+  // Seems that QGraphicsView (QChartView) does not grab gestures.
+  // They can only be grabbed here in the QGraphicsWidget (QChart).
+  grabGesture(Qt::PanGesture);
+  grabGesture(Qt::PinchGesture);
 }
 
-Chart::~Chart()
+bool CChart::sceneEvent(QEvent * iEvent)
 {
-
+  if (iEvent->type() == QEvent::Gesture) return gesture_event(static_cast<QGestureEvent *>(iEvent));
+  return QChart::event(iEvent);
 }
 
-//![1]
-bool Chart::sceneEvent(QEvent *event)
+bool CChart::gesture_event(QGestureEvent * iEvent)
 {
-    if (event->type() == QEvent::Gesture)
-        return gestureEvent(static_cast<QGestureEvent *>(event));
-    return QChart::event(event);
-}
+  if (QGesture * gesture = iEvent->gesture(Qt::PanGesture))
+  {
+    QPanGesture * pan = static_cast<QPanGesture*>(gesture);
+    QChart::scroll(-(pan->delta().x()), pan->delta().y());
+  }
 
-bool Chart::gestureEvent(QGestureEvent *event)
-{
-    if (QGesture *gesture = event->gesture(Qt::PanGesture)) {
-        QPanGesture *pan = static_cast<QPanGesture *>(gesture);
-        QChart::scroll(-(pan->delta().x()), pan->delta().y());
-    }
+  if (QGesture * gesture = iEvent->gesture(Qt::PinchGesture))
+  {
+    QPinchGesture * pinch = static_cast<QPinchGesture*>(gesture);
+    if (pinch->changeFlags() & QPinchGesture::ScaleFactorChanged) QChart::zoom(pinch->scaleFactor());
+  }
 
-    if (QGesture *gesture = event->gesture(Qt::PinchGesture)) {
-        QPinchGesture *pinch = static_cast<QPinchGesture *>(gesture);
-        if (pinch->changeFlags() & QPinchGesture::ScaleFactorChanged)
-            QChart::zoom(pinch->scaleFactor());
-    }
-
-    return true;
+  return true;
 }

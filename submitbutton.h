@@ -5,17 +5,22 @@
 #include <QPushButton>
 #include <QMouseEvent>
 
-class SubmitButton : public QPushButton
+class CSubmitButton : public QPushButton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    SubmitButton(const QString &text, QWidget *parent = nullptr);
-    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+
+  CSubmitButton(const QString &text, QWidget *parent = nullptr);
+  void mouseReleaseEvent(QMouseEvent *event) override;
+
 private slots:
-    void SubmitButtonPressed();
+
+  void submit_button_pressed();
+
 signals:
-    void signalSubmitButtonPressed();
+
+  void signal_submit_button_pressed();
 };
 
-#endif // SUBMITBUTTON_H
+#endif  // SUBMITBUTTON_H

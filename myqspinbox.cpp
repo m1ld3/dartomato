@@ -2,17 +2,17 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 
-MyQSpinBox::MyQSpinBox(QWidget *parent)
-    : QSpinBox(parent)
+CMyQSpinBox::CMyQSpinBox(QWidget * iParent)
+  : QSpinBox(iParent)
 {}
 
-void MyQSpinBox::keyPressEvent(QKeyEvent *event)
+void CMyQSpinBox::keyPressEvent(QKeyEvent * iEvent)
 {
-    event->ignore();
+  iEvent->ignore();
 }
 
-void MyQSpinBox::stepBy(int steps)
+void CMyQSpinBox::stepBy(int iSteps)
 {
-    QSpinBox::stepBy(steps);
-    lineEdit()->deselect();
+  QSpinBox::stepBy(iSteps);
+  lineEdit()->deselect();
 }

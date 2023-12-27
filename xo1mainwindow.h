@@ -6,51 +6,55 @@
 #include <QSoundEffect>
 #include "dartboard.h"
 
-namespace Ui {
-class X01MainWindow;
+namespace Ui
+{
+  class CX01MainWindow;
 }
 
-class X01MainWindow : public QMainWindow
+class CX01MainWindow : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit X01MainWindow(QWidget *parent = nullptr);
-    explicit X01MainWindow(QWidget *parent = nullptr, int numberofplayers = 1, int game = 501, int sets = 1, int legs = 1,
-                        bool singleIn = true, bool singleOut = false, bool doubleIn = false, bool doubleOut = false,
-                        bool masterIn = false, bool masterOut = false, bool offensive = false);
-    ~X01MainWindow();
-    void updatePlayer();
-    void closeEvent(QCloseEvent *event) override;
-    void setActivePlayer(int player);
+
+  explicit CX01MainWindow(QWidget * iParent = nullptr);
+  explicit CX01MainWindow(QWidget * iParent = nullptr, uint32_t iNumberOfPlayers = 1, uint32_t iGame = GAME_501, uint32_t iSets = 1, uint32_t iLegs = 1,
+                          bool iSingleIn = true, bool iSingleOut = false, bool iDoubleIn = false, bool iDoubleOut = false,
+                          bool iMasterIn = false, bool iMasterOut = false, bool iOffensive = false);
+  ~CX01MainWindow() override;
+  void update_player();
+  void closeEvent(QCloseEvent * iEvent) override;
+  void set_active_player(uint32_t iPlayer);
 
 private slots:
-    void signalUpdatePlayer(QString type);
-    void signalResetScores();
-    void signalGameWon(int playername);
-    void signalInactivatePlayers(int player, bool legstarted, bool setstarted);
-    void signalUpdateHistory();
-    void submitButtonPressedSlot(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
-    void on_submitButton_clicked();
-    void on_undoButton_clicked();
-    void displayScoreSlot(int score);
-    void displayDart1Slot(int val);
-    void displayDart2Slot(int val);
-    void displayDart3Slot(int val);
-    void eraseDart1Slot();
-    void eraseDart2Slot();
-    void eraseDart3Slot();
-    void updateFinishesSlot(int score, int numberOfDarts);
-    void setFocusToSubmitButtonSlot();
+
+  void signal_update_player(QString iType);
+  void signal_reset_scores();
+  void signal_game_won(uint32_t iPlayerNumber);
+  void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void signal_update_history();
+  void submit_button_pressed_slot(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, QVector<QString> iDarts);
+  void on_submit_button_clicked();
+  void on_undo_button_clicked();
+  void display_score_slot(uint32_t iScore);
+  void display_dart1_slot(uint32_t iVal);
+  void display_dart2_Slot(uint32_t iVal);
+  void display_dart3_slot(uint32_t iVal);
+  void erase_dart1_slot();
+  void erase_dart2_slot();
+  void erase_dart3_slot();
+  void update_finishes_slot(uint32_t iScore, uint32_t iNumberOfDarts);
+  void set_focus_to_submit_button_slot();
 
 private:
-    Ui::X01MainWindow *ui;
-    GroupBox_player *gb;
-    int NumberOfPlayers, Game, Sets, Legs, ActivePlayer;
-    bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Offensive;
-    QVector<GroupBox_player*> playerbox;
-    QVector<PlayerClass*> mplayer;
-    DartBoard * mDartBoard;
+
+  Ui::CX01MainWindow * mUi;
+  CX01GroupBox * mX01GroupBox;
+  uint32_t mNumberOfPlayers, mGame, mSets, mLegs, mActivePlayer;
+  bool mSingleIn, mSingleOut, mDoubleIn, mDoubleOut, mMasterIn, mMasterOut, mOffensive;
+  QVector<CX01GroupBox*> mPlayerBox;
+  QVector<CPlayerClass*> mPlayer;
+  CDartBoard * mDartBoard;
 };
 
-#endif // X01MAINWINDOW_H
+#endif  // X01MAINWINDOW_H

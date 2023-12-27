@@ -8,137 +8,143 @@
 #include <QPixmap>
 #include <QSoundEffect>
 
-class CricketMainWindow;
+class CCricketMainWindow;
 
-namespace Ui {
-class groupbox_cricket;
+namespace Ui
+{
+  class CCricketGroupBox;
 }
 
-class groupbox_cricket : public QGroupBox
+class CCricketGroupBox : public QGroupBox
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit groupbox_cricket(QWidget *parent = nullptr, int player_nr = 1, int sets = 1, int legs = 1,
-                              cricketclass *player = nullptr, bool cutthroat = false, bool offensive = false);
-    ~groupbox_cricket();
-    void setActive();
-    void setInactive();
-    void setFinished();
-    void unsetFinished();
-    void closeCricketInput();
-    QString getPlayerName();
-    void setSetBegin();
-    void unsetSetBegin();
-    void setLegBegin();
-    void unsetLegBegin();
-    bool hasBegunLeg();
-    bool hasBegunSet();
-    void updateHistory();
-    void resetLegs();
-    void reset();
-    static void setLegStarted();
-    static void setSetStarted();
-    static void unsetLegStarted();
-    static void unsetSetStarted();
-    int getSlot15();
-    int getSlot16();
-    int getSlot17();
-    int getSlot18();
-    int getSlot19();
-    int getSlot20();
-    int getSlot25();
-    void setSlot15(int hits);
-    void setSlot16(int hits);
-    void setSlot17(int hits);
-    void setSlot18(int hits);
-    void setSlot19(int hits);
-    void setSlot20(int hits);
-    void setSlot25(int hits);
-    void setExtra15(int points);
-    void setExtra16(int points);
-    void setExtra17(int points);
-    void setExtra18(int points);
-    void setExtra19(int points);
-    void setExtra20(int points);
-    void setExtra25(int points);
-    int getExtra15();
-    int getExtra16();
-    int getExtra17();
-    int getExtra18();
-    int getExtra19();
-    int getExtra20();
-    int getExtra25();
-    void setLabelExtra15(int points);
-    void setLabelExtra16(int points);
-    void setLabelExtra17(int points);
-    void setLabelExtra18(int points);
-    void setLabelExtra19(int points);
-    void setLabelExtra20(int points);
-    void setLabelExtra25(int points);
-    void setLabel15(int hits);
-    void setLabel16(int hits);
-    void setLabel17(int hits);
-    void setLabel18(int hits);
-    void setLabel19(int hits);
-    void setLabel20(int hits);
-    void setLabel25(int hits);
-    int getScore();
-    void setLegHistory();
-    void increaseExtra15(int points);
-    void increaseExtra16(int points);
-    void increaseExtra17(int points);
-    void increaseExtra18(int points);
-    void increaseExtra19(int points);
-    void increaseExtra20(int points);
-    void increaseExtra25(int points);
-    void setScore();
-    void updateLabels();
-    void updateDarts(QVector<QString> darts);
-    void playFailSounds();
-    void setLcdLegs();
-    void performUndo();
+
+  explicit CCricketGroupBox(QWidget * iParent = nullptr, uint32_t iPlayerNumber = 1, uint32_t iSets = 1, uint32_t iLegs = 1,
+                            CCricketClass *iPlayer = nullptr, bool iCutThroat = false, bool iOffensive = false);
+  ~CCricketGroupBox() override;
+  void set_active();
+  void set_inactive();
+  void set_finished();
+  void unset_finished();
+  void close_cricket_input();
+  QString get_player_number() const;
+  void set_set_begin();
+  void unset_set_begin();
+  void set_leg_begin();
+  void unset_leg_begin();
+  bool has_begun_leg() const;
+  bool has_begun_set() const;
+  void update_history();
+  void reset_legs();
+  void reset();
+  static void set_leg_started();
+  static void set_set_started();
+  static void unset_leg_started();
+  static void unset_set_started();
+  uint32_t get_slot15() const;
+  uint32_t get_slot16() const;
+  uint32_t get_slot17() const;
+  uint32_t get_slot18() const;
+  uint32_t get_slot19() const;
+  uint32_t get_slot20() const;
+  uint32_t get_slot25() const;
+  void set_slot15(uint32_t iHits);
+  void set_slot16(uint32_t iHits);
+  void set_slot17(uint32_t iHits);
+  void set_slot18(uint32_t iHits);
+  void set_slot19(uint32_t iHits);
+  void set_slot20(uint32_t iHits);
+  void set_slot25(uint32_t iHits);
+  void set_extra15(uint32_t iPoints);
+  void set_extra16(uint32_t iPoints);
+  void set_extra17(uint32_t iPoints);
+  void set_extra18(uint32_t iPoints);
+  void set_extra19(uint32_t iPoints);
+  void set_extra20(uint32_t iPoints);
+  void set_extra25(uint32_t iPoints);
+  uint32_t get_extra15() const;
+  uint32_t get_extra16() const;
+  uint32_t get_extra17() const;
+  uint32_t get_extra18() const;
+  uint32_t get_extra19() const;
+  uint32_t get_extra20() const;
+  uint32_t get_extra25() const;
+  void set_label_extra15(uint32_t iPoints);
+  void set_label_extra16(uint32_t iPoints);
+  void set_label_extra17(uint32_t iPoints);
+  void set_label_extra18(uint32_t iPoints);
+  void set_label_extra19(uint32_t iPoints);
+  void set_label_extra20(uint32_t iPoints);
+  void set_label_extra25(uint32_t iPoints);
+  void set_label15(uint32_t iHits);
+  void set_label16(uint32_t iHits);
+  void set_label17(uint32_t iHits);
+  void set_label18(uint32_t iHits);
+  void set_label19(uint32_t iHits);
+  void set_label20(uint32_t iHits);
+  void set_label25(uint32_t iHits);
+  uint32_t get_score() const;
+  void set_leg_history();
+  void increase_extra15(uint32_t iPoints);
+  void increase_extra16(uint32_t iPoints);
+  void increase_extra17(uint32_t iPoints);
+  void increase_extra18(uint32_t iPoints);
+  void increase_extra19(uint32_t iPoints);
+  void increase_extra20(uint32_t iPoints);
+  void increase_extra25(uint32_t iPoints);
+  void set_score();
+  void update_labels();
+  void update_darts(QVector<QString> && iDarts);
+  void play_fail_sounds();
+  void set_lcd_legs();
+  void perform_undo();
 
 signals:
-    void signalUpdatePlayer(QString type);
-    void signalResetScores();
-    void signalInactivatePlayers(int player, bool legstarted, bool setstarted);
-    void signalUpdateHistory();
+
+  void signal_update_player(QString iType);
+  void signal_reset_scores();
+  void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void signal_update_history();
 
 public slots:
-    void on_pushButton_name_clicked();
-    void on_pushButton_score_clicked();
-    void okButtonClicked(QString& name);
-    void signalSubmitButtonPressed2(int &numberofdarts, QVector<QString> darts);
-    void signalPlayerActiveButtonPressed();
-    void on_pushButton_undo_clicked();
-    void signalSetLabelSlot(int hits, int slot);
+
+  void on_pushButton_name_clicked();
+  void on_pushButton_score_clicked();
+  void ok_button_clicked(QString && iName);
+  void signal_cricket_submit_button_pressed(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
+  void signal_player_active_button_pressed();
+  void on_pushButton_undo_clicked();
+  void signal_set_label_slot(uint32_t iHits, uint32_t iSlot);
 
 private:
-    Ui::groupbox_cricket *ui;
-    QString playername;
-    DialogNameinput *dn;
-    cricketinput *scoreinput;
-    cricketclass *Player;
-    int Player_Nr, Sets, Legs, Score;
-    bool Active, Finished, SetBegin, LegBegin, CutThroat, Offensive;
-    static bool legstarted;
-    static bool setstarted;
-    QPixmap pix = QPixmap(":/resources/img/darts.svg");
-    CricketMainWindow* mGameWindow;
-    int mTotalHits;
-    int mSlot15, mSlot16, mSlot17, mSlot18, mSlot19, mSlot20, mSlot25,
-    mExtra15, mExtra16, mExtra17, mExtra18, mExtra19, mExtra20, mExtra25;
-    QSoundEffect sound1;
-    QSoundEffect sound2;
-    QSoundEffect sound3;
-    QSoundEffect sound4;
-    QSoundEffect sound5;
-    QSoundEffect sound6;
-    QSoundEffect sound7;
-    QSoundEffect sound8;
-    QSoundEffect sound9;
-    QSoundEffect sound10;
-    QSoundEffect sound11;
+
+  Ui::CCricketGroupBox * mUi;
+  QString mPlayerName;
+  CDialogNameInput *mDialogNameInput;
+  CCricketInput *mScoreInput;
+  CCricketClass *mPlayer;
+  uint32_t mPlayerNumber, mSets, mLegs, mScore;
+  bool mActive, mFinished, mSetBegin, mLegBegin, mCutThroat, mOffensive;
+  static bool mLegStarted;
+  static bool mSetStarted;
+  QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
+  CCricketMainWindow* mGameWindow;
+  uint32_t mTotalHits;
+  uint32_t mSlot15, mSlot16, mSlot17, mSlot18, mSlot19, mSlot20, mSlot25,
+  mExtra15, mExtra16, mExtra17, mExtra18, mExtra19, mExtra20, mExtra25;
+  QSoundEffect mSound1;
+  QSoundEffect mSound2;
+  QSoundEffect mSound3;
+  QSoundEffect mSound4;
+  QSoundEffect mSound5;
+  QSoundEffect mSound6;
+  QSoundEffect mSound7;
+  QSoundEffect mSound8;
+  QSoundEffect mSound9;
+  QSoundEffect mSound10;
+  QSoundEffect mSound11;
 };
-#endif // GROUPBOX_CRICKET_H
+
+#endif  // GROUPBOX_CRICKET_H

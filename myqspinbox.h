@@ -3,13 +3,15 @@
 
 #include <QSpinBox>
 
-class MyQSpinBox : public QSpinBox
+class CMyQSpinBox : public QSpinBox
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    explicit MyQSpinBox(QWidget *parent = nullptr);
-    void keyPressEvent(QKeyEvent *event) override;
-    void stepBy(int steps) override;
+
+  explicit CMyQSpinBox(QWidget * iParent = nullptr);
+  void keyPressEvent(QKeyEvent * iEvent) override;
+  void stepBy(int iSteps) override;
 };
 
-#endif // MYQSPINBOX_H
+#endif  // MYQSPINBOX_H

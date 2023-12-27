@@ -6,64 +6,68 @@
 #include <QSoundEffect>
 #include <QGridLayout>
 
-class groupbox_cricket;
+class CCricketGroupBox;
 
-namespace Ui {
-class CricketMainWindow;
+namespace Ui
+{
+  class CCricketMainWindow;
 }
 
-class CricketMainWindow : public QMainWindow
+class CCricketMainWindow : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit CricketMainWindow(QWidget *parent = nullptr);
-    explicit CricketMainWindow(QWidget *parent = nullptr, int numberofplayers = 1, int sets = 1, int legs = 1, bool cutthroat = false, bool offensive = false);
-    ~CricketMainWindow();
-    void updatePlayer();
-    void closeEvent(QCloseEvent *event) override;
-    void setActivePlayer(int player);
-    bool isSlot15free(int player);
-    bool isSlot16free(int player);
-    bool isSlot17free(int player);
-    bool isSlot18free(int player);
-    bool isSlot19free(int player);
-    bool isSlot20free(int player);
-    bool isSlot25free(int player);
-    bool isScoreBigger(int score);
-    bool isScoreSmaller(int score);
-    void increaseScore15(int points);
-    void increaseScore16(int points);
-    void increaseScore17(int points);
-    void increaseScore18(int points);
-    void increaseScore19(int points);
-    void increaseScore20(int points);
-    void increaseScore25(int points);
-    QVector<int> computeExtra15s(int points, int player);
-    QVector<int> computeExtra16s(int points, int player);
-    QVector<int> computeExtra17s(int points, int player);
-    QVector<int> computeExtra18s(int points, int player);
-    QVector<int> computeExtra19s(int points, int player);
-    QVector<int> computeExtra20s(int points, int player);
-    QVector<int> computeExtra25s(int points, int player);
-    void setScores();
-    void updateLabels();
-    void updateDarts(int player);
+
+  explicit CCricketMainWindow(QWidget *iParent = nullptr);
+  explicit CCricketMainWindow(QWidget *iParent = nullptr, uint32_t iNumberOfPlayers = 1, uint32_t iSets = 1, uint32_t iLegs = 1, bool iCutThroat = false, bool iOffensive = false);
+  ~CCricketMainWindow() override;
+  void update_player();
+  void closeEvent(QCloseEvent * iEvent) override;
+  void set_active_player(uint32_t iPlayer);
+  bool is_slot15_free(uint32_t iPlayer) const;
+  bool is_slot16_free(uint32_t iPlayer) const;
+  bool is_slot17_free(uint32_t iPlayer) const;
+  bool is_slot18_free(uint32_t iPlayer) const;
+  bool is_slot19_free(uint32_t iPlayer) const;
+  bool is_slot20_free(uint32_t iPlayer) const;
+  bool is_slot25_free(uint32_t iPlayer) const;
+  bool is_score_bigger(uint32_t iScore) const;
+  bool is_score_smaller(uint32_t iScore) const;
+  void increase_score15(uint32_t iPoints);
+  void increase_score16(uint32_t iPoints);
+  void increase_score17(uint32_t iPoints);
+  void increase_score18(uint32_t iPoints);
+  void increase_score19(uint32_t iPoints);
+  void increase_score20(uint32_t iPoints);
+  void increase_score25(uint32_t iPoints);
+  QVector<uint32_t> compute_extra15s(uint32_t iPoints, uint32_t iPlayer);
+  QVector<uint32_t> compute_extra16s(uint32_t iPoints, uint32_t iPlayer);
+  QVector<uint32_t> compute_extra17s(uint32_t iPoints, uint32_t iPlayer);
+  QVector<uint32_t> compute_extra18s(uint32_t iPoints, uint32_t iPlayer);
+  QVector<uint32_t> compute_extra19s(uint32_t iPoints, uint32_t iPlayer);
+  QVector<uint32_t> compute_extra20s(uint32_t iPoints, uint32_t iPlayer);
+  QVector<uint32_t> compute_extra25s(uint32_t iPoints, uint32_t iPlayer);
+  void set_scores();
+  void update_labels();
+  void update_darts(uint32_t iPlayer);
 
 private slots:
-    void signalUpdatePlayer(QString type);
-    void signalResetScores();
-    void signalGameWon(int playername);
-    void signalInactivatePlayers(int player, bool legstarted, bool setstarted);
-    void signalUpdateHistory();
+
+  void signal_update_player(QString iType);
+  void signal_reset_scores();
+  void signal_game_won(uint32_t iPlayerNumber);
+  void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void signal_update_history();
 
 private:
-    Ui::CricketMainWindow *ui;
-    groupbox_cricket *gbc;
-    int NumberOfPlayers, Sets, Legs, ActivePlayer;
-    bool CutThroat, Offensive;
-    QVector<groupbox_cricket*> cricketbox;
-    QVector<cricketclass*> mcricketplayer;
+
+  Ui::CCricketMainWindow *mUi;
+  CCricketGroupBox *mGbc;
+  uint32_t mNumberOfPlayers, mSets, mLegs, mActivePlayer;
+  bool mCutThroat, mOffensive;
+  QVector<CCricketGroupBox*> mCricketBox;
+  QVector<CCricketClass*> mCricketPlayer;
 };
 
-#endif // CRICKETMAINWINDOW_H
+#endif  // CRICKETMAINWINDOW_H

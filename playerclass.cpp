@@ -2,7 +2,7 @@
 #include <cmath>
 #include <QDebug>
 
-PlayerClass::PlayerClass(int startval, int setnumber, int legnumber, int playername) :
+CPlayerClass::CPlayerClass(int startval, int setnumber, int legnumber, int playername) :
     sets(0), legs(0), totallegs(0), remaining(startval), avg1dart(0.0), avg3dart(0.0),
     checkout(0.0), CheckoutAttempts(0), Checkouts(0), numberoflegs(legnumber),
     numberofsets(setnumber), margin_legs(std::ceil(numberoflegs/2.0)),
@@ -16,7 +16,7 @@ PlayerClass::PlayerClass(int startval, int setnumber, int legnumber, int playern
     compute_checkout(0, 0);
 }
 
-bool PlayerClass::increase_setslegs() {
+bool CPlayerClass::increase_setslegs() {
     legs += 1;
     totallegs += 1;
     bool temp = false;
@@ -26,12 +26,12 @@ bool PlayerClass::increase_setslegs() {
         temp = true;
     }
     if (sets == margin_sets) {
-        emit signalGameWon(PlayerName);
+        emit signal_game_won(PlayerName);
     }
     return temp;
 }
 
-int PlayerClass::set_score(int& score) {
+int CPlayerClass::set_score(int& score) {
     mScoresOfCurrentLeg.push_back(score);
     mAllScoresFlat.push_back(score);
     remaining -= score;
@@ -39,29 +39,29 @@ int PlayerClass::set_score(int& score) {
     return remaining;
 }
 
-void PlayerClass::set_darts(QVector<QString> darts)
+void CPlayerClass::set_darts(QVector<QString> darts)
 {
     mThrownDartsOfCurrentLeg.append(darts);
     mThrownDartsOfAllLegsFlat.append(darts);
 }
 
-QVector<QVector<QString>> PlayerClass::get_darts()
+QVector<QVector<QString>> CPlayerClass::get_darts()
 {
     return mThrownDartsOfAllLegsFlat;
 }
 
-QVector<int> PlayerClass::get_total_scores()
+QVector<int> CPlayerClass::get_total_scores()
 {
     return mAllScoresFlat;
 }
 
-void PlayerClass::update_history() {
+void CPlayerClass::update_history() {
     mAllScoresOfAllLegs.push_back(mScoresOfCurrentLeg);
     mThrownDartsOfAllLegs.push_back(mThrownDartsOfCurrentLeg);
     mRemainingPointsOfAllLegs.push_back(mRemainingPointsOfCurrentLeg);
 }
 
-void PlayerClass::resetScore()
+void CPlayerClass::reset_score()
 {
     remaining = StartVal;
     mRemainingPointsOfCurrentLeg = {remaining};
@@ -69,17 +69,17 @@ void PlayerClass::resetScore()
     mThrownDartsOfCurrentLeg = {};
 }
 
-void PlayerClass::resetLegs()
+void CPlayerClass::reset_legs()
 {
     legs = 0;
 }
 
-int PlayerClass::getPlayerName()
+int CPlayerClass::get_player_number()
 {
     return PlayerName;
 }
 
-void PlayerClass::undoStep() {
+void CPlayerClass::perform_undo_step() {
     mThrownDartsOfCurrentLeg.pop_back();
     mRemainingPointsOfCurrentLeg.pop_back();
     remaining = mRemainingPointsOfCurrentLeg.back();
@@ -107,19 +107,19 @@ void PlayerClass::undoStep() {
     avg3dart = 3 * avg1dart;
 }
 
-QVector<int> PlayerClass::getScoreLeg()
+QVector<int> CPlayerClass::get_score_leg()
 {
     return mScoresOfCurrentLeg;
 }
 
-QString PlayerClass::getCheckoutAttempts()
+QString CPlayerClass::get_checkout_attempts()
 {
     return QString::number(Checkouts) + " / " + QString::number(CheckoutAttempts);
 }
 
-void PlayerClass::undo() {
+void CPlayerClass::undo() {
     if (mScoresOfCurrentLeg.size() > 0) {
-        undoStep();
+        perform_undo_step();
     } else if (mAllScoresOfAllLegs.size() > 0) {
         mScoresOfCurrentLeg = mAllScoresOfAllLegs.back();
         mThrownDartsOfCurrentLeg = mThrownDartsOfAllLegs.back();
@@ -133,21 +133,21 @@ void PlayerClass::undo() {
                     totallegs -= 1;
                     legs = margin_legs -1;
                     sets -= 1;
-                    undoStep();
+                    perform_undo_step();
                 } else {
                     totallegs -= 1;
                     legs -= 1;
-                    undoStep();
+                    perform_undo_step();
                 }
             } else {
-                undoStep();
+                perform_undo_step();
             }
             //mRemainingPointsOfCurrentLeg.pop_back();
         }
     }
 }
 
-void PlayerClass::compute_averages(int numberofdarts) {
+void CPlayerClass::compute_averages(int numberofdarts) {
     TotalDarts += numberofdarts;
     numberofdartsarray.push_back(numberofdarts);
     double n = static_cast<double>(TotalDarts);
@@ -159,7 +159,7 @@ void PlayerClass::compute_averages(int numberofdarts) {
     avg3dart = 3 * avg1dart;
 }
 
-void PlayerClass::compute_checkout(int checkoutattempts, int success) {
+void CPlayerClass::compute_checkout(int checkoutattempts, int success) {
     CheckoutAttempts += checkoutattempts;
     checkoutattemptarray.push_back(checkoutattempts);
     checkoutarray.push_back(success);
@@ -171,59 +171,59 @@ void PlayerClass::compute_checkout(int checkoutattempts, int success) {
     }
 }
 
-double PlayerClass::get_avg1dart() {
+double CPlayerClass::get_avg1dart() {
     return avg1dart;
 }
 
-double PlayerClass::get_avg3dart() {
+double CPlayerClass::get_avg3dart() {
     return avg3dart;
 }
 
-double PlayerClass::get_checkout() {
+double CPlayerClass::get_checkout() {
     return checkout;
 }
 
-QVector<int> PlayerClass::get_LegScores()
+QVector<int> CPlayerClass::get_leg_scores()
 {
     return mScoresOfCurrentLeg;
 }
 
-QVector<QVector<QString>> PlayerClass::get_LegDarts()
+QVector<QVector<QString>> CPlayerClass::get_LegDarts()
 {
     return mThrownDartsOfCurrentLeg;
 }
 
-QVector<QVector<int>> PlayerClass::get_TotalScores()
+QVector<QVector<int>> CPlayerClass::get_TotalScores()
 {
     return mAllScoresOfAllLegs;
 }
 
-QVector<QVector<QVector<QString>>> PlayerClass::getThrownDartsOfAllLegs()
+QVector<QVector<QVector<QString>>> CPlayerClass::getThrownDartsOfAllLegs()
 {
     return mThrownDartsOfAllLegs;
 }
 
-int PlayerClass::get_remaining()
+int CPlayerClass::get_remaining()
 {
     return remaining;
 }
 
-QVector<int> PlayerClass::get_LegRemaining()
+QVector<int> CPlayerClass::get_leg_remaining()
 {
     return mRemainingPointsOfCurrentLeg;
 }
 
-QVector<QVector<int> > PlayerClass::get_RemainingOfAllLegs()
+QVector<QVector<int> > CPlayerClass::get_remaining_of_all_legs()
 {
     return mRemainingPointsOfAllLegs;
 }
 
-int PlayerClass::get_legs()
+int CPlayerClass::get_legs()
 {
     return legs;
 }
 
-int PlayerClass::get_sets()
+int CPlayerClass::get_sets()
 {
     return sets;
 }

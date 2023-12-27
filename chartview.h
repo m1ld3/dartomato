@@ -5,14 +5,16 @@
 #include <QtWidgets/QRubberBand>
 
 
-class ChartView : public QChartView
+class CChartView : public QChartView
 {
 public:
-    ChartView(QWidget *parent = 0);
+
+  CChartView(QWidget *iParent = 0);
 
 protected:
-    void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+
+  void wheelEvent(QWheelEvent *iEvent) override;
+  void keyPressEvent(QKeyEvent *iEvent) override;
 };
 
 #endif

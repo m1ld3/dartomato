@@ -7,51 +7,57 @@
 #include "chart.h"
 #include "chartview.h"
 
-class Callout;
+class CCallout;
 
-namespace Ui {
-class StatsWindow;
+namespace Ui
+{
+  class CStatsWindow;
 }
 
-class StatsWindow : public QDialog
+class CStatsWindow : public QDialog
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit StatsWindow(QWidget *parent = nullptr);
-    ~StatsWindow();
-    void setLabel1DartAvg(double avg);
-    void setLabel3DartAvg(double avg);
-    void setLabelCheckout(double checkout);
-    void setLabelLeg1DartAvg(double avg);
-    void setLabelLeg3DartAvg(double avg);
-    void setLabelBestLeg(int numberOfDarts);
-    void setLabelWorstLeg(int numberOfDarts);
-    void setLabelLegAvg(double avg);
-    void setLabelCheckoutAttempts(QString attempts);
-    void setLabelHighestCheckout(int checkout);
-    void setLabel180s(int count);
-    void setLabel160s(int count);
-    void setLabel140s(int count);
-    void setLabel120s(int count);
-    void setLabel100s(int count);
-    void setLabel80s(int count);
-    void setLabel60s(int count);
-    void setLabel40s(int count);
-    void setLabel20s(int count);
-    void setLabel0s(int count);
-    void setChart(Chart *chart1, Chart *chart2);
-    void setText(QString text);
-    void clearText();
-    void initLegSelector(int numberOfLegs);
+
+  explicit CStatsWindow(QWidget * iParent = nullptr);
+  ~CStatsWindow() override;
+  void set_label_1dart_avg(double iAvg);
+  void set_label_3dart_avg(double iAvg);
+  void set_label_checkout(double iCheckout);
+  void set_label_leg_1dart_avg(double iAvg);
+  void set_label_leg_3dart_avg(double iAvg);
+  void set_label_best_leg(uint32_t iNumberOfDarts);
+  void set_label_worst_leg(uint32_t iNumberOfDarts);
+  void set_label_leg_avg(double iAvg);
+  void set_label_checkout_attempts(QString iAttempts);
+  void set_label_highest_checkout(uint32_t iCheckout);
+  void set_label_180s(uint32_t iCount);
+  void set_label_160s(uint32_t iCount);
+  void set_label_140s(uint32_t iCount);
+  void set_label_120s(uint32_t iCount);
+  void set_label_100s(uint32_t iCount);
+  void set_label_80s(uint32_t iCount);
+  void set_label_60s(uint32_t iCount);
+  void set_label_40s(uint32_t iCount);
+  void set_label_20s(uint32_t iCount);
+  void set_label_0s(uint32_t iCount);
+  void set_chart(CChart *iChart1, CChart *iChart2);
+  void set_text(QString iText);
+  void clear_text();
+  void init_leg_selector(uint32_t iNumberOfLegs);
+
 signals:
-    void signalUpdateLegHistory(int index, StatsWindow* stats);
+
+  void signal_update_leg_history(uint32_t iIndex, CStatsWindow * iStats);
 
 private slots:
-    void on_legSelector_currentIndexChanged(int index);
+
+  void on_leg_selector_current_index_changed(uint32_t iIndex);
 
 private:
-    Ui::StatsWindow *ui;
+
+  Ui::CStatsWindow *mUi;
 };
 
-#endif // STATSWINDOW_H
+#endif  // STATSWINDOW_H

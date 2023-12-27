@@ -6,584 +6,587 @@
 #include <QDebug>
 #include <QMessageBox>
 
-CricketMainWindow::CricketMainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::CricketMainWindow)
+CCricketMainWindow::CCricketMainWindow(QWidget * iParent)
+  : QMainWindow(iParent)
+  , mUi(new Ui::CCricketMainWindow)
 {
-    ui->setupUi(this);
-    setAttribute(Qt::WA_DeleteOnClose);
+  mUi->setupUi(this);
+  setAttribute(Qt::WA_DeleteOnClose);
 }
 
-CricketMainWindow::CricketMainWindow(QWidget *parent, int numberofplayers, int sets, int legs, bool cutthroat, bool offensive)
-    : QMainWindow(parent), ui(new Ui::CricketMainWindow), NumberOfPlayers(numberofplayers), Sets(sets), Legs(legs)
-    , CutThroat(cutthroat), Offensive(offensive), mcricketplayer(NumberOfPlayers, nullptr)
+CCricketMainWindow::CCricketMainWindow(QWidget * iParent, uint32_t iNumberOfPlayers, uint32_t iSets, uint32_t iLegs, bool iCutThroat, bool iOffensive)
+  : QMainWindow(iParent), mUi(new Ui::CCricketMainWindow), mNumberOfPlayers(iNumberOfPlayers), mSets(iSets), mLegs(iLegs),
+    mCutThroat(iCutThroat), mOffensive(iOffensive), mCricketPlayer(mNumberOfPlayers, nullptr)
 {
-    ui->setupUi(this);
-    QWidget::setWindowTitle("Cricket");
-    for (int i = 0;i < NumberOfPlayers; i++)
-    {
-        mcricketplayer[i] = new cricketclass(this, sets,legs, i+1, CutThroat);
-        cricketbox.push_back(new groupbox_cricket(this, i+1, Sets, Legs, mcricketplayer[i], CutThroat, Offensive));
-        cricketbox[i]->setAttribute(Qt::WA_DeleteOnClose);
-        cricketbox[i]->setInactive();
-        ui->gridLayoutCricket->addWidget(cricketbox[i],i<4 ? 0 : 1,i%4);
-        connect(cricketbox[i],SIGNAL(signalUpdatePlayer(QString)),this,SLOT(signalUpdatePlayer(QString)));
-        connect(cricketbox[i],SIGNAL(signalResetScores()),this,SLOT(signalResetScores()));
-        connect(mcricketplayer[i],SIGNAL(signal_game_won(int)),this,SLOT(signalGameWon(int)));
-        connect(cricketbox[i],SIGNAL(signalInactivatePlayers(int, bool, bool)),this,SLOT(signalInactivatePlayers(int, bool, bool)));
-        connect(cricketbox[i],SIGNAL(signalUpdateHistory()),this,SLOT(signalUpdateHistory()));
-    }
-    ActivePlayer = 0;
-    cricketbox[ActivePlayer]->setSetBegin();
-    cricketbox[ActivePlayer]->setLegBegin();
-    cricketbox[ActivePlayer]->setActive();
+  mUi->setupUi(this);
+  QWidget::setWindowTitle("Cricket");
+  for (uint32_t i = 0;i < mNumberOfPlayers; i++)
+  {
+    mCricketPlayer[i] = new CCricketClass(this, iSets, iLegs, i+1, mCutThroat);
+    mCricketBox.push_back(new CCricketGroupBox(this, i+1, mSets, mLegs, mCricketPlayer[i], mCutThroat, mOffensive));
+    mCricketBox[i]->setAttribute(Qt::WA_DeleteOnClose);
+    mCricketBox[i]->set_inactive();
+    mUi->gridLayoutCricket->addWidget(mCricketBox[i], i<4 ? 0 : 1, i%4);
+    connect(mCricketBox[i], SIGNAL(signal_update_player(QString)), this,SLOT(signal_update_player(QString)));
+    connect(mCricketBox[i], SIGNAL(signal_reset_scores()), this, SLOT(signal_reset_scores()));
+    connect(mCricketPlayer[i], SIGNAL(signal_game_won(int)), this, SLOT(signal_game_won(int)));
+    connect(mCricketBox[i], SIGNAL(signal_inactivate_players(int, bool, bool)), this, SLOT(signal_inactivate_players(int, bool, bool)));
+    connect(mCricketBox[i], SIGNAL(signal_update_history()), this, SLOT(signal_update_history()));
+  }
+  mActivePlayer = 0;
+  mCricketBox[mActivePlayer]->set_set_begin();
+  mCricketBox[mActivePlayer]->set_leg_begin();
+  mCricketBox[mActivePlayer]->set_active();
 }
 
-CricketMainWindow::~CricketMainWindow()
+CCricketMainWindow::~CCricketMainWindow()
 {
-    delete ui;
-    for (auto player : mcricketplayer)
-    {
-        delete player;
-    }
-    for (auto box : cricketbox)
-    {
-        delete box;
-    }
+  delete mUi;
+  for (auto player : mCricketPlayer)
+  {
+    delete player;
+  }
+  for (auto box : mCricketBox)
+  {
+    delete box;
+  }
 }
 
-void CricketMainWindow::closeEvent(QCloseEvent *event)
+void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
 {
-    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Quit game",
-                                                                tr("Are you sure you want to quit the game?\n"),
-                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                                QMessageBox::No);
-    if (resBtn != QMessageBox::Yes)
+  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Quit game",
+                                                             tr("Are you sure you want to quit the game?\n"),
+                                                             QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                             QMessageBox::No);
+  if (resBtn != QMessageBox::Yes)
+  {
+    iEvent->ignore();
+  }
+  else
+  {
+    iEvent->accept();
+  }
+}
+
+void CCricketMainWindow::set_active_player(uint32_t iPlayer)
+{
+  mActivePlayer = iPlayer;
+}
+
+void CCricketMainWindow::update_player()
+{
+  mActivePlayer = (mActivePlayer + 1) % mNumberOfPlayers;
+}
+
+void CCricketMainWindow::signal_update_player(QString iType)
+{
+  if (iType == "default")
+  {
+    update_player();
+    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
     {
-        event->ignore();
+      mCricketBox[i]->set_inactive();
+    }
+    mCricketBox[mActivePlayer]->set_active();
+  }
+  else if (iType == "leg")
+  {
+    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    {
+      if (mCricketBox[i]->has_begun_leg())
+      {
+        mCricketBox[i]->unset_leg_begin();
+        mActivePlayer = i;
+        update_player();
+        for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+        {
+          mCricketBox[i]->set_inactive();
+        }
+        mCricketBox[mActivePlayer]->set_active();
+        mCricketBox[mActivePlayer]->set_leg_begin();
+        break;
+      }
+    }
+  }
+  else if (iType == "set")
+  {
+    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    {
+      if (mCricketBox[i]->has_begun_set())
+      {
+        mCricketBox[i]->unset_set_begin();
+        mActivePlayer = i;
+        update_player();
+        for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+        {
+          mCricketBox[i]->set_inactive();
+          mCricketBox[i]->unset_leg_begin();
+        }
+        mCricketBox[mActivePlayer]->set_active();
+        mCricketBox[mActivePlayer]->set_leg_begin();
+        mCricketBox[mActivePlayer]->set_set_begin();
+        break;
+      }
+    }
+    for (auto box: mCricketBox)
+    {
+      box->reset_legs();
+      box->set_lcd_legs();
+    }
+  }
+}
+
+void CCricketMainWindow::signal_reset_scores()
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->reset();
+  }
+}
+
+void CCricketMainWindow::signal_game_won(uint32_t iPlayerNumber)
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->set_finished();
+  }
+
+  mCricketBox[iPlayerNumber]->close_cricket_input();
+  QString name = mCricketBox[iPlayerNumber]->get_player_number();
+  QString text = name + " has won the game. Congratulations!. ";
+  QMessageBox::about(this,"Game finished", text);
+}
+
+void CCricketMainWindow::signal_inactivate_players(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->set_inactive();
+  }
+  set_active_player(iPlayerNumber);
+
+  if (!iLegStarted)
+  {
+    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    {
+      mCricketBox[i]->unset_leg_begin();
+    }
+    mCricketBox[iPlayerNumber]->set_leg_begin();
+  }
+
+  if (!iSetStarted)
+  {
+    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    {
+      mCricketBox[i]->unset_set_begin();
+      mCricketBox[i]->unset_leg_begin();
+    }
+    mCricketBox[iPlayerNumber]->set_leg_begin();
+    mCricketBox[iPlayerNumber]->set_set_begin();
+  }
+}
+
+void CCricketMainWindow::signal_update_history()
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->update_history();
+  }
+}
+
+bool CCricketMainWindow::is_slot15_free(uint32_t iPlayer) const
+{
+  bool free = false;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
+    {
+      free |= mCricketBox[i]->get_slot15() < 3;
+    }
+  }
+  return free;
+}
+
+bool CCricketMainWindow::is_slot16_free(uint32_t iPlayer) const
+{
+  bool free = false;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
+    {
+      free |= mCricketBox[i]->get_slot16() < 3;
+    }
+  }
+  return free;
+}
+
+bool CCricketMainWindow::is_slot17_free(uint32_t iPlayer) const
+{
+  bool free = false;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
+    {
+      free |= mCricketBox[i]->get_slot17() < 3;
+    }
+  }
+  return free;
+}
+
+bool CCricketMainWindow::is_slot18_free(uint32_t iPlayer) const
+{
+  bool free = false;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
+    {
+      free |= mCricketBox[i]->get_slot18() < 3;
+    }
+  }
+  return free;
+}
+
+bool CCricketMainWindow::is_slot19_free(uint32_t iPlayer) const
+{
+  bool free = false;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
+    {
+      free |= mCricketBox[i]->get_slot19() < 3;
+    }
+  }
+  return free;
+}
+
+bool CCricketMainWindow::is_slot20_free(uint32_t iPlayer) const
+{
+  bool free = false;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
+    {
+      free |= mCricketBox[i]->get_slot20() < 3;
+    }
+  }
+  return free;
+}
+
+bool CCricketMainWindow::is_slot25_free(uint32_t iPlayer) const
+{
+  bool free = false;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
+    {
+      free |= mCricketBox[i]->get_slot25() < 3;
+    }
+  }
+  return free;
+}
+
+bool CCricketMainWindow::is_score_bigger(uint32_t iScore) const
+{
+  bool result = true;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    result = result && mCricketBox[i]->get_score() <= iScore;
+  }
+  return result;
+}
+
+bool CCricketMainWindow::is_score_smaller(uint32_t iScore) const
+{
+  bool result = true;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    result = result && mCricketBox[i]->get_score() >= iScore;
+  }
+  return result;
+}
+
+void CCricketMainWindow::increase_score15(uint32_t iPoints)
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->get_slot15() != 3)
+    {
+      mCricketBox[i]->increase_extra15(iPoints);
     }
     else
     {
-        event->accept();
+      mCricketBox[i]->increase_extra15(0);
     }
+  }
 }
 
-void CricketMainWindow::setActivePlayer(int player)
+void CCricketMainWindow::increase_score16(uint32_t iPoints)
 {
-    ActivePlayer = player;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->get_slot16() != 3)
+    {
+      mCricketBox[i]->increase_extra16(iPoints);
+    }
+    else
+    {
+      mCricketBox[i]->increase_extra16(0);
+    }
+  }
 }
 
-void CricketMainWindow::updatePlayer()
+void CCricketMainWindow::increase_score17(uint32_t iPoints)
 {
-    ActivePlayer = (ActivePlayer + 1) % NumberOfPlayers;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->get_slot17() != 3)
+    {
+      mCricketBox[i]->increase_extra17(iPoints);
+    }
+    else
+    {
+      mCricketBox[i]->increase_extra17(0);
+    }
+  }
 }
 
-void CricketMainWindow::signalUpdatePlayer(QString type)
+void CCricketMainWindow::increase_score18(uint32_t iPoints)
 {
-    if (type == "default")
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->get_slot18() != 3)
     {
-        updatePlayer();
-        for (int i = 0; i < NumberOfPlayers; i++)
-        {
-            cricketbox[i]->setInactive();
-        }
-        cricketbox[ActivePlayer]->setActive();
+      mCricketBox[i]->increase_extra18(iPoints);
     }
-    else if (type == "leg")
+    else
     {
-        for (int i = 0; i < NumberOfPlayers; i++)
-        {
-            if (cricketbox[i]->hasBegunLeg())
-            {
-                cricketbox[i]->unsetLegBegin();
-                ActivePlayer = i;
-                updatePlayer();
-                for (int i = 0; i < NumberOfPlayers; i++)
-                {
-                    cricketbox[i]->setInactive();
-                }
-                cricketbox[ActivePlayer]->setActive();
-                cricketbox[ActivePlayer]->setLegBegin();
-                break;
-            }
-        }
+      mCricketBox[i]->increase_extra18(0);
     }
-    else if (type == "set")
-    {
-        for (int i = 0; i < NumberOfPlayers; i++)
-        {
-            if (cricketbox[i]->hasBegunSet())
-            {
-                cricketbox[i]->unsetSetBegin();
-                ActivePlayer = i;
-                updatePlayer();
-                for (int i = 0; i < NumberOfPlayers; i++)
-                {
-                    cricketbox[i]->setInactive();
-                    cricketbox[i]->unsetLegBegin();
-                }
-                cricketbox[ActivePlayer]->setActive();
-                cricketbox[ActivePlayer]->setLegBegin();
-                cricketbox[ActivePlayer]->setSetBegin();
-                break;
-            }
-        }
-        for (auto box: cricketbox)
-        {
-            box->resetLegs();
-            box->setLcdLegs();
-        }
-    }
+  }
 }
 
-void CricketMainWindow::signalResetScores()
+void CCricketMainWindow::increase_score19(uint32_t iPoints)
 {
-    for (int i = 0; i < NumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->get_slot19() != 3)
     {
-        cricketbox[i]->reset();
+      mCricketBox[i]->increase_extra19(iPoints);
     }
+    else
+    {
+      mCricketBox[i]->increase_extra19(0);
+    }
+  }
 }
 
-void CricketMainWindow::signalGameWon(int playernumber)
+void CCricketMainWindow::increase_score20(uint32_t iPoints)
 {
-    for (int i = 0; i < NumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->get_slot20() != 3)
     {
-        cricketbox[i]->setFinished();
+      mCricketBox[i]->increase_extra20(iPoints);
     }
-    cricketbox[playernumber]->closeCricketInput();
-    QString name = cricketbox[playernumber]->getPlayerName();
-    QString text = name + " has won the game. Congratulations!. ";
-    QMessageBox::about(this,"Game finished", text);
+    else
+    {
+      mCricketBox[i]->increase_extra20(0);
+    }
+  }
 }
 
-void CricketMainWindow::signalInactivatePlayers(int player, bool legstarted, bool setstarted)
+void CCricketMainWindow::increase_score25(uint32_t iPoints)
 {
-    for (int i = 0; i < NumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->get_slot25() != 3)
     {
-        cricketbox[i]->setInactive();
+      mCricketBox[i]->increase_extra25(iPoints);
     }
-    setActivePlayer(player);
-    if (!legstarted)
+    else
     {
-        for (int i = 0; i < NumberOfPlayers; i++)
-        {
-            cricketbox[i]->unsetLegBegin();
-        }
-        cricketbox[player]->setLegBegin();
+      mCricketBox[i]->increase_extra25(0);
     }
-    if (!setstarted)
-    {
-        for (int i = 0; i < NumberOfPlayers; i++)
-        {
-            cricketbox[i]->unsetSetBegin();
-            cricketbox[i]->unsetLegBegin();
-        }
-        cricketbox[player]->setLegBegin();
-        cricketbox[player]->setSetBegin();
-    }
+  }
 }
 
-void CricketMainWindow::signalUpdateHistory()
+QVector<uint32_t> CCricketMainWindow::compute_extra15s(uint32_t iPoints, uint32_t iPlayer)
 {
-    for (int i = 0; i < NumberOfPlayers; i++)
+  QVector<uint32_t> extra15s = {};
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        cricketbox[i]->updateHistory();
+      uint32_t extra = 0;
+      if (mCricketBox[i]->get_slot15() != 3)
+      {
+        extra = mCricketBox[i]->get_extra15() + iPoints;
+      }
+      else
+      {
+        extra = mCricketBox[i]->get_extra15();
+      }
+      extra15s.push_back(extra);
     }
+  }
+  return extra15s;
 }
 
-bool CricketMainWindow::isSlot15free(int player)
+QVector<uint32_t> CCricketMainWindow::compute_extra16s(uint32_t iPoints, uint32_t iPlayer)
 {
-    bool free = false;
-    for (int i = 0; i < NumberOfPlayers; i++)
+  QVector<uint32_t> extra16s = {};
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        if (i != player)
-        {
-            free |= cricketbox[i]->getSlot15() < 3;
-        }
+      uint32_t extra = 0;
+      if (mCricketBox[i]->get_slot16() != 3)
+      {
+        extra = mCricketBox[i]->get_extra16() + iPoints;
+      }
+      else
+      {
+        extra = mCricketBox[i]->get_extra16();
+      }
+      extra16s.push_back(extra);
     }
-    return free;
+  }
+  return extra16s;
 }
 
-bool CricketMainWindow::isSlot16free(int player)
+QVector<uint32_t> CCricketMainWindow::compute_extra17s(uint32_t iPoints, uint32_t iPlayer)
 {
-    bool free = false;
-    for (int i = 0; i < NumberOfPlayers; i++)
+  QVector<uint32_t> extra17s = {};
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        if (i != player)
-        {
-            free |= cricketbox[i]->getSlot16() < 3;
-        }
+      uint32_t extra = 0;
+      if (mCricketBox[i]->get_slot17() != 3)
+      {
+        extra = mCricketBox[i]->get_extra17() + iPoints;
+      }
+      else
+      {
+        extra = mCricketBox[i]->get_extra17();
+      }
+      extra17s.push_back(extra);
     }
-    return free;
+  }
+  return extra17s;
 }
 
-bool CricketMainWindow::isSlot17free(int player)
+QVector<uint32_t> CCricketMainWindow::compute_extra18s(uint32_t iPoints, uint32_t iPlayer)
 {
-    bool free = false;
-    for (int i = 0; i < NumberOfPlayers; i++)
+  QVector<uint32_t> extra18s = {};
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        if (i != player)
-        {
-            free |= cricketbox[i]->getSlot17() < 3;
-        }
+      uint32_t extra = 0;
+      if (mCricketBox[i]->get_slot18() != 3)
+      {
+        extra = mCricketBox[i]->get_extra18() + iPoints;
+      }
+      else
+      {
+        extra = mCricketBox[i]->get_extra18();
+      }
+      extra18s.push_back(extra);
     }
-    return free;
+  }
+  return extra18s;
 }
 
-bool CricketMainWindow::isSlot18free(int player)
+QVector<uint32_t> CCricketMainWindow::compute_extra19s(uint32_t iPoints, uint32_t iPlayer)
 {
-    bool free = false;
-    for (int i = 0; i < NumberOfPlayers; i++)
+  QVector<uint32_t> extra19s = {};
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        if (i != player)
-        {
-            free |= cricketbox[i]->getSlot18() < 3;
-        }
+      uint32_t extra = 0;
+      if (mCricketBox[i]->get_slot19() != 3)
+      {
+        extra = mCricketBox[i]->get_extra19() + iPoints;
+      }
+      else
+      {
+        extra = mCricketBox[i]->get_extra19();
+      }
+      extra19s.push_back(extra);
     }
-    return free;
+  }
+  return extra19s;
 }
 
-bool CricketMainWindow::isSlot19free(int player)
+QVector<uint32_t> CCricketMainWindow::compute_extra20s(uint32_t iPoints, uint32_t iPlayer)
 {
-    bool free = false;
-    for (int i = 0; i < NumberOfPlayers; i++)
+  QVector<uint32_t> extra20s = {};
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        if (i != player)
-        {
-            free |= cricketbox[i]->getSlot19() < 3;
-        }
+      uint32_t extra = 0;
+      if (mCricketBox[i]->get_slot20() != 3)
+      {
+        extra = mCricketBox[i]->get_extra20() + iPoints;
+      }
+      else
+      {
+        extra = mCricketBox[i]->get_extra20();
+      }
+      extra20s.push_back(extra);
     }
-    return free;
+  }
+  return extra20s;
 }
 
-bool CricketMainWindow::isSlot20free(int player)
+QVector<uint32_t> CCricketMainWindow::compute_extra25s(uint32_t iPoints, uint32_t iPlayer)
 {
-    bool free = false;
-    for (int i = 0; i < NumberOfPlayers; i++)
+  QVector<uint32_t> extra25s = {};
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        if (i != player)
-        {
-            free |= cricketbox[i]->getSlot20() < 3;
-        }
+      uint32_t extra = 0;
+      if (mCricketBox[i]->get_slot25() != 3)
+      {
+        extra = mCricketBox[i]->get_extra25() + iPoints;
+      }
+      else
+      {
+        extra = mCricketBox[i]->get_extra25();
+      }
+      extra25s.push_back(extra);
     }
-    return free;
+  }
+  return extra25s;
 }
 
-bool CricketMainWindow::isSlot25free(int player)
+void CCricketMainWindow::set_scores()
 {
-    bool free = false;
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            free |= cricketbox[i]->getSlot25() < 3;
-        }
-    }
-    return free;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->set_score();
+  }
 }
 
-bool CricketMainWindow::isScoreBigger(int score)
+void CCricketMainWindow::update_labels()
 {
-    bool result = true;
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        result = result && cricketbox[i]->getScore() <= score;
-    }
-    return result;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->update_labels();
+  }
 }
 
-bool CricketMainWindow::isScoreSmaller(int score)
+void CCricketMainWindow::update_darts(uint32_t iPlayer)
 {
-    bool result = true;
-    for (int i = 0; i < NumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    if (i != iPlayer)
     {
-        result = result && cricketbox[i]->getScore() >= score;
+      mCricketBox[i]->update_darts({""});
     }
-    return result;
-}
-
-void CricketMainWindow::increaseScore15(int points)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (cricketbox[i]->getSlot15() != 3)
-        {
-            cricketbox[i]->increaseExtra15(points);
-        }
-        else
-        {
-            cricketbox[i]->increaseExtra15(0);
-        }
-    }
-}
-
-void CricketMainWindow::increaseScore16(int points)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (cricketbox[i]->getSlot16() != 3)
-        {
-            cricketbox[i]->increaseExtra16(points);
-        }
-        else
-        {
-            cricketbox[i]->increaseExtra16(0);
-        }
-    }
-}
-
-void CricketMainWindow::increaseScore17(int points)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (cricketbox[i]->getSlot17() != 3)
-        {
-            cricketbox[i]->increaseExtra17(points);
-        }
-        else
-        {
-            cricketbox[i]->increaseExtra17(0);
-        }
-    }
-}
-
-void CricketMainWindow::increaseScore18(int points)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (cricketbox[i]->getSlot18() != 3)
-        {
-            cricketbox[i]->increaseExtra18(points);
-        }
-        else
-        {
-            cricketbox[i]->increaseExtra18(0);
-        }
-    }
-}
-
-void CricketMainWindow::increaseScore19(int points)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (cricketbox[i]->getSlot19() != 3)
-        {
-            cricketbox[i]->increaseExtra19(points);
-        }
-        else
-        {
-            cricketbox[i]->increaseExtra19(0);
-        }
-    }
-}
-
-void CricketMainWindow::increaseScore20(int points)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (cricketbox[i]->getSlot20() != 3)
-        {
-            cricketbox[i]->increaseExtra20(points);
-        }
-        else
-        {
-            cricketbox[i]->increaseExtra20(0);
-        }
-    }
-}
-
-void CricketMainWindow::increaseScore25(int points)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (cricketbox[i]->getSlot25() != 3)
-        {
-            cricketbox[i]->increaseExtra25(points);
-        }
-        else
-        {
-            cricketbox[i]->increaseExtra25(0);
-        }
-    }
-}
-
-QVector<int> CricketMainWindow::computeExtra15s(int points, int player)
-{
-    QVector<int> extra15s = {};
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            int extra = 0;
-            if (cricketbox[i]->getSlot15() != 3)
-            {
-                extra = cricketbox[i]->getExtra15() + points;
-            }
-            else
-            {
-                extra = cricketbox[i]->getExtra15();
-            }
-            extra15s.push_back(extra);
-        }
-    }
-    return extra15s;
-}
-
-QVector<int> CricketMainWindow::computeExtra16s(int points, int player)
-{
-    QVector<int> extra16s = {};
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            int extra = 0;
-            if (cricketbox[i]->getSlot16() != 3)
-            {
-                extra = cricketbox[i]->getExtra16() + points;
-            }
-            else
-            {
-                extra = cricketbox[i]->getExtra16();
-            }
-            extra16s.push_back(extra);
-        }
-    }
-    return extra16s;
-}
-
-QVector<int> CricketMainWindow::computeExtra17s(int points, int player)
-{
-    QVector<int> extra17s = {};
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            int extra = 0;
-            if (cricketbox[i]->getSlot17() != 3)
-            {
-                extra = cricketbox[i]->getExtra17() + points;
-            }
-            else
-            {
-                extra = cricketbox[i]->getExtra17();
-            }
-            extra17s.push_back(extra);
-        }
-    }
-    return extra17s;
-}
-
-QVector<int> CricketMainWindow::computeExtra18s(int points, int player)
-{
-    QVector<int> extra18s = {};
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            int extra = 0;
-            if (cricketbox[i]->getSlot18() != 3)
-            {
-                extra = cricketbox[i]->getExtra18() + points;
-            }
-            else
-            {
-                extra = cricketbox[i]->getExtra18();
-            }
-            extra18s.push_back(extra);
-        }
-    }
-    return extra18s;
-}
-
-QVector<int> CricketMainWindow::computeExtra19s(int points, int player)
-{
-    QVector<int> extra19s = {};
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            int extra = 0;
-            if (cricketbox[i]->getSlot19() != 3)
-            {
-                extra = cricketbox[i]->getExtra19() + points;
-            }
-            else
-            {
-                extra = cricketbox[i]->getExtra19();
-            }
-            extra19s.push_back(extra);
-        }
-    }
-    return extra19s;
-}
-
-QVector<int> CricketMainWindow::computeExtra20s(int points, int player)
-{
-    QVector<int> extra20s = {};
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            int extra = 0;
-            if (cricketbox[i]->getSlot20() != 3)
-            {
-                extra = cricketbox[i]->getExtra20() + points;
-            }
-            else
-            {
-                extra = cricketbox[i]->getExtra20();
-            }
-            extra20s.push_back(extra);
-        }
-    }
-    return extra20s;
-}
-
-QVector<int> CricketMainWindow::computeExtra25s(int points, int player)
-{
-    QVector<int> extra25s = {};
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            int extra = 0;
-            if (cricketbox[i]->getSlot25() != 3)
-            {
-                extra = cricketbox[i]->getExtra25() + points;
-            }
-            else
-            {
-                extra = cricketbox[i]->getExtra25();
-            }
-            extra25s.push_back(extra);
-        }
-    }
-    return extra25s;
-}
-
-void CricketMainWindow::setScores()
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        cricketbox[i]->setScore();
-    }
-}
-
-void CricketMainWindow::updateLabels()
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        cricketbox[i]->updateLabels();
-    }
-}
-
-void CricketMainWindow::updateDarts(int player)
-{
-    for (int i = 0; i < NumberOfPlayers; i++)
-    {
-        if (i != player)
-        {
-            cricketbox[i]->updateDarts({""});
-        }
-    }
+  }
 }

@@ -9,86 +9,98 @@
 #include <QSoundEffect>
 #include "statswindow.h"
 
-class X01MainWindow;
+class CX01MainWindow;
 
-namespace Ui {
-class GroupBox_player;
+
+constexpr uint32_t GAME_301 = 301;
+constexpr uint32_t GAME_501 = 501;
+constexpr uint32_t GAME_701 = 701;
+
+namespace Ui
+{
+  class CX01GroupBox;
 }
 
-class GroupBox_player : public QGroupBox
+class CX01GroupBox : public QGroupBox
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit GroupBox_player(QWidget* parent = nullptr, int game = 501, int player_nr = 1, int sets = 1, int legs = 1,
-                             bool singleIn = true, bool singleOut = false, bool doubleIn = false, bool doubleOut = false,
-                             bool masterIn = false, bool masterOut = false, bool offensive = false, PlayerClass* player = nullptr, DartBoard* dartboard = nullptr);
-    ~GroupBox_player();
-    void setActive();
-    void setInactive();
-    void reset();
-    void setFinished();
-    void unsetFinished();
-    void closeScoreInput();
-    QString getPlayerName();
-    void setSetBegin();
-    void unsetSetBegin();
-    void setLegBegin();
-    void unsetLegBegin();
-    bool hasBegunLeg();
-    bool hasBegunSet();
-    void updateHistory();
-    void resetLegs();
-    void displayFinishes(int remaining, int numberOfDarts);
-    void playFailSounds();
-    void setLcdLegs();
-    void play_offensive_sounds();
-    int getRemaining();
-    void submitScore(int &score, int &numberofdarts, int &checkoutattempts, QVector<QString> darts);
-    double computeAverage(QVector<int> scoresOfLeg);
+
+  explicit CX01GroupBox(QWidget * iParent = nullptr, uint32_t iGame = GAME_501, uint32_t iPlayerNumber = 1, uint32_t iSets = 1, uint32_t iLegs = 1,
+                        bool iSingleIn = true, bool iSingleOut = false, bool iDoubleIn = false, bool iDoubleOut = false,
+                        bool iMasterIn = false, bool iMasterOut = false, bool iOffensive = false, CPlayerClass * iPlayer = nullptr, CDartBoard * iDartboard = nullptr);
+  ~CX01GroupBox() override;
+  void set_active();
+  void set_inactive();
+  void reset();
+  void set_finished();
+  void unset_finished();
+  void close_score_input();
+  QString get_player_number() const;
+  void set_set_begin();
+  void unset_set_begin();
+  void set_leg_begin();
+  void unset_leg_begin();
+  bool has_begun_leg() const;
+  bool has_begun_set() const;
+  void update_history();
+  void reset_legs();
+  void display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts);
+  void play_fail_sounds();
+  void set_lcd_legs();
+  void play_offensive_sounds();
+  uint32_t get_remaining() const;
+  void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, QVector<QString> && iDarts);
+  double compute_average(QVector<uint32_t> iScoresOfLeg);
 
 signals:
-    void signalUpdatePlayer(QString type);
-    void signalResetScores();
-    void signalInactivatePlayers(int player, bool legstarted, bool setstarted);
-    void signalUpdateHistory();
+
+  void signal_update_player(QString iType);
+  void signal_reset_scores();
+  void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void signal_update_history();
 
 public slots:
-    void on_pushButton_name_clicked();
-    void okButtonClicked(QString& name);
-    void signalPlayerActiveButtonPressed();
-    void performUndo();
-    void slotUpdateLegHistory(int index, StatsWindow *stats);
+
+  void on_push_button_name_clicked();
+  void ok_button_clicked(QString && iName);
+  void signal_player_active_button_pressed();
+  void perform_undo();
+  void slot_update_leg_history(uint32_t iIndex, CStatsWindow * iStats);
+
 private slots:
-    void on_pushButton_stats_clicked();
-    void on_pushButton_undo_clicked();
+
+  void on_push_button_stats_clicked();
+  void on_push_button_undo_clicked();
 
 private:
-    Ui::GroupBox_player *ui;
-    QString playername;
-    DialogNameinput *dn;
-    PlayerClass *Player;
-    DartBoard * mDartBoard;
-    int StartVal, Player_Nr, Sets, Legs, Remaining, mCurrentScore;
-    bool SingleIn, SingleOut, DoubleIn, DoubleOut, MasterIn, MasterOut, Offensive, Active, Finished, SetBegin, LegBegin;
-    QPixmap pix = QPixmap(":/resources/img/darts.svg");
-    static bool legstarted;
-    static bool setstarted;
-    X01MainWindow* mGameWindow;
-    QSoundEffect sexy69;
-    QSoundEffect anotherone;
-    QSoundEffect sound1;
-    QSoundEffect sound2;
-    QSoundEffect sound3;
-    QSoundEffect sound4;
-    QSoundEffect sound5;
-    QSoundEffect sound6;
-    QSoundEffect sound7;
-    QSoundEffect sound8;
-    QSoundEffect sound9;
-    QSoundEffect sound10;
-    QSoundEffect sound11;
-    QSoundEffect scoresound;
+
+  Ui::CX01GroupBox * mUi;
+  QString mPlayerName;
+  CDialogNameInput * mDialogNameInput;
+  CPlayerClass * mPlayer;
+  CDartBoard * mDartBoard;
+  uint32_t mStartVal, mPlayerNumber, mSets, mLegs, mRemaining, mCurrentScore;
+  bool mSingleIn, mSingleOut, mDoubleIn, mDoubleOut, mMasterIn, mMasterOut, mOffensive, mActive, mFinished, mSetBegin, mLegBegin;
+  QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
+  static bool mLegStarted;
+  static bool mSetStarted;
+  CX01MainWindow * mGameWindow;
+  QSoundEffect mSexy69;
+  QSoundEffect mAnotherone;
+  QSoundEffect mSound1;
+  QSoundEffect mSound2;
+  QSoundEffect mSound3;
+  QSoundEffect mSound4;
+  QSoundEffect mSound5;
+  QSoundEffect mSound6;
+  QSoundEffect mSound7;
+  QSoundEffect mSound8;
+  QSoundEffect mSound9;
+  QSoundEffect mSound10;
+  QSoundEffect mSound11;
+  QSoundEffect mScoreSound;
 };
 
-#endif // GROUPBOX_PLAYER_H
+#endif  // GROUPBOX_PLAYER_H

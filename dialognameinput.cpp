@@ -4,23 +4,22 @@
 #include "groupbox_player.h"
 #include "dialognameinput.h"
 
-DialogNameinput::DialogNameinput(QWidget *parent, QString text) :
-    QDialog(parent),
-    ui(new Ui::DialogNameinput)
+CDialogNameInput::CDialogNameInput(QWidget * iParent, QString && iText)
+  : QDialog(iParent)
+  , mUi(new Ui::CDialogNameInput)
 {
-    ui->setupUi(this);
-    ui->lineEdit_name->setText(text);
-    ui->lineEdit_name->selectAll();
-    setAttribute(Qt::WA_DeleteOnClose);
+  mUi->setupUi(this);
+  mUi->lineEdit_name->setText(iText);
+  mUi->lineEdit_name->selectAll();
+  setAttribute(Qt::WA_DeleteOnClose);
 }
 
-DialogNameinput::~DialogNameinput()
+CDialogNameInput::~CDialogNameInput()
 {
-    delete ui;
+  delete mUi;
 }
 
-void DialogNameinput::on_pushButton_ok_clicked()
+void CDialogNameInput::on_pushButton_ok_clicked()
 {
-    QString text = ui->lineEdit_name->text();
-    emit okButtonClicked(text);
+  emit ok_button_clicked(mUi->lineEdit_name->text());
 }

@@ -2,412 +2,459 @@
 #include <cmath>
 #include <QDebug>
 
-cricketclass::cricketclass(QWidget* parent, int numberofsets, int numberoflegs, int playername, bool cutthroat) :
-    mSets(0), mLegs(0), mTotalLegs(0), CutThroat(cutthroat), mScoreLegs({}), mScoringHistory({}),
-    mTotalScores({}), mNumberOfLegs(numberoflegs), mNumberOfSets(numberofsets),
-    mPlayerName(playername-1), mNumberOfDartsArray({}), mTotalDarts(0), mSlot15(0),
-    mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0), mSlot20(0), mSlot25(0), mExtra15(0),
-    mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0), mScore(0),
-    mSlot15Array({0}), mSlot16Array({0}), mSlot17Array({0}), mSlot18Array({0}), mSlot19Array({0}),
-    mSlot20Array({0}), mSlot25Array({0}), mExtra15Array({0}), mExtra16Array({0}), mExtra17Array({0}),
-    mExtra18Array({0}), mExtra19Array({0}), mExtra20Array({0}), mExtra25Array({0}), mScoreArray({0}), mLegWinArray({false})
+CCricketClass::CCricketClass(QWidget * iParent, uint32_t iNumberOfSets, uint32_t iNumberOfLegs, uint32_t iPlayerNumber, bool iCutThroat)
+  : mSets(0), mLegs(0), mTotalLegs(0), mCutThroat(iCutThroat), mScoreLegs({}), mScoringHistory({})
+  , mTotalScores({}), mNumberOfLegs(iNumberOfLegs), mNumberOfSets(iNumberOfSets)
+  , mPlayerNumber(iPlayerNumber-1), mNumberOfDartsArray({}), mTotalDarts(0), mSlot15(0)
+  , mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0), mSlot20(0), mSlot25(0), mExtra15(0)
+  , mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0), mScore(0)
+  , mSlot15Array({0}), mSlot16Array({0}), mSlot17Array({0}), mSlot18Array({0}), mSlot19Array({0})
+  , mSlot20Array({0}), mSlot25Array({0}), mExtra15Array({0}), mExtra16Array({0}), mExtra17Array({0})
+  , mExtra18Array({0}), mExtra19Array({0}), mExtra20Array({0}), mExtra25Array({0}), mScoreArray({0}), mLegWinArray({false})
 {
-    mGameWindow = dynamic_cast<CricketMainWindow*>(parent);
-    mMarginLegs = std::ceil(numberoflegs/2.0);
-    mMarginSets = std::ceil(numberofsets/2.0);
-    mHitsPerRound = compute_hits_per_round(0,0);
+  mGameWindow = dynamic_cast<CCricketMainWindow*>(iParent);
+  mMarginLegs = std::ceil(iNumberOfLegs/2.0);
+  mMarginSets = std::ceil(iNumberOfSets/2.0);
+  mHitsPerRound = compute_hits_per_round(0,0);
 }
 
-bool cricketclass::increase_setslegs() {
-    mLegs += 1;
-    mTotalLegs += 1;
-    bool temp = false;
-    if (((mLegs % mMarginLegs) == 0) && (mLegs > 0)) {
-        mSets += 1;
-        mLegs = 0;
-        temp = true;
-    }
-    if (mSets == mMarginSets) {
-        emit signal_game_won(mPlayerName);
-    }
-    return temp;
-}
-
-void cricketclass::update_history() {
-    mScoringHistory.push_back(mScoreLegs);
-}
-
-void cricketclass::update_darts(QVector<QString> darts)
+bool CCricketClass::increase_setslegs()
 {
-    mScoreLegs.push_back(darts);
-    mTotalScores.push_back(darts);
-}
+  mLegs += 1;
+  mTotalLegs += 1;
+  bool temp = false;
 
-void cricketclass::reset_score()
-{
-    mScoreLegs = {};
-    mSlot15 = 0;
-    mSlot16 = 0;
-    mSlot17 = 0;
-    mSlot18 = 0;
-    mSlot19 = 0;
-    mSlot20 = 0;
-    mSlot25 = 0;
-    mExtra15 = 0;
-    mExtra16 = 0;
-    mExtra17 = 0;
-    mExtra18 = 0;
-    mExtra19 = 0;
-    mExtra20 = 0;
-    mExtra25 = 0;
-    mScore = 0;
-}
-
-void cricketclass::reset_legs()
-{
+  if (((mLegs % mMarginLegs) == 0) && (mLegs > 0))
+  {
+    mSets += 1;
     mLegs = 0;
+    temp = true;
+  }
+
+  if (mSets == mMarginSets)
+  {
+    emit signal_game_won(mPlayerNumber);
+  }
+
+  return temp;
 }
 
-void cricketclass::undoStep() {
-    mScoreLegs.pop_back();
-    mTotalScores.pop_back();
-    mScoreArray.pop_back();
-    mSlot15Array.pop_back();
-    mSlot16Array.pop_back();
-    mSlot17Array.pop_back();
-    mSlot18Array.pop_back();
-    mSlot19Array.pop_back();
-    mSlot20Array.pop_back();
-    mSlot25Array.pop_back();
-    mExtra15Array.pop_back();
-    mExtra16Array.pop_back();
-    mExtra17Array.pop_back();
-    mExtra18Array.pop_back();
-    mExtra19Array.pop_back();
-    mExtra20Array.pop_back();
-    mExtra25Array.pop_back();
-    mSlot15 = mSlot15Array.back();
-    mSlot16 = mSlot16Array.back();
-    mSlot17 = mSlot17Array.back();
-    mSlot18 = mSlot18Array.back();
-    mSlot19 = mSlot19Array.back();
-    mSlot20 = mSlot20Array.back();
-    mSlot25 = mSlot25Array.back();
-    mExtra15 = mExtra15Array.back();
-    mExtra16 = mExtra16Array.back();
-    mExtra17 = mExtra17Array.back();
-    mExtra18 = mExtra18Array.back();
-    mExtra19 = mExtra19Array.back();
-    mExtra20 = mExtra20Array.back();
-    mExtra25 = mExtra25Array.back();
-    setScore();
-    mTotalDarts -= mNumberOfDartsArray.back();
-    mNumberOfHitsArray.pop_back();
-    mTotalHits = mNumberOfHitsArray.back();
-    mNumberOfDartsArray.pop_back();
-    mLegWinArray.pop_back();
-    if (mTotalDarts > 0) {
-        mHitsPerRound = 3 * static_cast<double>(mTotalHits) / static_cast<double>(mTotalDarts);
-    } else {
-        mHitsPerRound = 0.0;
-    }
-}
-
-int cricketclass::get_player_name()
+void CCricketClass::update_history()
 {
-    return mPlayerName;
+  mScoringHistory.push_back(mScoreLegs);
 }
 
-int cricketclass::getSlot15()
+void CCricketClass::update_darts(QVector<QString> iDarts)
 {
-    return mSlot15;
+  mScoreLegs.push_back(iDarts);
+  mTotalScores.push_back(iDarts);
 }
 
-int cricketclass::getSlot16()
+void CCricketClass::reset_score()
 {
-    return mSlot16;
+  mScoreLegs = {};
+  mSlot15 = 0;
+  mSlot16 = 0;
+  mSlot17 = 0;
+  mSlot18 = 0;
+  mSlot19 = 0;
+  mSlot20 = 0;
+  mSlot25 = 0;
+  mExtra15 = 0;
+  mExtra16 = 0;
+  mExtra17 = 0;
+  mExtra18 = 0;
+  mExtra19 = 0;
+  mExtra20 = 0;
+  mExtra25 = 0;
+  mScore = 0;
 }
 
-int cricketclass::getSlot17()
+void CCricketClass::reset_legs()
 {
-    return mSlot17;
+  mLegs = 0;
 }
 
-int cricketclass::getSlot18()
+void CCricketClass::perform_undo_step()
 {
-    return mSlot18;
+  mScoreLegs.pop_back();
+  mTotalScores.pop_back();
+  mScoreArray.pop_back();
+  mSlot15Array.pop_back();
+  mSlot16Array.pop_back();
+  mSlot17Array.pop_back();
+  mSlot18Array.pop_back();
+  mSlot19Array.pop_back();
+  mSlot20Array.pop_back();
+  mSlot25Array.pop_back();
+  mExtra15Array.pop_back();
+  mExtra16Array.pop_back();
+  mExtra17Array.pop_back();
+  mExtra18Array.pop_back();
+  mExtra19Array.pop_back();
+  mExtra20Array.pop_back();
+  mExtra25Array.pop_back();
+  mSlot15 = mSlot15Array.back();
+  mSlot16 = mSlot16Array.back();
+  mSlot17 = mSlot17Array.back();
+  mSlot18 = mSlot18Array.back();
+  mSlot19 = mSlot19Array.back();
+  mSlot20 = mSlot20Array.back();
+  mSlot25 = mSlot25Array.back();
+  mExtra15 = mExtra15Array.back();
+  mExtra16 = mExtra16Array.back();
+  mExtra17 = mExtra17Array.back();
+  mExtra18 = mExtra18Array.back();
+  mExtra19 = mExtra19Array.back();
+  mExtra20 = mExtra20Array.back();
+  mExtra25 = mExtra25Array.back();
+  set_score();
+  mTotalDarts -= mNumberOfDartsArray.back();
+  mNumberOfHitsArray.pop_back();
+  mTotalHits = mNumberOfHitsArray.back();
+  mNumberOfDartsArray.pop_back();
+  mLegWinArray.pop_back();
+
+  if (mTotalDarts > 0)
+  {
+    mHitsPerRound = 3 * static_cast<double>(mTotalHits) / static_cast<double>(mTotalDarts);
+  }
+  else
+  {
+    mHitsPerRound = 0.0;
+  }
 }
 
-int cricketclass::getSlot19()
+uint32_t CCricketClass::get_player_number() const
 {
-    return mSlot19;
+  return mPlayerNumber;
 }
 
-int cricketclass::getSlot20()
+uint32_t CCricketClass::get_slot15() const
 {
-    return mSlot20;
+  return mSlot15;
 }
 
-int cricketclass::getSlot25()
+uint32_t CCricketClass::get_slot16() const
 {
-    return mSlot25;
+  return mSlot16;
 }
 
-void cricketclass::setSlot15(int hits)
+uint32_t CCricketClass::get_slot17() const
 {
-    mSlot15 = hits;
-    mSlot15Array.push_back(mSlot15);
+  return mSlot17;
 }
 
-void cricketclass::setSlot16(int hits)
+uint32_t CCricketClass::get_slot18() const
 {
-    mSlot16 = hits;
-    mSlot16Array.push_back(mSlot16);
+  return mSlot18;
 }
 
-void cricketclass::setSlot17(int hits)
+uint32_t CCricketClass::get_slot19() const
 {
-    mSlot17 = hits;
-    mSlot17Array.push_back(mSlot17);
+  return mSlot19;
 }
 
-void cricketclass::setSlot18(int hits)
+uint32_t CCricketClass::get_slot20() const
 {
-    mSlot18 = hits;
-    mSlot18Array.push_back(mSlot18);
+  return mSlot20;
 }
 
-void cricketclass::setSlot19(int hits)
+uint32_t CCricketClass::get_slot25() const
 {
-    mSlot19 = hits;
-    mSlot19Array.push_back(mSlot19);
+  return mSlot25;
 }
 
-void cricketclass::setSlot20(int hits)
+void CCricketClass::set_slot15(uint32_t iHits)
 {
-    mSlot20 = hits;
-    mSlot20Array.push_back(mSlot20);
+  mSlot15 = iHits;
+  mSlot15Array.push_back(mSlot15);
 }
 
-void cricketclass::setSlot25(int hits)
+void CCricketClass::set_slot16(uint32_t iHits)
 {
-    mSlot25 = hits;
-    mSlot25Array.push_back(mSlot25);
+  mSlot16 = iHits;
+  mSlot16Array.push_back(mSlot16);
 }
 
-void cricketclass::setExtra15(int points)
+void CCricketClass::set_slot17(uint32_t iHits)
 {
-    if (!CutThroat) {
-        mExtra15 = points;
-    } else {
-        mExtra15 += points;
-    }
-    mExtra15Array.push_back(mExtra15);
+  mSlot17 = iHits;
+  mSlot17Array.push_back(mSlot17);
 }
 
-void cricketclass::setExtra16(int points)
+void CCricketClass::set_slot18(uint32_t iHits)
 {
-    if (!CutThroat) {
-        mExtra16 = points;
-    } else {
-        mExtra16 += points;
-    }
-    mExtra16Array.push_back(mExtra16);
+  mSlot18 = iHits;
+  mSlot18Array.push_back(mSlot18);
 }
 
-void cricketclass::setExtra17(int points)
+void CCricketClass::set_slot19(uint32_t iHits)
 {
-    if (!CutThroat) {
-        mExtra17 = points;
-    } else {
-        mExtra17 += points;
-    }
-    mExtra17Array.push_back(mExtra17);
+  mSlot19 = iHits;
+  mSlot19Array.push_back(mSlot19);
 }
 
-void cricketclass::setExtra18(int points)
+void CCricketClass::set_slot20(uint32_t iHits)
 {
-    if (!CutThroat) {
-        mExtra18 = points;
-    } else {
-        mExtra18 += points;
-    }
-    mExtra18Array.push_back(mExtra18);
+  mSlot20 = iHits;
+  mSlot20Array.push_back(mSlot20);
 }
 
-void cricketclass::setExtra19(int points)
+void CCricketClass::set_slot25(uint32_t iHits)
 {
-    if (!CutThroat) {
-        mExtra19 = points;
-    } else {
-        mExtra19 += points;
-    }
-    mExtra19Array.push_back(mExtra19);
+  mSlot25 = iHits;
+  mSlot25Array.push_back(mSlot25);
 }
 
-void cricketclass::setExtra20(int points)
+void CCricketClass::set_extra15(uint32_t iPoints)
 {
-    if (!CutThroat) {
-        mExtra20 = points;
-    } else {
-        mExtra20 += points;
-    }
-    mExtra20Array.push_back(mExtra20);
+  if (!mCutThroat)
+  {
+    mExtra15 = iPoints;
+  }
+  else
+  {
+    mExtra15 += iPoints;
+  }
+  mExtra15Array.push_back(mExtra15);
 }
 
-int cricketclass::getExtra15()
+void CCricketClass::set_extra16(uint32_t iPoints)
 {
-    return mExtra15;
+  if (!mCutThroat)
+  {
+    mExtra16 = iPoints;
+  }
+  else
+  {
+    mExtra16 += iPoints;
+  }
+  mExtra16Array.push_back(mExtra16);
 }
 
-int cricketclass::getExtra16()
+void CCricketClass::set_extra17(uint32_t iPoints)
 {
-    return mExtra16;
+  if (!mCutThroat)
+  {
+    mExtra17 = iPoints;
+  }
+  else
+  {
+    mExtra17 += iPoints;
+  }
+  mExtra17Array.push_back(mExtra17);
 }
 
-int cricketclass::getExtra17()
+void CCricketClass::set_extra18(uint32_t iPoints)
 {
-    return mExtra17;
+  if (!mCutThroat)
+  {
+    mExtra18 = iPoints;
+  }
+  else
+  {
+    mExtra18 += iPoints;
+  }
+  mExtra18Array.push_back(mExtra18);
 }
 
-int cricketclass::getExtra18()
+void CCricketClass::set_extra19(uint32_t iPoints)
 {
-    return mExtra18;
+  if (!mCutThroat)
+  {
+    mExtra19 = iPoints;
+  }
+  else
+  {
+    mExtra19 += iPoints;
+  }
+  mExtra19Array.push_back(mExtra19);
 }
 
-int cricketclass::getExtra19()
+void CCricketClass::set_extra20(uint32_t iPoints)
 {
-    return mExtra19;
+  if (!mCutThroat)
+  {
+    mExtra20 = iPoints;
+  }
+  else
+  {
+    mExtra20 += iPoints;
+  }
+  mExtra20Array.push_back(mExtra20);
 }
 
-int cricketclass::getExtra20()
+uint32_t CCricketClass::get_extra15() const
 {
-    return mExtra20;
+  return mExtra15;
 }
 
-int cricketclass::getExtra25()
+uint32_t CCricketClass::get_extra16() const
 {
-    return mExtra25;
+  return mExtra16;
 }
 
-int cricketclass::getTotalHits()
+uint32_t CCricketClass::get_extra17() const
 {
-    return mTotalHits;
+  return mExtra17;
 }
 
-int cricketclass::getTotalDarts()
+uint32_t CCricketClass::get_extra18() const
 {
-    return mTotalDarts;
+  return mExtra18;
 }
 
-bool cricketclass::areSlotsFull()
+uint32_t CCricketClass::get_extra19() const
 {
-    bool full15 = mSlot15 == 3;
-    bool full16 = mSlot16 == 3;
-    bool full17 = mSlot17 == 3;
-    bool full18 = mSlot18 == 3;
-    bool full19 = mSlot19 == 3;
-    bool full20 = mSlot20 == 3;
-    bool full25 = mSlot25 == 3;
-    return full15 && full16 && full17 && full18 && full19 && full20 && full25;
+  return mExtra19;
 }
 
-void cricketclass::setScore()
+uint32_t CCricketClass::get_extra20() const
 {
-    mScore = mExtra15 + mExtra16 + mExtra17 + mExtra18 + mExtra19 + mExtra20 + mExtra25;
-    mScoreArray.push_back(mScore);
+  return mExtra20;
 }
 
-int cricketclass::getScore()
+uint32_t CCricketClass::get_extra25() const
 {
-    return mScore;
+  return mExtra25;
 }
 
-double cricketclass::get_hits_per_round()
+uint32_t CCricketClass::get_total_hits() const
 {
-    return mHitsPerRound;
+  return mTotalHits;
 }
 
-QVector<QVector<QString> > cricketclass::getMScoreLegs()
+uint32_t CCricketClass::get_total_darts() const
 {
-    return mScoreLegs;
+  return mTotalDarts;
 }
 
-QVector<QVector<QVector<QString> > > cricketclass::getmScoringHistory()
+bool CCricketClass::are_slots_full() const
 {
-    return mScoringHistory;
+  bool full15 = mSlot15 == 3;
+  bool full16 = mSlot16 == 3;
+  bool full17 = mSlot17 == 3;
+  bool full18 = mSlot18 == 3;
+  bool full19 = mSlot19 == 3;
+  bool full20 = mSlot20 == 3;
+  bool full25 = mSlot25 == 3;
+  return full15 && full16 && full17 && full18 && full19 && full20 && full25;
 }
 
-void cricketclass::setLegWinArray(bool finished)
+void CCricketClass::set_score()
 {
-    mLegWinArray.push_back(finished);
+  mScore = mExtra15 + mExtra16 + mExtra17 + mExtra18 + mExtra19 + mExtra20 + mExtra25;
+  mScoreArray.push_back(mScore);
 }
 
-void cricketclass::setTotalHits(int hits)
+uint32_t CCricketClass::get_score() const
 {
-    mTotalHits = hits;
-    mNumberOfHitsArray.push_back(mTotalHits);
+  return mScore;
 }
 
-void cricketclass::setTotalDarts(int darts)
+double CCricketClass::get_hits_per_round() const
 {
-    mTotalDarts = darts;
-    mNumberOfDartsArray.push_back(mTotalDarts);
+  return mHitsPerRound;
 }
 
-void cricketclass::setExtra25(int points)
+QVector<QVector<QString> > CCricketClass::get_score_legs() const
 {
-    if (!CutThroat) {
-        mExtra25 = points;
-    } else {
-        mExtra25 += points;
-    }
-    mExtra25Array.push_back(mExtra25);
+  return mScoreLegs;
 }
 
-void cricketclass::undo() {
-    if (mScoreLegs.size() > 0) {
-        undoStep();
-    } else if (mScoringHistory.size() > 0) {
-        mScoreLegs = mScoringHistory.back();
-        mScoringHistory.pop_back();
-        if (mScoreLegs.size() > 0) {
-            bool finished = mLegWinArray.back();
-            undoStep();
-            if (finished) {
-                if (mTotalLegs % mMarginLegs == 0) {
-                    mTotalLegs -= 1;
-                    mLegs = mMarginLegs -1;
-                    mSets -= 1;
-                } else {
-                    mTotalLegs -= 1;
-                    mLegs -= 1;
-                }
-            } else {
-            }
+QVector<QVector<QVector<QString> > > CCricketClass::get_scoring_history() const
+{
+  return mScoringHistory;
+}
+
+void CCricketClass::set_leg_win_array(bool iFinished)
+{
+  mLegWinArray.push_back(iFinished);
+}
+
+void CCricketClass::set_total_hits(uint32_t iHits)
+{
+  mTotalHits = iHits;
+  mNumberOfHitsArray.push_back(mTotalHits);
+}
+
+void CCricketClass::set_total_darts(uint32_t iDarts)
+{
+  mTotalDarts = iDarts;
+  mNumberOfDartsArray.push_back(mTotalDarts);
+}
+
+void CCricketClass::set_extra25(uint32_t iPoints)
+{
+  if (!mCutThroat)
+  {
+    mExtra25 = iPoints;
+  }
+  else
+  {
+    mExtra25 += iPoints;
+  }
+  mExtra25Array.push_back(mExtra25);
+}
+
+void CCricketClass::undo()
+{
+  if (mScoreLegs.size() > 0)
+  {
+    perform_undo_step();
+  }
+  else if (mScoringHistory.size() > 0)
+  {
+    mScoreLegs = mScoringHistory.back();
+    mScoringHistory.pop_back();
+    if (mScoreLegs.size() > 0)
+    {
+      bool finished = mLegWinArray.back();
+      perform_undo_step();
+      if (finished)
+      {
+        if (mTotalLegs % mMarginLegs == 0)
+        {
+          mTotalLegs -= 1;
+          mLegs = mMarginLegs -1;
+          mSets -= 1;
         }
+        else
+        {
+          mTotalLegs -= 1;
+          mLegs -= 1;
+        }
+      }
     }
+  }
 }
 
-double cricketclass::compute_hits_per_round(int numberofdarts, int totalhits) {
-    mTotalDarts += numberofdarts;
-    mNumberOfDartsArray.push_back(numberofdarts);
-    mTotalHits = totalhits;
-    mNumberOfHitsArray.push_back(mTotalHits);
-    if (numberofdarts > 0) {
-        mHitsPerRound = 3 * static_cast<double>(mTotalHits) / static_cast<double>(mTotalDarts);
-    } else {
-        mHitsPerRound = 0.0;
-    }
-    return mHitsPerRound;
-}
-
-int cricketclass::get_legs()
+double CCricketClass::compute_hits_per_round(uint32_t iNumberOfDarts, uint32_t iTotalHits)
 {
-    return mLegs;
+  mTotalDarts += iNumberOfDarts;
+  mNumberOfDartsArray.push_back(iNumberOfDarts);
+  mTotalHits = iTotalHits;
+  mNumberOfHitsArray.push_back(mTotalHits);
+
+  if (iNumberOfDarts > 0)
+  {
+    mHitsPerRound = 3 * static_cast<double>(mTotalHits) / static_cast<double>(mTotalDarts);
+  }
+  else
+  {
+    mHitsPerRound = 0.0;
+  }
+
+  return mHitsPerRound;
 }
 
-int cricketclass::get_sets()
+uint32_t CCricketClass::get_legs() const
 {
-    return mSets;
+  return mLegs;
+}
+
+uint32_t CCricketClass::get_sets() const
+{
+  return mSets;
 }

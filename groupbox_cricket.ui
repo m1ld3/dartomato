@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>groupbox_cricket</class>
- <widget class="QGroupBox" name="groupbox_cricket">
+ <class>CCricketGroupBox</class>
+ <widget class="QGroupBox" name="CCricketGroupBox">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>509</width>
-    <height>453</height>
+    <height>489</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -567,9 +567,7 @@
            </property>
            <property name="font">
             <font>
-             <family>Segment7</family>
              <pointsize>18</pointsize>
-             <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
             </font>
@@ -729,9 +727,7 @@
            </property>
            <property name="font">
             <font>
-             <family>Segment7</family>
              <pointsize>18</pointsize>
-             <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
             </font>
@@ -891,9 +887,7 @@
            </property>
            <property name="font">
             <font>
-             <family>Segment7</family>
              <pointsize>18</pointsize>
-             <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
             </font>
@@ -1053,9 +1047,7 @@
            </property>
            <property name="font">
             <font>
-             <family>Segment7</family>
              <pointsize>18</pointsize>
-             <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
             </font>
@@ -1215,9 +1207,7 @@
            </property>
            <property name="font">
             <font>
-             <family>Segment7</family>
              <pointsize>18</pointsize>
-             <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
             </font>
@@ -1377,9 +1367,7 @@
            </property>
            <property name="font">
             <font>
-             <family>Segment7</family>
              <pointsize>18</pointsize>
-             <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
             </font>
@@ -1539,9 +1527,7 @@
            </property>
            <property name="font">
             <font>
-             <family>Segment7</family>
              <pointsize>18</pointsize>
-             <weight>75</weight>
              <italic>true</italic>
              <bold>true</bold>
             </font>

@@ -1,9 +1,9 @@
 #include "statswindow.h"
 #include "ui_statswindow.h"
 
-StatsWindow::StatsWindow(QWidget *parent) :
+CStatsWindow::CStatsWindow(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::StatsWindow)
+    ui(new Ui::CStatsWindow)
 {
     ui->setupUi(this);
     ui->chartView1->setMouseTracking(true);
@@ -13,134 +13,134 @@ StatsWindow::StatsWindow(QWidget *parent) :
     ui->chartView2->setRubberBand( QChartView::HorizontalRubberBand);
 }
 
-StatsWindow::~StatsWindow()
+CStatsWindow::~CStatsWindow()
 {
     delete ui;
 }
 
-void StatsWindow::setLabel1DartAvg(double avg)
+void CStatsWindow::set_label_1dart_avg(double avg)
 {
     QString avgstr = QString::number(avg, 'f', 2);
     ui->label_1dartInput->setText(avgstr);
 }
 
-void StatsWindow::setLabel3DartAvg(double avg)
+void CStatsWindow::set_label_3dart_avg(double avg)
 {
     QString avgstr = QString::number(avg, 'f', 2);
     ui->label_3dartInput->setText(avgstr);
 }
 
-void StatsWindow::setLabelCheckout(double checkout)
+void CStatsWindow::set_label_checkout(double checkout)
 {
     QString checkstr = QString::number(checkout, 'f', 2) + "%";
     ui->label_checkoutInput->setText(checkstr);
 }
 
-void StatsWindow::setLabelLeg1DartAvg(double avg)
+void CStatsWindow::set_label_leg_1dart_avg(double avg)
 {
     QString avgstr = QString::number(avg, 'f', 2);
     ui->label_legavg1_input->setText(avgstr);
 }
 
-void StatsWindow::setLabelLeg3DartAvg(double avg)
+void CStatsWindow::set_label_leg_3dart_avg(double avg)
 {
     QString avgstr = QString::number(avg, 'f', 2);
     ui->label_legavg3_input->setText(avgstr);
 }
 
-void StatsWindow::setLabelBestLeg(int numberOfDarts)
+void CStatsWindow::set_label_best_leg(int numberOfDarts)
 {
     ui->label_best_leg_input->setText(QString::number(numberOfDarts));
 }
 
-void StatsWindow::setLabelWorstLeg(int numberOfDarts)
+void CStatsWindow::set_label_worst_leg(int numberOfDarts)
 {
     ui->label_worst_leg_input->setText(QString::number(numberOfDarts));
 }
 
-void StatsWindow::setLabelLegAvg(double avg)
+void CStatsWindow::set_label_leg_avg(double avg)
 {
     QString avgstr = QString::number(avg, 'f', 2);
     ui->label_leg_avg_input->setText(avgstr);
 }
 
-void StatsWindow::setLabelCheckoutAttempts(QString attempts)
+void CStatsWindow::set_label_checkout_attempts(QString attempts)
 {
     ui->label_checkout_attempts_input->setText(attempts);
 }
 
-void StatsWindow::setLabelHighestCheckout(int checkout)
+void CStatsWindow::set_label_highest_checkout(int checkout)
 {
     ui->label_highest_checkout_input->setText(QString::number(checkout));
 }
 
-void StatsWindow::setLabel180s(int count)
+void CStatsWindow::set_label_180s(int count)
 {
     ui->label_180_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel160s(int count)
+void CStatsWindow::set_label_160s(int count)
 {
     ui->label_160p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel140s(int count)
+void CStatsWindow::set_label_140s(int count)
 {
     ui->label_140p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel120s(int count)
+void CStatsWindow::set_label_120s(int count)
 {
     ui->label_120p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel100s(int count)
+void CStatsWindow::set_label_100s(int count)
 {
     ui->label_100p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel80s(int count)
+void CStatsWindow::set_label_80s(int count)
 {
     ui->label_80p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel60s(int count)
+void CStatsWindow::set_label_60s(int count)
 {
     ui->label_60p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel40s(int count)
+void CStatsWindow::set_label_40s(int count)
 {
     ui->label_40p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel20s(int count)
+void CStatsWindow::set_label_20s(int count)
 {
     ui->label_20p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setLabel0s(int count)
+void CStatsWindow::set_label_0s(int count)
 {
     ui->label_0p_input->setText(QString::number(count));
 }
 
-void StatsWindow::setChart(Chart *chart1, Chart *chart2)
+void CStatsWindow::set_chart(CChart *chart1, CChart *chart2)
 {
     ui->chartView1->setChart(chart1);
     ui->chartView2->setChart(chart2);
 }
 
-void StatsWindow::setText(QString text)
+void CStatsWindow::set_text(QString text)
 {
     ui->textBrowser->append(text);
 }
 
-void StatsWindow::clearText()
+void CStatsWindow::clear_text()
 {
     ui->textBrowser->clear();
 }
 
-void StatsWindow::initLegSelector(int numberOfLegs)
+void CStatsWindow::init_leg_selector(int numberOfLegs)
 {
     if (numberOfLegs == 0)
     {
@@ -157,7 +157,7 @@ void StatsWindow::initLegSelector(int numberOfLegs)
     }
 }
 
-void StatsWindow::on_legSelector_currentIndexChanged(int index)
+void CStatsWindow::on_leg_selector_current_index_changed(int index)
 {
-    emit signalUpdateLegHistory(index, this);
+    emit signal_update_leg_history(index, this);
 }
