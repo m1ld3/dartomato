@@ -11,12 +11,12 @@ class CSubmitButton : public QPushButton
 
 public:
 
-  CSubmitButton(const QString &text, QWidget *parent = nullptr);
-  void mouseReleaseEvent(QMouseEvent *event) override;
+  CSubmitButton(const QString & iText, QWidget * iParent = nullptr);
+  void mouseReleaseEvent(QMouseEvent * iEvent) override;
 
 private slots:
 
-  void submit_button_pressed();
+  void submit_button_pressed_slot();
 
 signals:
 

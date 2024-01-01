@@ -19,8 +19,7 @@ class CCricketMainWindow : public QMainWindow
 
 public:
 
-  explicit CCricketMainWindow(QWidget *iParent = nullptr);
-  explicit CCricketMainWindow(QWidget *iParent = nullptr, uint32_t iNumberOfPlayers = 1, uint32_t iSets = 1, uint32_t iLegs = 1, bool iCutThroat = false, bool iOffensive = false);
+  explicit CCricketMainWindow(QWidget * iParent, const CSettings & ipSettings);
   ~CCricketMainWindow() override;
   void update_player();
   void closeEvent(QCloseEvent * iEvent) override;
@@ -54,19 +53,19 @@ public:
 
 private slots:
 
-  void signal_update_player(QString iType);
-  void signal_reset_scores();
-  void signal_game_won(uint32_t iPlayerNumber);
-  void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void signal_update_history();
+  void update_player_slot(const EUpdateType iType);
+  void reset_scores_slot();
+  void game_won_slot(uint32_t iPlayerNumber);
+  void inactivate_players_slot(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void update_history_slot();
 
 private:
 
-  Ui::CCricketMainWindow *mUi;
-  CCricketGroupBox *mGbc;
-  uint32_t mNumberOfPlayers, mSets, mLegs, mActivePlayer;
-  bool mCutThroat, mOffensive;
+  Ui::CCricketMainWindow * mUi;
+  CCricketGroupBox * mCricketGroupBox;
+  uint32_t mActivePlayer = 0;
   QVector<CCricketGroupBox*> mCricketBox;
+  const CSettings & mpSettings;
   QVector<CCricketClass*> mCricketPlayer;
 };
 

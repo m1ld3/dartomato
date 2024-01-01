@@ -17,28 +17,12 @@
 #include <xo1mainwindow.h>
 #include <checkoutlists.h>
 
-CX01GroupBox::CX01GroupBox(QWidget * iParent, uint32_t iPlayerNumber, uint32_t iGame, uint32_t iSets, uint32_t iLegs, bool iSingleIn,
-                           bool iSingleOut, bool iDoubleIn, bool iDoubleOut, bool iMasterIn,
-                           bool iMasterOut, bool iOffensive, CPlayerClass * iPlayer, CDartBoard * iDartBoard)
+CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
+                           uint32_t iPlayerNumber, CX01Class * iPlayer, CDartBoardX01 * iDartBoard)
   : QGroupBox(iParent)
   , mUi(new Ui::CX01GroupBox)
   , mPlayer(iPlayer)
   , mDartBoard(iDartBoard)
-  , mStartVal(iGame)
-  , mSets(iSets)
-  , mLegs(iLegs)
-  , mRemaining(iGame)
-  , mCurrentScore(0)
-  , mSingleIn(iSingleIn)
-  , mSingleOut(iSingleOut)
-  , mDoubleIn(iDoubleIn)
-  , mDoubleOut(iDoubleOut)
-  , mMasterIn(iMasterIn)
-  , mMasterOut(iMasterOut)
-  , mOffensive(iOffensive)
-  , mFinished(false)
-  , mSetBegin(false)
-  , mLegBegin(false)
   , mSexy69(this)
   , mAnotherone(this)
   , mSound1(this)
@@ -53,32 +37,21 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, uint32_t iPlayerNumber, uint32_t i
   , mSound10(this)
   , mSound11(this)
   , mScoreSound(this)
+  , mpSettings(ipSettings)
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
-  mUi->lcdNumber->display(static_cast<int>(iGame));
+  mUi->lcdNumber->display(static_cast<int>(mpSettings.mGame));
   mUi->lcdNumber->setPalette(Qt::darkBlue);
   QString text = "Player " + QString::number(iPlayerNumber);
   mUi->label_playername->setText(text);
-  uint32_t w = 80;
-  uint32_t h = 80;
-
-  if (mActive)
-  {
-    mUi->label_pic->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-  }
-  else
-  {
-    mUi->label_pic->clear();
-  }
-
-  QString avg1dart = QString::number(mPlayer->get_avg1dart(),'f',3);
-  QString avg3dart = QString::number(mPlayer->get_avg3dart(),'f',3);
-  QString checkout = QString::number(mPlayer->get_checkout(),'f',3) + "%";
+  QString avg1dart = QString::number(mPlayer->get_avg1dart(), 'f', 3);
+  QString avg3dart = QString::number(mPlayer->get_avg3dart(), 'f', 3);
+  QString checkout = QString::number(mPlayer->get_checkout(), 'f', 3) + "%";
   mUi->label_1dartInput->setText(avg1dart);
   mUi->label_3dartInput->setText(avg3dart);
   mUi->label_checkoutInput->setText(checkout);
-  connect(mUi->label_pic,SIGNAL(signal_player_active_button_pressed()),this,SLOT(signal_player_active_button_pressed()));
+  connect(mUi->label_pic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CX01GroupBox::player_active_button_pressed_slot);
   display_finishes(mRemaining, 3);
   mGameWindow = dynamic_cast<CX01MainWindow*>(iParent);
   mSexy69.setSource(QUrl("qrc:/resources/sounds/sexy69.wav"));
@@ -94,10 +67,16 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, uint32_t iPlayerNumber, uint32_t i
   mSound9.setSource(QUrl("qrc:/resources/sounds/littlegirl.wav"));
   mSound10.setSource(QUrl("qrc:/resources/sounds/gutschlecht.wav"));
   mSound11.setSource(QUrl("qrc:/resources/sounds/daswarscheisse.wav"));
+
   connect(&mScoreSound, &QSoundEffect::playingChanged, this, [this]
   {
-    if(!mScoreSound.isPlaying() && mOffensive) play_offensive_sounds();
+    if(!mScoreSound.isPlaying() && mpSettings.mOffensive) play_offensive_sounds();
   });
+
+  connect(mUi->label_pic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CX01GroupBox::player_active_button_pressed_slot);
+  connect(mUi->pushButton_name, &QPushButton::clicked, this, &CX01GroupBox::push_button_name_clicked_slot);
+  connect(mUi->pushButton_undo, &QPushButton::clicked, this, &CX01GroupBox::push_button_undo_clicked_slot);
+  connect(mUi->pushButton_stats, &QPushButton::clicked, this, &CX01GroupBox::push_button_stats_clicked_slot);
 }
 
 CX01GroupBox::~CX01GroupBox()
@@ -115,13 +94,13 @@ void CX01GroupBox::set_active()
 
 void CX01GroupBox::set_inactive()
 {
-    mActive = false;
-    mUi->label_pic->clear();
+  mActive = false;
+  mUi->label_pic->clear();
 }
 
 void CX01GroupBox::reset()
 {
-  mRemaining = mStartVal;
+  mRemaining = static_cast<uint32_t>(mpSettings.mGame);
   mUi->lcdNumber->display(static_cast<int>(mRemaining));
   mPlayer->reset_score();
 }
@@ -141,21 +120,21 @@ QString CX01GroupBox::get_player_number() const
   return mUi->label_playername->text();
 }
 
-void CX01GroupBox::on_push_button_name_clicked()
+void CX01GroupBox::push_button_name_clicked_slot()
 {
-  CDialogNameInput *dn = new CDialogNameInput(this, mUi->label_playername->text());
+  QPointer<CDialogNameInput> dn = new CDialogNameInput(this, mUi->label_playername->text());
   dn->setAttribute(Qt::WA_DeleteOnClose);
-  connect(dn, SIGNAL(ok_button_clicked(QString&)), this, SLOT(ok_button_clicked(QString&)));
+  connect(dn, &CDialogNameInput::signal_ok_button_clicked, this, &CX01GroupBox::ok_button_clicked_slot);
   dn->show();
 }
 
-void CX01GroupBox::ok_button_clicked(QString && iName)
+void CX01GroupBox::ok_button_clicked_slot(const QString & iName)
 {
   mPlayerName = iName;
   mUi->label_playername->setText(mPlayerName);
 }
 
-void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, QVector<QString> && iDarts)
+void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
 {
   mCurrentScore = iScore;
   CX01GroupBox::mLegStarted = true;
@@ -178,14 +157,19 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
     emit signal_update_history();
     mScoreSound.play();
     emit signal_reset_scores();
-    if (mActive && !newset) {
-        emit signal_update_player("leg");
-        CX01GroupBox::mLegStarted = false;
-    } else if (mActive && newset) {
-        emit signal_update_player("set");
-        CX01GroupBox::mSetStarted = false;
-        CX01GroupBox::mLegStarted = false;
+
+    if (mActive && !newset)
+    {
+      emit signal_update_player(EUpdateType::LEG);
+      CX01GroupBox::mLegStarted = false;
     }
+    else if (mActive && newset)
+    {
+      emit signal_update_player(EUpdateType::SET);
+      CX01GroupBox::mSetStarted = false;
+      CX01GroupBox::mLegStarted = false;
+    }
+
     mUi->lcdNumber_legs->display(static_cast<int>(mPlayer->get_legs()));
     mUi->lcdNumber_sets->display(static_cast<int>(mPlayer->get_sets()));
   }
@@ -197,25 +181,26 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
 
     if (mActive)
     {
-      emit signal_update_player("default");
+      emit signal_update_player(EUpdateType::DEFAULT);
     }
   }
 
-  QString avg1dart = QString::number(mPlayer->get_avg1dart(),'f',3);
-  QString avg3dart = QString::number(mPlayer->get_avg3dart(),'f',3);
-  QString checkout = QString::number(mPlayer->get_checkout(),'f',3) + "%";
+  QString avg1dart = QString::number(mPlayer->get_avg1dart(), 'f', 3);
+  QString avg3dart = QString::number(mPlayer->get_avg3dart(), 'f', 3);
+  QString checkout = QString::number(mPlayer->get_checkout(), 'f', 3) + "%";
   mUi->label_1dartInput->setText(avg1dart);
   mUi->label_3dartInput->setText(avg3dart);
   mUi->label_checkoutInput->setText(checkout);
   display_finishes(mRemaining, 3);
 }
 
-void CX01GroupBox::signal_player_active_button_pressed()
+void CX01GroupBox::player_active_button_pressed_slot()
 {
   if (!mActive)
   {
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Change player order", "Do you really want to change the player order?", QMessageBox::Yes|QMessageBox::No);
+    reply = QMessageBox::question(this, "Change player order", "Do you really want to change the player order?",
+                                  QMessageBox::Yes|QMessageBox::No);
 
     if (reply == QMessageBox::Yes)
     {
@@ -273,7 +258,7 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
   mUi->textBrowser->clear();
   mUi->textBrowser->setText("Checkouts:");
 
-  if (mSingleOut)
+  if (mpSettings.mSingleOut)
   {
     if (singleOutSingleDartCheckoutList.find(iRemaining) != singleOutSingleDartCheckoutList.end())
     {
@@ -306,7 +291,7 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
       }
     }
   }
-  else if (mDoubleOut)
+  else if (mpSettings.mDoubleOut)
   {
     if (doubleOutSingleDartCheckoutList.find(iRemaining) != doubleOutSingleDartCheckoutList.end())
     {
@@ -339,7 +324,7 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
       }
     }
   }
-  else if (mMasterOut)
+  else if (mpSettings.mMasterOut)
   {
     if (masterOutSingleDartCheckoutList.find(iRemaining) != masterOutSingleDartCheckoutList.end())
     {
@@ -428,7 +413,7 @@ void CX01GroupBox::set_lcd_legs()
 
 void CX01GroupBox::play_offensive_sounds()
 {
-  if (!(mRemaining == mStartVal && mCurrentScore > 0))
+  if (!(mRemaining == static_cast<uint32_t>(mpSettings.mGame) && mCurrentScore > 0))
   {
     std::srand(static_cast<unsigned> (std::time(0)));
     uint32_t rnd = 1 + (std::rand() % 3);
@@ -564,7 +549,7 @@ void CX01GroupBox::perform_undo()
   display_finishes(mRemaining, 3);
 }
 
-void CX01GroupBox::slot_update_leg_history(uint32_t iIndex, CStatsWindow * iStats)
+void CX01GroupBox::update_leg_history_slot(uint32_t iIndex, CStatsWindow * iStats)
 {
   iStats->clear_text();
   iStats->set_label_leg_1dart_avg(0.0);
@@ -600,14 +585,14 @@ double CX01GroupBox::compute_average(QVector<uint32_t> vector)
   return avg;
 }
 
-void CX01GroupBox::on_push_button_stats_clicked()
+void CX01GroupBox::push_button_stats_clicked_slot()
 {
-  CStatsWindow * stats = new CStatsWindow;
-  connect(stats, SIGNAL(signal_update_leg_history(int,StatsWindow*)), this, SLOT(slot_update_leg_history(int, StatsWindow*)));
+  QPointer<CStatsWindow> stats = new CStatsWindow();
+  connect(stats, &CStatsWindow::signal_update_leg_history, this, &CX01GroupBox::update_leg_history_slot);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
-  QBarSet *setScores = new QBarSet("Scores");
-  QBarSet *setDarts = new QBarSet("Single Darts");
+  QPointer<QBarSet> setScores = new QBarSet("Scores");
+  QPointer<QBarSet> setDarts = new QBarSet("Single Darts");
   QVector<QVector<QString>> thrownDarts = mPlayer->get_darts();
   QVector<QString> thrownDarts_flat;
 
@@ -640,10 +625,10 @@ void CX01GroupBox::on_push_button_stats_clicked()
   QVector<uint32_t> allScores = mPlayer->get_total_scores_flat();
   std::map<uint32_t, uint32_t> score_counts;
   for (auto score : allScores) ++score_counts[score];
-  QBarSeries *series = new QBarSeries();
-  QBarSeries *series2 = new QBarSeries();
-  CChart *chart = new CChart();
-  CChart *chart2 = new CChart();
+  QPointer<QBarSeries> series = new QBarSeries();
+  QPointer<QBarSeries> series2 = new QBarSeries();
+  QPointer<CChart> chart = new CChart();
+  QPointer<CChart> chart2 = new CChart();
   chart->addSeries(series);
   chart2->addSeries(series2);
   chart->setTitle("Scoring statistics");
@@ -661,7 +646,7 @@ void CX01GroupBox::on_push_button_stats_clicked()
 
     for (it = score_counts.begin(); it != score_counts.end(); it++)
     {
-      if (it->first >=  0 && it->first < 20)   plus0  += it->second;
+      if (it->first < 20)                      plus0  += it->second;
       if (it->first >= 20 && it->first < 40)   plus20 += it->second;
       if (it->first >= 40 && it->first < 60)   plus40 += it->second;
       if (it->first >= 60 && it->first < 80)   plus60 += it->second;
@@ -675,12 +660,12 @@ void CX01GroupBox::on_push_button_stats_clicked()
       categories.append(QString::number(it->first));
     }
 
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    QPointer<QBarCategoryAxis> axisX = new QBarCategoryAxis();
     if (categories.size()) axisX->setMin(categories.first());
     axisX->append(categories);
     chart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
-    QValueAxis *axisY = new QValueAxis();
+    QPointer<QValueAxis> axisY = new QValueAxis();
     std::map<uint32_t, uint32_t>::iterator best = std::max_element(score_counts.begin(), score_counts.end(), [] (const std::pair<int, int>& a, const std::pair<int, int>& b)->bool{return a.second < b.second;});
     qreal max = static_cast<qreal>(best->second);
     axisY->setRange(0, max);
@@ -690,7 +675,7 @@ void CX01GroupBox::on_push_button_stats_clicked()
     chart->addAxis(axisY, Qt::AlignLeft);
     series->attachAxis(axisY);
 
-    QObject::connect(setScores, &QBarSet::hovered,this,[setScores](bool status, int index)
+    QObject::connect(setScores, &QBarSet::hovered, this, [setScores](bool status, int index)
     {
       QPoint p = QCursor::pos();
       if (status)
@@ -711,12 +696,12 @@ void CX01GroupBox::on_push_button_stats_clicked()
       categories2.append(it2->first);
     }
 
-    QBarCategoryAxis *axisX2 = new QBarCategoryAxis();
+    QPointer<QBarCategoryAxis> axisX2 = new QBarCategoryAxis();
     if (categories2.size()) axisX2->setMin(categories2.first());
     axisX2->append(categories2);
     chart2->addAxis(axisX2, Qt::AlignBottom);
     series2->attachAxis(axisX2);
-    QValueAxis *axisY2 = new QValueAxis();
+    QPointer<QValueAxis> axisY2 = new QValueAxis();
     std::map<QString, uint32_t>::iterator best2 = std::max_element(dart_counts.begin(), dart_counts.end(), [] (const std::pair<QString, int>& a, const std::pair<QString, int>& b)->bool{return a.second < b.second;});
     qreal max2 = static_cast<qreal>(best2->second);
     axisY2->setRange(0, max2);
@@ -726,7 +711,7 @@ void CX01GroupBox::on_push_button_stats_clicked()
     chart2->addAxis(axisY2, Qt::AlignLeft);
     series2->attachAxis(axisY2);
 
-    QObject::connect(setDarts, &QBarSet::hovered,this,[setDarts](bool status, int index)
+    QObject::connect(setDarts, &QBarSet::hovered, this, [setDarts](bool status, int index)
     {
       QPoint p = QCursor::pos();
       if (status)
@@ -784,17 +769,28 @@ void CX01GroupBox::on_push_button_stats_clicked()
   }
 
   stats->set_label_leg_avg(compute_average(dartCountOfWonLegs));
-  uint32_t bestLeg = *std::min_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
-  uint32_t worstLeg = *std::max_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
-  uint32_t highestCheckout = *std::max_element(allCheckouts.begin(), allCheckouts.end());
-  stats->set_label_highest_checkout(highestCheckout);
-  stats->set_label_best_leg(bestLeg);
-  stats->set_label_worst_leg(worstLeg);
+
+  uint32_t bestLeg = 0;
+  uint32_t worstLeg = 0;
+  if (dartCountOfWonLegs.size() > 0)
+  {
+    bestLeg = *std::min_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
+    worstLeg = *std::max_element(dartCountOfWonLegs.begin(), dartCountOfWonLegs.end());
+    stats->set_label_best_leg(bestLeg);
+    stats->set_label_worst_leg(worstLeg);
+  }
+
+  uint32_t highestCheckout = 0;
+  if (allCheckouts.size() > 0)
+  {
+    highestCheckout = *std::max_element(allCheckouts.begin(), allCheckouts.end());
+    stats->set_label_highest_checkout(highestCheckout);
+  }
 
   stats->show();
 }
 
-void CX01GroupBox::on_push_button_undo_clicked()
+void CX01GroupBox::push_button_undo_clicked_slot()
 {
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
                                                              tr("Are you sure you want to undo your last score?\n"),

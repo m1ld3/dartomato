@@ -1,18 +1,17 @@
 #include "undobutton.h"
 
-CUndoButton::CUndoButton(const QString &text, QWidget *parent) :
-    QPushButton(text, parent)
-{
+CUndoButton::CUndoButton(const QString & iText, QWidget * iParent)
+  : QPushButton(iText, iParent)
+{}
 
+void CUndoButton::mouseReleaseEvent(QMouseEvent * iEvent)
+{
+  Q_UNUSED(iEvent);
+  update();
+  CUndoButton::undo_button_pressed_slot();
 }
 
-void CUndoButton::mouseReleaseEvent(QMouseEvent *event)
+void CUndoButton::undo_button_pressed_slot()
 {
-    Q_UNUSED(event);
-    update();
-    CUndoButton::undo_button_pressed();
-}
-
-void CUndoButton::undo_button_pressed() {
-    emit signal_undo_button_pressed();
+  emit signal_undo_button_pressed();
 }

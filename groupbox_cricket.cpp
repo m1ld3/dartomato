@@ -8,12 +8,13 @@
 #include <QString>
 #include <algorithm>
 
-CCricketGroupBox::CCricketGroupBox(QWidget * iParent, uint32_t iPlayerNumber, uint32_t iSets, uint32_t iLegs,
-                                   CCricketClass * iPlayer, bool iCutThroat, bool iOffensive)
-  : QGroupBox(iParent), mUi(new Ui::CCricketGroupBox), mPlayer(iPlayer), mPlayerNumber(iPlayerNumber - 1), mSets(iSets)
-  , mLegs(iLegs), mScore(0), mFinished(false), mSetBegin(false), mLegBegin(false), mCutThroat(iCutThroat)
-  , mOffensive(iOffensive), mTotalHits(0), mSlot15(0), mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0)
-  , mSlot20(0), mSlot25(0), mExtra15(0), mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0)
+CCricketGroupBox::CCricketGroupBox(QWidget * iParent, const CSettings & ipSettings,
+                                   uint32_t iPlayerNumber,
+                                   CCricketClass * iPlayer)
+  : QGroupBox(iParent)
+  , mUi(new Ui::CCricketGroupBox)
+  , mPlayer(iPlayer)
+  , mPlayerNumber(iPlayerNumber - 1)
   , mSound1(this)
   , mSound2(this)
   , mSound3(this)
@@ -25,6 +26,7 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent, uint32_t iPlayerNumber, ui
   , mSound9(this)
   , mSound10(this)
   , mSound11(this)
+  , mpSettings(ipSettings)
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(4);
@@ -41,21 +43,7 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent, uint32_t iPlayerNumber, ui
   mUi->label_playername->setText(text);
   QString hitsPerRound = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
   mUi->label_hitsPerRound->setText(hitsPerRound);
-  uint32_t w = 80;
-  uint32_t h = 80;
-
-  if (mActive)
-  {
-    mUi->label_pic->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-  }
-  else
-  {
-    mUi->label_pic->clear();
-  }
-
-  connect(mUi->label_pic,SIGNAL(signal_player_active_button_pressed()), this, SLOT(signal_player_active_button_pressed()));
   mGameWindow = dynamic_cast<CCricketMainWindow*>(iParent);
-
   mSound1.setSource(QUrl("qrc:/resources/sounds/yousuck1.wav"));
   mSound2.setSource(QUrl("qrc:/resources/sounds/yousuck2.wav"));
   mSound3.setSource(QUrl("qrc:/resources/sounds/yousuck3.wav"));
@@ -67,6 +55,11 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent, uint32_t iPlayerNumber, ui
   mSound9.setSource(QUrl("qrc:/resources/sounds/littlegirl.wav"));
   mSound10.setSource(QUrl("qrc:/resources/sounds/gutschlecht.wav"));
   mSound11.setSource(QUrl("qrc:/resources/sounds/daswarscheisse.wav"));
+
+  connect(mUi->label_pic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CCricketGroupBox::player_active_button_pressed_slot);
+  connect(mUi->pushButton_name, &QPushButton::clicked, this, &CCricketGroupBox::push_button_name_clicked_slot);
+  connect(mUi->pushButton_score, &QPushButton::clicked, this, &CCricketGroupBox::push_button_score_clicked_slot);
+  connect(mUi->pushButton_undo, &QPushButton::clicked, this, &CCricketGroupBox::push_button_undo_clicked_slot);
 }
 
 CCricketGroupBox::~CCricketGroupBox()
@@ -108,20 +101,20 @@ QString CCricketGroupBox::get_player_number() const
   return mUi->label_playername->text();
 }
 
-void CCricketGroupBox::on_pushButton_name_clicked()
+void CCricketGroupBox::push_button_name_clicked_slot()
 {
-  CDialogNameInput *dn = new CDialogNameInput(this, mUi->label_playername->text());
-  connect(dn, SIGNAL(ok_button_clicked(QString&)), this, SLOT(ok_button_clicked(QString&)));
+  QPointer<CDialogNameInput> dn = new CDialogNameInput(this, mUi->label_playername->text());
+  connect(dn, &CDialogNameInput::signal_ok_button_clicked, this, &CCricketGroupBox::ok_button_clicked_slot);
   dn->show();
 }
 
-void CCricketGroupBox::ok_button_clicked(QString && iName)
+void CCricketGroupBox::ok_button_clicked_slot(const QString & iName)
 {
   mPlayerName = iName;
   mUi->label_playername->setText(mPlayerName);
 }
 
-void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDarts, QVector<QString> & iDarts)
+void CCricketGroupBox::cricket_submit_button_pressed_slot(uint32_t iNumberOfDarts, const QVector<QString> & iDarts)
 {
   CCricketGroupBox::mLegStarted = true;
   CCricketGroupBox::mSetStarted = true;
@@ -144,7 +137,7 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
   mExtra25 = mPlayer->get_extra25();
   uint32_t newhits = mTotalHits;
 
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     QString dart = "0";
     for (uint32_t i = 0; i < iDarts.size(); i++)
@@ -750,7 +743,7 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
     mScore = mPlayer->get_score();
   }
 
-  if (mTotalHits == newhits && mOffensive)
+  if (mTotalHits == newhits && mpSettings.mOffensive)
   {
     play_fail_sounds();
   }
@@ -760,7 +753,7 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
   QString hpr = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
   mUi->label_hitsPerRound->setText(hpr);
 
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     if (mScoreInput->are_slots_full() && mGameWindow->is_score_bigger(mScore))
     {  // leg won
@@ -770,12 +763,12 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
       emit signal_reset_scores();
       if (mActive && !newset)
       {
-        emit signal_update_player("leg");
+        emit signal_update_player(EUpdateType::LEG);
         CCricketGroupBox::mLegStarted = false;
       }
       else if (mActive && newset)
       {
-        emit signal_update_player("set");
+        emit signal_update_player(EUpdateType::SET);
         CCricketGroupBox::mSetStarted = false;
         CCricketGroupBox::mLegStarted = false;
       }
@@ -786,7 +779,7 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
     {
       if (mActive)
       {
-        emit signal_update_player("default");
+        emit signal_update_player(EUpdateType::DEFAULT);
       }
       mPlayer->set_leg_win_array(false);
       mGameWindow->update_labels();
@@ -803,12 +796,12 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
       emit signal_reset_scores();
       if (mActive && !newset)
       {
-        emit signal_update_player("leg");
+        emit signal_update_player(EUpdateType::LEG);
         CCricketGroupBox::mLegStarted = false;
       }
       else if (mActive && newset)
       {
-        emit signal_update_player("set");
+        emit signal_update_player(EUpdateType::SET);
         CCricketGroupBox::mSetStarted = false;
         CCricketGroupBox::mLegStarted = false;
       }
@@ -819,7 +812,7 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
     {
       if (mActive)
       {
-        emit signal_update_player("default");
+        emit signal_update_player(EUpdateType::DEFAULT);
       }
       mPlayer->set_leg_win_array(false);
       mGameWindow->update_labels();
@@ -830,7 +823,7 @@ void CCricketGroupBox::signal_cricket_submit_button_pressed(uint32_t iNumberOfDa
 }
 
 
-void CCricketGroupBox::signal_player_active_button_pressed()
+void CCricketGroupBox::player_active_button_pressed_slot()
 {
   if (!mActive)
   {
@@ -845,13 +838,13 @@ void CCricketGroupBox::signal_player_active_button_pressed()
   }
 }
 
-void CCricketGroupBox::on_pushButton_score_clicked()
+void CCricketGroupBox::push_button_score_clicked_slot()
 {
   if (mActive && !mFinished)
   {
-    mScoreInput = new CCricketInput(this, mSets, mLegs, mPlayer, mGameWindow, mCutThroat);
+    mScoreInput = new CCricketInput(this, mpSettings, mPlayer, mGameWindow);
     mScoreInput->setAttribute(Qt::WA_DeleteOnClose);
-    connect(mScoreInput, SIGNAL (signal_cricket_submit_button_pressed(int&, QVector<QString>)), this, SLOT (signal_cricket_submit_button_pressed(int&, QVector<QString>)));
+    connect(mScoreInput, &CCricketInput::signal_cricket_submit_button_pressed, this, &CCricketGroupBox::cricket_submit_button_pressed_slot);
     mScoreInput->show();
   }
   else if (mFinished)
@@ -1290,19 +1283,21 @@ void CCricketGroupBox::set_leg_history()
   {
     legscores = totalscores.last();
   }
-  if (mCutThroat)
+
+  if (mpSettings.mCutThroat)
   {
     QVector<QVector<QString>> temp = {};
     for (uint32_t i = 0; i < legscores.size(); i++)
     {
-    if (legscores[i].last() != "")
-    {
-      temp.push_back(legscores[i]);
-    }
+      if (legscores[i].last() != "")
+      {
+        temp.push_back(legscores[i]);
+      }
     }
     legscores = {};
     legscores = temp;
   }
+
   mUi->textBrowser->clear();
   for (uint32_t i = 0; i < legscores.size(); i++)
   {
@@ -1321,6 +1316,7 @@ void CCricketGroupBox::set_leg_history()
         }
       }
     }
+
     if (legscores[i].size() == 3)
     {
       QString line = QString::number(i+1) + ": " + legscores[i][0] + "  " + legscores[i][1] + "  " + legscores[i][2];
@@ -1359,7 +1355,7 @@ void CCricketGroupBox::set_extra20(uint32_t iPoints)
   mPlayer->set_extra20(iPoints);
 }
 
-void CCricketGroupBox::on_pushButton_undo_clicked()
+void CCricketGroupBox::push_button_undo_clicked_slot()
 {
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
                                                              tr("Are you sure you want to undo your last score?\n"),
@@ -1399,162 +1395,6 @@ void CCricketGroupBox::perform_undo()
   if (mFinished)
   {
     unset_finished();
-  }
-}
-
-void CCricketGroupBox::signal_set_label_slot(uint32_t iHits, uint32_t iSlot)
-{
-  uint32_t w = 25;
-  uint32_t h = 25;
-  switch (iSlot)
-  {
-  case 15:
-    switch (iHits)
-    {
-    default:
-      mUi->label_15slot1->clear();
-      mUi->label_15slot2->clear();
-      mUi->label_15slot3->clear();
-      break;
-    case 1:
-      mUi->label_15slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 2:
-      mUi->label_15slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_15slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 3:
-      mUi->label_15slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_15slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_15slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    }
-    break;
-  case 16:
-    switch (iHits)
-    {
-    default:
-      mUi->label_16slot1->clear();
-      mUi->label_16slot2->clear();
-      mUi->label_16slot3->clear();
-      break;
-    case 1:
-      mUi->label_16slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 2:
-      mUi->label_16slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_16slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 3:
-      mUi->label_16slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_16slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_16slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    }
-    break;
-  case 17:
-    switch (iHits)
-    {
-    default:
-      mUi->label_17slot1->clear();
-      mUi->label_17slot2->clear();
-      mUi->label_17slot3->clear();
-      break;
-    case 1:
-      mUi->label_17slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 2:
-        mUi->label_17slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-        mUi->label_17slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-        break;
-    case 3:
-      mUi->label_17slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_17slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_17slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    }
-    break;
-  case 18:
-    switch (iHits)
-    {
-    default:
-      mUi->label_18slot1->clear();
-      mUi->label_18slot2->clear();
-      mUi->label_18slot3->clear();
-      break;
-    case 1:
-      mUi->label_18slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 2:
-      mUi->label_18slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_18slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 3:
-      mUi->label_18slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_18slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_18slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    }
-    break;
-  case 19:
-    switch (iHits)
-    {
-    default:
-      mUi->label_19slot1->clear();
-      mUi->label_19slot2->clear();
-      mUi->label_19slot3->clear();
-      break;
-    case 1:
-      mUi->label_19slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 2:
-      mUi->label_19slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_19slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 3:
-      mUi->label_19slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_19slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_19slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    }
-    break;
-  case 20:
-    switch (iHits)
-    {
-    default:
-      mUi->label_20slot1->clear();
-      mUi->label_20slot2->clear();
-      mUi->label_20slot3->clear();
-      break;
-    case 1:
-      mUi->label_20slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 2:
-      mUi->label_20slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_20slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 3:
-      mUi->label_20slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_20slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_20slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    }
-    break;
-  case 25:
-    switch (iHits)
-    {
-    default:
-      mUi->label_25slot1->clear();
-      mUi->label_25slot2->clear();
-      mUi->label_25slot3->clear();
-      break;
-    case 1:
-      mUi->label_25slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 2:
-      mUi->label_25slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_25slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      break;
-    case 3:
-      mUi->label_25slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_25slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-      mUi->label_25slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    }
-  default:;
   }
 }
 

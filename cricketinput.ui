@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>cricketinput</class>
- <widget class="QDialog" name="cricketinput">
+ <class>CCricketInput</class>
+ <widget class="QDialog" name="CCricketInput">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -53,7 +53,6 @@
            <property name="font">
             <font>
              <pointsize>20</pointsize>
-             <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
             </font>
@@ -124,7 +123,6 @@
            <property name="font">
             <font>
              <pointsize>20</pointsize>
-             <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
             </font>
@@ -192,7 +190,6 @@
            <property name="font">
             <font>
              <pointsize>20</pointsize>
-             <weight>50</weight>
              <italic>false</italic>
              <bold>false</bold>
             </font>
@@ -247,7 +244,7 @@
       </layout>
      </item>
      <item>
-      <widget class="DartBoardView" name="graphicsView_dartboard">
+      <widget class="CDartBoardView" name="graphicsView_dartboard">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -329,7 +326,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DartBoardView</class>
+   <class>CDartBoardView</class>
    <extends>QGraphicsView</extends>
    <header>dartboardview.h</header>
   </customwidget>

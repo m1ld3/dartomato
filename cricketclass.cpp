@@ -2,36 +2,30 @@
 #include <cmath>
 #include <QDebug>
 
-CCricketClass::CCricketClass(QWidget * iParent, uint32_t iNumberOfSets, uint32_t iNumberOfLegs, uint32_t iPlayerNumber, bool iCutThroat)
-  : mSets(0), mLegs(0), mTotalLegs(0), mCutThroat(iCutThroat), mScoreLegs({}), mScoringHistory({})
-  , mTotalScores({}), mNumberOfLegs(iNumberOfLegs), mNumberOfSets(iNumberOfSets)
-  , mPlayerNumber(iPlayerNumber-1), mNumberOfDartsArray({}), mTotalDarts(0), mSlot15(0)
-  , mSlot16(0), mSlot17(0), mSlot18(0), mSlot19(0), mSlot20(0), mSlot25(0), mExtra15(0)
-  , mExtra16(0), mExtra17(0), mExtra18(0), mExtra19(0), mExtra20(0), mExtra25(0), mScore(0)
-  , mSlot15Array({0}), mSlot16Array({0}), mSlot17Array({0}), mSlot18Array({0}), mSlot19Array({0})
-  , mSlot20Array({0}), mSlot25Array({0}), mExtra15Array({0}), mExtra16Array({0}), mExtra17Array({0})
-  , mExtra18Array({0}), mExtra19Array({0}), mExtra20Array({0}), mExtra25Array({0}), mScoreArray({0}), mLegWinArray({false})
+CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings)
+  : mPlayerNumber(iPlayerNumber-1)
+  , mpSettings(ipSettings)
 {
   mGameWindow = dynamic_cast<CCricketMainWindow*>(iParent);
-  mMarginLegs = std::ceil(iNumberOfLegs/2.0);
-  mMarginSets = std::ceil(iNumberOfSets/2.0);
+  mMarginLegs = std::ceil(mpSettings.mLegs/2.0);
+  mMarginSets = std::ceil(mpSettings.mSets/2.0);
   mHitsPerRound = compute_hits_per_round(0,0);
 }
 
 bool CCricketClass::increase_setslegs()
 {
-  mLegs += 1;
-  mTotalLegs += 1;
+  mLegsWonPerSet += 1;
+  mTotalLegsWon += 1;
   bool temp = false;
 
-  if (((mLegs % mMarginLegs) == 0) && (mLegs > 0))
+  if (((mLegsWonPerSet % mMarginLegs) == 0) && (mLegsWonPerSet > 0))
   {
-    mSets += 1;
-    mLegs = 0;
+    mSetsWon += 1;
+    mLegsWonPerSet = 0;
     temp = true;
   }
 
-  if (mSets == mMarginSets)
+  if (mSetsWon == mMarginSets)
   {
     emit signal_game_won(mPlayerNumber);
   }
@@ -72,7 +66,7 @@ void CCricketClass::reset_score()
 
 void CCricketClass::reset_legs()
 {
-  mLegs = 0;
+  mLegsWonPerSet = 0;
 }
 
 void CCricketClass::perform_undo_step()
@@ -209,7 +203,7 @@ void CCricketClass::set_slot25(uint32_t iHits)
 
 void CCricketClass::set_extra15(uint32_t iPoints)
 {
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     mExtra15 = iPoints;
   }
@@ -222,7 +216,7 @@ void CCricketClass::set_extra15(uint32_t iPoints)
 
 void CCricketClass::set_extra16(uint32_t iPoints)
 {
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     mExtra16 = iPoints;
   }
@@ -235,7 +229,7 @@ void CCricketClass::set_extra16(uint32_t iPoints)
 
 void CCricketClass::set_extra17(uint32_t iPoints)
 {
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     mExtra17 = iPoints;
   }
@@ -248,7 +242,7 @@ void CCricketClass::set_extra17(uint32_t iPoints)
 
 void CCricketClass::set_extra18(uint32_t iPoints)
 {
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     mExtra18 = iPoints;
   }
@@ -261,7 +255,7 @@ void CCricketClass::set_extra18(uint32_t iPoints)
 
 void CCricketClass::set_extra19(uint32_t iPoints)
 {
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     mExtra19 = iPoints;
   }
@@ -274,7 +268,7 @@ void CCricketClass::set_extra19(uint32_t iPoints)
 
 void CCricketClass::set_extra20(uint32_t iPoints)
 {
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     mExtra20 = iPoints;
   }
@@ -363,7 +357,7 @@ QVector<QVector<QString> > CCricketClass::get_score_legs() const
   return mScoreLegs;
 }
 
-QVector<QVector<QVector<QString> > > CCricketClass::get_scoring_history() const
+QVector<QVector<QVector<QString>>> CCricketClass::get_scoring_history() const
 {
   return mScoringHistory;
 }
@@ -387,7 +381,7 @@ void CCricketClass::set_total_darts(uint32_t iDarts)
 
 void CCricketClass::set_extra25(uint32_t iPoints)
 {
-  if (!mCutThroat)
+  if (!mpSettings.mCutThroat)
   {
     mExtra25 = iPoints;
   }
@@ -414,16 +408,16 @@ void CCricketClass::undo()
       perform_undo_step();
       if (finished)
       {
-        if (mTotalLegs % mMarginLegs == 0)
+        if (mTotalLegsWon % mMarginLegs == 0)
         {
-          mTotalLegs -= 1;
-          mLegs = mMarginLegs -1;
-          mSets -= 1;
+          mTotalLegsWon -= 1;
+          mLegsWonPerSet = mMarginLegs -1;
+          mSetsWon -= 1;
         }
         else
         {
-          mTotalLegs -= 1;
-          mLegs -= 1;
+          mTotalLegsWon -= 1;
+          mLegsWonPerSet -= 1;
         }
       }
     }
@@ -451,10 +445,10 @@ double CCricketClass::compute_hits_per_round(uint32_t iNumberOfDarts, uint32_t i
 
 uint32_t CCricketClass::get_legs() const
 {
-  return mLegs;
+  return mLegsWonPerSet;
 }
 
 uint32_t CCricketClass::get_sets() const
 {
-  return mSets;
+  return mSetsWon;
 }

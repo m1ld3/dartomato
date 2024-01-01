@@ -11,16 +11,16 @@ class CChart : public QChart
 {
 public:
 
-  explicit CChart(QGraphicsItem *iParent = nullptr, Qt::WindowFlags iWindowFlags = {});
+  explicit CChart(QGraphicsItem * iParent = nullptr, Qt::WindowFlags iWindowFlags = {});
   ~CChart() override = default;
 
 protected:
 
-  bool sceneEvent(QEvent *iEvent) override;
+  bool sceneEvent(QEvent * iEvent) override;
 
 private:
 
-  bool gesture_event(QGestureEvent *iEvent);
+  bool gesture_event(QGestureEvent * iEvent);
 };
 
 #endif  // CHART_H

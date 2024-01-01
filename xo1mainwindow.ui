@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>X01MainWindow</class>
- <widget class="QMainWindow" name="X01MainWindow">
+ <class>CX01MainWindow</class>
+ <widget class="QMainWindow" name="CX01MainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -99,7 +99,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -150,7 +149,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -198,7 +196,6 @@
               </property>
               <property name="font">
                <font>
-                <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
@@ -239,7 +236,7 @@
        </layout>
       </item>
       <item>
-       <widget class="DartBoardView" name="graphicsViewDartBoard"/>
+       <widget class="CDartBoardView" name="graphicsViewDartBoard"/>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -321,7 +318,7 @@
      <x>0</x>
      <y>0</y>
      <width>509</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>
@@ -329,7 +326,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DartBoardView</class>
+   <class>CDartBoardView</class>
    <extends>QGraphicsView</extends>
    <header>dartboardview.h</header>
   </customwidget>

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "xo1mainwindow.h"
 #include "cricketmainwindow.h"
+#include "settings.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -18,19 +19,21 @@ class CDartomatMain : public QMainWindow
 
 public:
 
-  CDartomatMain(QWidget *parent = nullptr);
+  CDartomatMain(QWidget * iParent = nullptr);
   ~CDartomatMain();
 
 private slots:
 
-  void on_pushButton_startgame_clicked();
+  void push_button_startgame_clicked_slot();
+  void combo_box_game_current_index_changed_slot(const QString & iGame);
 
 private:
 
   Ui::CDartomatMain * mUi;
-  CX01MainWindow * mX01MainWindow;
-  CCricketMainWindow * mCricketMainWindow;
+  QPointer<CX01MainWindow> mX01MainWindow;
+  QPointer<CCricketMainWindow> mCricketMainWindow;
   QSoundEffect mGameOnSound;
+  CSettings mSettings;
 };
 
 #endif  // DARTOMATMAIN_H

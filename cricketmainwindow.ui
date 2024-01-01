@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CricketMainWindow</class>
- <widget class="QMainWindow" name="CricketMainWindow">
+ <class>CCricketMainWindow</class>
+ <widget class="QMainWindow" name="CCricketMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -32,7 +32,7 @@
      <x>0</x>
      <y>0</y>
      <width>509</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

@@ -19,11 +19,11 @@ public:
 
 private slots:
 
-  void on_pushButton_ok_clicked();
+  void push_button_ok_clicked_slot();
 
 signals:
 
-  void ok_button_clicked(QString && iName);
+  void signal_ok_button_clicked(const QString & iName);
 
 private:
 

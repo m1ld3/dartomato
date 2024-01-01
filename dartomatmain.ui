@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DartomatMain</class>
- <widget class="QMainWindow" name="DartomatMain">
+ <class>CDartomatMain</class>
+ <widget class="QMainWindow" name="CDartomatMain">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -291,7 +291,7 @@
        </widget>
       </item>
       <item>
-       <widget class="MyQSpinBox" name="spinBox_sets">
+       <widget class="CMyQSpinBox" name="spinBox_sets">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -371,7 +371,7 @@
        </widget>
       </item>
       <item>
-       <widget class="MyQSpinBox" name="spinBox_legs">
+       <widget class="CMyQSpinBox" name="spinBox_legs">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -716,7 +716,6 @@
         <property name="font">
          <font>
           <pointsize>14</pointsize>
-          <weight>50</weight>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -771,7 +770,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>
@@ -779,7 +778,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MyQSpinBox</class>
+   <class>CMyQSpinBox</class>
    <extends>QSpinBox</extends>
    <header>myqspinbox.h</header>
   </customwidget>
@@ -787,7 +786,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

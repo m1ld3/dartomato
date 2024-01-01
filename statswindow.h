@@ -42,7 +42,7 @@ public:
   void set_label_40s(uint32_t iCount);
   void set_label_20s(uint32_t iCount);
   void set_label_0s(uint32_t iCount);
-  void set_chart(CChart *iChart1, CChart *iChart2);
+  void set_chart(CChart * iChart1, CChart * iChart2);
   void set_text(QString iText);
   void clear_text();
   void init_leg_selector(uint32_t iNumberOfLegs);
@@ -53,11 +53,11 @@ signals:
 
 private slots:
 
-  void on_leg_selector_current_index_changed(uint32_t iIndex);
+  void leg_selector_current_index_changed_slot(uint32_t iIndex);
 
 private:
 
-  Ui::CStatsWindow *mUi;
+  Ui::CStatsWindow * mUi;
 };
 
 #endif  // STATSWINDOW_H

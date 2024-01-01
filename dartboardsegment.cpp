@@ -7,14 +7,11 @@
 CDartBoardSegment::CDartBoardSegment(const QPainterPath & iPath, const uint32_t iVal, QString && iColor, QChar iType, QGraphicsPathItem * iParent)
   : QObject()
   , QGraphicsPathItem(iPath, iParent)
+  , mValue(iVal)
+  , mColor(iColor)
+  , mPath(iPath)
+  , mType(iType)
 {
-  mValue = iVal;
-  mPressed = false;
-  mHover = false;
-  mDragging = false;
-  mColor = iColor;
-  mPath = iPath;
-  mType = iType;
   setAcceptHoverEvents(true);
 }
 
@@ -53,7 +50,7 @@ void CDartBoardSegment::mouseReleaseEvent(QGraphicsSceneMouseEvent * iEvent)
     else
     {
       update();
-      CDartBoardSegment::segment_pressed();
+      CDartBoardSegment::segment_pressed_slot();
     }
   }
 }
@@ -114,7 +111,7 @@ QPainterPath CDartBoardSegment::shape() const
   return mPath;
 }
 
-void CDartBoardSegment::segment_pressed()
+void CDartBoardSegment::segment_pressed_slot()
 {
   emit signal_segment_pressed(mValue, mType);
 }

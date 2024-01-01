@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>StatsWindow</class>
- <widget class="QDialog" name="StatsWindow">
+ <class>CStatsWindow</class>
+ <widget class="QDialog" name="CStatsWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -388,7 +388,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab3">
       <attribute name="title">
@@ -1552,7 +1552,7 @@
         </layout>
        </item>
        <item>
-        <widget class="ChartView" name="chartView1"/>
+        <widget class="CChartView" name="chartView1"/>
        </item>
       </layout>
      </widget>
@@ -1562,7 +1562,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="ChartView" name="chartView2">
+        <widget class="CChartView" name="chartView2">
          <property name="locale">
           <locale language="German" country="Germany"/>
          </property>
@@ -1576,7 +1576,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ChartView</class>
+   <class>CChartView</class>
    <extends>QGraphicsView</extends>
    <header>chartview.h</header>
   </customwidget>

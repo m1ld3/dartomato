@@ -10,7 +10,9 @@ class CDartBoardSegment : public QObject, public QGraphicsPathItem
 
 public:
 
-  CDartBoardSegment(const QPainterPath & iPath, const uint32_t iVal = 0, QString && iColor = "black", QChar iType = 's', QGraphicsPathItem * iParent = nullptr);
+  CDartBoardSegment(const QPainterPath & iPath, const uint32_t iVal = 0,
+                    QString && iColor = "black", QChar iType = 's',
+                    QGraphicsPathItem * iParent = nullptr);
   ~CDartBoardSegment() override = default;
 
 protected:
@@ -26,21 +28,21 @@ protected:
 
 private slots:
 
-  void segment_pressed();
+  void segment_pressed_slot();
 
 signals:
 
-  void signal_segment_pressed(uint32_t & iSegmentVal, QChar & iType);
+  void signal_segment_pressed(uint32_t iVal, QChar & iType);
 
 private:
 
   uint32_t mValue;
   QString mColor;
-  bool mPressed;
-  bool mHover;
-  bool mDragging;
   QPainterPath mPath;
   QChar mType;
+  bool mPressed = false;
+  bool mHover = false;
+  bool mDragging = false;
 };
 
 #endif  // DARTBOARDSEGMENT_H

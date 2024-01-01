@@ -9,12 +9,12 @@ class CChartView : public QChartView
 {
 public:
 
-  CChartView(QWidget *iParent = 0);
+  CChartView(QWidget * iParent = 0);
 
 protected:
 
-  void wheelEvent(QWheelEvent *iEvent) override;
-  void keyPressEvent(QKeyEvent *iEvent) override;
+  void wheelEvent(QWheelEvent * iEvent) override;
+  void keyPressEvent(QKeyEvent * iEvent) override;
 };
 
 #endif

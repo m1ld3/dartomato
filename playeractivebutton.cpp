@@ -1,7 +1,7 @@
 #include "playeractivebutton.h"
 
-CPlayerActiveButton::CPlayerActiveButton(QWidget *parent) :
-    QLabel(parent)
+CPlayerActiveButton::CPlayerActiveButton(QWidget * iParent)
+  : QLabel(iParent)
 {}
 
 void CPlayerActiveButton::mouseReleaseEvent(QMouseEvent * iEvent)

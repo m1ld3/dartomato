@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GroupBox_player</class>
- <widget class="QGroupBox" name="GroupBox_player">
+ <class>CX01GroupBox</class>
+ <widget class="QGroupBox" name="CX01GroupBox">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -107,7 +107,7 @@
       </layout>
      </item>
      <item>
-      <widget class="PlayerActiveButton" name="label_pic">
+      <widget class="CPlayerActiveButton" name="label_pic">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -467,7 +467,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PlayerActiveButton</class>
+   <class>CPlayerActiveButton</class>
    <extends>QLabel</extends>
    <header>playeractivebutton.h</header>
   </customwidget>

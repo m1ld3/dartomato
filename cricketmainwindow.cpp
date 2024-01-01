@@ -6,34 +6,29 @@
 #include <QDebug>
 #include <QMessageBox>
 
-CCricketMainWindow::CCricketMainWindow(QWidget * iParent)
+
+CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & ipSettings)
   : QMainWindow(iParent)
   , mUi(new Ui::CCricketMainWindow)
-{
-  mUi->setupUi(this);
-  setAttribute(Qt::WA_DeleteOnClose);
-}
-
-CCricketMainWindow::CCricketMainWindow(QWidget * iParent, uint32_t iNumberOfPlayers, uint32_t iSets, uint32_t iLegs, bool iCutThroat, bool iOffensive)
-  : QMainWindow(iParent), mUi(new Ui::CCricketMainWindow), mNumberOfPlayers(iNumberOfPlayers), mSets(iSets), mLegs(iLegs),
-    mCutThroat(iCutThroat), mOffensive(iOffensive), mCricketPlayer(mNumberOfPlayers, nullptr)
+  , mpSettings(ipSettings)
 {
   mUi->setupUi(this);
   QWidget::setWindowTitle("Cricket");
-  for (uint32_t i = 0;i < mNumberOfPlayers; i++)
+
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
-    mCricketPlayer[i] = new CCricketClass(this, iSets, iLegs, i+1, mCutThroat);
-    mCricketBox.push_back(new CCricketGroupBox(this, i+1, mSets, mLegs, mCricketPlayer[i], mCutThroat, mOffensive));
+    mCricketPlayer.push_back(new CCricketClass(this, i+1, mpSettings));
+    mCricketBox.push_back(new CCricketGroupBox(this, mpSettings, i+1, mCricketPlayer[i]));
     mCricketBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mCricketBox[i]->set_inactive();
     mUi->gridLayoutCricket->addWidget(mCricketBox[i], i<4 ? 0 : 1, i%4);
-    connect(mCricketBox[i], SIGNAL(signal_update_player(QString)), this,SLOT(signal_update_player(QString)));
-    connect(mCricketBox[i], SIGNAL(signal_reset_scores()), this, SLOT(signal_reset_scores()));
-    connect(mCricketPlayer[i], SIGNAL(signal_game_won(int)), this, SLOT(signal_game_won(int)));
-    connect(mCricketBox[i], SIGNAL(signal_inactivate_players(int, bool, bool)), this, SLOT(signal_inactivate_players(int, bool, bool)));
-    connect(mCricketBox[i], SIGNAL(signal_update_history()), this, SLOT(signal_update_history()));
+    connect(mCricketBox[i], &CCricketGroupBox::signal_update_player, this, &CCricketMainWindow::update_player_slot);
+    connect(mCricketBox[i], &CCricketGroupBox::signal_reset_scores, this, &CCricketMainWindow::reset_scores_slot);
+    connect(mCricketPlayer[i], &CCricketClass::signal_game_won, this, &CCricketMainWindow::game_won_slot);
+    connect(mCricketBox[i], &CCricketGroupBox::signal_inactivate_players, this, &CCricketMainWindow::inactivate_players_slot);
+    connect(mCricketBox[i], &CCricketGroupBox::signal_update_history, this, &CCricketMainWindow::update_history_slot);
   }
-  mActivePlayer = 0;
+
   mCricketBox[mActivePlayer]->set_set_begin();
   mCricketBox[mActivePlayer]->set_leg_begin();
   mCricketBox[mActivePlayer]->set_active();
@@ -75,30 +70,30 @@ void CCricketMainWindow::set_active_player(uint32_t iPlayer)
 
 void CCricketMainWindow::update_player()
 {
-  mActivePlayer = (mActivePlayer + 1) % mNumberOfPlayers;
+  mActivePlayer = (mActivePlayer + 1) % mpSettings.mNumberOfPlayers;
 }
 
-void CCricketMainWindow::signal_update_player(QString iType)
+void CCricketMainWindow::update_player_slot(const EUpdateType iType)
 {
-  if (iType == "default")
+  if (iType == EUpdateType::DEFAULT)
   {
     update_player();
-    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
     {
       mCricketBox[i]->set_inactive();
     }
     mCricketBox[mActivePlayer]->set_active();
   }
-  else if (iType == "leg")
+  else if (iType == EUpdateType::LEG)
   {
-    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
     {
       if (mCricketBox[i]->has_begun_leg())
       {
         mCricketBox[i]->unset_leg_begin();
         mActivePlayer = i;
         update_player();
-        for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+        for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
         {
           mCricketBox[i]->set_inactive();
         }
@@ -108,16 +103,16 @@ void CCricketMainWindow::signal_update_player(QString iType)
       }
     }
   }
-  else if (iType == "set")
+  else if (iType == EUpdateType::SET)
   {
-    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
     {
       if (mCricketBox[i]->has_begun_set())
       {
         mCricketBox[i]->unset_set_begin();
         mActivePlayer = i;
         update_player();
-        for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+        for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
         {
           mCricketBox[i]->set_inactive();
           mCricketBox[i]->unset_leg_begin();
@@ -136,17 +131,17 @@ void CCricketMainWindow::signal_update_player(QString iType)
   }
 }
 
-void CCricketMainWindow::signal_reset_scores()
+void CCricketMainWindow::reset_scores_slot()
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     mCricketBox[i]->reset();
   }
 }
 
-void CCricketMainWindow::signal_game_won(uint32_t iPlayerNumber)
+void CCricketMainWindow::game_won_slot(uint32_t iPlayerNumber)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     mCricketBox[i]->set_finished();
   }
@@ -157,9 +152,9 @@ void CCricketMainWindow::signal_game_won(uint32_t iPlayerNumber)
   QMessageBox::about(this,"Game finished", text);
 }
 
-void CCricketMainWindow::signal_inactivate_players(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
+void CCricketMainWindow::inactivate_players_slot(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     mCricketBox[i]->set_inactive();
   }
@@ -167,7 +162,7 @@ void CCricketMainWindow::signal_inactivate_players(uint32_t iPlayerNumber, bool 
 
   if (!iLegStarted)
   {
-    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
     {
       mCricketBox[i]->unset_leg_begin();
     }
@@ -176,7 +171,7 @@ void CCricketMainWindow::signal_inactivate_players(uint32_t iPlayerNumber, bool 
 
   if (!iSetStarted)
   {
-    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
     {
       mCricketBox[i]->unset_set_begin();
       mCricketBox[i]->unset_leg_begin();
@@ -186,9 +181,9 @@ void CCricketMainWindow::signal_inactivate_players(uint32_t iPlayerNumber, bool 
   }
 }
 
-void CCricketMainWindow::signal_update_history()
+void CCricketMainWindow::update_history_slot()
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     mCricketBox[i]->update_history();
   }
@@ -197,7 +192,7 @@ void CCricketMainWindow::signal_update_history()
 bool CCricketMainWindow::is_slot15_free(uint32_t iPlayer) const
 {
   bool free = false;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -210,7 +205,7 @@ bool CCricketMainWindow::is_slot15_free(uint32_t iPlayer) const
 bool CCricketMainWindow::is_slot16_free(uint32_t iPlayer) const
 {
   bool free = false;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -223,7 +218,7 @@ bool CCricketMainWindow::is_slot16_free(uint32_t iPlayer) const
 bool CCricketMainWindow::is_slot17_free(uint32_t iPlayer) const
 {
   bool free = false;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -236,7 +231,7 @@ bool CCricketMainWindow::is_slot17_free(uint32_t iPlayer) const
 bool CCricketMainWindow::is_slot18_free(uint32_t iPlayer) const
 {
   bool free = false;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -249,7 +244,7 @@ bool CCricketMainWindow::is_slot18_free(uint32_t iPlayer) const
 bool CCricketMainWindow::is_slot19_free(uint32_t iPlayer) const
 {
   bool free = false;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -262,7 +257,7 @@ bool CCricketMainWindow::is_slot19_free(uint32_t iPlayer) const
 bool CCricketMainWindow::is_slot20_free(uint32_t iPlayer) const
 {
   bool free = false;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -275,7 +270,7 @@ bool CCricketMainWindow::is_slot20_free(uint32_t iPlayer) const
 bool CCricketMainWindow::is_slot25_free(uint32_t iPlayer) const
 {
   bool free = false;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -288,7 +283,7 @@ bool CCricketMainWindow::is_slot25_free(uint32_t iPlayer) const
 bool CCricketMainWindow::is_score_bigger(uint32_t iScore) const
 {
   bool result = true;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     result = result && mCricketBox[i]->get_score() <= iScore;
   }
@@ -298,7 +293,7 @@ bool CCricketMainWindow::is_score_bigger(uint32_t iScore) const
 bool CCricketMainWindow::is_score_smaller(uint32_t iScore) const
 {
   bool result = true;
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     result = result && mCricketBox[i]->get_score() >= iScore;
   }
@@ -307,7 +302,7 @@ bool CCricketMainWindow::is_score_smaller(uint32_t iScore) const
 
 void CCricketMainWindow::increase_score15(uint32_t iPoints)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (mCricketBox[i]->get_slot15() != 3)
     {
@@ -322,7 +317,7 @@ void CCricketMainWindow::increase_score15(uint32_t iPoints)
 
 void CCricketMainWindow::increase_score16(uint32_t iPoints)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (mCricketBox[i]->get_slot16() != 3)
     {
@@ -337,7 +332,7 @@ void CCricketMainWindow::increase_score16(uint32_t iPoints)
 
 void CCricketMainWindow::increase_score17(uint32_t iPoints)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (mCricketBox[i]->get_slot17() != 3)
     {
@@ -352,7 +347,7 @@ void CCricketMainWindow::increase_score17(uint32_t iPoints)
 
 void CCricketMainWindow::increase_score18(uint32_t iPoints)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (mCricketBox[i]->get_slot18() != 3)
     {
@@ -367,7 +362,7 @@ void CCricketMainWindow::increase_score18(uint32_t iPoints)
 
 void CCricketMainWindow::increase_score19(uint32_t iPoints)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (mCricketBox[i]->get_slot19() != 3)
     {
@@ -382,7 +377,7 @@ void CCricketMainWindow::increase_score19(uint32_t iPoints)
 
 void CCricketMainWindow::increase_score20(uint32_t iPoints)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (mCricketBox[i]->get_slot20() != 3)
     {
@@ -397,7 +392,7 @@ void CCricketMainWindow::increase_score20(uint32_t iPoints)
 
 void CCricketMainWindow::increase_score25(uint32_t iPoints)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (mCricketBox[i]->get_slot25() != 3)
     {
@@ -413,7 +408,7 @@ void CCricketMainWindow::increase_score25(uint32_t iPoints)
 QVector<uint32_t> CCricketMainWindow::compute_extra15s(uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra15s = {};
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -435,7 +430,7 @@ QVector<uint32_t> CCricketMainWindow::compute_extra15s(uint32_t iPoints, uint32_
 QVector<uint32_t> CCricketMainWindow::compute_extra16s(uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra16s = {};
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -457,7 +452,7 @@ QVector<uint32_t> CCricketMainWindow::compute_extra16s(uint32_t iPoints, uint32_
 QVector<uint32_t> CCricketMainWindow::compute_extra17s(uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra17s = {};
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -479,7 +474,7 @@ QVector<uint32_t> CCricketMainWindow::compute_extra17s(uint32_t iPoints, uint32_
 QVector<uint32_t> CCricketMainWindow::compute_extra18s(uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra18s = {};
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -501,7 +496,7 @@ QVector<uint32_t> CCricketMainWindow::compute_extra18s(uint32_t iPoints, uint32_
 QVector<uint32_t> CCricketMainWindow::compute_extra19s(uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra19s = {};
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -523,7 +518,7 @@ QVector<uint32_t> CCricketMainWindow::compute_extra19s(uint32_t iPoints, uint32_
 QVector<uint32_t> CCricketMainWindow::compute_extra20s(uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra20s = {};
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -545,7 +540,7 @@ QVector<uint32_t> CCricketMainWindow::compute_extra20s(uint32_t iPoints, uint32_
 QVector<uint32_t> CCricketMainWindow::compute_extra25s(uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra25s = {};
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
@@ -566,7 +561,7 @@ QVector<uint32_t> CCricketMainWindow::compute_extra25s(uint32_t iPoints, uint32_
 
 void CCricketMainWindow::set_scores()
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     mCricketBox[i]->set_score();
   }
@@ -574,7 +569,7 @@ void CCricketMainWindow::set_scores()
 
 void CCricketMainWindow::update_labels()
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     mCricketBox[i]->update_labels();
   }
@@ -582,7 +577,7 @@ void CCricketMainWindow::update_labels()
 
 void CCricketMainWindow::update_darts(uint32_t iPlayer)
 {
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {

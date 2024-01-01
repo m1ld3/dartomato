@@ -11,12 +11,12 @@ class CUndoButton : public QPushButton
 
 public:
 
-  CUndoButton(const QString &text, QWidget *parent = nullptr);
-  virtual void mouseReleaseEvent(QMouseEvent *event) override;
+  CUndoButton(const QString & iText, QWidget * iParent = nullptr);
+  virtual void mouseReleaseEvent(QMouseEvent * iEvent) override;
 
 private slots:
 
-  void undo_button_pressed();
+  void undo_button_pressed_slot();
 
 signals:
 

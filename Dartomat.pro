@@ -22,12 +22,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    cdartboard_base.cpp \
     chart.cpp \
     chartview.cpp \
     cricketclass.cpp \
     cricketinput.cpp \
     cricketmainwindow.cpp \
     dartboard.cpp \
+    dartboard_cricket.cpp \
     dartboardsegment.cpp \
     dartboardview.cpp \
     dialognameinput.cpp \
@@ -44,6 +46,7 @@ SOURCES += \
     xo1mainwindow.cpp
 
 HEADERS += \
+    cdartboard_base.h \
     chart.h \
     chartview.h \
     checkoutlists.h \
@@ -51,6 +54,7 @@ HEADERS += \
     cricketinput.h \
     cricketmainwindow.h \
     dartboard.h \
+    dartboard_cricket.h \
     dartboardsegment.h \
     dartboardview.h \
     dartomatmain.h \
@@ -60,6 +64,7 @@ HEADERS += \
     myqspinbox.h \
     playeractivebutton.h \
     playerclass.h \
+    settings.h \
     statswindow.h \
     submitbutton.h \
     undobutton.h \

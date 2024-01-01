@@ -12,6 +12,7 @@ CDialogNameInput::CDialogNameInput(QWidget * iParent, QString && iText)
   mUi->lineEdit_name->setText(iText);
   mUi->lineEdit_name->selectAll();
   setAttribute(Qt::WA_DeleteOnClose);
+  connect(mUi->pushButton_ok, &QPushButton::clicked, this, &CDialogNameInput::push_button_ok_clicked_slot);
 }
 
 CDialogNameInput::~CDialogNameInput()
@@ -19,7 +20,7 @@ CDialogNameInput::~CDialogNameInput()
   delete mUi;
 }
 
-void CDialogNameInput::on_pushButton_ok_clicked()
+void CDialogNameInput::push_button_ok_clicked_slot()
 {
-  emit ok_button_clicked(mUi->lineEdit_name->text());
+  emit signal_ok_button_clicked(mUi->lineEdit_name->text());
 }

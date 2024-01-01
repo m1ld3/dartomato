@@ -21,8 +21,9 @@ class CCricketGroupBox : public QGroupBox
 
 public:
 
-  explicit CCricketGroupBox(QWidget * iParent = nullptr, uint32_t iPlayerNumber = 1, uint32_t iSets = 1, uint32_t iLegs = 1,
-                            CCricketClass *iPlayer = nullptr, bool iCutThroat = false, bool iOffensive = false);
+  explicit CCricketGroupBox(QWidget * iParent, const CSettings & ipSettings,
+                            uint32_t iPlayerNumber = 1,
+                            CCricketClass * iPlayer = nullptr);
   ~CCricketGroupBox() override;
   void set_active();
   void set_inactive();
@@ -103,37 +104,51 @@ public:
 
 signals:
 
-  void signal_update_player(QString iType);
+  void signal_update_player(const EUpdateType iType);
   void signal_reset_scores();
   void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
   void signal_update_history();
 
 public slots:
 
-  void on_pushButton_name_clicked();
-  void on_pushButton_score_clicked();
-  void ok_button_clicked(QString && iName);
-  void signal_cricket_submit_button_pressed(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
-  void signal_player_active_button_pressed();
-  void on_pushButton_undo_clicked();
-  void signal_set_label_slot(uint32_t iHits, uint32_t iSlot);
+  void push_button_name_clicked_slot();
+  void push_button_score_clicked_slot();
+  void ok_button_clicked_slot(const QString & iName);
+  void cricket_submit_button_pressed_slot(uint32_t iNumberOfDarts, const QVector<QString> & iDarts);
+  void player_active_button_pressed_slot();
+  void push_button_undo_clicked_slot();
 
 private:
 
   Ui::CCricketGroupBox * mUi;
   QString mPlayerName;
-  CDialogNameInput *mDialogNameInput;
-  CCricketInput *mScoreInput;
-  CCricketClass *mPlayer;
-  uint32_t mPlayerNumber, mSets, mLegs, mScore;
-  bool mActive, mFinished, mSetBegin, mLegBegin, mCutThroat, mOffensive;
+  QPointer<CCricketInput> mScoreInput;
+  CCricketClass * mPlayer;
+  uint32_t mPlayerNumber;
+  uint32_t mScore = 0;
+  bool mActive = false;
+  bool mFinished = false;
+  bool mSetBegin = false;
+  bool mLegBegin = false;
   static bool mLegStarted;
   static bool mSetStarted;
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
-  CCricketMainWindow* mGameWindow;
-  uint32_t mTotalHits;
-  uint32_t mSlot15, mSlot16, mSlot17, mSlot18, mSlot19, mSlot20, mSlot25,
-  mExtra15, mExtra16, mExtra17, mExtra18, mExtra19, mExtra20, mExtra25;
+  CCricketMainWindow * mGameWindow;
+  uint32_t mTotalHits = 0;
+  uint32_t mSlot15 = 0;
+  uint32_t mSlot16 = 0;
+  uint32_t mSlot17 = 0;
+  uint32_t mSlot18 = 0;
+  uint32_t mSlot19 = 0;
+  uint32_t mSlot20 = 0;
+  uint32_t mSlot25 = 0;
+  uint32_t mExtra15 = 0;
+  uint32_t mExtra16 = 0;
+  uint32_t mExtra17 = 0;
+  uint32_t mExtra18 = 0;
+  uint32_t mExtra19 = 0;
+  uint32_t mExtra20 = 0;
+  uint32_t mExtra25 = 0;
   QSoundEffect mSound1;
   QSoundEffect mSound2;
   QSoundEffect mSound3;
@@ -145,6 +160,7 @@ private:
   QSoundEffect mSound9;
   QSoundEffect mSound10;
   QSoundEffect mSound11;
+  const CSettings & mpSettings;
 };
 
 #endif  // GROUPBOX_CRICKET_H

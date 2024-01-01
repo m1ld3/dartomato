@@ -1,163 +1,168 @@
 #include "statswindow.h"
 #include "ui_statswindow.h"
 
-CStatsWindow::CStatsWindow(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::CStatsWindow)
+CStatsWindow::CStatsWindow(QWidget * iParent)
+  : QDialog(iParent)
+  , mUi(new Ui::CStatsWindow)
 {
-    ui->setupUi(this);
-    ui->chartView1->setMouseTracking(true);
-    ui->chartView2->setMouseTracking(true);
-    setAttribute(Qt::WA_DeleteOnClose);
-    ui->chartView1->setRubberBand( QChartView::HorizontalRubberBand);
-    ui->chartView2->setRubberBand( QChartView::HorizontalRubberBand);
+  mUi->setupUi(this);
+  mUi->chartView1->setMouseTracking(true);
+  mUi->chartView2->setMouseTracking(true);
+  setAttribute(Qt::WA_DeleteOnClose);
+  mUi->chartView1->setRubberBand( QChartView::HorizontalRubberBand);
+  mUi->chartView2->setRubberBand( QChartView::HorizontalRubberBand);
+
+  connect(mUi->legSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
+  {
+    leg_selector_current_index_changed_slot(index);
+  });
 }
 
 CStatsWindow::~CStatsWindow()
 {
-    delete ui;
+  delete mUi;
 }
 
-void CStatsWindow::set_label_1dart_avg(double avg)
+void CStatsWindow::set_label_1dart_avg(double iAvg)
 {
-    QString avgstr = QString::number(avg, 'f', 2);
-    ui->label_1dartInput->setText(avgstr);
+  QString avgstr = QString::number(iAvg, 'f', 2);
+  mUi->label_1dartInput->setText(avgstr);
 }
 
-void CStatsWindow::set_label_3dart_avg(double avg)
+void CStatsWindow::set_label_3dart_avg(double iAvg)
 {
-    QString avgstr = QString::number(avg, 'f', 2);
-    ui->label_3dartInput->setText(avgstr);
+  QString avgstr = QString::number(iAvg, 'f', 2);
+  mUi->label_3dartInput->setText(avgstr);
 }
 
-void CStatsWindow::set_label_checkout(double checkout)
+void CStatsWindow::set_label_checkout(double iCheckout)
 {
-    QString checkstr = QString::number(checkout, 'f', 2) + "%";
-    ui->label_checkoutInput->setText(checkstr);
+  QString checkstr = QString::number(iCheckout, 'f', 2) + "%";
+  mUi->label_checkoutInput->setText(checkstr);
 }
 
-void CStatsWindow::set_label_leg_1dart_avg(double avg)
+void CStatsWindow::set_label_leg_1dart_avg(double iAvg)
 {
-    QString avgstr = QString::number(avg, 'f', 2);
-    ui->label_legavg1_input->setText(avgstr);
+  QString avgstr = QString::number(iAvg, 'f', 2);
+  mUi->label_legavg1_input->setText(avgstr);
 }
 
-void CStatsWindow::set_label_leg_3dart_avg(double avg)
+void CStatsWindow::set_label_leg_3dart_avg(double iAvg)
 {
-    QString avgstr = QString::number(avg, 'f', 2);
-    ui->label_legavg3_input->setText(avgstr);
+  QString avgstr = QString::number(iAvg, 'f', 2);
+  mUi->label_legavg3_input->setText(avgstr);
 }
 
-void CStatsWindow::set_label_best_leg(int numberOfDarts)
+void CStatsWindow::set_label_best_leg(uint32_t iNumberOfDarts)
 {
-    ui->label_best_leg_input->setText(QString::number(numberOfDarts));
+  mUi->label_best_leg_input->setText(QString::number(iNumberOfDarts));
 }
 
-void CStatsWindow::set_label_worst_leg(int numberOfDarts)
+void CStatsWindow::set_label_worst_leg(uint32_t iNumberOfDarts)
 {
-    ui->label_worst_leg_input->setText(QString::number(numberOfDarts));
+  mUi->label_worst_leg_input->setText(QString::number(iNumberOfDarts));
 }
 
-void CStatsWindow::set_label_leg_avg(double avg)
+void CStatsWindow::set_label_leg_avg(double iAvg)
 {
-    QString avgstr = QString::number(avg, 'f', 2);
-    ui->label_leg_avg_input->setText(avgstr);
+  QString avgstr = QString::number(iAvg, 'f', 2);
+  mUi->label_leg_avg_input->setText(avgstr);
 }
 
-void CStatsWindow::set_label_checkout_attempts(QString attempts)
+void CStatsWindow::set_label_checkout_attempts(QString iAttempts)
 {
-    ui->label_checkout_attempts_input->setText(attempts);
+  mUi->label_checkout_attempts_input->setText(iAttempts);
 }
 
-void CStatsWindow::set_label_highest_checkout(int checkout)
+void CStatsWindow::set_label_highest_checkout(uint32_t iCheckout)
 {
-    ui->label_highest_checkout_input->setText(QString::number(checkout));
+  mUi->label_highest_checkout_input->setText(QString::number(iCheckout));
 }
 
-void CStatsWindow::set_label_180s(int count)
+void CStatsWindow::set_label_180s(uint32_t iCount)
 {
-    ui->label_180_input->setText(QString::number(count));
+  mUi->label_180_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_160s(int count)
+void CStatsWindow::set_label_160s(uint32_t iCount)
 {
-    ui->label_160p_input->setText(QString::number(count));
+  mUi->label_160p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_140s(int count)
+void CStatsWindow::set_label_140s(uint32_t iCount)
 {
-    ui->label_140p_input->setText(QString::number(count));
+  mUi->label_140p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_120s(int count)
+void CStatsWindow::set_label_120s(uint32_t iCount)
 {
-    ui->label_120p_input->setText(QString::number(count));
+  mUi->label_120p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_100s(int count)
+void CStatsWindow::set_label_100s(uint32_t iCount)
 {
-    ui->label_100p_input->setText(QString::number(count));
+  mUi->label_100p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_80s(int count)
+void CStatsWindow::set_label_80s(uint32_t iCount)
 {
-    ui->label_80p_input->setText(QString::number(count));
+  mUi->label_80p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_60s(int count)
+void CStatsWindow::set_label_60s(uint32_t iCount)
 {
-    ui->label_60p_input->setText(QString::number(count));
+  mUi->label_60p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_40s(int count)
+void CStatsWindow::set_label_40s(uint32_t iCount)
 {
-    ui->label_40p_input->setText(QString::number(count));
+  mUi->label_40p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_20s(int count)
+void CStatsWindow::set_label_20s(uint32_t iCount)
 {
-    ui->label_20p_input->setText(QString::number(count));
+  mUi->label_20p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_label_0s(int count)
+void CStatsWindow::set_label_0s(uint32_t iCount)
 {
-    ui->label_0p_input->setText(QString::number(count));
+  mUi->label_0p_input->setText(QString::number(iCount));
 }
 
-void CStatsWindow::set_chart(CChart *chart1, CChart *chart2)
+void CStatsWindow::set_chart(CChart * iChart1, CChart * iChart2)
 {
-    ui->chartView1->setChart(chart1);
-    ui->chartView2->setChart(chart2);
+  mUi->chartView1->setChart(iChart1);
+  mUi->chartView2->setChart(iChart2);
 }
 
-void CStatsWindow::set_text(QString text)
+void CStatsWindow::set_text(QString iText)
 {
-    ui->textBrowser->append(text);
+  mUi->textBrowser->append(iText);
 }
 
 void CStatsWindow::clear_text()
 {
-    ui->textBrowser->clear();
+  mUi->textBrowser->clear();
 }
 
-void CStatsWindow::init_leg_selector(int numberOfLegs)
+void CStatsWindow::init_leg_selector(uint32_t iNumberOfLegs)
 {
-    if (numberOfLegs == 0)
+  if (iNumberOfLegs == 0)
+  {
+    mUi->legSelector->addItem("1");
+    mUi->legSelector->setCurrentIndex(0);
+  }
+  else
+  {
+    for (uint32_t i = 1; i < iNumberOfLegs + 1; i++)
     {
-        ui->legSelector->addItem("1");
-        ui->legSelector->setCurrentIndex(0);
+      mUi->legSelector->addItem(QString::number(i));
     }
-    else
-    {
-        for (int i = 1; i < numberOfLegs + 1; i++)
-        {
-            ui->legSelector->addItem(QString::number(i));
-        }
-        ui->legSelector->setCurrentIndex(numberOfLegs - 1);
-    }
+    mUi->legSelector->setCurrentIndex(iNumberOfLegs - 1);
+  }
 }
 
-void CStatsWindow::on_leg_selector_current_index_changed(int index)
+void CStatsWindow::leg_selector_current_index_changed_slot(uint32_t iIndex)
 {
-    emit signal_update_leg_history(index, this);
+  emit signal_update_leg_history(iIndex, this);
 }

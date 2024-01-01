@@ -1,17 +1,16 @@
 #include "submitbutton.h"
 
-CSubmitButton::CSubmitButton(const QString &text, QWidget *parent) :
-    QPushButton(text, parent)
-{
+CSubmitButton::CSubmitButton(const QString & iText, QWidget * iParent)
+  : QPushButton(iText, iParent)
+{}
 
+void CSubmitButton::mouseReleaseEvent(QMouseEvent * iEvent)
+{
+  Q_UNUSED(iEvent);
+  CSubmitButton::submit_button_pressed_slot();
 }
 
-void CSubmitButton::mouseReleaseEvent(QMouseEvent *event)
+void CSubmitButton::submit_button_pressed_slot()
 {
-    Q_UNUSED(event);
-    CSubmitButton::submit_button_pressed();
-}
-
-void CSubmitButton::submit_button_pressed() {
-    emit signal_submit_button_pressed();
+  emit signal_submit_button_pressed();
 }

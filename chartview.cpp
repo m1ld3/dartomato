@@ -17,7 +17,8 @@ void CChartView::wheelEvent(QWheelEvent * iEvent)
 
 void CChartView::keyPressEvent(QKeyEvent * iEvent)
 {
-  switch (iEvent->key()) {
+  switch (iEvent->key())
+  {
   case Qt::Key_Plus:
     chart()->zoomIn();
     break;
