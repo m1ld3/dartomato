@@ -759,3 +759,8 @@ CDartBoard::~CDartBoard()
   delete mLabels;
   delete mScene;
 }
+
+void CDartBoard::play_game_shot_sound()
+{
+  mGameShotSound.play();
+}

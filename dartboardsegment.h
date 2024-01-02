@@ -14,6 +14,7 @@ public:
                     QString && iColor = "black", QChar iType = 's',
                     QGraphicsPathItem * iParent = nullptr);
   ~CDartBoardSegment() override = default;
+  void set_value(const uint32_t iVal);
 
 protected:
 

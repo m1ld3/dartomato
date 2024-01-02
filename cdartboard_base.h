@@ -26,6 +26,7 @@ public:
 
   CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & ipSettings);
   virtual ~CDartBoard();
+  void play_game_shot_sound();
 
 protected:
 

@@ -2,6 +2,7 @@
 #define CSETTINGS_H
 
 #include <stdint.h>
+#include <unordered_map>
 
 enum class EGame
 {
@@ -16,6 +17,18 @@ enum class EUpdateType
     DEFAULT = 0
   , LEG     = 1
   , SET     = 2
+};
+
+enum class ECricketSlots
+{
+    SLOT_15  = 0
+  , SLOT_16  = 1
+  , SLOT_17  = 2
+  , SLOT_18  = 3
+  , SLOT_19  = 4
+  , SLOT_20  = 5
+  , SLOT_25  = 6
+  , SLOT_MAX = 7
 };
 
 struct CSettings

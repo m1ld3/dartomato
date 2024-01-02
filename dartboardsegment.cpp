@@ -124,3 +124,8 @@ QRectF CDartBoardSegment::boundingRect() const
   return boundingPath.boundingRect();
 }
 
+void CDartBoardSegment::set_value(const uint32_t iVal)
+{
+  mValue = iVal;
+}
+

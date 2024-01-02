@@ -24,31 +24,13 @@ public:
   void update_player();
   void closeEvent(QCloseEvent * iEvent) override;
   void set_active_player(uint32_t iPlayer);
-  bool is_slot15_free(uint32_t iPlayer) const;
-  bool is_slot16_free(uint32_t iPlayer) const;
-  bool is_slot17_free(uint32_t iPlayer) const;
-  bool is_slot18_free(uint32_t iPlayer) const;
-  bool is_slot19_free(uint32_t iPlayer) const;
-  bool is_slot20_free(uint32_t iPlayer) const;
-  bool is_slot25_free(uint32_t iPlayer) const;
+  bool is_slot_free(const ECricketSlots iSlot, uint32_t iPlayer) const;
   bool is_score_bigger(uint32_t iScore) const;
   bool is_score_smaller(uint32_t iScore) const;
-  void increase_score15(uint32_t iPoints);
-  void increase_score16(uint32_t iPoints);
-  void increase_score17(uint32_t iPoints);
-  void increase_score18(uint32_t iPoints);
-  void increase_score19(uint32_t iPoints);
-  void increase_score20(uint32_t iPoints);
-  void increase_score25(uint32_t iPoints);
-  QVector<uint32_t> compute_extra15s(uint32_t iPoints, uint32_t iPlayer);
-  QVector<uint32_t> compute_extra16s(uint32_t iPoints, uint32_t iPlayer);
-  QVector<uint32_t> compute_extra17s(uint32_t iPoints, uint32_t iPlayer);
-  QVector<uint32_t> compute_extra18s(uint32_t iPoints, uint32_t iPlayer);
-  QVector<uint32_t> compute_extra19s(uint32_t iPoints, uint32_t iPlayer);
-  QVector<uint32_t> compute_extra20s(uint32_t iPoints, uint32_t iPlayer);
-  QVector<uint32_t> compute_extra25s(uint32_t iPoints, uint32_t iPlayer);
+  void increase_slot_score(const ECricketSlots iSlot, uint32_t iPoints);
+  QVector<uint32_t> compute_extra_points(const ECricketSlots iSlot, uint32_t iPoints, uint32_t iPlayer);
   void set_scores();
-  void update_labels();
+  void update_extra_points_labels();
   void update_darts(uint32_t iPlayer);
 
 private slots:

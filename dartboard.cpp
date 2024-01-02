@@ -144,7 +144,7 @@ void CDartBoardX01::segment_pressed_slot(uint32_t iVal, QChar & iType)
         {
           mStop = true;  // Game shot
           emit signal_set_focus_to_submit_button();
-          mGameShotSound.play();
+          play_game_shot_sound();
           checkout = 1;
           set_score(iVal, iType, checkout);
         } else if (mpSettings.mDoubleOut)
@@ -153,7 +153,7 @@ void CDartBoardX01::segment_pressed_slot(uint32_t iVal, QChar & iType)
           {
             mStop = true;  // Game shot
             emit signal_set_focus_to_submit_button();
-            mGameShotSound.play();
+            play_game_shot_sound();
             checkout = 1;
             set_score(iVal, iType, checkout);
           }
@@ -177,7 +177,7 @@ void CDartBoardX01::segment_pressed_slot(uint32_t iVal, QChar & iType)
           {
             checkout = 1;
             mStop = true;  // Game shot
-            mGameShotSound.play();
+            play_game_shot_sound();
             set_score(iVal, iType, checkout);
           }
           else

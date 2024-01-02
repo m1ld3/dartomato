@@ -24,34 +24,10 @@ public:
   void reset_legs();
   void perform_undo_step();
   uint32_t get_player_number() const;
-  uint32_t get_slot15() const;
-  uint32_t get_slot16() const;
-  uint32_t get_slot17() const;
-  uint32_t get_slot18() const;
-  uint32_t get_slot19() const;
-  uint32_t get_slot20() const;
-  uint32_t get_slot25() const;
-  void set_slot15(uint32_t iHits);
-  void set_slot16(uint32_t iHits);
-  void set_slot17(uint32_t iHits);
-  void set_slot18(uint32_t iHits);
-  void set_slot19(uint32_t iHits);
-  void set_slot20(uint32_t iHits);
-  void set_slot25(uint32_t iHits);
-  void set_extra15(uint32_t iPoints);
-  void set_extra16(uint32_t iPoints);
-  void set_extra17(uint32_t iPoints);
-  void set_extra18(uint32_t iPoints);
-  void set_extra19(uint32_t iPoints);
-  void set_extra20(uint32_t iPoints);
-  void set_extra25(uint32_t iPoints);
-  uint32_t get_extra15() const;
-  uint32_t get_extra16() const;
-  uint32_t get_extra17() const;
-  uint32_t get_extra18() const;
-  uint32_t get_extra19() const;
-  uint32_t get_extra20() const;
-  uint32_t get_extra25() const;
+  uint32_t get_slot(const ECricketSlots iSlot) const;
+  void set_slot(const ECricketSlots iSlot, uint32_t iHits);
+  void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
+  uint32_t get_extra_points(const ECricketSlots iSlot) const;
   uint32_t get_total_hits() const;
   bool are_slots_full() const;
   void set_score();
@@ -71,6 +47,8 @@ signals:
 
 private:
 
+  void handle_undo_after_legset_win();
+
   CCricketMainWindow * mGameWindow;
   uint32_t mSetsWon = 0;  // sets won
   uint32_t mLegsWonPerSet = 0;  // legs won per set
@@ -85,35 +63,11 @@ private:
   uint32_t mTotalHits;  // total amount of hits
   QVector<uint32_t> mNumberOfHitsArray;
   double mHitsPerRound;
-  uint32_t mSlot15 = 0;
-  uint32_t mSlot16 = 0;
-  uint32_t mSlot17 = 0;
-  uint32_t mSlot18 = 0;
-  uint32_t mSlot19 = 0;
-  uint32_t mSlot20 = 0;
-  uint32_t mSlot25 = 0;
-  uint32_t mExtra15 = 0;
-  uint32_t mExtra16 = 0;
-  uint32_t mExtra17 = 0;
-  uint32_t mExtra18 = 0;
-  uint32_t mExtra19 = 0;
-  uint32_t mExtra20 = 0;
-  uint32_t mExtra25 = 0;
+  std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
+  std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
+  std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
+  std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
   uint32_t mScore = 0;
-  QVector<uint32_t> mSlot15Array = {0};
-  QVector<uint32_t> mSlot16Array = {0};
-  QVector<uint32_t> mSlot17Array = {0};
-  QVector<uint32_t> mSlot18Array = {0};
-  QVector<uint32_t> mSlot19Array = {0};
-  QVector<uint32_t> mSlot20Array = {0};
-  QVector<uint32_t> mSlot25Array = {0};
-  QVector<uint32_t> mExtra15Array = {0};
-  QVector<uint32_t> mExtra16Array = {0};
-  QVector<uint32_t> mExtra17Array = {0};
-  QVector<uint32_t> mExtra18Array = {0};
-  QVector<uint32_t> mExtra19Array = {0};
-  QVector<uint32_t> mExtra20Array = {0};
-  QVector<uint32_t> mExtra25Array = {0};
   QVector<uint32_t> mScoreArray = {0};
   QVector<bool> mLegWinArray = {false};
   const CSettings & mpSettings;

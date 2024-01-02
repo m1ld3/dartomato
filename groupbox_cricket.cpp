@@ -32,13 +32,12 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent, const CSettings & ipSettin
   mUi->lcdNumber->setDigitCount(4);
   mUi->lcdNumber->display(static_cast<int>(mScore));
   mUi->lcdNumber->setPalette(Qt::darkBlue);
-  set_label_extra15(mPlayer->get_extra15());
-  set_label_extra16(mPlayer->get_extra16());
-  set_label_extra17(mPlayer->get_extra17());
-  set_label_extra18(mPlayer->get_extra18());
-  set_label_extra19(mPlayer->get_extra19());
-  set_label_extra20(mPlayer->get_extra20());
-  set_label_extra25(mPlayer->get_extra25());
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    set_extra_points_label(static_cast<ECricketSlots>(i), mPlayer->get_extra_points(static_cast<ECricketSlots>(i)));
+  }
+
   QString text = "Player " + QString::number(mPlayerNumber);
   mUi->label_playername->setText(text);
   QString hitsPerRound = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
@@ -121,20 +120,13 @@ void CCricketGroupBox::cricket_submit_button_pressed_slot(uint32_t iNumberOfDart
   bool newset = false;
   uint32_t hits = 0;
   uint32_t hits_old = 0;
-  mSlot15 = mPlayer->get_slot15();
-  mSlot16 = mPlayer->get_slot16();
-  mSlot17 = mPlayer->get_slot17();
-  mSlot18 = mPlayer->get_slot18();
-  mSlot19 = mPlayer->get_slot19();
-  mSlot20 = mPlayer->get_slot20();
-  mSlot25 = mPlayer->get_slot25();
-  mExtra15 = mPlayer->get_extra15();
-  mExtra16 = mPlayer->get_extra16();
-  mExtra17 = mPlayer->get_extra17();
-  mExtra18 = mPlayer->get_extra18();
-  mExtra19 = mPlayer->get_extra19();
-  mExtra20 = mPlayer->get_extra20();
-  mExtra25 = mPlayer->get_extra25();
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    mSlotArray.at(i) = mPlayer->get_slot(static_cast<ECricketSlots>(i));
+    mExtraPointsArray.at(i) = mPlayer->get_extra_points(static_cast<ECricketSlots>(i));
+  }
+
   uint32_t newhits = mTotalHits;
 
   if (!mpSettings.mCutThroat)
@@ -161,298 +153,59 @@ void CCricketGroupBox::cricket_submit_button_pressed_slot(uint32_t iNumberOfDart
       }
       QString temp = dart.remove(0,1);
       uint32_t val = temp.toInt();
-      switch (val)
+      uint32_t idx = static_cast<uint32_t>(Slot2IdxMap[val]);
+
+      if (mSlotArray.at(idx) < 3 && val != 0)
       {
-      case 15:
-        if (mSlot15 < 3)
+        if (mSlotArray.at(idx) + hits <= 3)
         {
-          if (mSlot15 + hits <= 3)
-          {
-            mSlot15 += hits;
-            set_label15(mSlot15);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot15;
-            mSlot15 = 3;
-            set_label15(mSlot15);
-            if (mGameWindow->is_slot15_free(mPlayerNumber))
-            {
-              mExtra15 += hits * 15;
-              set_label_extra15(mExtra15);
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
+          mSlotArray.at(idx) += hits;
+          set_slot_label(static_cast<ECricketSlots>(idx), mSlotArray.at(idx));
+          mTotalHits += hits;
         }
         else
         {
-          if (mGameWindow->is_slot15_free(mPlayerNumber))
+          hits_old = hits;
+          hits -= 3 - mSlotArray.at(idx);
+          mSlotArray.at(idx) = 3;
+          set_slot_label(static_cast<ECricketSlots>(idx), mSlotArray.at(idx));
+          if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(idx), mPlayerNumber))
           {
-            mExtra15 += hits * 15;
-            set_label_extra15(mExtra15);
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 16:
-        if (mSlot16 < 3)
-        {
-          if (mSlot16 + hits <= 3)
-          {
-            mSlot16 += hits;
-            set_label16(mSlot16);
-            mTotalHits += hits;
+            mExtraPointsArray.at(idx) += hits * val;
+            set_extra_points_label(static_cast<ECricketSlots>(idx), mExtraPointsArray.at(idx));
+            mTotalHits += hits_old;
           }
           else
           {
-            hits_old = hits;
-            hits -= 3 - mSlot16;
-            mSlot16 = 3;
-            set_label16(mSlot16);
-            if (mGameWindow->is_slot16_free(mPlayerNumber))
-            {
-              mExtra16 += hits * 16;
-              set_label_extra16(mExtra16);
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot16_free(mPlayerNumber))
-          {
-            mExtra16 += hits * 16;
-            set_label_extra16(mExtra16);
             mTotalHits += hits;
           }
         }
-        break;
-      case 17:
-        if (mSlot17 < 3)
+      }
+      else
+      {
+        if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(idx), mPlayerNumber))
         {
-          if (mSlot17 + hits <= 3)
-          {
-            mSlot17 += hits;
-            set_label17(mSlot17);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot17;
-            mSlot17 = 3;
-            set_label17(mSlot17);
-            if (mGameWindow->is_slot17_free(mPlayerNumber))
-            {
-              mExtra17 += hits * 17;
-              set_label_extra17(mExtra17);
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
+          mExtraPointsArray.at(idx) += hits * val;
+          set_extra_points_label(static_cast<ECricketSlots>(idx), mExtraPointsArray.at(idx));
+          mTotalHits += hits;
         }
-        else
-        {
-          if (mGameWindow->is_slot17_free(mPlayerNumber))
-          {
-            mExtra17 += hits * 17;
-            set_label_extra17(mExtra17);
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 18:
-        if (mSlot18 < 3)
-        {
-          if (mSlot18 + hits <= 3)
-          {
-            mSlot18 += hits;
-            set_label18(mSlot18);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot18;
-            mSlot18 = 3;
-            set_label18(mSlot18);
-            if (mGameWindow->is_slot18_free(mPlayerNumber))
-            {
-              mExtra18 += hits * 18;
-              set_label_extra18(mExtra18);
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot18_free(mPlayerNumber))
-          {
-            mExtra18 += hits * 18;
-            set_label_extra18(mExtra18);
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 19:
-        if (mSlot19 < 3)
-        {
-          if (mSlot19 + hits <= 3)
-          {
-            mSlot19 += hits;
-            set_label19(mSlot19);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot19;
-            mSlot19 = 3;
-            set_label19(mSlot19);
-            if (mGameWindow->is_slot19_free(mPlayerNumber))
-            {
-              mExtra19 += hits * 19;
-              set_label_extra19(mExtra19);
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot19_free(mPlayerNumber))
-          {
-            mExtra19 += hits * 19;
-            set_label_extra19(mExtra19);
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 20:
-        if (mSlot20 < 3)
-        {
-          if (mSlot20 + hits <= 3)
-          {
-            mSlot20 += hits;
-            set_label20(mSlot20);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot20;
-            mSlot20 = 3;
-            set_label20(mSlot20);
-            if (mGameWindow->is_slot20_free(mPlayerNumber))
-            {
-              mExtra20 += hits * 20;
-              set_label_extra20(mExtra20);
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot20_free(mPlayerNumber))
-          {
-            mExtra20 += hits * 20;
-            set_label_extra20(mExtra20);
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 25:
-        if (mSlot25 < 3)
-        {
-          if (mSlot25 + hits <= 3)
-          {
-            mSlot25 += hits;
-            set_label25(mSlot25);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot25;
-            mSlot25 = 3;
-            set_label25(mSlot25);
-            if (mGameWindow->is_slot25_free(mPlayerNumber))
-            {
-              mExtra25 += hits * 25;
-              set_label_extra25(mExtra25);
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot25_free(mPlayerNumber))
-          {
-            mExtra25 += hits * 25;
-            set_label_extra25(mExtra25);
-            mTotalHits += hits;
-          }
-        }
-        break;
-      default:;
       }
     }
 
-    mPlayer->set_slot15(mSlot15);
-    mPlayer->set_slot16(mSlot16);
-    mPlayer->set_slot17(mSlot17);
-    mPlayer->set_slot18(mSlot18);
-    mPlayer->set_slot19(mSlot19);
-    mPlayer->set_slot20(mSlot20);
-    mPlayer->set_slot25(mSlot25);
-    mPlayer->set_extra15(mExtra15);
-    mPlayer->set_extra16(mExtra16);
-    mPlayer->set_extra17(mExtra17);
-    mPlayer->set_extra18(mExtra18);
-    mPlayer->set_extra19(mExtra19);
-    mPlayer->set_extra20(mExtra20);
-    mPlayer->set_extra25(mExtra25);
+    for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+    {
+      mPlayer->set_slot(static_cast<ECricketSlots>(i), mSlotArray.at(i));
+      mPlayer->set_extra_points(static_cast<ECricketSlots>(i), mExtraPointsArray.at(i));
+    }
+
     mPlayer->set_score();
     mScore = mPlayer->get_score();
   }
   else
   {
-    uint32_t Extra15CT = 0;
-    uint32_t Extra16CT = 0;
-    uint32_t Extra17CT = 0;
-    uint32_t Extra18CT = 0;
-    uint32_t Extra19CT = 0;
-    uint32_t Extra20CT = 0;
-    uint32_t Extra25CT = 0;
+    std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> extraPoints = {0, 0, 0, 0, 0, 0, 0};
     QString dart = "0";
+
     for (uint32_t i = 0; i < iDarts.size(); i++)
     {
       if (iDarts[i].size() > 0)
@@ -474,271 +227,51 @@ void CCricketGroupBox::cricket_submit_button_pressed_slot(uint32_t iNumberOfDart
       }
       QString temp = dart.remove(0,1);
       uint32_t val = temp.toInt();
-      switch (val)
+      uint32_t idx = static_cast<uint32_t>(Slot2IdxMap[val]);
+
+      if (mSlotArray.at(idx) < 3 && val != 0)
       {
-      case 15:
-        if (mSlot15 < 3)
+        if (mSlotArray.at(idx) + hits <= 3)
         {
-          if (mSlot15 + hits <= 3)
-          {
-            mSlot15 += hits;
-            set_label15(mSlot15);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot15;
-            mSlot15 = 3;
-            set_label15(mSlot15);
-            if (mGameWindow->is_slot15_free(mPlayerNumber))
-            {
-              Extra15CT += hits * 15;
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
+          mSlotArray.at(idx) += hits;
+          set_slot_label(static_cast<ECricketSlots>(idx), mSlotArray.at(idx));
+          mTotalHits += hits;
         }
         else
         {
-          if (mGameWindow->is_slot15_free(mPlayerNumber))
+          hits_old = hits;
+          hits -= 3 - mSlotArray.at(idx);
+          mSlotArray.at(idx) = 3;
+          set_slot_label(static_cast<ECricketSlots>(idx), mSlotArray.at(idx));
+          if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(idx), mPlayerNumber))
           {
-            Extra15CT += hits * 15;
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 16:
-        if (mSlot16 < 3)
-        {
-          if (mSlot16 + hits <= 3)
-          {
-            mSlot16 += hits;
-            set_label16(mSlot16);
-            mTotalHits += hits;
+            extraPoints.at(idx) += hits * val;
+            mTotalHits += hits_old;
           }
           else
           {
-            hits_old = hits;
-            hits -= 3 - mSlot16;
-            mSlot16 = 3;
-            set_label16(mSlot16);
-            if (mGameWindow->is_slot16_free(mPlayerNumber))
-            {
-              Extra16CT += hits * 16;
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot16_free(mPlayerNumber))
-          {
-            Extra16CT += hits * 16;
             mTotalHits += hits;
           }
         }
-        break;
-      case 17:
-        if (mSlot17 < 3)
-        {
-          if (mSlot17 + hits <= 3)
-          {
-            mSlot17 += hits;
-            set_label17(mSlot17);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot17;
-            mSlot17 = 3;
-            set_label17(mSlot17);
-            if (mGameWindow->is_slot17_free(mPlayerNumber))
-            {
-              Extra17CT += hits * 17;
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot17_free(mPlayerNumber))
-          {
-            Extra17CT += hits * 17;
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 18:
-        if (mSlot18 < 3)
-        {
-          if (mSlot18 + hits <= 3)
-          {
-            mSlot18 += hits;
-            set_label18(mSlot18);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot18;
-            mSlot18 = 3;
-            set_label18(mSlot18);
-            if (mGameWindow->is_slot18_free(mPlayerNumber))
-            {
-              Extra18CT += hits * 18;
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot18_free(mPlayerNumber))
-          {
-            Extra18CT += hits * 18;
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 19:
-        if (mSlot19 < 3)
-        {
-          if (mSlot19 + hits <= 3)
-          {
-            mSlot19 += hits;
-            set_label19(mSlot19);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot19;
-            mSlot19 = 3;
-            set_label19(mSlot19);
-            if (mGameWindow->is_slot19_free(mPlayerNumber))
-            {
-              Extra19CT += hits * 19;
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot19_free(mPlayerNumber))
-          {
-            Extra19CT += hits * 19;
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 20:
-        if (mSlot20 < 3)
-        {
-          if (mSlot20 + hits <= 3)
-          {
-            mSlot20 += hits;
-            set_label20(mSlot20);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot20;
-            mSlot20 = 3;
-            set_label20(mSlot20);
-            if (mGameWindow->is_slot20_free(mPlayerNumber))
-            {
-              Extra20CT += hits * 20;
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot20_free(mPlayerNumber))
-          {
-            Extra20CT += hits * 20;
-            mTotalHits += hits;
-          }
-        }
-        break;
-      case 25:
-        if (mSlot25 < 3)
-        {
-          if (mSlot25 + hits <= 3)
-          {
-            mSlot25 += hits;
-            set_label25(mSlot25);
-            mTotalHits += hits;
-          }
-          else
-          {
-            hits_old = hits;
-            hits -= 3 - mSlot25;
-            mSlot25 = 3;
-            set_label25(mSlot25);
-            if (mGameWindow->is_slot25_free(mPlayerNumber))
-            {
-              Extra25CT += hits * 25;
-              mTotalHits += hits_old;
-            }
-            else
-            {
-              mTotalHits += hits;
-            }
-          }
-        }
-        else
-        {
-          if (mGameWindow->is_slot25_free(mPlayerNumber))
-          {
-              Extra25CT += hits * 25;
-            mTotalHits += hits;
-          }
-        }
-        break;
-      default:;
       }
+      else
+      {
+        if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(idx), mPlayerNumber))
+        {
+          extraPoints.at(idx) += hits * val;
+          mTotalHits += hits;
+        }
+      }
+
+
     }
 
-    mPlayer->set_slot15(mSlot15);
-    mPlayer->set_slot16(mSlot16);
-    mPlayer->set_slot17(mSlot17);
-    mPlayer->set_slot18(mSlot18);
-    mPlayer->set_slot19(mSlot19);
-    mPlayer->set_slot20(mSlot20);
-    mPlayer->set_slot25(mSlot25);
-    mGameWindow->increase_score15(Extra15CT);
-    mGameWindow->increase_score16(Extra16CT);
-    mGameWindow->increase_score17(Extra17CT);
-    mGameWindow->increase_score18(Extra18CT);
-    mGameWindow->increase_score19(Extra19CT);
-    mGameWindow->increase_score20(Extra20CT);
-    mGameWindow->increase_score25(Extra25CT);
+    for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+    {
+      mPlayer->set_slot(static_cast<ECricketSlots>(i), mSlotArray.at(i));
+      mGameWindow->increase_slot_score(static_cast<ECricketSlots>(i), extraPoints.at(i));
+    }
+
     mGameWindow->set_scores();
     mScore = mPlayer->get_score();
   }
@@ -782,7 +315,7 @@ void CCricketGroupBox::cricket_submit_button_pressed_slot(uint32_t iNumberOfDart
         emit signal_update_player(EUpdateType::DEFAULT);
       }
       mPlayer->set_leg_win_array(false);
-      mGameWindow->update_labels();
+      mGameWindow->update_extra_points_labels();
     }
   }
   else
@@ -815,7 +348,7 @@ void CCricketGroupBox::cricket_submit_button_pressed_slot(uint32_t iNumberOfDart
         emit signal_update_player(EUpdateType::DEFAULT);
       }
       mPlayer->set_leg_win_array(false);
-      mGameWindow->update_labels();
+      mGameWindow->update_extra_points_labels();
     }
   }
   set_leg_history();
@@ -904,20 +437,12 @@ void CCricketGroupBox::reset()
   mUi->lcdNumber->display(static_cast<int>(mScore));
   mUi->lcdNumber_legs->display(static_cast<int>(mPlayer->get_legs()));
   mUi->lcdNumber_sets->display(static_cast<int>(mPlayer->get_sets()));
-  set_label15(0);
-  set_label16(0);
-  set_label17(0);
-  set_label18(0);
-  set_label19(0);
-  set_label20(0);
-  set_label25(0);
-  set_label_extra15(0);
-  set_label_extra16(0);
-  set_label_extra17(0);
-  set_label_extra18(0);
-  set_label_extra19(0);
-  set_label_extra20(0);
-  set_label_extra25(0);
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    set_slot_label(static_cast<ECricketSlots>(i), 0);
+    set_extra_points_label(static_cast<ECricketSlots>(i), 0);
+  }
 }
 
 void CCricketGroupBox::set_leg_started()
@@ -940,333 +465,143 @@ void CCricketGroupBox::unset_set_started()
   mSetStarted = false;
 }
 
-uint32_t CCricketGroupBox::get_slot15() const
+uint32_t CCricketGroupBox::get_slot(const ECricketSlots iSlot) const
 {
-  return mPlayer->get_slot15();
+  return mPlayer->get_slot(iSlot);
 }
 
-uint32_t CCricketGroupBox::get_slot16() const
+void CCricketGroupBox::set_slot(const ECricketSlots iSlot, uint32_t iHits)
 {
-  return mPlayer->get_slot16();
+  mPlayer->set_slot(iSlot, iHits);
 }
 
-uint32_t CCricketGroupBox::get_slot17() const
+void CCricketGroupBox::set_extra_points(const ECricketSlots iSlot, uint32_t iPoints)
 {
-  return mPlayer->get_slot17();
+  mPlayer->set_extra_points(iSlot, iPoints);
 }
 
-uint32_t CCricketGroupBox::get_slot18() const
+uint32_t CCricketGroupBox::get_extra_points(const ECricketSlots iSlot) const
 {
-  return mPlayer->get_slot18();
+  return mPlayer->get_extra_points(iSlot);
 }
 
-uint32_t CCricketGroupBox::get_slot19() const
+void CCricketGroupBox::set_extra_points_label(const ECricketSlots iSlot, uint32_t iPoints)
 {
-  return mPlayer->get_slot19();
-}
-
-uint32_t CCricketGroupBox::get_slot20() const
-{
-  return mPlayer->get_slot20();
-}
-
-uint32_t CCricketGroupBox::get_slot25() const
-{
-  return mPlayer->get_slot25();
-}
-
-void CCricketGroupBox::set_slot15(uint32_t iHits)
-{
-  mPlayer->set_slot15(iHits);
-}
-
-void CCricketGroupBox::set_slot16(uint32_t iHits)
-{
-  mPlayer->set_slot16(iHits);
-}
-
-void CCricketGroupBox::set_slot17(uint32_t iHits)
-{
-  mPlayer->set_slot17(iHits);
-}
-
-void CCricketGroupBox::set_slot18(uint32_t iHits)
-{
-  mPlayer->set_slot18(iHits);
-}
-
-void CCricketGroupBox::set_slot19(uint32_t iHits)
-{
-  mPlayer->set_slot19(iHits);
-}
-
-void CCricketGroupBox::set_slot20(uint32_t iHits)
-{
-  mPlayer->set_slot20(iHits);
-}
-
-void CCricketGroupBox::set_slot25(uint32_t iHits)
-{
-  mPlayer->set_slot25(iHits);
-}
-
-void CCricketGroupBox::set_extra15(uint32_t iPoints)
-{
-  mPlayer->set_extra15(iPoints);
-}
-
-void CCricketGroupBox::set_extra16(uint32_t iPoints)
-{
-  mPlayer->set_extra16(iPoints);
-}
-
-void CCricketGroupBox::set_extra25(uint32_t iPoints)
-{
-  mPlayer->set_extra25(iPoints);
-}
-
-uint32_t CCricketGroupBox::get_extra15() const
-{
-  return mPlayer->get_extra15();
-}
-
-uint32_t CCricketGroupBox::get_extra16() const
-{
-  return mPlayer->get_extra16();
-}
-
-uint32_t CCricketGroupBox::get_extra17() const
-{
-  return mPlayer->get_extra17();
-}
-
-uint32_t CCricketGroupBox::get_extra18() const
-{
-  return mPlayer->get_extra18();
-}
-
-uint32_t CCricketGroupBox::get_extra19() const
-{
-  return mPlayer->get_extra19();
-}
-
-uint32_t CCricketGroupBox::get_extra20() const
-{
-  return mPlayer->get_extra20();
-}
-
-uint32_t CCricketGroupBox::get_extra25() const
-{
-  return mPlayer->get_extra25();
-}
-
-void CCricketGroupBox::set_label_extra15(uint32_t iPoints)
-{
-  mUi->label_extra15->setNum(static_cast<int>(iPoints));
-}
-
-void CCricketGroupBox::set_label_extra16(uint32_t iPoints)
-{
-  mUi->label_extra16->setNum(static_cast<int>(iPoints));
-}
-
-void CCricketGroupBox::set_label_extra17(uint32_t iPoints)
-{
-  mUi->label_extra17->setNum(static_cast<int>(iPoints));
-}
-
-void CCricketGroupBox::set_label_extra18(uint32_t iPoints)
-{
-  mUi->label_extra18->setNum(static_cast<int>(iPoints));
-}
-
-void CCricketGroupBox::set_label_extra19(uint32_t iPoints)
-{
-  mUi->label_extra19->setNum(static_cast<int>(iPoints));
-}
-
-void CCricketGroupBox::set_label_extra20(uint32_t iPoints)
-{
-  mUi->label_extra20->setNum(static_cast<int>(iPoints));
-}
-
-void CCricketGroupBox::set_label_extra25(uint32_t iPoints)
-{
-  mUi->label_extra25->setNum(static_cast<int>(iPoints));
-}
-
-void CCricketGroupBox::set_label15(uint32_t iHits)
-{
-  uint32_t w = 25;
-  uint32_t h = 25;
-  switch (iHits)
+  switch (iSlot)
   {
-  default:
-    mUi->label_15slot1->clear();
-    mUi->label_15slot2->clear();
-    mUi->label_15slot3->clear();
+  case ECricketSlots::SLOT_15:
+    mUi->label_extra15->setNum(static_cast<int>(iPoints));
     break;
-  case 1:
-    mUi->label_15slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
+  case ECricketSlots::SLOT_16:
+    mUi->label_extra16->setNum(static_cast<int>(iPoints));
     break;
-  case 2:
-    mUi->label_15slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_15slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
+  case ECricketSlots::SLOT_17:
+    mUi->label_extra17->setNum(static_cast<int>(iPoints));
     break;
-  case 3:
-    mUi->label_15slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_15slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_15slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
+  case ECricketSlots::SLOT_18:
+    mUi->label_extra18->setNum(static_cast<int>(iPoints));
+    break;
+  case ECricketSlots::SLOT_19:
+    mUi->label_extra19->setNum(static_cast<int>(iPoints));
+    break;
+  case ECricketSlots::SLOT_20:
+    mUi->label_extra20->setNum(static_cast<int>(iPoints));
+    break;
+  case ECricketSlots::SLOT_25:
+    mUi->label_extra25->setNum(static_cast<int>(iPoints));
+    break;
+  default:;
   }
 }
 
-void CCricketGroupBox::set_label16(uint32_t iHits)
+void CCricketGroupBox::set_slot_label(const ECricketSlots iSlot, uint32_t iHits)
 {
   uint32_t w = 25;
   uint32_t h = 25;
-  switch (iHits)
-  {
-  default:
-    mUi->label_16slot1->clear();
-    mUi->label_16slot2->clear();
-    mUi->label_16slot3->clear();
-    break;
-  case 1:
-    mUi->label_16slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 2:
-    mUi->label_16slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_16slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 3:
-    mUi->label_16slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_16slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_16slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-  }
-}
 
-void CCricketGroupBox::set_label17(uint32_t iHits)
-{
-  uint32_t w = 25;
-  uint32_t h = 25;
-  switch (iHits)
+  for (uint32_t i = 0; i <= iHits; i++)
   {
-  default:
-    mUi->label_17slot1->clear();
-    mUi->label_17slot2->clear();
-    mUi->label_17slot3->clear();
-    break;
-  case 1:
-    mUi->label_17slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 2:
-    mUi->label_17slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_17slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 3:
-    mUi->label_17slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_17slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_17slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-  }
-}
-
-void CCricketGroupBox::set_label18(uint32_t iHits)
-{
-  uint32_t w = 25;
-  uint32_t h = 25;
-  switch (iHits)
-  {
-  default:
-    mUi->label_18slot1->clear();
-    mUi->label_18slot2->clear();
-    mUi->label_18slot3->clear();
-    break;
-  case 1:
-    mUi->label_18slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 2:
-    mUi->label_18slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_18slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 3:
-    mUi->label_18slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_18slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_18slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-  }
-}
-
-void CCricketGroupBox::set_label19(uint32_t iHits)
-{
-  uint32_t w = 25;
-  uint32_t h = 25;
-  switch (iHits)
-  {
-  default:
-    mUi->label_19slot1->clear();
-    mUi->label_19slot2->clear();
-    mUi->label_19slot3->clear();
-    break;
-  case 1:
-    mUi->label_19slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 2:
-    mUi->label_19slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_19slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 3:
-    mUi->label_19slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_19slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_19slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-  }
-}
-
-void CCricketGroupBox::set_label20(uint32_t iHits)
-{
-  uint32_t w = 25;
-  uint32_t h = 25;
-  switch (iHits)
-  {
-  default:
-    mUi->label_20slot1->clear();
-    mUi->label_20slot2->clear();
-    mUi->label_20slot3->clear();
-    break;
-  case 1:
-    mUi->label_20slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 2:
-    mUi->label_20slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_20slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 3:
-    mUi->label_20slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_20slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_20slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-  }
-}
-
-void CCricketGroupBox::set_label25(uint32_t iHits)
-{
-  uint32_t w = 25;
-  uint32_t h = 25;
-  switch (iHits)
-  {
-  default:
-    mUi->label_25slot1->clear();
-    mUi->label_25slot2->clear();
-    mUi->label_25slot3->clear();
-    break;
-  case 1:
-    mUi->label_25slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 2:
-    mUi->label_25slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_25slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    break;
-  case 3:
-    mUi->label_25slot1->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_25slot2->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
-    mUi->label_25slot3->setPixmap(mPixMap.scaled(w,h,Qt::KeepAspectRatio));
+    switch (iSlot)
+    {
+    case ECricketSlots::SLOT_15:
+      if (i == 0)
+      {
+        mUi->label_15slot1->clear();
+        mUi->label_15slot2->clear();
+        mUi->label_15slot3->clear();
+      }
+      else if (i == 1) mUi->label_15slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label_15slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label_15slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      break;
+    case ECricketSlots::SLOT_16:
+      if (i == 0)
+      {
+        mUi->label_16slot1->clear();
+        mUi->label_16slot2->clear();
+        mUi->label_16slot3->clear();
+      }
+      else if (i == 1) mUi->label_16slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label_16slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label_16slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      break;
+    case ECricketSlots::SLOT_17:
+      if (i == 0)
+      {
+        mUi->label_17slot1->clear();
+        mUi->label_17slot2->clear();
+        mUi->label_17slot3->clear();
+      }
+      else if (i == 1) mUi->label_17slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label_17slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label_17slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      break;
+    case ECricketSlots::SLOT_18:
+      if (i == 0)
+      {
+        mUi->label_18slot1->clear();
+        mUi->label_18slot2->clear();
+        mUi->label_18slot3->clear();
+      }
+      else if (i == 1) mUi->label_18slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label_18slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label_18slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      break;
+    case ECricketSlots::SLOT_19:
+      if (i == 0)
+      {
+        mUi->label_19slot1->clear();
+        mUi->label_19slot2->clear();
+        mUi->label_19slot3->clear();
+      }
+      else if (i == 1) mUi->label_19slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label_19slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label_19slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      break;
+    case ECricketSlots::SLOT_20:
+      if (i == 0)
+      {
+        mUi->label_20slot1->clear();
+        mUi->label_20slot2->clear();
+        mUi->label_20slot3->clear();
+      }
+      else if (i == 1) mUi->label_20slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label_20slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label_20slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      break;
+    case ECricketSlots::SLOT_25:
+      if (i == 0)
+      {
+        mUi->label_25slot1->clear();
+        mUi->label_25slot2->clear();
+        mUi->label_25slot3->clear();
+      }
+      else if (i == 1) mUi->label_25slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label_25slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label_25slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      break;
+    default:;
+    }
   }
 }
 
@@ -1335,26 +670,6 @@ void CCricketGroupBox::set_leg_history()
   }
 }
 
-void CCricketGroupBox::set_extra17(uint32_t iPoints)
-{
-  mPlayer->set_extra17(iPoints);
-}
-
-void CCricketGroupBox::set_extra18(uint32_t iPoints)
-{
-  mPlayer->set_extra18(iPoints);
-}
-
-void CCricketGroupBox::set_extra19(uint32_t iPoints)
-{
-  mPlayer->set_extra19(iPoints);
-}
-
-void CCricketGroupBox::set_extra20(uint32_t iPoints)
-{
-  mPlayer->set_extra20(iPoints);
-}
-
 void CCricketGroupBox::push_button_undo_clicked_slot()
 {
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
@@ -1373,64 +688,28 @@ void CCricketGroupBox::perform_undo()
   mScore = mPlayer->get_score();
   mUi->lcdNumber->display(static_cast<int>(mScore));
   mTotalHits = mPlayer->get_total_hits();
-  set_label15(get_slot15());
-  set_label16(get_slot16());
-  set_label17(get_slot17());
-  set_label18(get_slot18());
-  set_label19(get_slot19());
-  set_label20(get_slot20());
-  set_label25(get_slot25());
-  set_label_extra15(get_extra15());
-  set_label_extra16(get_extra16());
-  set_label_extra17(get_extra17());
-  set_label_extra18(get_extra18());
-  set_label_extra19(get_extra19());
-  set_label_extra20(get_extra20());
-  set_label_extra25(get_extra25());
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    set_slot_label(static_cast<ECricketSlots>(i), get_slot(static_cast<ECricketSlots>(i)));
+    set_extra_points_label(static_cast<ECricketSlots>(i), get_extra_points(static_cast<ECricketSlots>(i)));
+  }
+
   mUi->lcdNumber_legs->display(static_cast<int>(mPlayer->get_legs()));
   mUi->lcdNumber_sets->display(static_cast<int>(mPlayer->get_sets()));
   QString hpr = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
   mUi->label_hitsPerRound->setText(hpr);
   set_leg_history();
+
   if (mFinished)
   {
     unset_finished();
   }
 }
 
-void CCricketGroupBox::increase_extra15(uint32_t iPoints)
+void CCricketGroupBox::increase_extra_points(const ECricketSlots iSlot, uint32_t iPoints)
 {
-  mPlayer->set_extra15(iPoints);
-}
-
-void CCricketGroupBox::increase_extra16(uint32_t iPoints)
-{
-  mPlayer->set_extra16(iPoints);
-}
-
-void CCricketGroupBox::increase_extra17(uint32_t iPoints)
-{
-  mPlayer->set_extra17(iPoints);
-}
-
-void CCricketGroupBox::increase_extra18(uint32_t iPoints)
-{
-  mPlayer->set_extra18(iPoints);
-}
-
-void CCricketGroupBox::increase_extra19(uint32_t iPoints)
-{
-  mPlayer->set_extra19(iPoints);
-}
-
-void CCricketGroupBox::increase_extra20(uint32_t iPoints)
-{
-  mPlayer->set_extra20(iPoints);
-}
-
-void CCricketGroupBox::increase_extra25(uint32_t iPoints)
-{
-  mPlayer->set_extra25(iPoints);
+  mPlayer->set_extra_points(iSlot, iPoints);
 }
 
 void CCricketGroupBox::set_score()
@@ -1438,28 +717,24 @@ void CCricketGroupBox::set_score()
   mPlayer->set_score();
 }
 
-void CCricketGroupBox::update_labels()
+void CCricketGroupBox::update_extra_points_labels()
 {
-  set_label_extra15(mPlayer->get_extra15());
-  set_label_extra16(mPlayer->get_extra16());
-  set_label_extra17(mPlayer->get_extra17());
-  set_label_extra18(mPlayer->get_extra18());
-  set_label_extra19(mPlayer->get_extra19());
-  set_label_extra20(mPlayer->get_extra20());
-  set_label_extra25(mPlayer->get_extra25());
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    set_extra_points_label(static_cast<ECricketSlots>(i), mPlayer->get_extra_points(static_cast<ECricketSlots>(i)));
+  }
   mUi->lcdNumber->display(static_cast<int>(mPlayer->get_score()));
 }
 
 void CCricketGroupBox::update_darts(QVector<QString> && iDarts)
 {
   mPlayer->update_darts(iDarts);
-  mPlayer->set_slot15(mPlayer->get_slot15());
-  mPlayer->set_slot16(mPlayer->get_slot16());
-  mPlayer->set_slot17(mPlayer->get_slot17());
-  mPlayer->set_slot18(mPlayer->get_slot18());
-  mPlayer->set_slot19(mPlayer->get_slot19());
-  mPlayer->set_slot20(mPlayer->get_slot20());
-  mPlayer->set_slot25(mPlayer->get_slot25());
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    mPlayer->set_slot(static_cast<ECricketSlots>(i), mPlayer->get_slot(static_cast<ECricketSlots>(i)));
+  }
+
   mPlayer->set_total_hits(mPlayer->get_total_hits());
   mPlayer->set_total_darts(mPlayer->get_total_darts());
   mPlayer->set_leg_win_array(false);

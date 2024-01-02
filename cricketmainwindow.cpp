@@ -189,92 +189,14 @@ void CCricketMainWindow::update_history_slot()
   }
 }
 
-bool CCricketMainWindow::is_slot15_free(uint32_t iPlayer) const
+bool CCricketMainWindow::is_slot_free(const ECricketSlots iSlot, uint32_t iPlayer) const
 {
   bool free = false;
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
-      free |= mCricketBox[i]->get_slot15() < 3;
-    }
-  }
-  return free;
-}
-
-bool CCricketMainWindow::is_slot16_free(uint32_t iPlayer) const
-{
-  bool free = false;
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      free |= mCricketBox[i]->get_slot16() < 3;
-    }
-  }
-  return free;
-}
-
-bool CCricketMainWindow::is_slot17_free(uint32_t iPlayer) const
-{
-  bool free = false;
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      free |= mCricketBox[i]->get_slot17() < 3;
-    }
-  }
-  return free;
-}
-
-bool CCricketMainWindow::is_slot18_free(uint32_t iPlayer) const
-{
-  bool free = false;
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      free |= mCricketBox[i]->get_slot18() < 3;
-    }
-  }
-  return free;
-}
-
-bool CCricketMainWindow::is_slot19_free(uint32_t iPlayer) const
-{
-  bool free = false;
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      free |= mCricketBox[i]->get_slot19() < 3;
-    }
-  }
-  return free;
-}
-
-bool CCricketMainWindow::is_slot20_free(uint32_t iPlayer) const
-{
-  bool free = false;
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      free |= mCricketBox[i]->get_slot20() < 3;
-    }
-  }
-  return free;
-}
-
-bool CCricketMainWindow::is_slot25_free(uint32_t iPlayer) const
-{
-  bool free = false;
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      free |= mCricketBox[i]->get_slot25() < 3;
+      free |= mCricketBox[i]->get_slot(iSlot) < 3;
     }
   }
   return free;
@@ -300,263 +222,42 @@ bool CCricketMainWindow::is_score_smaller(uint32_t iScore) const
   return result;
 }
 
-void CCricketMainWindow::increase_score15(uint32_t iPoints)
+void CCricketMainWindow::increase_slot_score(const ECricketSlots iSlot, uint32_t iPoints)
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
-    if (mCricketBox[i]->get_slot15() != 3)
+    if (mCricketBox[i]->get_slot(iSlot) != 3)
     {
-      mCricketBox[i]->increase_extra15(iPoints);
+      mCricketBox[i]->increase_extra_points(iSlot, iPoints);
     }
     else
     {
-      mCricketBox[i]->increase_extra15(0);
+      mCricketBox[i]->increase_extra_points(iSlot, 0);
     }
   }
 }
 
-void CCricketMainWindow::increase_score16(uint32_t iPoints)
-{
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (mCricketBox[i]->get_slot16() != 3)
-    {
-      mCricketBox[i]->increase_extra16(iPoints);
-    }
-    else
-    {
-      mCricketBox[i]->increase_extra16(0);
-    }
-  }
-}
-
-void CCricketMainWindow::increase_score17(uint32_t iPoints)
-{
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (mCricketBox[i]->get_slot17() != 3)
-    {
-      mCricketBox[i]->increase_extra17(iPoints);
-    }
-    else
-    {
-      mCricketBox[i]->increase_extra17(0);
-    }
-  }
-}
-
-void CCricketMainWindow::increase_score18(uint32_t iPoints)
-{
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (mCricketBox[i]->get_slot18() != 3)
-    {
-      mCricketBox[i]->increase_extra18(iPoints);
-    }
-    else
-    {
-      mCricketBox[i]->increase_extra18(0);
-    }
-  }
-}
-
-void CCricketMainWindow::increase_score19(uint32_t iPoints)
-{
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (mCricketBox[i]->get_slot19() != 3)
-    {
-      mCricketBox[i]->increase_extra19(iPoints);
-    }
-    else
-    {
-      mCricketBox[i]->increase_extra19(0);
-    }
-  }
-}
-
-void CCricketMainWindow::increase_score20(uint32_t iPoints)
-{
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (mCricketBox[i]->get_slot20() != 3)
-    {
-      mCricketBox[i]->increase_extra20(iPoints);
-    }
-    else
-    {
-      mCricketBox[i]->increase_extra20(0);
-    }
-  }
-}
-
-void CCricketMainWindow::increase_score25(uint32_t iPoints)
-{
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (mCricketBox[i]->get_slot25() != 3)
-    {
-      mCricketBox[i]->increase_extra25(iPoints);
-    }
-    else
-    {
-      mCricketBox[i]->increase_extra25(0);
-    }
-  }
-}
-
-QVector<uint32_t> CCricketMainWindow::compute_extra15s(uint32_t iPoints, uint32_t iPlayer)
+QVector<uint32_t> CCricketMainWindow::compute_extra_points(const ECricketSlots iSlot, uint32_t iPoints, uint32_t iPlayer)
 {
   QVector<uint32_t> extra15s = {};
+
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
     if (i != iPlayer)
     {
       uint32_t extra = 0;
-      if (mCricketBox[i]->get_slot15() != 3)
+      if (mCricketBox[i]->get_slot(iSlot) != 3)
       {
-        extra = mCricketBox[i]->get_extra15() + iPoints;
+        extra = mCricketBox[i]->get_extra_points(iSlot) + iPoints;
       }
       else
       {
-        extra = mCricketBox[i]->get_extra15();
+        extra = mCricketBox[i]->get_extra_points(iSlot);
       }
       extra15s.push_back(extra);
     }
   }
   return extra15s;
-}
-
-QVector<uint32_t> CCricketMainWindow::compute_extra16s(uint32_t iPoints, uint32_t iPlayer)
-{
-  QVector<uint32_t> extra16s = {};
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      uint32_t extra = 0;
-      if (mCricketBox[i]->get_slot16() != 3)
-      {
-        extra = mCricketBox[i]->get_extra16() + iPoints;
-      }
-      else
-      {
-        extra = mCricketBox[i]->get_extra16();
-      }
-      extra16s.push_back(extra);
-    }
-  }
-  return extra16s;
-}
-
-QVector<uint32_t> CCricketMainWindow::compute_extra17s(uint32_t iPoints, uint32_t iPlayer)
-{
-  QVector<uint32_t> extra17s = {};
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      uint32_t extra = 0;
-      if (mCricketBox[i]->get_slot17() != 3)
-      {
-        extra = mCricketBox[i]->get_extra17() + iPoints;
-      }
-      else
-      {
-        extra = mCricketBox[i]->get_extra17();
-      }
-      extra17s.push_back(extra);
-    }
-  }
-  return extra17s;
-}
-
-QVector<uint32_t> CCricketMainWindow::compute_extra18s(uint32_t iPoints, uint32_t iPlayer)
-{
-  QVector<uint32_t> extra18s = {};
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      uint32_t extra = 0;
-      if (mCricketBox[i]->get_slot18() != 3)
-      {
-        extra = mCricketBox[i]->get_extra18() + iPoints;
-      }
-      else
-      {
-        extra = mCricketBox[i]->get_extra18();
-      }
-      extra18s.push_back(extra);
-    }
-  }
-  return extra18s;
-}
-
-QVector<uint32_t> CCricketMainWindow::compute_extra19s(uint32_t iPoints, uint32_t iPlayer)
-{
-  QVector<uint32_t> extra19s = {};
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      uint32_t extra = 0;
-      if (mCricketBox[i]->get_slot19() != 3)
-      {
-        extra = mCricketBox[i]->get_extra19() + iPoints;
-      }
-      else
-      {
-        extra = mCricketBox[i]->get_extra19();
-      }
-      extra19s.push_back(extra);
-    }
-  }
-  return extra19s;
-}
-
-QVector<uint32_t> CCricketMainWindow::compute_extra20s(uint32_t iPoints, uint32_t iPlayer)
-{
-  QVector<uint32_t> extra20s = {};
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      uint32_t extra = 0;
-      if (mCricketBox[i]->get_slot20() != 3)
-      {
-        extra = mCricketBox[i]->get_extra20() + iPoints;
-      }
-      else
-      {
-        extra = mCricketBox[i]->get_extra20();
-      }
-      extra20s.push_back(extra);
-    }
-  }
-  return extra20s;
-}
-
-QVector<uint32_t> CCricketMainWindow::compute_extra25s(uint32_t iPoints, uint32_t iPlayer)
-{
-  QVector<uint32_t> extra25s = {};
-  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-  {
-    if (i != iPlayer)
-    {
-      uint32_t extra = 0;
-      if (mCricketBox[i]->get_slot25() != 3)
-      {
-        extra = mCricketBox[i]->get_extra25() + iPoints;
-      }
-      else
-      {
-        extra = mCricketBox[i]->get_extra25();
-      }
-      extra25s.push_back(extra);
-    }
-  }
-  return extra25s;
 }
 
 void CCricketMainWindow::set_scores()
@@ -567,11 +268,11 @@ void CCricketMainWindow::set_scores()
   }
 }
 
-void CCricketMainWindow::update_labels()
+void CCricketMainWindow::update_extra_points_labels()
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
-    mCricketBox[i]->update_labels();
+    mCricketBox[i]->update_extra_points_labels();
   }
 }
 

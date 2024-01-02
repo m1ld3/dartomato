@@ -44,7 +44,7 @@ public:
   void erase_dart3();
   void set_finished();
   void unset_finished();
-
+  
 private:
 
   uint32_t mScore = 0;

@@ -21,6 +21,16 @@ namespace Ui
   class CCricketInput;
 }
 
+inline std::unordered_map<uint32_t, ECricketSlots> Slot2IdxMap =
+{
+  {15, ECricketSlots::SLOT_15},
+  {16, ECricketSlots::SLOT_16},
+  {17, ECricketSlots::SLOT_17},
+  {18, ECricketSlots::SLOT_18},
+  {19, ECricketSlots::SLOT_19},
+  {20, ECricketSlots::SLOT_20},
+  {25, ECricketSlots::SLOT_25}
+};
 
 class CCricketInput : public QDialog
 {
@@ -28,7 +38,7 @@ class CCricketInput : public QDialog
 
 public:
 
-  void set_score(uint32_t iValue, QChar iType);
+  void set_score_labels(uint32_t iValue, QChar iType);
   void compute_score();
   bool are_slots_full() const;
 
@@ -53,6 +63,17 @@ private slots:
 
 private:
 
+  void process_segment_cutthroat();
+  void process_segment_default();
+  void compute_cutthroat_scores_for_other_players(QVector<uint32_t> & iScores);
+  void process_segment_common(uint32_t iVal, QChar & iType);
+  void save_history();
+  void handle_game_shot();
+  void check_if_game_shot_cutthroat(QVector<uint32_t> & iScores);
+  void handle_input_stop();
+  void handle_warnings(bool iWarningCondition);
+  void handle_slots_and_extra_points(uint32_t iVal, QChar & iType);
+
   Ui::CCricketInput * mUi;
   QGraphicsView * mView;
   QGraphicsScene * mScene;
@@ -66,14 +87,13 @@ private:
   QVector<QString> mDarts{"","",""};
   CCricketClass * mPlayer;
   CCricketMainWindow * mGameWindow;
-  uint32_t mSlot15, mSlot16, mSlot17, mSlot18, mSlot19, mSlot20, mSlot25;
-  uint32_t mExtra15, mExtra16, mExtra17, mExtra18, mExtra19, mExtra20, mExtra25;
+  std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
+  std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
+  std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
+  std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
+  std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mCutThroatExtraPointsArray;
+  std::array<QVector<QVector<uint32_t>>, static_cast<int>(ECricketSlots::SLOT_MAX)> mCutThroatExtraPointsHistory;
   uint32_t mScore;
-  QVector<uint32_t> mExtra15s, mExtra16s, mExtra17s, mExtra18s, mExtra19s, mExtra20s, mExtra25s;
-  QVector<uint32_t> mSlot15Array, mSlot16Array, mSlot17Array, mSlot18Array, mSlot19Array, mSlot20Array, mSlot25Array;
-  QVector<uint32_t> mExtra15Array, mExtra16Array, mExtra17Array, mExtra18Array, mExtra19Array, mExtra20Array, mExtra25Array;
-  QVector<QVector<uint32_t>> mExtra15sArray, mExtra16sArray, mExtra17sArray, mExtra18sArray, mExtra19sArray, mExtra20sArray, mExtra25sArray;
-  QSoundEffect mGameShotSound;
   CDartBoardCricket * mDartBoard;
   const CSettings & mpSettings;
 };
