@@ -11,7 +11,7 @@ CX01Class::CX01Class(uint32_t iPlayerNumber, const CSettings & ipSettings)
 {
   mRemainingPointsOfCurrentLeg.push_back(mRemaining);
   compute_averages(0);
-  compute_checkout(0, 0);
+  update_checkout(0, 0);
 }
 
 bool CX01Class::increase_setslegs()
@@ -97,14 +97,7 @@ void CX01Class::perform_undo_step()
   mCheckouts -= mCheckoutsArray.back();
   mCheckoutsArray.pop_back();
 
-  if (mCheckoutAttempts > 0)
-  {
-     mCheckout = (static_cast<double> (mCheckouts) / static_cast<double> (mCheckoutAttempts)) * 100.0;
-  }
-  else
-  {
-    mCheckout = 0.0;
-  }
+  compute_checkout();
 
   double n = static_cast<double>(mTotalDarts);
 
@@ -130,6 +123,21 @@ QString CX01Class::get_checkout_attempts() const
   return QString::number(mCheckouts) + " / " + QString::number(mCheckoutAttempts);
 }
 
+void CX01Class::undo_last_won_leg_or_set()
+{
+  if (mTotalLegsWon % mMarginLegs == 0)
+  {
+    mTotalLegsWon -= 1;
+    mLegsWonPerSet = mMarginLegs -1;
+    mSetsWon -= 1;
+  }
+  else
+  {
+    mTotalLegsWon -= 1;
+    mLegsWonPerSet -= 1;
+  }
+}
+
 void CX01Class::undo()
 {
   if (mScoresOfCurrentLeg.size() > 0)
@@ -149,24 +157,9 @@ void CX01Class::undo()
     {
       if (mRemainingPointsOfCurrentLeg.back() == 0)
       {
-        if (mTotalLegsWon % mMarginLegs == 0)
-        {
-          mTotalLegsWon -= 1;
-          mLegsWonPerSet = mMarginLegs -1;
-          mSetsWon -= 1;
-          perform_undo_step();
-        }
-        else
-        {
-          mTotalLegsWon -= 1;
-          mLegsWonPerSet -= 1;
-          perform_undo_step();
-        }
+        undo_last_won_leg_or_set();
       }
-      else
-      {
-        perform_undo_step();
-      }
+      perform_undo_step();
     }
   }
 }
@@ -188,13 +181,8 @@ void CX01Class::compute_averages(uint32_t numberofdarts)
   mAvg3Dart = 3 * mAvg1Dart;
 }
 
-void CX01Class::compute_checkout(uint32_t checkoutattempts, uint32_t success)
+void CX01Class::compute_checkout()
 {
-  mCheckoutAttempts += checkoutattempts;
-  mCheckoutAttemptsArray.push_back(checkoutattempts);
-  mCheckoutsArray.push_back(success);
-  mCheckouts += success;
-
   if (mCheckoutAttempts > 0)
   {
     mCheckout = (static_cast<double> (mCheckouts) / static_cast<double> (mCheckoutAttempts)) * 100.0;
@@ -203,6 +191,16 @@ void CX01Class::compute_checkout(uint32_t checkoutattempts, uint32_t success)
   {
     mCheckout = 0;
   }
+}
+
+void CX01Class::update_checkout(uint32_t checkoutattempts, uint32_t success)
+{
+  mCheckoutAttempts += checkoutattempts;
+  mCheckoutAttemptsArray.push_back(checkoutattempts);
+  mCheckoutsArray.push_back(success);
+  mCheckouts += success;
+
+  compute_checkout();
 }
 
 double CX01Class::get_avg1dart() const

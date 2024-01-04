@@ -186,22 +186,6 @@
         <file>sounds/180.wav</file>
         <file>sounds/gameon.wav</file>
         <file>sounds/gameshot.wav</file>
-        <file>sounds/anotherone.wav</file>
-        <file>sounds/dasgehtdochnicht.wav</file>
-        <file>sounds/daswarscheisse.wav</file>
-        <file>sounds/gutschlecht.wav</file>
-        <file>sounds/howdareyou.wav</file>
-        <file>sounds/littlegirl.wav</file>
-        <file>sounds/newwaytosuck.wav</file>
-        <file>sounds/nichtgut.wav</file>
-        <file>sounds/poorjob.wav</file>
-        <file>sounds/sexy69.wav</file>
-        <file>sounds/whenwillyoulearn.wav</file>
-        <file>sounds/youfuckedup.wav</file>
-        <file>sounds/yousuck1.wav</file>
-        <file>sounds/yousuck2.wav</file>
-        <file>sounds/yousuck3.wav</file>
-        <file>sounds/loser.wav</file>
         <file>sounds/busted.wav</file>
     </qresource>
 </RCC>

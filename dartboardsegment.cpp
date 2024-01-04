@@ -77,9 +77,10 @@ void CDartBoardSegment::paint(QPainter * iPainter, const QStyleOptionGraphicsIte
 
   if (mPressed && !mDragging)
   {
-    iPainter->setPen(QPen(Qt::blue, 4));
+    iPainter->setPen(QPen(Qt::cyan, 4));
     setZValue(1);
-  } else
+  }
+  else
   {
     iPainter->setPen(QPen(Qt::gray, 4));
     setZValue(0);
@@ -87,8 +88,8 @@ void CDartBoardSegment::paint(QPainter * iPainter, const QStyleOptionGraphicsIte
 
   if (mHover)
   {
-    if (mColor == "black")       brush.setColor(QColor::fromRgb(80,80,80));
-    else if (mColor == "beige")  brush.setColor(QColor::fromRgb(165,165,140));
+    if (mColor == "black")       brush.setColor(QColor::fromRgb(80, 80, 80));
+    else if (mColor == "beige")  brush.setColor(QColor::fromRgb(165, 165, 140));
     else if (mColor == "red")    brush.setColor(Qt::red);
     else if (mColor == "green")  brush.setColor(Qt::green);
     else                         brush.setColor(Qt::white);
@@ -96,13 +97,13 @@ void CDartBoardSegment::paint(QPainter * iPainter, const QStyleOptionGraphicsIte
   else
   {
     if (mColor == "black")       brush.setColor(Qt::black);
-    else if (mColor == "beige")  brush.setColor(QColor::fromRgb(215,215,190));
-    else if (mColor == "red")    brush.setColor(QColor::fromRgb(180,50,0));
+    else if (mColor == "beige")  brush.setColor(QColor::fromRgb(215, 215, 190));
+    else if (mColor == "red")    brush.setColor(QColor::fromRgb(180, 50, 0));
     else if (mColor == "green")  brush.setColor(Qt::darkGreen);
     else                         brush.setColor(Qt::white);
   }
 
-  iPainter->fillPath(mPath,brush);
+  iPainter->fillPath(mPath, brush);
   iPainter->drawPath(mPath);
 }
 

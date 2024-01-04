@@ -19,7 +19,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
 
   connect(mUi->pushButton_startgame, &QPushButton::clicked, this, &CDartomatMain::push_button_startgame_clicked_slot);
-  connect(mUi->comboBox_game, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
+  connect(mUi->comboBox_game, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index)
   {
     const QString game = mUi->comboBox_game->itemText(index);
     combo_box_game_current_index_changed_slot(game);
@@ -46,10 +46,9 @@ void CDartomatMain::push_button_startgame_clicked_slot()
   bool masterIn = mUi->radioButton_Min->isChecked();
   bool masterOut = mUi->radioButton_Mout->isChecked();
   bool cutThroat = mUi->checkBoxCutThroat->isChecked();
-  bool offensive = mUi->checkBoxOffensive->isChecked();
 
   mSettings = CSettings(static_cast<EGame>(game), numberOfPlayers, sets, legs, singleIn,
-                        singleOut, doubleIn, doubleOut, masterIn, masterOut, cutThroat, offensive);
+                        singleOut, doubleIn, doubleOut, masterIn, masterOut, cutThroat);
 
   if (game > 0)
   {
@@ -77,6 +76,7 @@ void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iG
     mUi->radioButton_Dout->setVisible(false);
     mUi->radioButton_Mout->setVisible(false);
     mUi->checkBoxCutThroat->setVisible(true);
+    mUi->checkBoxCutThroat->move(mUi->radioButton_Sout->pos());
   }
   else
   {

@@ -48,7 +48,7 @@ public slots:
 
 signals:
 
-  void signal_cricket_submit_button_pressed(uint32_t iNumberOfDarts, const QVector<QString> & iDarts);
+  void signal_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
 
 public:
 
@@ -73,6 +73,7 @@ private:
   void handle_input_stop();
   void handle_warnings(bool iWarningCondition);
   void handle_slots_and_extra_points(uint32_t iVal, QChar & iType);
+  void increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits);
 
   Ui::CCricketInput * mUi;
   QGraphicsView * mView;

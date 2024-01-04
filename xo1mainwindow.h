@@ -47,6 +47,9 @@ private slots:
 
 private:
 
+  void add_players();
+  void connect_main_window_slots();
+
   Ui::CX01MainWindow * mUi;
   CX01GroupBox * mX01GroupBox;
   uint32_t mActivePlayer = 0;
@@ -54,6 +57,9 @@ private:
   QVector<CX01Class*> mPlayer;
   CDartBoardX01 * mDartBoard;
   const CSettings & mpSettings;
+  void update__player_default();
+  void update_player_leg();
+  void update_player_set();
 };
 
 #endif  // X01MAINWINDOW_H

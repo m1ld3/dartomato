@@ -23,19 +23,6 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
   , mUi(new Ui::CX01GroupBox)
   , mPlayer(iPlayer)
   , mDartBoard(iDartBoard)
-  , mSexy69(this)
-  , mAnotherone(this)
-  , mSound1(this)
-  , mSound2(this)
-  , mSound3(this)
-  , mSound4(this)
-  , mSound5(this)
-  , mSound6(this)
-  , mSound7(this)
-  , mSound8(this)
-  , mSound9(this)
-  , mSound10(this)
-  , mSound11(this)
   , mScoreSound(this)
   , mpSettings(ipSettings)
 {
@@ -54,24 +41,6 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
   connect(mUi->label_pic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CX01GroupBox::player_active_button_pressed_slot);
   display_finishes(mRemaining, 3);
   mGameWindow = dynamic_cast<CX01MainWindow*>(iParent);
-  mSexy69.setSource(QUrl("qrc:/resources/sounds/sexy69.wav"));
-  mAnotherone.setSource(QUrl("qrc:/resources/sounds/anotherone.wav"));
-  mSound1.setSource(QUrl("qrc:/resources/sounds/yousuck1.wav"));
-  mSound2.setSource(QUrl("qrc:/resources/sounds/yousuck2.wav"));
-  mSound3.setSource(QUrl("qrc:/resources/sounds/yousuck3.wav"));
-  mSound4.setSource(QUrl("qrc:/resources/sounds/youfuckedup.wav"));
-  mSound5.setSource(QUrl("qrc:/resources/sounds/poorjob.wav"));
-  mSound6.setSource(QUrl("qrc:/resources/sounds/nichtgut.wav"));
-  mSound7.setSource(QUrl("qrc:/resources/sounds/newwaytosuck.wav"));
-  mSound8.setSource(QUrl("qrc:/resources/sounds/loser.wav"));
-  mSound9.setSource(QUrl("qrc:/resources/sounds/littlegirl.wav"));
-  mSound10.setSource(QUrl("qrc:/resources/sounds/gutschlecht.wav"));
-  mSound11.setSource(QUrl("qrc:/resources/sounds/daswarscheisse.wav"));
-
-  connect(&mScoreSound, &QSoundEffect::playingChanged, this, [this]
-  {
-    if(!mScoreSound.isPlaying() && mpSettings.mOffensive) play_offensive_sounds();
-  });
 
   connect(mUi->label_pic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CX01GroupBox::player_active_button_pressed_slot);
   connect(mUi->pushButton_name, &QPushButton::clicked, this, &CX01GroupBox::push_button_name_clicked_slot);
@@ -152,7 +121,7 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
 
   if (mRemaining == 0)
   {
-    mPlayer->compute_checkout(iCheckoutAttempts, 1);
+    mPlayer->update_checkout(iCheckoutAttempts, 1);
     newset = mPlayer->increase_setslegs();
     emit signal_update_history();
     mScoreSound.play();
@@ -175,7 +144,7 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
   }
   else
   {
-    mPlayer->compute_checkout(iCheckoutAttempts, 0);
+    mPlayer->update_checkout(iCheckoutAttempts, 0);
     mScoreSound.play();
     mUi->lcdNumber->display(static_cast<int>(mRemaining));
 
@@ -257,6 +226,7 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
 {
   mUi->textBrowser->clear();
   mUi->textBrowser->setText("Checkouts:");
+  if (iNumberOfDarts == 0) return;
 
   if (mpSettings.mSingleOut)
   {
@@ -362,158 +332,9 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
   mUi->textBrowser->setTextCursor(cursor);
 }
 
-void CX01GroupBox::play_fail_sounds()
-{
-  std::srand(static_cast<unsigned> (std::time(0)));
-  uint32_t rnd = 1 + (std::rand() % 11);
-
-  switch (rnd)
-  {
-  case 1:
-    mSound1.play();
-    break;
-  case 2:
-    mSound2.play();
-    break;
-  case 3:
-    mSound3.play();
-    break;
-  case 4:
-    mSound4.play();
-    break;
-  case 5:
-    mSound5.play();
-    break;
-  case 6:
-    mSound6.play();
-    break;
-  case 7:
-    mSound7.play();
-    break;
-  case 8:
-    mSound8.play();
-    break;
-  case 9:
-    mSound9.play();
-    break;
-  case 10:
-    mSound10.play();
-    break;
-  case 11:
-    mSound11.play();
-    break;
-  default:;
-  }
-}
-
 void CX01GroupBox::set_lcd_legs()
 {
   mUi->lcdNumber_legs->display(static_cast<int>(mPlayer->get_legs()));
-}
-
-void CX01GroupBox::play_offensive_sounds()
-{
-  if (!(mRemaining == static_cast<uint32_t>(mpSettings.mGame) && mCurrentScore > 0))
-  {
-    std::srand(static_cast<unsigned> (std::time(0)));
-    uint32_t rnd = 1 + (std::rand() % 3);
-
-    switch (mCurrentScore)
-    {
-    case 3:
-      switch (rnd)
-      {
-      case 1:
-        mAnotherone.play();
-        break;
-      case 2:
-        play_fail_sounds();
-        break;
-      case 3:
-        break;
-      }
-      break;
-    case 7:
-      switch (rnd)
-      {
-      case 1:
-        mAnotherone.play();
-        break;
-      case 2:
-        play_fail_sounds();
-        break;
-      case 3:
-        break;
-      }
-      break;
-    case 11:
-      switch (rnd)
-      {
-      case 1:
-        mAnotherone.play();
-        break;
-      case 2:
-        play_fail_sounds();
-        break;
-      case 3:
-        break;
-      }
-      break;
-    case 26:
-      switch (rnd)
-      {
-      case 1:
-        mAnotherone.play();
-        break;
-      case 2:
-        play_fail_sounds();
-        break;
-      case 3:
-        break;
-      }
-      break;
-    case 41:
-      switch (rnd)
-      {
-      case 1:
-        mAnotherone.play();
-        break;
-      case 2:
-      case 3:
-        break;
-      }
-      break;
-    case 45:
-      switch (rnd)
-      {
-      case 1:
-        mAnotherone.play();
-        break;
-      case 2:
-      case 3:
-        break;
-      }
-      break;
-    case 69:
-      mSexy69.play();
-      break;
-    default:
-      if (mCurrentScore < 30)
-      {
-        switch (rnd)
-        {
-        case 1:
-          play_fail_sounds();
-          break;
-        case 2:
-          play_fail_sounds();
-          break;
-        case 3:
-          break;
-        }
-      }
-    }
-  }
 }
 
 uint32_t CX01GroupBox::get_remaining() const

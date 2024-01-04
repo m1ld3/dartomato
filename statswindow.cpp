@@ -12,7 +12,7 @@ CStatsWindow::CStatsWindow(QWidget * iParent)
   mUi->chartView1->setRubberBand( QChartView::HorizontalRubberBand);
   mUi->chartView2->setRubberBand( QChartView::HorizontalRubberBand);
 
-  connect(mUi->legSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), [this](int index)
+  connect(mUi->legSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index)
   {
     leg_selector_current_index_changed_slot(index);
   });

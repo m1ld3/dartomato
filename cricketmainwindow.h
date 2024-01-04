@@ -49,6 +49,12 @@ private:
   QVector<CCricketGroupBox*> mCricketBox;
   const CSettings & mpSettings;
   QVector<CCricketClass*> mCricketPlayer;
+  void handle_update_default();
+  void handle_update_leg();
+  void handle_update_set();
+  void inactivate_all_players();
+  void unset_leg_begin_for_all_players();
+  void unset_set_begin_for_all_players();
 };
 
 #endif  // CRICKETMAINWINDOW_H

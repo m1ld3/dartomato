@@ -79,14 +79,8 @@ bool CCricketInput::are_slots_full() const
 void CCricketInput::segment_pressed_slot(uint32_t iVal, QChar & iType)
 {
   process_segment_common(iVal, iType);
-  if (mpSettings.mCutThroat)
-  {
-    process_segment_cutthroat();
-  }
-  else
-  {
-    process_segment_default();
-  }
+  if (mpSettings.mCutThroat) process_segment_cutthroat();
+  else process_segment_default();
 }
 
 void CCricketInput::check_if_game_shot_cutthroat(QVector<uint32_t> & iScores)
@@ -97,10 +91,7 @@ void CCricketInput::check_if_game_shot_cutthroat(QVector<uint32_t> & iScores)
     result = result && iScores[i] >= mScore;
   }
 
-  if (are_slots_full() && result)
-  {
-    handle_game_shot();
-  }
+  if (are_slots_full() && result) handle_game_shot();
 }
 
 void CCricketInput::handle_input_stop()
@@ -153,6 +144,14 @@ void CCricketInput::handle_game_shot()
   mUi->submitButton->setFocus();
 }
 
+void CCricketInput::increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits)
+{
+  if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayer->get_player_number()))
+  {
+    mExtraPointsArray.at(iSlotIdx) += iHits * iSlotVal;
+  }
+}
+
 void CCricketInput::handle_slots_and_extra_points(uint32_t iVal, QChar & iType)
 {
   uint32_t hits = (iType == 't') ? 3 : ((iType == 'd') ? 2 : 1);
@@ -168,15 +167,12 @@ void CCricketInput::handle_slots_and_extra_points(uint32_t iVal, QChar & iType)
     {
       hits -= 3 - mSlotArray.at(idx);
       mSlotArray.at(idx) = 3;
-      if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(idx), mPlayer->get_player_number()))
-      {
-        mExtraPointsArray.at(idx) += hits * val;
-      }
+      increase_extra_points(idx, val, hits);
     }
   }
-  else if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(idx), mPlayer->get_player_number()))
+  else
   {
-    mExtraPointsArray.at(idx) += hits * val;
+    increase_extra_points(idx, val, hits);
   }
 }
 
@@ -220,7 +216,7 @@ void CCricketInput::submit_button_clicked_slot()
   if (mStop)
   {
     uint32_t numberofdarts = 3 - mCounter;
-    emit signal_cricket_submit_button_pressed(numberofdarts, mDarts);
+    emit signal_cricket_submit_button_clicked(numberofdarts, mDarts);
   }
   else
   {

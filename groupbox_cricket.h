@@ -56,7 +56,6 @@ public:
   void set_score();
   void update_extra_points_labels();
   void update_darts(QVector<QString> && iDarts);
-  void play_fail_sounds();
   void set_lcd_legs();
   void perform_undo();
 
@@ -72,11 +71,31 @@ public slots:
   void push_button_name_clicked_slot();
   void push_button_score_clicked_slot();
   void ok_button_clicked_slot(const QString & iName);
-  void cricket_submit_button_pressed_slot(uint32_t iNumberOfDarts, const QVector<QString> & iDarts);
+  void cricket_submit_button_clicked_slot(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
   void player_active_button_pressed_slot();
   void push_button_undo_clicked_slot();
+  void connect_slots();
 
 private:
+
+  void filter_leg_scores_cutthroat(QVector<QVector<QString>> & oLegScores);
+  void display_leg_scores(const QVector<QVector<QString>> & iLegScores);
+  void display_leg_score_line(uint32_t iLegNumber, const QVector<QString> & iLegScore);
+  QString format_leg_score(const QVector<QString> & iLegScore);
+  void load_slot_arrays_from_player();
+  void write_slot_arrays_to_player(const std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & iExtraPointsCutThroat);
+  void handle_leg_won();
+  void handle_switch_to_next_player();
+  void process_single_dart(uint32_t iDartIdx, QVector<QString> & oDarts,
+                           std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & oExtraPointsCutThroat);
+  void submit_score_to_player(uint32_t iNumberOfDarts, const QVector<QString> & iDart,
+                              const std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & iExtraPointsCutThroat);
+  bool has_leg_won();
+  void calculate_extra_points(uint32_t iSlotIdx, uint32_t iHits, uint32_t iSlotVal,
+                              std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & oExtraPointsCutThroat);
+  void handle_slot_hits_overflow(uint32_t iSlotIdx, uint32_t iHits, uint32_t iSlotVal, QString & oDart,
+                                 std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & oExtraPointsCutThroat);
+  void fill_slot_hits(uint32_t iSlotIdx, uint32_t iHits);
 
   Ui::CCricketGroupBox * mUi;
   QString mPlayerName;
@@ -95,17 +114,6 @@ private:
   uint32_t mTotalHits = 0;
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
-  QSoundEffect mSound1;
-  QSoundEffect mSound2;
-  QSoundEffect mSound3;
-  QSoundEffect mSound4;
-  QSoundEffect mSound5;
-  QSoundEffect mSound6;
-  QSoundEffect mSound7;
-  QSoundEffect mSound8;
-  QSoundEffect mSound9;
-  QSoundEffect mSound10;
-  QSoundEffect mSound11;
   const CSettings & mpSettings;
 };
 

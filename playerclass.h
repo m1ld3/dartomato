@@ -18,7 +18,7 @@ public:
   QVector<uint32_t> get_total_scores_flat() const;
   void undo();
   void compute_averages(uint32_t iNumberOfDarts);
-  void compute_checkout(uint32_t iCheckoutAttempts, uint32_t iSuccess);
+  void update_checkout(uint32_t iCheckoutAttempts, uint32_t iSuccess);
   double get_avg1dart() const;
   double get_avg3dart() const;
   double get_checkout() const;
@@ -46,6 +46,8 @@ signals:
 
 private:
 
+  void undo_last_won_leg_or_set();
+
   const CSettings & mpSettings;
   uint32_t mSetsWon = 0;  // sets won
   uint32_t mLegsWonPerSet = 0;  // legs won per set
@@ -70,6 +72,7 @@ private:
   QVector<QVector<QString>> mThrownDartsOfCurrentLeg = {};
   QVector<QVector<QString>> mThrownDartsOfAllLegsFlat = {};
   QVector<QVector<QVector<QString>>> mThrownDartsOfAllLegs = {};
+  void compute_checkout();
 };
 
 #endif  // PLAYERCLASS_H

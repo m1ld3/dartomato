@@ -35,7 +35,7 @@ struct CSettings
 {
   CSettings(EGame iGame, uint32_t iPlayers, uint32_t iSets, uint32_t iLegs,
             bool iSingleIn, bool iSingleOut, bool iDoubleIn, bool iDoubleOut,
-            bool iMasterIn, bool iMasterOut, bool iCutThroat, bool iOffensive)
+            bool iMasterIn, bool iMasterOut, bool iCutThroat)
   : mGame(iGame)
   , mNumberOfPlayers(iPlayers)
   , mSets(iSets)
@@ -47,7 +47,6 @@ struct CSettings
   , mMasterIn(iMasterIn)
   , mMasterOut(iMasterOut)
   , mCutThroat(iCutThroat)
-  , mOffensive(iOffensive)
   {}
 
   CSettings(){}
@@ -63,7 +62,6 @@ struct CSettings
   bool mMasterIn = false;
   bool mMasterOut = false;
   bool mCutThroat = false;
-  bool mOffensive = false;
 };
 
 #endif // CSETTINGS_H

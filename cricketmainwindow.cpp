@@ -53,14 +53,8 @@ void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
                                                              tr("Are you sure you want to quit the game?\n"),
                                                              QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
                                                              QMessageBox::No);
-  if (resBtn != QMessageBox::Yes)
-  {
-    iEvent->ignore();
-  }
-  else
-  {
-    iEvent->accept();
-  }
+  if (resBtn != QMessageBox::Yes) iEvent->ignore();
+  else iEvent->accept();
 }
 
 void CCricketMainWindow::set_active_player(uint32_t iPlayer)
@@ -73,61 +67,83 @@ void CCricketMainWindow::update_player()
   mActivePlayer = (mActivePlayer + 1) % mpSettings.mNumberOfPlayers;
 }
 
+void CCricketMainWindow::inactivate_all_players()
+{
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->set_inactive();
+  }
+}
+
+void CCricketMainWindow::handle_update_default()
+{
+  update_player();
+  inactivate_all_players();
+  mCricketBox[mActivePlayer]->set_active();
+}
+
+void CCricketMainWindow::handle_update_leg()
+{
+  inactivate_all_players();
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->has_begun_leg())
+    {
+      mCricketBox[i]->unset_leg_begin();
+      mActivePlayer = i;
+      update_player();
+      mCricketBox[mActivePlayer]->set_active();
+      mCricketBox[mActivePlayer]->set_leg_begin();
+      break;
+    }
+  }
+}
+
+void CCricketMainWindow::unset_leg_begin_for_all_players()
+{
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
+  {
+    mCricketBox[i]->unset_leg_begin();
+  }
+}
+
+void CCricketMainWindow::handle_update_set()
+{
+  inactivate_all_players();
+  unset_leg_begin_for_all_players();
+  for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
+  {
+    if (mCricketBox[i]->has_begun_set())
+    {
+      mCricketBox[i]->unset_set_begin();
+      mActivePlayer = i;
+      update_player();
+      mCricketBox[mActivePlayer]->set_active();
+      mCricketBox[mActivePlayer]->set_leg_begin();
+      mCricketBox[mActivePlayer]->set_set_begin();
+      break;
+    }
+  }
+  for (auto box: mCricketBox)
+  {
+    box->reset_legs();
+    box->set_lcd_legs();
+  }
+}
+
 void CCricketMainWindow::update_player_slot(const EUpdateType iType)
 {
   if (iType == EUpdateType::DEFAULT)
   {
-    update_player();
-    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-    {
-      mCricketBox[i]->set_inactive();
-    }
-    mCricketBox[mActivePlayer]->set_active();
+    handle_update_default();
   }
   else if (iType == EUpdateType::LEG)
   {
-    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-    {
-      if (mCricketBox[i]->has_begun_leg())
-      {
-        mCricketBox[i]->unset_leg_begin();
-        mActivePlayer = i;
-        update_player();
-        for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-        {
-          mCricketBox[i]->set_inactive();
-        }
-        mCricketBox[mActivePlayer]->set_active();
-        mCricketBox[mActivePlayer]->set_leg_begin();
-        break;
-      }
-    }
+    handle_update_leg();
   }
   else if (iType == EUpdateType::SET)
   {
-    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-    {
-      if (mCricketBox[i]->has_begun_set())
-      {
-        mCricketBox[i]->unset_set_begin();
-        mActivePlayer = i;
-        update_player();
-        for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-        {
-          mCricketBox[i]->set_inactive();
-          mCricketBox[i]->unset_leg_begin();
-        }
-        mCricketBox[mActivePlayer]->set_active();
-        mCricketBox[mActivePlayer]->set_leg_begin();
-        mCricketBox[mActivePlayer]->set_set_begin();
-        break;
-      }
-    }
-    for (auto box: mCricketBox)
-    {
-      box->reset_legs();
-      box->set_lcd_legs();
-    }
+    handle_update_set();
   }
 }
 
@@ -152,30 +168,29 @@ void CCricketMainWindow::game_won_slot(uint32_t iPlayerNumber)
   QMessageBox::about(this,"Game finished", text);
 }
 
-void CCricketMainWindow::inactivate_players_slot(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
+void CCricketMainWindow::unset_set_begin_for_all_players()
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
-    mCricketBox[i]->set_inactive();
+    mCricketBox[i]->unset_set_begin();
   }
+}
+
+void CCricketMainWindow::inactivate_players_slot(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
+{
+  inactivate_all_players();
   set_active_player(iPlayerNumber);
 
   if (!iLegStarted)
   {
-    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-    {
-      mCricketBox[i]->unset_leg_begin();
-    }
+    unset_leg_begin_for_all_players();
     mCricketBox[iPlayerNumber]->set_leg_begin();
   }
 
   if (!iSetStarted)
   {
-    for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
-    {
-      mCricketBox[i]->unset_set_begin();
-      mCricketBox[i]->unset_leg_begin();
-    }
+    unset_leg_begin_for_all_players();
+    unset_set_begin_for_all_players();
     mCricketBox[iPlayerNumber]->set_leg_begin();
     mCricketBox[iPlayerNumber]->set_set_begin();
   }
@@ -239,7 +254,7 @@ void CCricketMainWindow::increase_slot_score(const ECricketSlots iSlot, uint32_t
 
 QVector<uint32_t> CCricketMainWindow::compute_extra_points(const ECricketSlots iSlot, uint32_t iPoints, uint32_t iPlayer)
 {
-  QVector<uint32_t> extra15s = {};
+  QVector<uint32_t> extraPoints = {};
 
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -254,10 +269,10 @@ QVector<uint32_t> CCricketMainWindow::compute_extra_points(const ECricketSlots i
       {
         extra = mCricketBox[i]->get_extra_points(iSlot);
       }
-      extra15s.push_back(extra);
+      extraPoints.push_back(extra);
     }
   }
-  return extra15s;
+  return extraPoints;
 }
 
 void CCricketMainWindow::set_scores()
