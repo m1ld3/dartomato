@@ -31,7 +31,7 @@ private slots:
   void game_won_slot(uint32_t iPlayerNumber);
   void inactivate_players_slot(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
   void update_history_slot();
-  void submit_button_pressed_slot(uint32_t iScore, uint32_t iNumberOfDarts,
+  void submit_score_to_player_slot(uint32_t iScore, uint32_t iNumberOfDarts,
                                   uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
   void submit_button_clicked_slot();
   void undo_button_clicked_slot();

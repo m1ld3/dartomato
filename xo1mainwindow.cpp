@@ -67,7 +67,7 @@ void CX01MainWindow::add_players()
 
 void CX01MainWindow::connect_main_window_slots()
 {
-  connect(mDartBoard, &CDartBoardX01::signal_submit_button_pressed_to_game_window, this, &CX01MainWindow::submit_button_pressed_slot);
+  connect(mDartBoard, &CDartBoardX01::signal_submit_score_to_player, this, &CX01MainWindow::submit_score_to_player_slot);
   connect(mDartBoard, &CDartBoardX01::signal_display_score, this, &CX01MainWindow::display_score_slot);
   connect(mDartBoard, &CDartBoardX01::signal_display_dart1, this, &CX01MainWindow::display_dart1_slot);
   connect(mDartBoard, &CDartBoardX01::signal_display_dart2, this, &CX01MainWindow::display_dart2_slot);
@@ -235,7 +235,7 @@ void CX01MainWindow::update_history_slot()
   }
 }
 
-void CX01MainWindow::submit_button_pressed_slot(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
+void CX01MainWindow::submit_score_to_player_slot(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
 {
   mPlayerBox[mActivePlayer]->submit_score(iScore, iNumberOfDarts, iCheckoutAttempts, iDarts);
 }

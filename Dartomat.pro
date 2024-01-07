@@ -41,7 +41,6 @@ SOURCES += \
     playeractivebutton.cpp \
     playerclass.cpp \
     statswindow.cpp \
-    submitbutton.cpp \
     undobutton.cpp \
     xo1mainwindow.cpp
 
@@ -66,7 +65,6 @@ HEADERS += \
     playerclass.h \
     settings.h \
     statswindow.h \
-    submitbutton.h \
     undobutton.h \
     xo1mainwindow.h
 

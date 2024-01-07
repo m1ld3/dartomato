@@ -14,7 +14,7 @@ public slots:
 
 signals:
 
-  void signal_submit_button_pressed_to_game_window(uint32_t iScore, uint32_t iNumberOfDarts,
+  void signal_submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts,
                                                    uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
   void signal_set_score_to_group_box_player();
   void signal_erase_dart1();

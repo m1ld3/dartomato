@@ -4,7 +4,7 @@
 #include <QMap>
 #include <QVector>
 
-const QMap<int, QVector<QString>> singleOutSingleDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> singleOutSingleDartCheckoutList =
 {
   {1,  {"S01"}},
   {2,  {"S02"}},
@@ -51,7 +51,7 @@ const QMap<int, QVector<QString>> singleOutSingleDartCheckoutList =
   {60, {"T20"}}
 };
 
-const QMap<int, QVector<QString>> singleOutTwoDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> singleOutTwoDartCheckoutList =
 {
   {23,  {"S20   S03"}},
   {29,  {"S20   S09"}},
@@ -123,7 +123,7 @@ const QMap<int, QVector<QString>> singleOutTwoDartCheckoutList =
   {120, {"T20   T20"}}
 };
 
-const QMap<int, QVector<QString>> singleOutThreeDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> singleOutThreeDartCheckoutList =
 {
   {103, {"S18   S25   T20", "S13   T15   T15", "S04   T15   T18", "S13   T12   T18",
          "S01   T17   T17", "S07   T16   T16", "S19   T14   T14"}},
@@ -214,7 +214,7 @@ const QMap<int, QVector<QString>> singleOutThreeDartCheckoutList =
   {180, {"T20   T20   T20"}}
 };
 
-const QMap<int, QVector<QString>> doubleOutSingleDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> doubleOutSingleDartCheckoutList =
 {
   {2,  {"D01"}},
   {4,  {"D02"}},
@@ -239,7 +239,7 @@ const QMap<int, QVector<QString>> doubleOutSingleDartCheckoutList =
   {50, {"D25"}}
 };
 
-const QMap<int, QVector<QString>> doubleOutTwoDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> doubleOutTwoDartCheckoutList =
 {
   {3,   {"S01   D01"}},
   {5,   {"S01   D02"}},
@@ -334,7 +334,7 @@ const QMap<int, QVector<QString>> doubleOutTwoDartCheckoutList =
   {110, {"T20   D25"}}
 };
 
-const QMap<int, QVector<QString>> doubleOutThreeDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> doubleOutThreeDartCheckoutList =
 {
   {99,  {"T19   S10   D16", "T20   S07   D16", "T18   S13   D16", "T17   S16   D16",
          "T16   S19   D16", "T19   S02   D20", "T18   S05   D20", "T17   S08   D20",
@@ -506,7 +506,7 @@ const QMap<int, QVector<QString>> doubleOutThreeDartCheckoutList =
   {170, {"T20   T20   D25"}}
 };
 
-const QMap<int, QVector<QString>> masterOutSingleDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> masterOutSingleDartCheckoutList =
 {
   {3,  {"T01"}},
   {6,  {"T02"}},
@@ -530,7 +530,7 @@ const QMap<int, QVector<QString>> masterOutSingleDartCheckoutList =
   {60, {"T20"}}
 };
 
-const QMap<int, QVector<QString>> masterOutTwoDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> masterOutTwoDartCheckoutList =
 {
   {4,   {"S01   T01"}},
   {5,   {"S02   T01"}},
@@ -635,7 +635,7 @@ const QMap<int, QVector<QString>> masterOutTwoDartCheckoutList =
   {120, {"T20   T20"}},
 };
 
-const QMap<int, QVector<QString>> masterOutThreeDartCheckoutList =
+const QMap<uint32_t, QVector<QString>> masterOutThreeDartCheckoutList =
 {
   {76,  {"S20   S20   T12", "S11   S11   T18", "S15   S16   T15"}},
   {77,  {"S05   S18   T18", "S16   S16   T15"}},

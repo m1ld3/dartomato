@@ -15,7 +15,7 @@ CChart::CChart(QGraphicsItem * iParent, Qt::WindowFlags iWindowFlags)
 
 bool CChart::sceneEvent(QEvent * iEvent)
 {
-  if (iEvent->type() == QEvent::Gesture) return gesture_event(static_cast<QGestureEvent *>(iEvent));
+  if (iEvent->type() == QEvent::Gesture) return gesture_event(static_cast<QGestureEvent*>(iEvent));
   return QChart::event(iEvent);
 }
 

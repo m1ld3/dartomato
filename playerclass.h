@@ -22,13 +22,13 @@ public:
   double get_avg1dart() const;
   double get_avg3dart() const;
   double get_checkout() const;
-  QVector<uint32_t> get_leg_scores() const;
-  QVector<QVector<QString>> get_leg_darts() const;
-  QVector<QVector<uint32_t>> get_total_scores() const;
+  QVector<uint32_t> get_scores_of_current_leg() const;
+  QVector<QVector<QString>> get_thrown_darts_of_current_leg() const;
+  QVector<QVector<uint32_t>> get_all_scores_of_all_legs() const;
   QVector<QVector<QVector<QString>>> get_thrown_darts_of_all_legs() const;
   uint32_t get_remaining() const;
-  QVector<uint32_t> get_leg_remaining() const;
-  QVector<QVector<uint32_t>> get_remaining_of_all_legs() const;
+  QVector<uint32_t> get_remaining_points_of_current_leg() const;
+  QVector<QVector<uint32_t>> get_remaining_points_of_all_legs() const;
   uint32_t get_legs() const;
   uint32_t get_sets() const;
   void update_history();
@@ -38,7 +38,7 @@ public:
   void perform_undo_step();
   QVector<uint32_t> get_score_leg() const;
   QString get_checkout_attempts() const;
-  bool increase_setslegs();
+  bool increment_won_legs_and_check_if_set_won();
 
 signals:
 

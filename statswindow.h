@@ -4,8 +4,15 @@
 #include <QDialog>
 #include <QString>
 #include <QtCharts/QBarSet>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QChart>
+#include <QtCharts/QBarCategoryAxis>
+#include <QToolTip>
+#include <QtCharts/QValueAxis>
+#include <QtCharts/QHorizontalBarSeries>
 #include "chart.h"
 #include "chartview.h"
+#include "playerclass.h"
 
 class CCallout;
 
@@ -20,8 +27,31 @@ class CStatsWindow : public QDialog
 
 public:
 
-  explicit CStatsWindow(QWidget * iParent = nullptr);
+  enum class EScoreCountsIdx
+  {
+      PLUS_0   = 0
+    , PLUS_20  = 1
+    , PLUS_40  = 2
+    , PLUS_60  = 3
+    , PLUS_80  = 4
+    , PLUS_100 = 5
+    , PLUS_120 = 6
+    , PLUS_140 = 7
+    , PLUS_160 = 8
+    , THE_180  = 9
+  };
+
+  explicit CStatsWindow(QWidget * iParent = nullptr, CX01Class * iPlayer = nullptr);
   ~CStatsWindow() override;
+
+private slots:
+
+  void update_leg_history(int iIndex);
+  void scores_scrollbar_changed(int iValue);
+  void y_axis_changed(const QString & iMinCat, const QString & iMaxCat);
+
+private:
+
   void set_label_1dart_avg(double iAvg);
   void set_label_3dart_avg(double iAvg);
   void set_label_checkout(double iCheckout);
@@ -42,22 +72,30 @@ public:
   void set_label_40s(uint32_t iCount);
   void set_label_20s(uint32_t iCount);
   void set_label_0s(uint32_t iCount);
-  void set_chart(CChart * iChart1, CChart * iChart2);
   void set_text(QString iText);
   void clear_text();
   void init_leg_selector(uint32_t iNumberOfLegs);
-
-signals:
-
-  void signal_update_leg_history(uint32_t iIndex, CStatsWindow * iStats);
-
-private slots:
-
-  void leg_selector_current_index_changed_slot(uint32_t iIndex);
+  void create_scores_chart();
+  void create_darts_chart();
+  QPointer<CChart> create_chart(const std::map<QString, uint32_t> & iData, const QString & iTitle, const QString & iSeriesName, QStringList & oCategories);
+  std::map<uint32_t, uint32_t> calculate_score_counts();
+  QVector<QString> process_thrown_darts();
+  std::map<QString, uint32_t> calculate_dart_counts(const QVector<QString> & iThrownDarts);
+  void connect_hover_signals(QPointer<QBarSet> & iBarSet);
+  void set_stats_labels();
+  void display_current_leg_scores();
+  void compute_dart_count_and_checkouts_of_won_legs();
+  double compute_average(QVector<uint32_t> iScoresOfLeg);
+  void display_best_and_worst_leg_dart_count();
+  void display_highest_checkout();
 
 private:
 
   Ui::CStatsWindow * mUi;
+  CX01Class * mPlayer;
+  std::array<uint32_t, 10> mScoreCounts = {};
+  QVector<uint32_t> mDartCountOfWonLegs = {};
+  QVector<uint32_t> mAllCheckouts = {};
 };
 
 #endif  // STATSWINDOW_H

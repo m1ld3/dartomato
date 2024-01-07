@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
+    <width>1045</width>
     <height>442</height>
    </rect>
   </property>
@@ -392,7 +392,7 @@
      </property>
      <widget class="QWidget" name="tab3">
       <attribute name="title">
-       <string>Leg history</string>
+       <string>Leg History</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
@@ -830,8 +830,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab1">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <attribute name="title">
-       <string>Score statistics</string>
+       <string>Score Statistics</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
@@ -1552,21 +1558,68 @@
         </layout>
        </item>
        <item>
-        <widget class="CChartView" name="chartView1"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_24">
+         <item>
+          <widget class="CChartView" name="scoresChartView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::WheelFocus</enum>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOn</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QScrollBar" name="scrollBarScores">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab2">
       <attribute name="title">
-       <string>Single dart statistics</string>
+       <string>Single Dart Statistics</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="CChartView" name="chartView2">
-         <property name="locale">
-          <locale language="German" country="Germany"/>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_25">
+         <item>
+          <widget class="CChartView" name="dartsChartView">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::WheelFocus</enum>
+           </property>
+           <property name="locale">
+            <locale language="German" country="Germany"/>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOn</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QScrollBar" name="scrollBarDarts">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

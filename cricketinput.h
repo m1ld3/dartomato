@@ -6,7 +6,6 @@
 #include "dartboardsegment.h"
 #include <QLCDNumber>
 #include "undobutton.h"
-#include "submitbutton.h"
 #include <QLabel>
 #include <QGraphicsSvgItem>
 #include <QSoundEffect>
@@ -84,7 +83,6 @@ private:
   QLCDNumber * mScoreDart2;
   QLCDNumber * mScoreDart3;
   CUndoButton * mUndoButton;
-  CSubmitButton * mSubmitButton;
   QVector<QString> mDarts{"","",""};
   CCricketClass * mPlayer;
   CCricketMainWindow * mGameWindow;

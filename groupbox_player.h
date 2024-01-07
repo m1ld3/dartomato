@@ -46,7 +46,6 @@ public:
   void set_lcd_legs();
   uint32_t get_remaining() const;
   void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
-  double compute_average(QVector<uint32_t> iScoresOfLeg);
   void perform_undo();
 
 signals:
@@ -61,7 +60,6 @@ public slots:
   void push_button_name_clicked_slot();
   void ok_button_clicked_slot(const QString & iName);
   void player_active_button_pressed_slot();
-  void update_leg_history_slot(uint32_t iIndex, CStatsWindow * iStats);
 
 private slots:
 
@@ -70,11 +68,20 @@ private slots:
 
 private:
 
+  void connect_slots();
+  void display_stats_and_finishes();
+  void set_lcd_legs_and_sets();
+  void play_score_sound();
+  void handle_game_shot(uint32_t iCheckoutAttempts);
+  void handle_default_score(uint32_t iCheckoutAttempts);
+  const QMap<uint32_t, QVector<QString>> & get_checkout_map(uint32_t iNumberOfDarts);
+
   Ui::CX01GroupBox * mUi;
   QString mPlayerName;
   CDialogNameInput * mDialogNameInput;
   CX01Class * mPlayer;
   CDartBoardX01 * mDartBoard;
+  const CSettings & mpSettings;
   uint32_t mPlayerNumber, mRemaining;
   uint32_t mCurrentScore = 0;
   bool mActive = false;
@@ -82,11 +89,10 @@ private:
   bool mSetBegin = false;
   bool mLegBegin = false;
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
-  static bool mLegStarted;
-  static bool mSetStarted;
+  static bool mLegAlreadyStarted;
+  static bool mSetAlreadyStarted;
   CX01MainWindow * mGameWindow;
   QSoundEffect mScoreSound;
-  const CSettings & mpSettings;
 };
 
 #endif  // GROUPBOX_PLAYER_H

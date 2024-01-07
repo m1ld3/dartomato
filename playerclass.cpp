@@ -14,22 +14,21 @@ CX01Class::CX01Class(uint32_t iPlayerNumber, const CSettings & ipSettings)
   update_checkout(0, 0);
 }
 
-bool CX01Class::increase_setslegs()
+bool CX01Class::increment_won_legs_and_check_if_set_won()
 {
-  mLegsWonPerSet += 1;
+  mLegsWonPerSet = (mLegsWonPerSet + 1) % mMarginLegs;
   mTotalLegsWon += 1;
-  bool temp = false;
-  if (mLegsWonPerSet == mMarginLegs)
+  bool hasWonSet = false;
+  if (mLegsWonPerSet == 0)
   {
     mSetsWon += 1;
-    mLegsWonPerSet = 0;
-    temp = true;
+    hasWonSet = true;
   }
   if (mSetsWon == mMarginSets)
   {
     emit signal_game_won(mPlayerNumber);
   }
-  return temp;
+  return hasWonSet;
 }
 
 uint32_t CX01Class::set_score(uint32_t score)
@@ -218,17 +217,17 @@ double CX01Class::get_checkout() const
   return mCheckout;
 }
 
-QVector<uint32_t> CX01Class::get_leg_scores() const
+QVector<uint32_t> CX01Class::get_scores_of_current_leg() const
 {
   return mScoresOfCurrentLeg;
 }
 
-QVector<QVector<QString>> CX01Class::get_leg_darts() const
+QVector<QVector<QString>> CX01Class::get_thrown_darts_of_current_leg() const
 {
   return mThrownDartsOfCurrentLeg;
 }
 
-QVector<QVector<uint32_t>> CX01Class::get_total_scores() const
+QVector<QVector<uint32_t>> CX01Class::get_all_scores_of_all_legs() const
 {
   return mAllScoresOfAllLegs;
 }
@@ -243,12 +242,12 @@ uint32_t CX01Class::get_remaining() const
   return mRemaining;
 }
 
-QVector<uint32_t> CX01Class::get_leg_remaining() const
+QVector<uint32_t> CX01Class::get_remaining_points_of_current_leg() const
 {
   return mRemainingPointsOfCurrentLeg;
 }
 
-QVector<QVector<uint32_t> > CX01Class::get_remaining_of_all_legs() const
+QVector<QVector<uint32_t> > CX01Class::get_remaining_points_of_all_legs() const
 {
   return mRemainingPointsOfAllLegs;
 }

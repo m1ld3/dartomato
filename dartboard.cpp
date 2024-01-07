@@ -170,7 +170,7 @@ void CDartBoardX01::submit_score()
 
     uint32_t numberofdarts = 3 - mCounter;
     uint32_t checkoutattempts = static_cast<uint32_t>(std::count(mCheckoutAttempts.begin(), mCheckoutAttempts.end(), true));
-    emit signal_submit_button_pressed_to_game_window(score, numberofdarts, checkoutattempts, darts);
+    emit signal_submit_score_to_player(score, numberofdarts, checkoutattempts, darts);
   }
   else if (!mFinished)
   {
