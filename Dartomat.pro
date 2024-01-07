@@ -23,8 +23,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     cdartboard_base.cpp \
-    chart.cpp \
-    chartview.cpp \
     cricketclass.cpp \
     cricketinput.cpp \
     cricketmainwindow.cpp \
@@ -46,8 +44,6 @@ SOURCES += \
 
 HEADERS += \
     cdartboard_base.h \
-    chart.h \
-    chartview.h \
     checkoutlists.h \
     cricketclass.h \
     cricketinput.h \

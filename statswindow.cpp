@@ -8,28 +8,14 @@ CStatsWindow::CStatsWindow(QWidget * iParent, CX01Class * iPlayer)
   , mPlayer(iPlayer)
 {
   mUi->setupUi(this);
-  mUi->scoresChartView->setMouseTracking(true);
-  mUi->dartsChartView->setMouseTracking(true);
   setAttribute(Qt::WA_DeleteOnClose);
-  mUi->scoresChartView->setRubberBand( QChartView::VerticalRubberBand);
-  mUi->dartsChartView->setRubberBand( QChartView::VerticalRubberBand);
-
-  create_scores_chart();
-  create_darts_chart();
-
-  connect(mUi->scrollBarScores, SIGNAL(valueChanged(int)), this, SLOT(scores_scrollbar_changed(int)));
-  connect(mUi->scoresChartView->chart()->axisY(), SIGNAL(rangeChanged(const QString&, const QString&)), this, SLOT(y_axis_changed(const QString&, const QString&)));
-
+  count_scores();
+  calculate_segment_counts();
   set_stats_labels();
   QObject::connect(mUi->legSelector, &QComboBox::currentIndexChanged, this, &CStatsWindow::update_leg_history);
   display_current_leg_scores();
   compute_dart_count_and_checkouts_of_won_legs();
   display_best_and_worst_leg_dart_count();
-
-//  QObject::connect(mUi->tabWidget, &QTabWidget::currentChanged, this, [this](int index)
-//  {
-//    if (index == 0) update_leg_history(mUi->legSelector->currentIndex());
-//  });
 }
 
 CStatsWindow::~CStatsWindow()
@@ -37,110 +23,10 @@ CStatsWindow::~CStatsWindow()
   delete mUi;
 }
 
-void CStatsWindow::set_label_1dart_avg(double iAvg)
+void CStatsWindow::set_label_checkout(double iCheckout, const QString & iCheckoutAttempts)
 {
-  QString avgstr = QString::number(iAvg, 'f', 2);
-  mUi->label_1dartInput->setText(avgstr);
-}
-
-void CStatsWindow::set_label_3dart_avg(double iAvg)
-{
-  QString avgstr = QString::number(iAvg, 'f', 2);
-  mUi->label_3dartInput->setText(avgstr);
-}
-
-void CStatsWindow::set_label_checkout(double iCheckout)
-{
-  QString checkstr = QString::number(iCheckout, 'f', 2) + "%";
+  QString checkstr = QString::number(iCheckout, 'f', 2) + "%  (" + iCheckoutAttempts + ")";
   mUi->label_checkoutInput->setText(checkstr);
-}
-
-void CStatsWindow::set_label_leg_1dart_avg(double iAvg)
-{
-  QString avgstr = QString::number(iAvg, 'f', 2);
-  mUi->label_legavg1_input->setText(avgstr);
-}
-
-void CStatsWindow::set_label_leg_3dart_avg(double iAvg)
-{
-  QString avgstr = QString::number(iAvg, 'f', 2);
-  mUi->label_legavg3_input->setText(avgstr);
-}
-
-void CStatsWindow::set_label_best_leg(uint32_t iNumberOfDarts)
-{
-  mUi->label_best_leg_input->setText(QString::number(iNumberOfDarts));
-}
-
-void CStatsWindow::set_label_worst_leg(uint32_t iNumberOfDarts)
-{
-  mUi->label_worst_leg_input->setText(QString::number(iNumberOfDarts));
-}
-
-void CStatsWindow::set_label_leg_avg(double iAvg)
-{
-  QString avgstr = QString::number(iAvg, 'f', 2);
-  mUi->label_leg_avg_input->setText(avgstr);
-}
-
-void CStatsWindow::set_label_checkout_attempts(QString iAttempts)
-{
-  mUi->label_checkout_attempts_input->setText(iAttempts);
-}
-
-void CStatsWindow::set_label_highest_checkout(uint32_t iCheckout)
-{
-  mUi->label_highest_checkout_input->setText(QString::number(iCheckout));
-}
-
-void CStatsWindow::set_label_180s(uint32_t iCount)
-{
-  mUi->label_180_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_160s(uint32_t iCount)
-{
-  mUi->label_160p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_140s(uint32_t iCount)
-{
-  mUi->label_140p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_120s(uint32_t iCount)
-{
-  mUi->label_120p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_100s(uint32_t iCount)
-{
-  mUi->label_100p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_80s(uint32_t iCount)
-{
-  mUi->label_80p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_60s(uint32_t iCount)
-{
-  mUi->label_60p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_40s(uint32_t iCount)
-{
-  mUi->label_40p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_20s(uint32_t iCount)
-{
-  mUi->label_20p_input->setText(QString::number(iCount));
-}
-
-void CStatsWindow::set_label_0s(uint32_t iCount)
-{
-  mUi->label_0p_input->setText(QString::number(iCount));
 }
 
 void CStatsWindow::set_text(QString iText)
@@ -173,8 +59,8 @@ void CStatsWindow::init_leg_selector(uint32_t iNumberOfLegs)
 void CStatsWindow::update_leg_history(int iIndex)
 {
   clear_text();
-  set_label_leg_1dart_avg(0.0);
-  set_label_leg_3dart_avg(0.0);
+  mUi->label_legavg1_input->setText(QString::number(0.0, 'f', 2));
+  mUi->label_legavg3_input->setText(QString::number(0.0, 'f', 2));
   QVector<uint32_t> legscores = mPlayer->get_scores_of_current_leg();
   QVector<QVector<uint32_t>> totalscores = mPlayer->get_all_scores_of_all_legs();
 
@@ -192,38 +78,15 @@ void CStatsWindow::update_leg_history(int iIndex)
     uint32_t numberOfDarts = (totaldarts.at(iIndex).size() - 1) * 3 + totaldarts.at(iIndex).back().size();
     double avg1dart = std::accumulate(totalscores.at(iIndex).begin(), totalscores.at(iIndex).end(), 0.0)/numberOfDarts;
     double avg3dart = 3 * avg1dart;
-    set_label_leg_1dart_avg(avg1dart);
-    set_label_leg_3dart_avg(avg3dart);
-    }
+    mUi->label_legavg1_input->setText(QString::number(avg1dart, 'f', 2));
+    mUi->label_legavg3_input->setText(QString::number(avg3dart, 'f', 2));
+  }
 }
 
-void CStatsWindow::scores_scrollbar_changed(int iValue)
-{
-//  auto yAxis = static_cast<QBarCategoryAxis*>(mUi->scoresChartView->chart()->axisY());
-//  auto categories = yAxis->categories();
-//  if (yAxis->count() > 7)
-//  {
-
-//  }
-//  if (qAbs(yAxis->count()/2 - +iValue) > 1)
-//  {
-//    ui->plot->yAxis->setRange(-value/100.0, ui->plot->yAxis->range().size(), Qt::AlignCenter);
-//    ui->plot->replot();
-//    }
-}
-
-void CStatsWindow::y_axis_changed(const QString & iMinCat, const QString & iMaxCat)
-{
-  printf(iMinCat.toStdString().c_str());
-  printf(iMaxCat.toStdString().c_str());
-  display_highest_checkout();
-}
-
-void CStatsWindow::create_scores_chart()
+void CStatsWindow::count_scores()
 {
   std::map<uint32_t, uint32_t> scoreCounts = calculate_score_counts();
   QVector<uint32_t> allScores = mPlayer->get_total_scores_flat();
-  std::map<QString, uint32_t> scoreCountsStr = {};
 
   if (allScores.size() > 0)
   {
@@ -231,92 +94,27 @@ void CStatsWindow::create_scores_chart()
     for (it = scoreCounts.begin(); it != scoreCounts.end(); it++)
     {
       if (it->first < 20)                      mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))   += it->second;
-      if (it->first >= 20 && it->first < 40)   mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))  += it->second;
-      if (it->first >= 40 && it->first < 60)   mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))  += it->second;
-      if (it->first >= 60 && it->first < 80)   mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60))  += it->second;
-      if (it->first >= 80 && it->first < 100)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_80))  += it->second;
+      if (it->first >= 20  && it->first < 40)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))  += it->second;
+      if (it->first >= 40  && it->first < 60)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))  += it->second;
+      if (it->first >= 60  && it->first < 80)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60))  += it->second;
+      if (it->first >= 80  && it->first < 100) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_80))  += it->second;
       if (it->first >= 100 && it->first < 120) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_100)) += it->second;
       if (it->first >= 120 && it->first < 140) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_120)) += it->second;
       if (it->first >= 140 && it->first < 160) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_140)) += it->second;
       if (it->first >= 160 && it->first < 180) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_160)) += it->second;
       if (it->first == 180)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_180))  += it->second;
-      scoreCountsStr.insert({QString::number(it->first), it->second});
+      if (it->first == 140)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_140))  += it->second;
+      if (it->first == 120)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_120))  += it->second;
+      if (it->first == 100)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_100))  += it->second;
+      if (it->first ==  85)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_85))   += it->second;
+      if (it->first ==  81)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_81))   += it->second;
+      if (it->first ==  60)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_60))   += it->second;
+      if (it->first ==  45)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_45))   += it->second;
+      if (it->first ==  41)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_41))   += it->second;
+      if (it->first ==  30)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_30))   += it->second;
+      if (it->first ==  26)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_26))   += it->second;
     }
   }
-
-  QStringList categories;
-  QPointer<CChart> chart = create_chart(scoreCountsStr, "Scoring Statistics", "Scores", categories);
-
-  mUi->scoresChartView->setChart(chart);
-  mUi->scoresChartView->setVerticalScrollBar(mUi->scrollBarScores);
-
-//  QObject::connect(mScrollBarScores, &QScrollBar::valueChanged, this, [this, chart, categories](int value)
-//  {
-//    int totalCategories = categories.count();
-//    int visibleCategories = mUi->scoresChartView->height() / totalCategories;
-//    chart->axes(Qt::Vertical).back()->setRange(value, value + visibleCategories);
-//  });
-}
-
-void CStatsWindow::create_darts_chart()
-{
-  QVector<QString> thrownDarts = process_thrown_darts();
-  const std::map<QString, uint32_t> dartCounts = calculate_dart_counts(thrownDarts);
-
-  QStringList categories;
-  QPointer<CChart> chart = create_chart(dartCounts, "Single Dart Statistics", "Single Darts", categories);
-
-  mUi->dartsChartView->setChart(chart);
-  mUi->dartsChartView->setVerticalScrollBar(mUi->scrollBarDarts);
-
-//  QObject::connect(mScrollBarDarts, &QScrollBar::valueChanged, this, [this, chart, categories](int value)
-//  {
-//    int totalCategories = categories.count();
-//    int visibleCategories = mUi->dartsChartView->height() / totalCategories;
-//    chart->axes(Qt::Vertical).back()->setRange(value, value + visibleCategories);
-//  });
-}
-
-QPointer<CChart> CStatsWindow::create_chart(const std::map<QString, uint32_t> & iData, const QString & iTitle, const QString & iSeriesName, QStringList & oCategories)
-{
-  QPointer<QBarSet> barSet = new QBarSet(iSeriesName);
-  QPointer<QHorizontalBarSeries> series = new QHorizontalBarSeries();
-  QPointer<CChart> chart = new CChart();
-  chart->addSeries(series);
-  chart->setTitle(iTitle);
-  chart->setAnimationOptions(QChart::SeriesAnimations);
-
-  if (iData.size() > 0)
-  {
-    series->append(barSet);
-    std::map<QString, uint32_t>::const_iterator it;
-    for (it = iData.begin(); it != iData.end(); it++)
-    {
-      barSet->append(it->second);
-      oCategories.append(it->first);
-    }
-
-    QPointer<QValueAxis> axisX = new QValueAxis();
-    std::map<QString, uint32_t>::const_iterator best =
-        std::max_element(iData.begin(), iData.end(),
-        [] (const std::pair<QString, uint32_t>& a, const std::pair<QString, uint32_t>& b)->bool{return a.second < b.second;});
-    qreal max = static_cast<qreal>(best->second);
-    axisX->setRange(0, max);
-    axisX->setTickType(QValueAxis::TicksFixed);
-    axisX->setTickCount(std::min(std::max(2, int(max) + 1), 10));
-    axisX->setLabelFormat("%i");
-    chart->addAxis(axisX, Qt::AlignTop);
-    series->attachAxis(axisX);
-
-    QPointer<QBarCategoryAxis> axisY = new QBarCategoryAxis();
-    if (oCategories.size()) axisY->setMin(oCategories.first());
-    axisY->append(oCategories);
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
-    chart->setAnimationOptions(QChart::NoAnimation);
-    connect_hover_signals(barSet);
-  }
-  return chart;
 }
 
 std::map<uint32_t, uint32_t> CStatsWindow::calculate_score_counts()
@@ -328,39 +126,33 @@ std::map<uint32_t, uint32_t> CStatsWindow::calculate_score_counts()
   return scoreCounts;
 }
 
-QVector<QString> CStatsWindow::process_thrown_darts()
+void CStatsWindow::calculate_segment_counts()
 {
   QVector<QVector<QString>> thrownDarts = mPlayer->get_darts();
-  QVector<QString> thrownDartsFlat;
 
   for (const auto & darts : thrownDarts)
   {
-    for (const auto &dart : darts)
+    for (const auto & dart : darts)
     {
+      int idx = 0;
       if (dart[0] == 'd')
       {
-        thrownDartsFlat.append("D" + QString::number(dart.mid(1).toInt() / 2));
+        idx = dart.mid(1).toUInt() / 2;
+        if (idx == 25) idx = static_cast<int>(EDartCountsIdx::SEG_25);
       }
       else if (dart[0] == 't')
       {
-        thrownDartsFlat.append("T" + QString::number(dart.mid(1).toInt() / 3));
+        idx = dart.mid(1).toUInt() / 3;
+        if (idx >= 17) mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_TRIPLES)) += 1;
       }
       else
       {
-        thrownDartsFlat.append("S" + dart.mid(1));
+        idx = dart.mid(1).toUInt();
+        if (idx == 25) idx = static_cast<int>(EDartCountsIdx::SEG_25);
       }
+      mSegmentCounts.at(idx) += 1;
     }
   }
-
-  return thrownDartsFlat;
-}
-
-std::map<QString, uint32_t> CStatsWindow::calculate_dart_counts(const QVector<QString> & iThrownDarts)
-{
-  std::map<QString, uint32_t> dartCounts;
-  for (auto & dart : iThrownDarts) ++dartCounts[dart];
-
-  return dartCounts;
 }
 
 void CStatsWindow::connect_hover_signals(QPointer<QBarSet> &iBarSet)
@@ -377,20 +169,54 @@ void CStatsWindow::connect_hover_signals(QPointer<QBarSet> &iBarSet)
 
 void CStatsWindow::set_stats_labels()
 {
-  set_label_1dart_avg(mPlayer->get_avg1dart());
-  set_label_3dart_avg(mPlayer->get_avg3dart());
-  set_label_checkout(mPlayer->get_checkout());
-  set_label_checkout_attempts(mPlayer->get_checkout_attempts());
-  set_label_0s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0)));
-  set_label_20s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20)));
-  set_label_40s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40)));
-  set_label_60s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60)));
-  set_label_80s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_80)));
-  set_label_100s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_100)));
-  set_label_120s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_120)));
-  set_label_140s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_140)));
-  set_label_160s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_160)));
-  set_label_180s(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_180)));
+  mUi->label_1dartInput->setText(QString::number(mPlayer->get_avg1dart(), 'f', 2));
+  mUi->label_3dartInput->setText(QString::number(mPlayer->get_avg3dart(), 'f', 2));
+  set_label_checkout(mPlayer->get_checkout(), mPlayer->get_checkout_attempts());
+  mUi->label_0p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))));
+  mUi->label_20p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))));
+  mUi->label_40p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))));
+  mUi->label_60p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60))));
+  mUi->label_80p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_80))));
+  mUi->label_100p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_100))));
+  mUi->label_120p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_120))));
+  mUi->label_140p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_140))));
+  mUi->label_160p_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_160))));
+  mUi->label_180_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_180))));
+  mUi->label_140_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_140))));
+  mUi->label_120_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_120))));
+  mUi->label_100_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_100))));
+  mUi->label_85_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_85))));
+  mUi->label_81_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_81))));
+  mUi->label_60_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_60))));
+  mUi->label_45_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_45))));
+  mUi->label_41_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_41))));
+  mUi->label_30_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_30))));
+  mUi->label_26_input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_26))));
+
+  mUi->label_bull_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_25))));
+  mUi->label_20_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_20))));
+  mUi->label_19_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_19))));
+  mUi->label_18_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_18))));
+  mUi->label_17_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_17))));
+  mUi->label_16_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_16))));
+  mUi->label_15_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_15))));
+  mUi->label_14_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_14))));
+  mUi->label_13_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_13))));
+  mUi->label_12_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_12))));
+  mUi->label_11_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_11))));
+  mUi->label_10_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_10))));
+  mUi->label_9_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_9))));
+  mUi->label_8_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_8))));
+  mUi->label_7_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_7))));
+  mUi->label_6_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_6))));
+  mUi->label_5_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_5))));
+  mUi->label_4_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_4))));
+  mUi->label_3_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_3))));
+  mUi->label_2_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_2))));
+  mUi->label_1_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_1))));
+  mUi->label_0_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_0))));
+  mUi->label_high_triples_input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_TRIPLES))));
+
 }
 
 void CStatsWindow::display_current_leg_scores()
@@ -422,7 +248,7 @@ void CStatsWindow::compute_dart_count_and_checkouts_of_won_legs()
       mAllCheckouts.append(allScoresOfAllLegs.at(idx).back());
     }
   }
-  set_label_leg_avg(compute_average(mDartCountOfWonLegs));
+  mUi->label_leg_avg_input->setText(QString::number(compute_average(mDartCountOfWonLegs), 'f', 2));
 }
 
 double CStatsWindow::compute_average(QVector<uint32_t> iScoresOfLeg)
@@ -442,14 +268,14 @@ void CStatsWindow::display_best_and_worst_leg_dart_count()
   {
     bestLeg = *std::min_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
     worstLeg = *std::max_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
-    set_label_best_leg(bestLeg);
-    set_label_worst_leg(worstLeg);
-    }
+    mUi->label_best_leg_input->setText(QString::number(bestLeg));
+    mUi->label_worst_leg_input->setText(QString::number(worstLeg));
+  }
 }
 
 void CStatsWindow::display_highest_checkout()
 {
   uint32_t highestCheckout = 0;
   if (mAllCheckouts.size() > 0) highestCheckout = *std::max_element(mAllCheckouts.begin(), mAllCheckouts.end());
-  set_label_highest_checkout(highestCheckout);
+  mUi->label_highest_checkout_input->setText(QString::number(highestCheckout));
 }
