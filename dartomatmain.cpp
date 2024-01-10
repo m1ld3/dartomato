@@ -3,20 +3,26 @@
 #include <QPushButton>
 #include <QVector>
 #include <QGridLayout>
+#ifndef USE_TTS
 #include <QSoundEffect>
+#endif
 #include <QDebug>
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
   , mUi(new Ui::CDartomatMain)
+#ifndef USE_TTS
   , mGameOnSound(this)
+#endif
 {
   mUi->setupUi(this);
   mUi->radioButton_Sin->setChecked(true);
   mUi->radioButton_Dout->setChecked(true);
   mUi->comboBox_game->setCurrentIndex(1);
   mUi->checkBoxCutThroat->setVisible(false);
+#ifndef USE_TTS
   mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
+#endif
 
   connect(mUi->pushButton_startgame, &QPushButton::clicked, this, &CDartomatMain::push_button_startgame_clicked_slot);
   connect(mUi->comboBox_game, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index)
@@ -62,7 +68,11 @@ void CDartomatMain::push_button_startgame_clicked_slot()
     mCricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
     mCricketMainWindow->show();
   }
+#ifdef USE_TTS
+  play_game_on_sound();
+#else
   mGameOnSound.play();
+#endif
 }
 
 void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iGame)
@@ -87,5 +97,17 @@ void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iG
     mUi->radioButton_Dout->setVisible(true);
     mUi->radioButton_Mout->setVisible(true);
     mUi->checkBoxCutThroat->setVisible(false);
-  }
+    }
+}
+
+void CDartomatMain::play_game_on_sound()
+{
+#ifdef USE_TTS
+  auto * tts = new QTextToSpeech;
+  QLocale locale(QLocale::English, QLocale::UnitedKingdom);
+  tts->setLocale(locale);
+  tts->setVolume(1.0);
+  tts->setRate(0.1);
+  tts->say("Game on!");
+#endif
 }

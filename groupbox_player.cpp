@@ -13,14 +13,16 @@
 #include <string>
 
 CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
-                           uint32_t iPlayerNumber, CX01Class * iPlayer, CDartBoardX01 * iDartBoard)
+                           uint32_t iPlayerNumber, CX01Class * const iPlayer, CDartBoardX01 * iDartBoard)
   : QGroupBox(iParent)
   , mUi(new Ui::CX01GroupBox)
   , mPlayer(iPlayer)
   , mDartBoard(iDartBoard)
   , mpSettings(ipSettings)
   , mRemaining(static_cast<uint32_t>(mpSettings.mGame))
+#ifndef USE_TTS
   , mScoreSound(this)
+#endif
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
@@ -107,12 +109,16 @@ void CX01GroupBox::display_stats_and_finishes()
 
 void CX01GroupBox::play_score_sound()
 {
-  std::stringstream ss;
-  ss << std::setw(3) << std::setfill('0') << mCurrentScore;
-  std::string digits = ss.str();
-  std::string strpath = "qrc:/resources/sounds/" + digits + ".wav";
-  QString filepath = QString::fromStdString(strpath);
-  mScoreSound.setSource(filepath);
+#ifdef USE_TTS
+  auto * tts = new QTextToSpeech;
+  QLocale locale(QLocale::English, QLocale::UnitedKingdom);
+  tts->setLocale(locale);
+  tts->setVolume(1.0);
+  tts->setRate(0.1);
+  tts->say(QString::number(mCurrentScore));
+#else
+  mScoreSound.play();
+#endif
 }
 
 void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
@@ -120,7 +126,7 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   bool newSet = false;
   mPlayer->update_checkout(iCheckoutAttempts, 1);
   newSet = mPlayer->increment_won_legs_and_check_if_set_won();
-  mScoreSound.play();
+  play_score_sound();
   emit signal_update_history();
   emit signal_reset_scores();
   CX01GroupBox::mLegAlreadyStarted = false;
@@ -141,7 +147,7 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
 void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
 {
   mPlayer->update_checkout(iCheckoutAttempts, 0);
-  mScoreSound.play();
+  play_score_sound();
   mUi->lcdNumber->display(static_cast<int>(mRemaining));
   emit signal_update_player(EUpdateType::DEFAULT);
 }
@@ -149,11 +155,13 @@ void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
 void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
 {
   mCurrentScore = iScore;
+#ifndef USE_TTS
+  prepare_score_sound();
+#endif
   CX01GroupBox::mLegAlreadyStarted = true;
   CX01GroupBox::mSetAlreadyStarted = true;
   mRemaining = mPlayer->set_score(mCurrentScore);
   mPlayer->set_darts(iDarts);
-  play_score_sound();
   mPlayer->compute_averages(iNumberOfDarts);
 
   if (mRemaining == 0) handle_game_shot(iCheckoutAttempts);
@@ -240,7 +248,19 @@ const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t
     if (iNumberOfDarts == 1)      return masterOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return masterOutTwoDartCheckoutList;
     else                          return masterOutThreeDartCheckoutList;
-  }
+    }
+}
+
+void CX01GroupBox::prepare_score_sound()
+{
+#ifndef USE_TTS
+  std::stringstream ss;
+  ss << std::setw(3) << std::setfill('0') << mCurrentScore;
+  std::string digits = ss.str();
+  std::string strpath = "qrc:/resources/sounds/" + digits + ".wav";
+  QString filepath = QString::fromStdString(strpath);
+  mScoreSound.setSource(filepath);
+#endif
 }
 
 void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts)

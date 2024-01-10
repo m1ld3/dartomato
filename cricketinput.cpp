@@ -31,11 +31,10 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & ipSettings, CC
     mCutThroatExtraPointsHistory.at(i).append(mCutThroatExtraPointsArray.at(i));
   }
 
-  mDartBoard = new CDartBoardCricket(mUi->graphicsView_dartboard, mpSettings);
+  mDartBoard = new CDartBoardCricket(mUi->graphicsView_dartboard, mpSettings, this);
 
   connect(mUi->submitButton, &QPushButton::clicked, this, &CCricketInput::submit_button_clicked_slot);
   connect(mUi->undoButton, &QPushButton::clicked, this, &CCricketInput::undo_button_clicked_slot);
-  connect(mDartBoard, &CDartBoardCricket::signal_segment_pressed, this, &CCricketInput::segment_pressed_slot);
 }
 
 CCricketInput::~CCricketInput()
@@ -76,7 +75,7 @@ bool CCricketInput::are_slots_full() const
   return temp;
 }
 
-void CCricketInput::segment_pressed_slot(uint32_t iVal, QChar & iType)
+void CCricketInput::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
 {
   process_segment_common(iVal, iType);
   if (mpSettings.mCutThroat) process_segment_cutthroat();

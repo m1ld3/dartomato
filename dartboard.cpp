@@ -91,10 +91,12 @@ void CDartBoardX01::handle_busted_score(uint32_t iVal, QChar & iType, bool iChec
   emit signal_set_focus_to_submit_button();
   set_score(iVal, iType, iCheckoutAttempt);
   display_score(mOldScore);
+#ifndef USE_TTS
   mBustedSound.play();
+#endif
 }
 
-void CDartBoardX01::segment_pressed_slot(uint32_t iVal, QChar & iType)
+void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
 {
   if (mFinished)
   {

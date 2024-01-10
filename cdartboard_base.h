@@ -7,16 +7,18 @@
 #include <QGraphicsSvgItem>
 #include <QLabel>
 #include "dartboardview.h"
+#ifndef USE_TTS
 #include <QSoundEffect>
+#endif
 #include "settings.h"
 
 class CDartBoard : public QWidget
 {
   Q_OBJECT
 
-public slots:
+public:
 
-  virtual void segment_pressed_slot(uint32_t iVal, QChar & iType) = 0;
+  virtual void handle_segment_pressed_event(uint32_t iVal, QChar & iType) = 0;
 
 signals:
 
@@ -32,8 +34,10 @@ protected:
 
   QGraphicsView * mView;
   QGraphicsScene * mScene;
+#ifndef USE_TTS
   QSoundEffect mBustedSound;
   QSoundEffect mGameShotSound;
+#endif
   const CSettings & mpSettings;
 
   CDartBoardSegment * mS20;

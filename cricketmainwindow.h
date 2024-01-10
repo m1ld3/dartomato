@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include "groupbox_cricket.h"
+#ifndef USE_TTS
 #include <QSoundEffect>
+#endif
 #include <QGridLayout>
 
 class CCricketGroupBox;

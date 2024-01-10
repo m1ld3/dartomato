@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/resources">
-        <file>img/darts.png</file>
         <file>img/darts.svg</file>
         <file>img/dartboard.svg</file>
         <file>sounds/000.wav</file>

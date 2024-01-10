@@ -1,11 +1,18 @@
 #include "cdartboard_base.h"
 #include "cmath"
 #include <QMessageBox>
+#ifdef USE_TTS
+#include <QtTextToSpeech>
+#endif
 
 CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & ipSettings)
+#ifdef USE_TTS
+  : mpSettings(ipSettings)
+#else
   : mBustedSound(this)
   , mGameShotSound(this)
   , mpSettings(ipSettings)
+#endif
 {
   mScene = new QGraphicsScene(0, 0, 800, 800, iGraphicsViewDartBoard);
   mScene->setSceneRect(0, 0, 800, 800);
@@ -490,70 +497,69 @@ CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings 
 
   p_noscore.addEllipse(QRect(0, 0, 800, 800));
   p_noscore.addEllipse(QRect(58, 58, 684, 684));
-
-  mS20 = new CDartBoardSegment(p_s20, 20);
-  mS19 = new CDartBoardSegment(p_s19, 19, "beige");
-  mS18 = new CDartBoardSegment(p_s18, 18);
-  mS17 = new CDartBoardSegment(p_s17, 17, "beige");
-  mS14 = new CDartBoardSegment(p_s14, 14);
-  mS13 = new CDartBoardSegment(p_s13, 13);
-  mS12 = new CDartBoardSegment(p_s12, 12);
-  mS11 = new CDartBoardSegment(p_s11, 11, "beige");
-  mS16 = new CDartBoardSegment(p_s16, 16, "beige");
-  mS15 = new CDartBoardSegment(p_s15, 15, "beige");
-  mS10 = new CDartBoardSegment(p_s10, 10);
-  mS9 = new CDartBoardSegment(p_s9, 9, "beige");
-  mS8 = new CDartBoardSegment(p_s8, 8);
-  mS7 = new CDartBoardSegment(p_s7, 7);
-  mS6 = new CDartBoardSegment(p_s6, 6, "beige");
-  mS5 = new CDartBoardSegment(p_s5, 5, "beige");
-  mS4 = new CDartBoardSegment(p_s4, 4, "beige");
-  mS3 = new CDartBoardSegment(p_s3, 3);
-  mS2 = new CDartBoardSegment(p_s2, 2);
-  mS1 = new CDartBoardSegment(p_s1, 1, "beige");
-  mSBull = new CDartBoardSegment(p_sbull, 25, "green");
-  mD20 = new CDartBoardSegment(p_d20, 40, "red", 'd');
-  mD19 = new CDartBoardSegment(p_d19, 38, "green", 'd');
-  mD18 = new CDartBoardSegment(p_d18, 36, "red", 'd');
-  mD17 = new CDartBoardSegment(p_d17, 34, "green", 'd');
-  mD16 = new CDartBoardSegment(p_d16, 32, "green", 'd');
-  mD15 = new CDartBoardSegment(p_d15, 30, "green", 'd');
-  mD14 = new CDartBoardSegment(p_d14, 28, "red", 'd');
-  mD13 = new CDartBoardSegment(p_d13, 26, "red", 'd');
-  mD12 = new CDartBoardSegment(p_d12, 24, "red", 'd');
-  mD11 = new CDartBoardSegment(p_d11, 22, "green", 'd');
-  mD10 = new CDartBoardSegment(p_d10, 20, "red", 'd');
-  mD9 = new CDartBoardSegment(p_d9, 18, "green", 'd');
-  mD8 = new CDartBoardSegment(p_d8, 16, "red", 'd');
-  mD7 = new CDartBoardSegment(p_d7, 14, "red", 'd');
-  mD6 = new CDartBoardSegment(p_d6, 12, "green", 'd');
-  mD5 = new CDartBoardSegment(p_d5, 10, "green", 'd');
-  mD4 = new CDartBoardSegment(p_d4, 8, "green", 'd');
-  mD3 = new CDartBoardSegment(p_d3, 6, "red", 'd');
-  mD2 = new CDartBoardSegment(p_d2, 4, "red", 'd');
-  mD1 = new CDartBoardSegment(p_d1, 2, "green", 'd');
-  mDBull = new CDartBoardSegment(p_dbull, 50, "red", 'd');
-  mT20 = new CDartBoardSegment(p_t20, 60, "red", 't');
-  mT19 = new CDartBoardSegment(p_t19, 57, "green", 't');
-  mT18 = new CDartBoardSegment(p_t18, 54, "red", 't');
-  mT17 = new CDartBoardSegment(p_t17, 51, "green", 't');
-  mT16 = new CDartBoardSegment(p_t16, 48, "green", 't');
-  mT15 = new CDartBoardSegment(p_t15, 45, "green", 't');
-  mT14 = new CDartBoardSegment(p_t14, 42, "red", 't');
-  mT13 = new CDartBoardSegment(p_t13, 39, "red", 't');
-  mT12 = new CDartBoardSegment(p_t12, 36, "red", 't');
-  mT11 = new CDartBoardSegment(p_t11, 33, "green", 't');
-  mT10 = new CDartBoardSegment(p_t10, 30, "red", 't');
-  mT9 = new CDartBoardSegment(p_t9, 27, "green", 't');
-  mT8 = new CDartBoardSegment(p_t8, 24, "red", 't');
-  mT7 = new CDartBoardSegment(p_t7, 21, "red", 't');
-  mT6 = new CDartBoardSegment(p_t6, 18, "green", 't');
-  mT5 = new CDartBoardSegment(p_t5, 15, "green", 't');
-  mT4 = new CDartBoardSegment(p_t4, 12, "green", 't');
-  mT3 = new CDartBoardSegment(p_t3, 9, "red", 't');
-  mT2 = new CDartBoardSegment(p_t2, 6, "red", 't');
-  mT1 = new CDartBoardSegment(p_t1, 3, "green", 't');
-  mNoScore = new CDartBoardSegment(p_noscore);
+  mS20 = new CDartBoardSegment(this, p_s20, 20);
+  mS19 = new CDartBoardSegment(this, p_s19, 19, "beige");
+  mS18 = new CDartBoardSegment(this, p_s18, 18);
+  mS17 = new CDartBoardSegment(this, p_s17, 17, "beige");
+  mS14 = new CDartBoardSegment(this, p_s14, 14);
+  mS13 = new CDartBoardSegment(this, p_s13, 13);
+  mS12 = new CDartBoardSegment(this, p_s12, 12);
+  mS11 = new CDartBoardSegment(this, p_s11, 11, "beige");
+  mS16 = new CDartBoardSegment(this, p_s16, 16, "beige");
+  mS15 = new CDartBoardSegment(this, p_s15, 15, "beige");
+  mS10 = new CDartBoardSegment(this, p_s10, 10);
+  mS9 = new CDartBoardSegment(this, p_s9, 9, "beige");
+  mS8 = new CDartBoardSegment(this, p_s8, 8);
+  mS7 = new CDartBoardSegment(this, p_s7, 7);
+  mS6 = new CDartBoardSegment(this, p_s6, 6, "beige");
+  mS5 = new CDartBoardSegment(this, p_s5, 5, "beige");
+  mS4 = new CDartBoardSegment(this, p_s4, 4, "beige");
+  mS3 = new CDartBoardSegment(this, p_s3, 3);
+  mS2 = new CDartBoardSegment(this, p_s2, 2);
+  mS1 = new CDartBoardSegment(this, p_s1, 1, "beige");
+  mSBull = new CDartBoardSegment(this, p_sbull, 25, "green");
+  mD20 = new CDartBoardSegment(this, p_d20, 40, "red", 'd');
+  mD19 = new CDartBoardSegment(this, p_d19, 38, "green", 'd');
+  mD18 = new CDartBoardSegment(this, p_d18, 36, "red", 'd');
+  mD17 = new CDartBoardSegment(this, p_d17, 34, "green", 'd');
+  mD16 = new CDartBoardSegment(this, p_d16, 32, "green", 'd');
+  mD15 = new CDartBoardSegment(this, p_d15, 30, "green", 'd');
+  mD14 = new CDartBoardSegment(this, p_d14, 28, "red", 'd');
+  mD13 = new CDartBoardSegment(this, p_d13, 26, "red", 'd');
+  mD12 = new CDartBoardSegment(this, p_d12, 24, "red", 'd');
+  mD11 = new CDartBoardSegment(this, p_d11, 22, "green", 'd');
+  mD10 = new CDartBoardSegment(this, p_d10, 20, "red", 'd');
+  mD9 = new CDartBoardSegment(this, p_d9, 18, "green", 'd');
+  mD8 = new CDartBoardSegment(this, p_d8, 16, "red", 'd');
+  mD7 = new CDartBoardSegment(this, p_d7, 14, "red", 'd');
+  mD6 = new CDartBoardSegment(this, p_d6, 12, "green", 'd');
+  mD5 = new CDartBoardSegment(this, p_d5, 10, "green", 'd');
+  mD4 = new CDartBoardSegment(this, p_d4, 8, "green", 'd');
+  mD3 = new CDartBoardSegment(this, p_d3, 6, "red", 'd');
+  mD2 = new CDartBoardSegment(this, p_d2, 4, "red", 'd');
+  mD1 = new CDartBoardSegment(this, p_d1, 2, "green", 'd');
+  mDBull = new CDartBoardSegment(this, p_dbull, 50, "red", 'd');
+  mT20 = new CDartBoardSegment(this, p_t20, 60, "red", 't');
+  mT19 = new CDartBoardSegment(this, p_t19, 57, "green", 't');
+  mT18 = new CDartBoardSegment(this, p_t18, 54, "red", 't');
+  mT17 = new CDartBoardSegment(this, p_t17, 51, "green", 't');
+  mT16 = new CDartBoardSegment(this, p_t16, 48, "green", 't');
+  mT15 = new CDartBoardSegment(this, p_t15, 45, "green", 't');
+  mT14 = new CDartBoardSegment(this, p_t14, 42, "red", 't');
+  mT13 = new CDartBoardSegment(this, p_t13, 39, "red", 't');
+  mT12 = new CDartBoardSegment(this, p_t12, 36, "red", 't');
+  mT11 = new CDartBoardSegment(this, p_t11, 33, "green", 't');
+  mT10 = new CDartBoardSegment(this, p_t10, 30, "red", 't');
+  mT9 = new CDartBoardSegment(this, p_t9, 27, "green", 't');
+  mT8 = new CDartBoardSegment(this, p_t8, 24, "red", 't');
+  mT7 = new CDartBoardSegment(this, p_t7, 21, "red", 't');
+  mT6 = new CDartBoardSegment(this, p_t6, 18, "green", 't');
+  mT5 = new CDartBoardSegment(this, p_t5, 15, "green", 't');
+  mT4 = new CDartBoardSegment(this, p_t4, 12, "green", 't');
+  mT3 = new CDartBoardSegment(this, p_t3, 9, "red", 't');
+  mT2 = new CDartBoardSegment(this, p_t2, 6, "red", 't');
+  mT1 = new CDartBoardSegment(this, p_t1, 3, "green", 't');
+  mNoScore = new CDartBoardSegment(this, p_noscore);
   mLabels->setElementId("label");
 
   mScene->addItem(mNoScore);
@@ -623,72 +629,10 @@ CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings 
   mLabels->setZValue(1);
   mLabels->setScale(0.98);
   mLabels->setPos(10, 10);
-
-  connect(mS20, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS19, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS18, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS17, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS16, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS15, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS14, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS13, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS12, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS11, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS10, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS9, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS8, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS7, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS6, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS5, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS4, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS3, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS2, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mS1, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mSBull, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD20, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD19, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD18, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD17, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD16, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD15, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD14, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD13, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD12, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD11, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD10, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD9, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD8, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD7, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD6, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD5, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD4, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD3, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD2, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mD1, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mDBull, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT20, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT19, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT18, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT17, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT16, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT15, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT14, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT13, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT12, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT11, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT10, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT9, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT8, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT7, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT6, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT5, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT4, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT3, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT2, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mT1, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
-  connect(mNoScore, &CDartBoardSegment::signal_segment_pressed, this, &CDartBoard::segment_pressed_slot);
+#ifndef USE_TTS
   mBustedSound.setSource(QUrl("qrc:/resources/sounds/busted.wav"));
   mGameShotSound.setSource(QUrl("qrc:/resources/sounds/gameshot.wav"));
+#endif
 }
 
 CDartBoard::~CDartBoard()
@@ -762,5 +706,15 @@ CDartBoard::~CDartBoard()
 
 void CDartBoard::play_game_shot_sound()
 {
+#ifdef USE_TTS
+  auto * tts = new QTextToSpeech;
+  QLocale locale(QLocale::English, QLocale::UnitedKingdom);
+  tts->setLocale(locale);
+  tts->setVolume(1.0);
+  tts->setRate(0.1);
+  tts->say("Game shot!");
+#else
   mGameShotSound.play();
+#endif
+
 }

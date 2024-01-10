@@ -6,7 +6,11 @@
 #include "dartboard.h"
 #include "playerclass.h"
 #include <QPixmap>
+#ifdef USE_TTS
+#include <QtTextToSpeech>
+#else
 #include <QSoundEffect>
+#endif
 #include "statswindow.h"
 #include "settings.h"
 
@@ -24,7 +28,7 @@ class CX01GroupBox : public QGroupBox
 public:
 
   explicit CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
-                        uint32_t iPlayerNumber = 1, CX01Class * iPlayer = nullptr,
+                        uint32_t iPlayerNumber = 1, CX01Class * const iPlayer = nullptr,
                         CDartBoardX01 * iDartboard = nullptr);
   ~CX01GroupBox() override;
   void set_active();
@@ -75,11 +79,12 @@ private:
   void handle_game_shot(uint32_t iCheckoutAttempts);
   void handle_default_score(uint32_t iCheckoutAttempts);
   const QMap<uint32_t, QVector<QString>> & get_checkout_map(uint32_t iNumberOfDarts);
+  void prepare_score_sound();
 
   Ui::CX01GroupBox * mUi;
   QString mPlayerName;
   CDialogNameInput * mDialogNameInput;
-  CX01Class * mPlayer;
+  CX01Class * const mPlayer;
   CDartBoardX01 * mDartBoard;
   const CSettings & mpSettings;
   uint32_t mPlayerNumber, mRemaining;
@@ -92,7 +97,9 @@ private:
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
   CX01MainWindow * mGameWindow;
+#ifndef USE_TTS
   QSoundEffect mScoreSound;
+#endif
 };
 
 #endif  // GROUPBOX_PLAYER_H

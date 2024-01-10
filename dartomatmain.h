@@ -29,10 +29,14 @@ private slots:
 
 private:
 
+  void play_game_on_sound();
+
   Ui::CDartomatMain * mUi;
   QPointer<CX01MainWindow> mX01MainWindow;
   QPointer<CCricketMainWindow> mCricketMainWindow;
+#ifndef USE_TTS
   QSoundEffect mGameOnSound;
+#endif
   CSettings mSettings;
 };
 

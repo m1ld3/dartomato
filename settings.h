@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <unordered_map>
 
+//#define USE_TTS
+
 enum class EGame
 {
     GAME_301 = 301

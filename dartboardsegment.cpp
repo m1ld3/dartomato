@@ -3,14 +3,16 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPen>
 #include <QString>
+#include "cdartboard_base.h"
 
-CDartBoardSegment::CDartBoardSegment(const QPainterPath & iPath, const uint32_t iVal, QString && iColor, QChar iType, QGraphicsPathItem * iParent)
+CDartBoardSegment::CDartBoardSegment(CDartBoard * ipDartBoard, const QPainterPath & iPath, const uint32_t iVal, QString && iColor, QChar iType, QGraphicsPathItem * iParent)
   : QObject()
   , QGraphicsPathItem(iPath, iParent)
   , mValue(iVal)
   , mColor(iColor)
   , mPath(iPath)
   , mType(iType)
+  , mpDartBoard(ipDartBoard)
 {
   setAcceptHoverEvents(true);
 }
@@ -50,7 +52,7 @@ void CDartBoardSegment::mouseReleaseEvent(QGraphicsSceneMouseEvent * iEvent)
     else
     {
       update();
-      CDartBoardSegment::segment_pressed_slot();
+      mpDartBoard->handle_segment_pressed_event(mValue, mType);
     }
   }
 }
@@ -110,11 +112,6 @@ void CDartBoardSegment::paint(QPainter * iPainter, const QStyleOptionGraphicsIte
 QPainterPath CDartBoardSegment::shape() const
 {
   return mPath;
-}
-
-void CDartBoardSegment::segment_pressed_slot()
-{
-  emit signal_segment_pressed(mValue, mType);
 }
 
 QRectF CDartBoardSegment::boundingRect() const

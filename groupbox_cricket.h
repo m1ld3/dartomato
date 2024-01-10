@@ -6,7 +6,9 @@
 #include "cricketinput.h"
 #include "cricketclass.h"
 #include <QPixmap>
+#ifndef USE_TTS
 #include <QSoundEffect>
+#endif
 
 class CCricketMainWindow;
 
@@ -23,7 +25,7 @@ public:
 
   explicit CCricketGroupBox(QWidget * iParent, const CSettings & ipSettings,
                             uint32_t iPlayerNumber = 1,
-                            CCricketClass * iPlayer = nullptr);
+                            CCricketClass * const iPlayer = nullptr);
   ~CCricketGroupBox() override;
   void set_active();
   void set_inactive();
@@ -100,7 +102,7 @@ private:
   Ui::CCricketGroupBox * mUi;
   QString mPlayerName;
   QPointer<CCricketInput> mScoreInput;
-  CCricketClass * mPlayer;
+  CCricketClass * const mPlayer;
   uint32_t mPlayerNumber;
   uint32_t mScore = 0;
   bool mActive = false;

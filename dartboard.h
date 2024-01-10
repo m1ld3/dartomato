@@ -10,7 +10,7 @@ class CDartBoardX01 : public CDartBoard
 
 public slots:
 
-  void segment_pressed_slot(uint32_t iVal, QChar & iType) override;
+  void handle_segment_pressed_event(uint32_t iVal, QChar & iType) override;
 
 signals:
 

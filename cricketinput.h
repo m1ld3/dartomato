@@ -8,7 +8,9 @@
 #include "undobutton.h"
 #include <QLabel>
 #include <QGraphicsSvgItem>
+#ifndef USE_TTS
 #include <QSoundEffect>
+#endif
 #include "dartboard_cricket.h"
 #include "settings.h"
 
@@ -40,10 +42,7 @@ public:
   void set_score_labels(uint32_t iValue, QChar iType);
   void compute_score();
   bool are_slots_full() const;
-
-public slots:
-
-  void segment_pressed_slot(uint32_t iVal, QChar & iType);
+  void handle_segment_pressed_event(uint32_t iVal, QChar & iType);
 
 signals:
 

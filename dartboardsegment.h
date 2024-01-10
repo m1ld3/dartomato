@@ -4,13 +4,15 @@
 #include <QGraphicsItem>
 #include <QPainter>
 
+class CDartBoard;
+
 class CDartBoardSegment : public QObject, public QGraphicsPathItem
 {
   Q_OBJECT
 
 public:
 
-  CDartBoardSegment(const QPainterPath & iPath, const uint32_t iVal = 0,
+  CDartBoardSegment(CDartBoard * ipDartBoard, const QPainterPath & iPath, const uint32_t iVal = 0,
                     QString && iColor = "black", QChar iType = 's',
                     QGraphicsPathItem * iParent = nullptr);
   ~CDartBoardSegment() override = default;
@@ -27,14 +29,6 @@ protected:
   virtual QPainterPath shape() const override;
   QRectF boundingRect() const override;
 
-private slots:
-
-  void segment_pressed_slot();
-
-signals:
-
-  void signal_segment_pressed(uint32_t iVal, QChar & iType);
-
 private:
 
   uint32_t mValue;
@@ -44,6 +38,7 @@ private:
   bool mPressed = false;
   bool mHover = false;
   bool mDragging = false;
+  CDartBoard * mpDartBoard;
 };
 
 #endif  // DARTBOARDSEGMENT_H

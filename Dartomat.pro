@@ -2,11 +2,11 @@ QT       += core \
             multimedia \
             svgwidgets \
             widgets \
-            charts
+            texttospeech
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11 \ resources_big
+CONFIG += c++17 \ resources_big
 
 RC_ICONS = dartomat.ico
 

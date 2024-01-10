@@ -10,8 +10,6 @@
 #include <QToolTip>
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QHorizontalBarSeries>
-#include "chart.h"
-#include "chartview.h"
 #include "playerclass.h"
 
 class CCallout;
@@ -95,7 +93,6 @@ private:
   void count_scores();
   std::map<uint32_t, uint32_t> calculate_score_counts();
   void calculate_segment_counts();
-  void connect_hover_signals(QPointer<QBarSet> & iBarSet);
   void set_stats_labels();
   void display_current_leg_scores();
   void compute_dart_count_and_checkouts_of_won_legs();

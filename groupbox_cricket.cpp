@@ -3,7 +3,9 @@
 #include <QMessageBox>
 #include "dialognameinput.h"
 #include <QDebug>
+#ifndef USE_TTS
 #include <QSoundEffect>
+#endif
 #include <string>
 #include <QString>
 #include <algorithm>
@@ -11,7 +13,7 @@
 
 CCricketGroupBox::CCricketGroupBox(QWidget * iParent, const CSettings & ipSettings,
                                    uint32_t iPlayerNumber,
-                                   CCricketClass * iPlayer)
+                                   CCricketClass * const iPlayer)
   : QGroupBox(iParent)
   , mUi(new Ui::CCricketGroupBox)
   , mPlayer(iPlayer)

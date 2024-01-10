@@ -1,8 +1,9 @@
 #include "dartboard_cricket.h"
+#include "cricketinput.h"
 
-
-CDartBoardCricket::CDartBoardCricket(CDartBoardView *iGraphicsViewDartBoard, const CSettings &ipSettings)
+CDartBoardCricket::CDartBoardCricket(CDartBoardView * iGraphicsViewDartBoard, const CSettings & ipSettings, CCricketInput * ipCricketInput)
   : CDartBoard(iGraphicsViewDartBoard, ipSettings)
+  , mpCricketInput(ipCricketInput)
 {
   mS14->set_value(0);
   mS13->set_value(0);
@@ -48,7 +49,7 @@ CDartBoardCricket::CDartBoardCricket(CDartBoardView *iGraphicsViewDartBoard, con
   mT1->set_value(0);
 }
 
-void CDartBoardCricket::segment_pressed_slot(uint32_t iVal, QChar &iType)
+void CDartBoardCricket::handle_segment_pressed_event(uint32_t iVal, QChar &iType)
 {
-  emit signal_segment_pressed(iVal, iType);
+  mpCricketInput->handle_segment_pressed_event(iVal, iType);
 }

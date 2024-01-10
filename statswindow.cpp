@@ -155,18 +155,6 @@ void CStatsWindow::calculate_segment_counts()
   }
 }
 
-void CStatsWindow::connect_hover_signals(QPointer<QBarSet> &iBarSet)
-{
-  QObject::connect(iBarSet, &QBarSet::hovered, this, [iBarSet](bool status, int index)
-  {
-    QPoint p = QCursor::pos();
-    if (status)
-    {
-      QToolTip::showText(p, QString::number(iBarSet->at(index)));
-    }
-  });
-}
-
 void CStatsWindow::set_stats_labels()
 {
   mUi->label_1dartInput->setText(QString::number(mPlayer->get_avg1dart(), 'f', 2));
