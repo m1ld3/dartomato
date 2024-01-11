@@ -3,13 +3,6 @@
 
 #include <QDialog>
 #include <QString>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QChart>
-#include <QtCharts/QBarCategoryAxis>
-#include <QToolTip>
-#include <QtCharts/QValueAxis>
-#include <QtCharts/QHorizontalBarSeries>
 #include "playerclass.h"
 
 class CCallout;

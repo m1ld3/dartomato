@@ -2,13 +2,10 @@
 #define GROUPBOX_CRICKET_H
 
 #include <QGroupBox>
-#include "dialognameinput.h"
 #include "cricketinput.h"
 #include "cricketclass.h"
 #include <QPixmap>
-#ifndef USE_TTS
-#include <QSoundEffect>
-#endif
+#include <QPointer>
 
 class CCricketMainWindow;
 
@@ -23,14 +20,14 @@ class CCricketGroupBox : public QGroupBox
 
 public:
 
-  explicit CCricketGroupBox(QWidget * iParent, const CSettings & ipSettings,
+  explicit CCricketGroupBox(QWidget * iParent,
+                            const CSettings & ipSettings,
                             uint32_t iPlayerNumber = 1,
                             CCricketClass * const iPlayer = nullptr);
   ~CCricketGroupBox() override;
   void set_active();
   void set_inactive();
   void set_finished();
-  void unset_finished();
   void close_cricket_input();
   QString get_player_number() const;
   void set_set_begin();
@@ -42,44 +39,42 @@ public:
   void update_history();
   void reset_legs();
   void reset();
-  static void set_leg_started();
-  static void set_set_started();
-  static void unset_leg_started();
-  static void unset_set_started();
   uint32_t get_slot(const ECricketSlots iSlot) const;
-  void set_slot(const ECricketSlots iSlot, uint32_t iHits);
-  void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
-  uint32_t get_extra_points(const ECricketSlots iSlot) const;
-  void set_extra_points_label(const ECricketSlots iSlot, uint32_t iPoints);
-  void set_slot_label(const ECricketSlots iSlot, uint32_t iHits);
+  uint32_t get_extra_points(const ECricketSlots iSlot) const;  
   uint32_t get_score() const;
-  void set_leg_history();
   void increase_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
   void set_score();
   void update_extra_points_labels();
   void update_darts(QVector<QString> && iDarts);
   void set_lcd_legs();
-  void perform_undo();
+  void handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
 
-signals:
-
-  void signal_update_player(const EUpdateType iType);
-  void signal_reset_scores();
-  void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void signal_update_history();
-
-public slots:
+private slots:
 
   void push_button_name_clicked_slot();
   void push_button_score_clicked_slot();
   void ok_button_clicked_slot(const QString & iName);
-  void cricket_submit_button_clicked_slot(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
   void player_active_button_pressed_slot();
   void push_button_undo_clicked_slot();
-  void connect_slots();
 
 private:
 
+  void unset_finished();
+  static void set_leg_started();
+  static void set_set_started();
+  static void unset_leg_started();
+  static void unset_set_started();
+  void set_slot(const ECricketSlots iSlot, uint32_t iHits);
+  void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
+  void set_extra_points_label(const ECricketSlots iSlot, uint32_t iPoints);
+  void set_slot_label(const ECricketSlots iSlot, uint32_t iHits);
+  void set_leg_history();
+  void perform_undo();
+  void update_players(const EUpdateType iType);
+  void reset_scores_of_all_players();
+  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void update_history_of_all_players();
+  void connect_slots();
   void filter_leg_scores_cutthroat(QVector<QVector<QString>> & oLegScores);
   void display_leg_scores(const QVector<QVector<QString>> & iLegScores);
   void display_leg_score_line(uint32_t iLegNumber, const QVector<QString> & iLegScore);
@@ -112,7 +107,7 @@ private:
   static bool mLegStarted;
   static bool mSetStarted;
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
-  CCricketMainWindow * mGameWindow;
+  CCricketMainWindow * mpGameWindow;
   uint32_t mTotalHits = 0;
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};

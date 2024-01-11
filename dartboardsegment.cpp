@@ -1,7 +1,5 @@
 #include "dartboardsegment.h"
-#include <QDebug>
 #include <QGraphicsSceneMouseEvent>
-#include <QPen>
 #include <QString>
 #include "cdartboard_base.h"
 

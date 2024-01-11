@@ -2,7 +2,6 @@
 #define CRICKETCLASS_H
 
 #include <QObject>
-#include "cricketmainwindow.h"
 #include "settings.h"
 
 class CCricketMainWindow;
@@ -22,14 +21,12 @@ public:
   void update_darts(QVector<QString> iDarts);
   void reset_score();
   void reset_legs();
-  void perform_undo_step();
   uint32_t get_player_number() const;
   uint32_t get_slot(const ECricketSlots iSlot) const;
   void set_slot(const ECricketSlots iSlot, uint32_t iHits);
   void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
   uint32_t get_extra_points(const ECricketSlots iSlot) const;
   uint32_t get_total_hits() const;
-  bool are_slots_full() const;
   void set_score();
   uint32_t get_score() const;
   double get_hits_per_round() const;
@@ -41,15 +38,13 @@ public:
   uint32_t get_total_darts() const;
   bool increase_setslegs();
 
-signals:
-
-  void signal_game_won(uint32_t iPlayerNumber);
-
 private:
 
   void handle_undo_after_legset_win();
+  void notify_game_won(uint32_t iPlayerNumber);
+  void perform_undo_step();
 
-  CCricketMainWindow * mGameWindow;
+  CCricketMainWindow * mpGameWindow;
   uint32_t mSetsWon = 0;  // sets won
   uint32_t mLegsWonPerSet = 0;  // legs won per set
   uint32_t mTotalLegsWon = 0;  // total legs won

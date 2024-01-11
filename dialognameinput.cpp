@@ -1,7 +1,5 @@
 #include "ui_dialognameinput.h"
 #include <QString>
-#include <QDebug>
-#include "groupbox_player.h"
 #include "dialognameinput.h"
 
 CDialogNameInput::CDialogNameInput(QWidget * iParent, QString && iText)

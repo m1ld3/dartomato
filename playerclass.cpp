@@ -1,14 +1,16 @@
 #include "playerclass.h"
+#include "xo1mainwindow.h"
 #include <cmath>
-#include <QDebug>
 
-CX01Class::CX01Class(uint32_t iPlayerNumber, const CSettings & ipSettings)
-  : mpSettings(ipSettings)
+CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings)
+  : QObject(iParent)
+  , mpSettings(ipSettings)
   , mRemaining(static_cast<uint32_t>(mpSettings.mGame))
   , mMarginLegs(std::ceil(mpSettings.mLegs/2.0))
   , mMarginSets(std::ceil(mpSettings.mSets/2.0))
   , mPlayerNumber(iPlayerNumber-1)
 {
+  mpGameWindow = static_cast<CX01MainWindow*>(iParent);
   mRemainingPointsOfCurrentLeg.push_back(mRemaining);
   compute_averages(0);
   update_checkout(0, 0);
@@ -26,9 +28,14 @@ bool CX01Class::increment_won_legs_and_check_if_set_won()
   }
   if (mSetsWon == mMarginSets)
   {
-    emit signal_game_won(mPlayerNumber);
+    notify_game_won(mPlayerNumber);
   }
   return hasWonSet;
+}
+
+void CX01Class::notify_game_won(uint32_t iPlayerNumber)
+{
+  mpGameWindow->handle_game_won(iPlayerNumber);
 }
 
 uint32_t CX01Class::set_score(uint32_t score)
@@ -110,11 +117,6 @@ void CX01Class::perform_undo_step()
   }
 
   mAvg3Dart = 3 * mAvg1Dart;
-}
-
-QVector<uint32_t> CX01Class::get_score_leg() const
-{
-  return mScoresOfCurrentLeg;
 }
 
 QString CX01Class::get_checkout_attempts() const

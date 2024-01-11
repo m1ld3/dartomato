@@ -10,6 +10,9 @@ class CPlayerActiveButton : public QLabel
 public:
 
   CPlayerActiveButton(QWidget * iParent = nullptr);
+
+private:
+
   void player_active_button_pressed();
 
 signals:

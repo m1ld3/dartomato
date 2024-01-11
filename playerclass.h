@@ -5,13 +5,15 @@
 #include <QObject>
 #include "settings.h"
 
+class CX01MainWindow;
+
 class CX01Class : public QObject
 {
   Q_OBJECT
 
 public:
 
-  CX01Class(uint32_t iPlayerNumber, const CSettings & ipSettings);
+  CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings);
   uint32_t set_score(uint32_t iScore);
   void set_darts(QVector<QString> iDarts);
   QVector<QVector<QString>> get_darts() const;
@@ -35,19 +37,16 @@ public:
   void reset_score();
   void reset_legs();
   uint32_t get_player_number() const;
-  void perform_undo_step();
-  QVector<uint32_t> get_score_leg() const;
   QString get_checkout_attempts() const;
   bool increment_won_legs_and_check_if_set_won();
-
-signals:
-
-  void signal_game_won(uint32_t iPlayerNumber);
 
 private:
 
   void undo_last_won_leg_or_set();
+  void perform_undo_step();
+  void notify_game_won(uint32_t iPlayerNumber);
 
+  CX01MainWindow * mpGameWindow;
   const CSettings & mpSettings;
   uint32_t mSetsWon = 0;  // sets won
   uint32_t mLegsWonPerSet = 0;  // legs won per set

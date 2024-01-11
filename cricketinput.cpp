@@ -3,23 +3,24 @@
 #include <QGraphicsPathItem>
 #include <QPushButton>
 #include <QLineEdit>
-#include <QGraphicsLinearLayout>
-#include <QtDebug>
 #include <cmath>
 #include <QMessageBox>
 #include <QVector>
 #include "cricketclass.h"
+#include "groupbox_cricket.h"
+#include "cricketmainwindow.h"
 
-CCricketInput::CCricketInput(QWidget * iParent, const CSettings & ipSettings, CCricketClass * iPlayer, CCricketMainWindow * iGameWindow)
+CCricketInput::CCricketInput(QWidget * iParent, const CSettings & ipSettings, CCricketClass * iPlayer, CCricketMainWindow * ipGameWindow)
   : QDialog(iParent)
   , mUi(new Ui::CCricketInput)
   , mPlayer(iPlayer)
-  , mGameWindow(iGameWindow)
+  , mpGameWindow(ipGameWindow)
   , mScore(mPlayer->get_score())
   , mpSettings(ipSettings)
 {
   mUi->setupUi(this);
   mUi->submitButton->setAutoDefault(true);
+  mpGroupBox = static_cast<CCricketGroupBox*>(iParent);
 
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
   {
@@ -27,7 +28,7 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & ipSettings, CC
     mSlotHistory.at(i).push_back(mSlotArray.at(i));
     mExtraPointsArray.at(i) = mPlayer->get_extra_points(static_cast<ECricketSlots>(i));
     mExtraPointsHistory.at(i).push_back(mExtraPointsArray.at(i));
-    mCutThroatExtraPointsArray.at(i) = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), 0, mPlayer->get_player_number());
+    mCutThroatExtraPointsArray.at(i) = mpGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), 0, mPlayer->get_player_number());
     mCutThroatExtraPointsHistory.at(i).append(mCutThroatExtraPointsArray.at(i));
   }
 
@@ -82,6 +83,11 @@ void CCricketInput::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
   else process_segment_default();
 }
 
+void CCricketInput::notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> &iDarts)
+{
+  mpGroupBox->handle_submit_button_clicked(iNumberOfDarts, iDarts);
+}
+
 void CCricketInput::check_if_game_shot_cutthroat(QVector<uint32_t> & iScores)
 {
   bool result = true;
@@ -125,7 +131,7 @@ void CCricketInput::compute_cutthroat_scores_for_other_players(QVector<uint32_t>
 {
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
   {
-    QVector<uint32_t> temp = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), mExtraPointsArray.at(i), mPlayer->get_player_number());
+    QVector<uint32_t> temp = mpGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), mExtraPointsArray.at(i), mPlayer->get_player_number());
     for (uint32_t j = 0; j < temp.size(); j++)
     {
       mCutThroatExtraPointsArray.at(i)[j] += temp.at(j);
@@ -145,7 +151,7 @@ void CCricketInput::handle_game_shot()
 
 void CCricketInput::increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits)
 {
-  if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayer->get_player_number()))
+  if (mpGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayer->get_player_number()))
   {
     mExtraPointsArray.at(iSlotIdx) += iHits * iSlotVal;
   }
@@ -190,14 +196,14 @@ void CCricketInput::process_segment_default()
   if (!mStop && mCounter > 0)
   {
     compute_score();
-    bool gameShotCondition = are_slots_full() && mGameWindow->is_score_bigger(mScore);
+    bool gameShotCondition = are_slots_full() && mpGameWindow->is_score_bigger(mScore);
     if (gameShotCondition) handle_game_shot();
     mCounter--;
     if (mCounter == 0 || gameShotCondition) handle_input_stop();
   }
   else
   {
-    handle_warnings(are_slots_full() && mGameWindow->is_score_bigger(mScore));
+    handle_warnings(are_slots_full() && mpGameWindow->is_score_bigger(mScore));
   }
 }
 
@@ -215,7 +221,7 @@ void CCricketInput::submit_button_clicked_slot()
   if (mStop)
   {
     uint32_t numberofdarts = 3 - mCounter;
-    emit signal_cricket_submit_button_clicked(numberofdarts, mDarts);
+    notify_cricket_submit_button_clicked(numberofdarts, mDarts);
   }
   else
   {

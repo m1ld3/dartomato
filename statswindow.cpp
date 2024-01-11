@@ -1,6 +1,5 @@
 #include "statswindow.h"
 #include "ui_statswindow.h"
-#include <qscrollbar.h>
 
 CStatsWindow::CStatsWindow(QWidget * iParent, CX01Class * iPlayer)
   : QDialog(iParent)

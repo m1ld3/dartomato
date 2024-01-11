@@ -6,7 +6,6 @@
 #ifndef USE_TTS
 #include <QSoundEffect>
 #endif
-#include <QDebug>
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)

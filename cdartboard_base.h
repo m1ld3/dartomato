@@ -2,7 +2,6 @@
 #define CDARTBOARD_H
 
 #include <QDialog>
-#include "dartboardsegment.h"
 #include <QLCDNumber>
 #include <QGraphicsSvgItem>
 #include <QLabel>
@@ -12,6 +11,8 @@
 #endif
 #include "settings.h"
 
+class CDartBoardSegment;
+
 class CDartBoard : public QWidget
 {
   Q_OBJECT
@@ -19,10 +20,6 @@ class CDartBoard : public QWidget
 public:
 
   virtual void handle_segment_pressed_event(uint32_t iVal, QChar & iType) = 0;
-
-signals:
-
-  void signal_set_focus_to_submit_button();
 
 public:
 

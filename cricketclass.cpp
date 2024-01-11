@@ -1,12 +1,13 @@
 #include "cricketclass.h"
+#include "cricketmainwindow.h"
 #include <cmath>
-#include <QDebug>
 
 CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings)
-  : mPlayerNumber(iPlayerNumber-1)
+  : QObject(iParent)
+  , mPlayerNumber(iPlayerNumber-1)
   , mpSettings(ipSettings)
 {
-  mGameWindow = dynamic_cast<CCricketMainWindow*>(iParent);
+  mpGameWindow = static_cast<CCricketMainWindow*>(iParent);
   mMarginLegs = std::ceil(mpSettings.mLegs/2.0);
   mMarginSets = std::ceil(mpSettings.mSets/2.0);
   mHitsPerRound = compute_hits_per_round(0,0);
@@ -27,10 +28,15 @@ bool CCricketClass::increase_setslegs()
 
   if (mSetsWon == mMarginSets)
   {
-    emit signal_game_won(mPlayerNumber);
+    notify_game_won(mPlayerNumber);
   }
 
   return temp;
+}
+
+void CCricketClass::notify_game_won(uint32_t iPlayerNumber)
+{
+  mpGameWindow->handle_game_won(iPlayerNumber);
 }
 
 void CCricketClass::update_history()
@@ -135,17 +141,6 @@ uint32_t CCricketClass::get_total_hits() const
 uint32_t CCricketClass::get_total_darts() const
 {
   return mTotalDarts;
-}
-
-bool CCricketClass::are_slots_full() const
-{
-  bool full = true;
-  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
-  {
-    full = full && (mSlotArray.at(i) == 3);
-  }
-
-  return full;
 }
 
 void CCricketClass::set_score()

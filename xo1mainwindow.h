@@ -22,35 +22,37 @@ public:
 
   explicit CX01MainWindow(QWidget * iParent, const CSettings & ipSettings);
   ~CX01MainWindow() override;
-  void update_player();
   void closeEvent(QCloseEvent * iEvent) override;
-  void set_active_player(uint32_t iPlayer);
+  void handle_game_won(uint32_t iPlayerNumber);
+  void display_score(uint32_t iScore);
+  void display_dart1(uint32_t iVal);
+  void display_dart2(uint32_t iVal);
+  void display_dart3(uint32_t iVal);
+  void erase_dart1();
+  void erase_dart2();
+  void erase_dart3();
+  void submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
+  void update_finishes(uint32_t iScore, uint32_t iNumberOfDarts);
+  void set_focus_to_submit_button();
+  void update_players(const EUpdateType iType);
+  void reset_scores_of_all_players();
+  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void update_history_of_all_players();
 
 private slots:
 
-  void update_player_slot(const EUpdateType iType);
-  void reset_scores_slot();
-  void game_won_slot(uint32_t iPlayerNumber);
-  void inactivate_players_slot(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void update_history_slot();
-  void submit_score_to_player_slot(uint32_t iScore, uint32_t iNumberOfDarts,
-                                  uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
   void submit_button_clicked_slot();
   void undo_button_clicked_slot();
-  void display_score_slot(uint32_t iScore);
-  void display_dart1_slot(uint32_t iVal);
-  void display_dart2_slot(uint32_t iVal);
-  void display_dart3_slot(uint32_t iVal);
-  void erase_dart1_slot();
-  void erase_dart2_slot();
-  void erase_dart3_slot();
-  void update_finishes_slot(uint32_t iScore, uint32_t iNumberOfDarts);
-  void set_focus_to_submit_button_slot();
 
 private:
 
+  void update_active_player();
   void add_players();
   void connect_main_window_slots();
+  void update_player_default();
+  void update_player_leg();
+  void update_player_set();
+  void set_active_player(uint32_t iPlayer);
 
   Ui::CX01MainWindow * mUi;
   CX01GroupBox * mX01GroupBox;
@@ -59,9 +61,7 @@ private:
   QVector<CX01Class*> mPlayer;
   CDartBoardX01 * mDartBoard;
   const CSettings & mpSettings;
-  void update__player_default();
-  void update_player_leg();
-  void update_player_set();
+
 };
 
 #endif  // X01MAINWINDOW_H

@@ -2,7 +2,6 @@
 #define GROUPBOX_PLAYER_H
 
 #include <QGroupBox>
-#include "dialognameinput.h"
 #include "dartboard.h"
 #include "playerclass.h"
 #include <QPixmap>
@@ -11,7 +10,6 @@
 #else
 #include <QSoundEffect>
 #endif
-#include "statswindow.h"
 #include "settings.h"
 
 class CX01MainWindow;
@@ -35,8 +33,6 @@ public:
   void set_inactive();
   void reset();
   void set_finished();
-  void unset_finished();
-  void close_score_input();
   QString get_player_number() const;
   void set_set_begin();
   void unset_set_begin();
@@ -50,28 +46,23 @@ public:
   void set_lcd_legs();
   uint32_t get_remaining() const;
   void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
-  void perform_undo();
 
-signals:
-
-  void signal_update_player(const EUpdateType iType);
-  void signal_reset_scores();
-  void signal_inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void signal_update_history();
-
-public slots:
+private slots:
 
   void push_button_name_clicked_slot();
   void ok_button_clicked_slot(const QString & iName);
   void player_active_button_pressed_slot();
-
-private slots:
-
   void push_button_stats_clicked_slot();
   void push_button_undo_clicked_slot();
 
 private:
 
+  void update_players(const EUpdateType iType);
+  void reset_scores_of_all_players();
+  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void update_history_of_all_players();
+  void perform_undo();
+  void unset_finished();
   void connect_slots();
   void display_stats_and_finishes();
   void set_lcd_legs_and_sets();
@@ -83,7 +74,6 @@ private:
 
   Ui::CX01GroupBox * mUi;
   QString mPlayerName;
-  CDialogNameInput * mDialogNameInput;
   CX01Class * const mPlayer;
   CDartBoardX01 * mDartBoard;
   const CSettings & mpSettings;
@@ -96,7 +86,7 @@ private:
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
-  CX01MainWindow * mGameWindow;
+  CX01MainWindow * mpGameWindow;
 #ifndef USE_TTS
   QSoundEffect mScoreSound;
 #endif

@@ -1,10 +1,12 @@
 #include "dartboard.h"
+#include "xo1mainwindow.h"
 #include <cmath>
 #include <QMessageBox>
 
-CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, const CSettings & ipSettings)
+CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * ipX01MainWindow, const CSettings & ipSettings)
   : CDartBoard(iGraphicsViewDartBoard, ipSettings)
 {
+  mpGameWindow = static_cast<CX01MainWindow*>(ipX01MainWindow);
   erase_all_darts();
   display_score(mScore);
 }
@@ -19,7 +21,7 @@ void CDartBoardX01::set_score(uint32_t iVal, QChar iType, bool iCheckoutAttempt)
     mUndo[3 - mCounter] = iVal;
     mDarts.append(mBusted ? "S0" : iType + QString::number(iVal));
     mCheckoutAttempts[3 - mCounter] = iCheckoutAttempt;
-    emit signal_update_finishes(mScore, mCounter - 1);
+    update_finishes(mScore, mCounter - 1);
   }
   if (mCounter == 3)      display_dart1(iVal);
   else if (mCounter == 2) display_dart2(iVal);
@@ -61,7 +63,7 @@ bool CDartBoardX01::checkout_attempt_happened()
 void CDartBoardX01::handle_game_shot_score(uint32_t iVal, QChar & iType)
 {
   mStop = true;  // Game shot
-  emit signal_set_focus_to_submit_button();
+  set_focus_to_submit_button();
   play_game_shot_sound();
   set_score(iVal, iType, true);
 }
@@ -88,7 +90,7 @@ void CDartBoardX01::handle_busted_score(uint32_t iVal, QChar & iType, bool iChec
 {
   mStop = true;
   mBusted = true;
-  emit signal_set_focus_to_submit_button();
+  set_focus_to_submit_button();
   set_score(iVal, iType, iCheckoutAttempt);
   display_score(mOldScore);
 #ifndef USE_TTS
@@ -128,7 +130,7 @@ void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
     if (mCounter == 0)
     {
       mStop = true;
-      emit signal_set_focus_to_submit_button();
+      set_focus_to_submit_button();
     }
   }
   else if (mBusted)                     QMessageBox::warning(this, "Warning", "You are already busted!");
@@ -150,7 +152,7 @@ void CDartBoardX01::perform_undo()
   else if (mCounter == 1) erase_dart2();
   else if (mCounter == 0) erase_dart3();
 
-  emit signal_update_finishes(mScore, mCounter + 1);
+  update_finishes(mScore, mCounter + 1);
 
   mCounter++;
   mStop = false;
@@ -172,7 +174,7 @@ void CDartBoardX01::submit_score()
 
     uint32_t numberofdarts = 3 - mCounter;
     uint32_t checkoutattempts = static_cast<uint32_t>(std::count(mCheckoutAttempts.begin(), mCheckoutAttempts.end(), true));
-    emit signal_submit_score_to_player(score, numberofdarts, checkoutattempts, darts);
+    submit_score_to_player(score, numberofdarts, checkoutattempts, darts);
   }
   else if (!mFinished)
   {
@@ -186,22 +188,22 @@ void CDartBoardX01::submit_score()
 
 void CDartBoardX01::display_score(uint32_t iScore)
 {
-  emit signal_display_score(iScore);
+  mpGameWindow->display_score(iScore);
 }
 
 void CDartBoardX01::display_dart1(uint32_t iVal)
 {
-  emit signal_display_dart1(iVal);
+  mpGameWindow->display_dart1(iVal);
 }
 
 void CDartBoardX01::display_dart2(uint32_t iVal)
 {
-  emit signal_display_dart2(iVal);
+  mpGameWindow->display_dart2(iVal);
 }
 
 void CDartBoardX01::display_dart3(uint32_t iVal)
 {
-  emit signal_display_dart3(iVal);
+  mpGameWindow->display_dart3(iVal);
 }
 
 void CDartBoardX01::erase_all_darts()
@@ -213,17 +215,17 @@ void CDartBoardX01::erase_all_darts()
 
 void CDartBoardX01::erase_dart1()
 {
-  emit signal_erase_dart1();
+  mpGameWindow->erase_dart1();
 }
 
 void CDartBoardX01::erase_dart2()
 {
-  emit signal_erase_dart2();
+  mpGameWindow->erase_dart2();
 }
 
 void CDartBoardX01::erase_dart3()
 {
-  emit signal_erase_dart3();
+  mpGameWindow->erase_dart3();
 }
 
 void CDartBoardX01::set_finished()
@@ -234,6 +236,21 @@ void CDartBoardX01::set_finished()
 void CDartBoardX01::unset_finished()
 {
   mFinished = false;
+}
+
+void CDartBoardX01::submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> &iDarts)
+{
+  mpGameWindow->submit_score_to_player(iScore, iNumberOfDarts, iCheckoutAttempts, iDarts);
+}
+
+void CDartBoardX01::update_finishes(uint32_t iScore, uint32_t iNumberOfDarts)
+{
+  mpGameWindow->update_finishes(iScore, iNumberOfDarts);
+}
+
+void CDartBoardX01::set_focus_to_submit_button()
+{
+  mpGameWindow->set_focus_to_submit_button();
 }
 
 

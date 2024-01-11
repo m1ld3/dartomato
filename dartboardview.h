@@ -11,8 +11,8 @@ class CDartBoardView : public QGraphicsView
 public:
 
   CDartBoardView(QWidget * iParent = 0);
-  void resizeEvent(QResizeEvent * iEvent) override;
   ~CDartBoardView() override = default;
+  void resizeEvent(QResizeEvent * iEvent) override;
 };
 
 #endif  // DARTBOARDVIEW_H

@@ -3,7 +3,6 @@
 #include "groupbox_player.h"
 #include "playerclass.h"
 #include <QString>
-#include <QDebug>
 #include <QMessageBox>
 #include <QCloseEvent>
 
@@ -17,17 +16,17 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & ipSettings)
   mUi->setupUi(this);
   QString text = QString::number(static_cast<uint32_t>(mpSettings.mGame));
   QWidget::setWindowTitle(text);
-  mDartBoard = new CDartBoardX01(mUi->graphicsViewDartBoard, mpSettings);
+  mDartBoard = new CDartBoardX01(mUi->graphicsViewDartBoard, this, mpSettings);
   mDartBoard->init_dartboard(static_cast<uint32_t>(mpSettings.mGame));
   connect_main_window_slots();
   add_players();
   mPlayerBox[mActivePlayer]->set_set_begin();
   mPlayerBox[mActivePlayer]->set_leg_begin();
   mPlayerBox[mActivePlayer]->set_active();
-  display_score_slot(mPlayerBox[mActivePlayer]->get_remaining());
-  erase_dart1_slot();
-  erase_dart2_slot();
-  erase_dart3_slot();
+  display_score(mPlayerBox[mActivePlayer]->get_remaining());
+  erase_dart1();
+  erase_dart2();
+  erase_dart3();
   mUi->submitButton->setAutoDefault(true);
 }
 
@@ -49,34 +48,18 @@ void CX01MainWindow::add_players()
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
-    mPlayer.push_back(new CX01Class(i+1, mpSettings));
+    mPlayer.push_back(new CX01Class(this, i+1, mpSettings));
     mPlayerBox.push_back(new CX01GroupBox(this, mpSettings, i+1, mPlayer[i], mDartBoard));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mPlayerBox[i]->set_inactive();
 
     if ((i % 2) == 0) mUi->gridForLeftHandPlayers->addWidget(mPlayerBox[i]);
     else              mUi->gridForRightHandPlayers->addWidget(mPlayerBox[i]);
-
-    connect(mPlayerBox[i], &CX01GroupBox::signal_update_player, this, &CX01MainWindow::update_player_slot);
-    connect(mPlayerBox[i], &CX01GroupBox::signal_reset_scores, this, &CX01MainWindow::reset_scores_slot);
-    connect(mPlayer[i], &CX01Class::signal_game_won, this, &CX01MainWindow::game_won_slot);
-    connect(mPlayerBox[i], &CX01GroupBox::signal_inactivate_players, this, &CX01MainWindow::inactivate_players_slot);
-    connect(mPlayerBox[i], &CX01GroupBox::signal_update_history, this, &CX01MainWindow::update_history_slot);
   }
 }
 
 void CX01MainWindow::connect_main_window_slots()
 {
-  connect(mDartBoard, &CDartBoardX01::signal_submit_score_to_player, this, &CX01MainWindow::submit_score_to_player_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_display_score, this, &CX01MainWindow::display_score_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_display_dart1, this, &CX01MainWindow::display_dart1_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_display_dart2, this, &CX01MainWindow::display_dart2_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_display_dart3, this, &CX01MainWindow::display_dart3_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_erase_dart1, this, &CX01MainWindow::erase_dart1_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_erase_dart2, this, &CX01MainWindow::erase_dart2_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_erase_dart3, this, &CX01MainWindow::erase_dart3_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_update_finishes, this, &CX01MainWindow::update_finishes_slot);
-  connect(mDartBoard, &CDartBoardX01::signal_set_focus_to_submit_button, this, &CX01MainWindow::set_focus_to_submit_button_slot);
   connect(mUi->submitButton, &QPushButton::clicked, this, &CX01MainWindow::submit_button_clicked_slot);
   connect(mUi->undoButton, &QPushButton::clicked, this, &CX01MainWindow::undo_button_clicked_slot);
 }
@@ -96,14 +79,14 @@ void CX01MainWindow::set_active_player(uint32_t iPlayer)
   mActivePlayer = iPlayer;
 }
 
-void CX01MainWindow::update_player()
+void CX01MainWindow::update_active_player()
 {
   mActivePlayer = (mActivePlayer + 1) % mpSettings.mNumberOfPlayers;
 }
 
-void CX01MainWindow::update__player_default()
+void CX01MainWindow::update_player_default()
 {
-  update_player();
+  update_active_player();
 
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -120,7 +103,7 @@ void CX01MainWindow::update_player_leg()
     {
       mPlayerBox[i]->unset_leg_begin();
       mActivePlayer = i;
-      update_player();
+      update_active_player();
 
       for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
       {
@@ -141,7 +124,7 @@ void CX01MainWindow::update_player_set()
     {
       mPlayerBox[i]->unset_set_begin();
       mActivePlayer = i;
-      update_player();
+      update_active_player();
 
       for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
       {
@@ -162,11 +145,11 @@ void CX01MainWindow::update_player_set()
   }
 }
 
-void CX01MainWindow::update_player_slot(const EUpdateType iType)
+void CX01MainWindow::update_players(const EUpdateType iType)
 {
   if (iType == EUpdateType::DEFAULT)
   {
-    update__player_default();
+    update_player_default();
   }
   else if (iType == EUpdateType::LEG)
   {
@@ -179,7 +162,7 @@ void CX01MainWindow::update_player_slot(const EUpdateType iType)
   mDartBoard->init_dartboard(mPlayerBox[mActivePlayer]->get_remaining());
 }
 
-void CX01MainWindow::reset_scores_slot()
+void CX01MainWindow::reset_scores_of_all_players()
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -188,7 +171,7 @@ void CX01MainWindow::reset_scores_slot()
   }
 }
 
-void CX01MainWindow::game_won_slot(uint32_t iPlayerNumber)
+void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -200,7 +183,7 @@ void CX01MainWindow::game_won_slot(uint32_t iPlayerNumber)
   QMessageBox::about(this,"Game finished", text);
 }
 
-void CX01MainWindow::inactivate_players_slot(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
+void CX01MainWindow::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -227,7 +210,7 @@ void CX01MainWindow::inactivate_players_slot(uint32_t iPlayer, bool iLegStarted,
   }
 }
 
-void CX01MainWindow::update_history_slot()
+void CX01MainWindow::update_history_of_all_players()
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -235,7 +218,7 @@ void CX01MainWindow::update_history_slot()
   }
 }
 
-void CX01MainWindow::submit_score_to_player_slot(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
+void CX01MainWindow::submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
 {
   mPlayerBox[mActivePlayer]->submit_score(iScore, iNumberOfDarts, iCheckoutAttempts, iDarts);
 }
@@ -250,47 +233,47 @@ void CX01MainWindow::undo_button_clicked_slot()
   mDartBoard->perform_undo();
 }
 
-void CX01MainWindow::display_score_slot(uint32_t iScore)
+void CX01MainWindow::display_score(uint32_t iScore)
 {
   mUi->currentRemainingLCD->display(static_cast<int>(iScore));
 }
 
-void CX01MainWindow::display_dart1_slot(uint32_t iVal)
+void CX01MainWindow::display_dart1(uint32_t iVal)
 {
   mUi->dart1LCD->display(static_cast<int>(iVal));
 }
 
-void CX01MainWindow::display_dart2_slot(uint32_t iVal)
+void CX01MainWindow::display_dart2(uint32_t iVal)
 {
   mUi->dart2LCD->display(static_cast<int>(iVal));
 }
 
-void CX01MainWindow::display_dart3_slot(uint32_t iVal)
+void CX01MainWindow::display_dart3(uint32_t iVal)
 {
   mUi->dart3LCD->display(static_cast<int>(iVal));
 }
 
-void CX01MainWindow::erase_dart1_slot()
+void CX01MainWindow::erase_dart1()
 {
   mUi->dart1LCD->display("--");
 }
 
-void CX01MainWindow::erase_dart2_slot()
+void CX01MainWindow::erase_dart2()
 {
   mUi->dart2LCD->display("--");
 }
 
-void CX01MainWindow::erase_dart3_slot()
+void CX01MainWindow::erase_dart3()
 {
   mUi->dart3LCD->display("--");
 }
 
-void CX01MainWindow::update_finishes_slot(uint32_t iScore, uint32_t iNumberOfDarts)
+void CX01MainWindow::update_finishes(uint32_t iScore, uint32_t iNumberOfDarts)
 {
   mPlayerBox[mActivePlayer]->display_finishes(iScore, iNumberOfDarts);
 }
 
-void CX01MainWindow::set_focus_to_submit_button_slot()
+void CX01MainWindow::set_focus_to_submit_button()
 {
   mUi->submitButton->setFocus();
 }

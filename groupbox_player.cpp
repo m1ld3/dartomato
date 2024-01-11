@@ -1,8 +1,8 @@
 #include "groupbox_player.h"
 #include "ui_groupbox_player.h"
 #include "dialognameinput.h"
+#include "statswindow.h"
 #include "QPixmap"
-#include <QDebug>
 #include <sstream>
 #include <iomanip>
 #include <QMessageBox>
@@ -11,6 +11,7 @@
 #include <xo1mainwindow.h>
 #include <checkoutlists.h>
 #include <string>
+#include <QPointer>
 
 CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
                            uint32_t iPlayerNumber, CX01Class * const iPlayer, CDartBoardX01 * iDartBoard)
@@ -27,11 +28,10 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
   mUi->lcdNumber->display(static_cast<int>(mpSettings.mGame));
-  mUi->lcdNumber->setPalette(Qt::darkBlue);
   QString text = "Player " + QString::number(iPlayerNumber);
   mUi->label_playername->setText(text);
   display_stats_and_finishes();
-  mGameWindow = dynamic_cast<CX01MainWindow*>(iParent);
+  mpGameWindow = static_cast<CX01MainWindow*>(iParent);
   connect_slots();
 }
 
@@ -127,18 +127,18 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   mPlayer->update_checkout(iCheckoutAttempts, 1);
   newSet = mPlayer->increment_won_legs_and_check_if_set_won();
   play_score_sound();
-  emit signal_update_history();
-  emit signal_reset_scores();
+  update_history_of_all_players();
+  reset_scores_of_all_players();
   CX01GroupBox::mLegAlreadyStarted = false;
 
   if (newSet)
   {
-    emit signal_update_player(EUpdateType::SET);
+    update_players(EUpdateType::SET);
     CX01GroupBox::mSetAlreadyStarted = false;
   }
   else
   {
-    emit signal_update_player(EUpdateType::LEG);
+    update_players(EUpdateType::LEG);
   }
 
   set_lcd_legs_and_sets();
@@ -149,7 +149,7 @@ void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
   mPlayer->update_checkout(iCheckoutAttempts, 0);
   play_score_sound();
   mUi->lcdNumber->display(static_cast<int>(mRemaining));
-  emit signal_update_player(EUpdateType::DEFAULT);
+  update_players(EUpdateType::DEFAULT);
 }
 
 void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
@@ -180,7 +180,7 @@ void CX01GroupBox::player_active_button_pressed_slot()
 
     if (reply == QMessageBox::Yes)
     {
-      emit signal_inactivate_players(mPlayer->get_player_number(), CX01GroupBox::mLegAlreadyStarted, CX01GroupBox::mSetAlreadyStarted);
+      inactivate_players(mPlayer->get_player_number(), CX01GroupBox::mLegAlreadyStarted, CX01GroupBox::mSetAlreadyStarted);
       set_active();
       mDartBoard->init_dartboard(mRemaining);
     }
@@ -319,7 +319,27 @@ void CX01GroupBox::perform_undo()
   {
     unset_finished();
     mDartBoard->unset_finished();
-  }
+    }
+}
+
+void CX01GroupBox::update_players(const EUpdateType iType)
+{
+  mpGameWindow->update_players(iType);
+}
+
+void CX01GroupBox::reset_scores_of_all_players()
+{
+  mpGameWindow->reset_scores_of_all_players();
+}
+
+void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
+{
+  mpGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
+}
+
+void CX01GroupBox::update_history_of_all_players()
+{
+  mpGameWindow->update_history_of_all_players();
 }
 
 void CX01GroupBox::push_button_stats_clicked_slot()

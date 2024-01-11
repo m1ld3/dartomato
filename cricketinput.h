@@ -5,7 +5,6 @@
 #include <QGraphicsView>
 #include "dartboardsegment.h"
 #include <QLCDNumber>
-#include "undobutton.h"
 #include <QLabel>
 #include <QGraphicsSvgItem>
 #ifndef USE_TTS
@@ -16,6 +15,7 @@
 
 class CCricketMainWindow;
 class CCricketClass;
+class CCricketGroupBox;
 
 namespace Ui
 {
@@ -39,20 +39,12 @@ class CCricketInput : public QDialog
 
 public:
 
-  void set_score_labels(uint32_t iValue, QChar iType);
-  void compute_score();
+  CCricketInput(QWidget * iParent, const CSettings & ipSettings,
+                CCricketClass * iPlayer = nullptr, CCricketMainWindow * ipGameWindow = nullptr);
+  ~CCricketInput();
   bool are_slots_full() const;
   void handle_segment_pressed_event(uint32_t iVal, QChar & iType);
-
-signals:
-
-  void signal_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
-
-public:
-
-  CCricketInput(QWidget * iParent, const CSettings & ipSettings,
-                CCricketClass * iPlayer = nullptr, CCricketMainWindow * iGameWindow = nullptr);
-  ~CCricketInput();
+  void notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
 
 private slots:
 
@@ -61,6 +53,8 @@ private slots:
 
 private:
 
+  void compute_score();
+  void set_score_labels(uint32_t iValue, QChar iType);
   void process_segment_cutthroat();
   void process_segment_default();
   void compute_cutthroat_scores_for_other_players(QVector<uint32_t> & iScores);
@@ -81,10 +75,9 @@ private:
   QLCDNumber * mScoreDart1;
   QLCDNumber * mScoreDart2;
   QLCDNumber * mScoreDart3;
-  CUndoButton * mUndoButton;
   QVector<QString> mDarts{"","",""};
   CCricketClass * mPlayer;
-  CCricketMainWindow * mGameWindow;
+  CCricketMainWindow * mpGameWindow;
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
@@ -94,6 +87,7 @@ private:
   uint32_t mScore;
   CDartBoardCricket * mDartBoard;
   const CSettings & mpSettings;
+  CCricketGroupBox * mpGroupBox;
 };
 
 #endif  // CRICKETINPUT_H

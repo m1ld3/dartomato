@@ -3,8 +3,8 @@
 #include "groupbox_cricket.h"
 #include "cricketclass.h"
 #include <QString>
-#include <QDebug>
 #include <QMessageBox>
+#include <QCloseEvent>
 
 
 CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & ipSettings)
@@ -22,11 +22,6 @@ CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & ipSe
     mCricketBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mCricketBox[i]->set_inactive();
     mUi->gridLayoutCricket->addWidget(mCricketBox[i], i<4 ? 0 : 1, i%4);
-    connect(mCricketBox[i], &CCricketGroupBox::signal_update_player, this, &CCricketMainWindow::update_player_slot);
-    connect(mCricketBox[i], &CCricketGroupBox::signal_reset_scores, this, &CCricketMainWindow::reset_scores_slot);
-    connect(mCricketPlayer[i], &CCricketClass::signal_game_won, this, &CCricketMainWindow::game_won_slot);
-    connect(mCricketBox[i], &CCricketGroupBox::signal_inactivate_players, this, &CCricketMainWindow::inactivate_players_slot);
-    connect(mCricketBox[i], &CCricketGroupBox::signal_update_history, this, &CCricketMainWindow::update_history_slot);
   }
 
   mCricketBox[mActivePlayer]->set_set_begin();
@@ -62,7 +57,7 @@ void CCricketMainWindow::set_active_player(uint32_t iPlayer)
   mActivePlayer = iPlayer;
 }
 
-void CCricketMainWindow::update_player()
+void CCricketMainWindow::update_active_player()
 {
   mActivePlayer = (mActivePlayer + 1) % mpSettings.mNumberOfPlayers;
 }
@@ -77,7 +72,7 @@ void CCricketMainWindow::inactivate_all_players()
 
 void CCricketMainWindow::handle_update_default()
 {
-  update_player();
+  update_active_player();
   inactivate_all_players();
   mCricketBox[mActivePlayer]->set_active();
 }
@@ -91,7 +86,7 @@ void CCricketMainWindow::handle_update_leg()
     {
       mCricketBox[i]->unset_leg_begin();
       mActivePlayer = i;
-      update_player();
+      update_active_player();
       mCricketBox[mActivePlayer]->set_active();
       mCricketBox[mActivePlayer]->set_leg_begin();
       break;
@@ -117,7 +112,7 @@ void CCricketMainWindow::handle_update_set()
     {
       mCricketBox[i]->unset_set_begin();
       mActivePlayer = i;
-      update_player();
+      update_active_player();
       mCricketBox[mActivePlayer]->set_active();
       mCricketBox[mActivePlayer]->set_leg_begin();
       mCricketBox[mActivePlayer]->set_set_begin();
@@ -131,7 +126,7 @@ void CCricketMainWindow::handle_update_set()
   }
 }
 
-void CCricketMainWindow::update_player_slot(const EUpdateType iType)
+void CCricketMainWindow::update_players(const EUpdateType iType)
 {
   if (iType == EUpdateType::DEFAULT)
   {
@@ -147,7 +142,7 @@ void CCricketMainWindow::update_player_slot(const EUpdateType iType)
   }
 }
 
-void CCricketMainWindow::reset_scores_slot()
+void CCricketMainWindow::reset_scores_of_all_players()
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -155,7 +150,7 @@ void CCricketMainWindow::reset_scores_slot()
   }
 }
 
-void CCricketMainWindow::game_won_slot(uint32_t iPlayerNumber)
+void CCricketMainWindow::handle_game_won(uint32_t iPlayerNumber)
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {
@@ -176,7 +171,7 @@ void CCricketMainWindow::unset_set_begin_for_all_players()
   }
 }
 
-void CCricketMainWindow::inactivate_players_slot(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
+void CCricketMainWindow::inactivate_players(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
 {
   inactivate_all_players();
   set_active_player(iPlayerNumber);
@@ -196,7 +191,7 @@ void CCricketMainWindow::inactivate_players_slot(uint32_t iPlayerNumber, bool iL
   }
 }
 
-void CCricketMainWindow::update_history_slot()
+void CCricketMainWindow::update_history_of_all_players()
 {
   for (uint32_t i = 0; i < mpSettings.mNumberOfPlayers; i++)
   {

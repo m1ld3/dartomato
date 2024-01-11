@@ -1,4 +1,5 @@
 #include "cdartboard_base.h"
+#include "dartboardsegment.h"
 #include "cmath"
 #include <QMessageBox>
 #ifdef USE_TTS

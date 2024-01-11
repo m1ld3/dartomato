@@ -2,7 +2,6 @@
 #define CSETTINGS_H
 
 #include <stdint.h>
-#include <unordered_map>
 
 //#define USE_TTS
 
