@@ -8,7 +8,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17 \ resources_big
 
-RC_ICONS = dartomat.ico
+RC_ICONS = img/dartomat.ico
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -22,59 +22,61 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    cdartboard_base.cpp \
-    cricketclass.cpp \
-    cricketinput.cpp \
-    cricketmainwindow.cpp \
-    dartboard.cpp \
-    dartboard_cricket.cpp \
-    dartboardsegment.cpp \
-    dartboardview.cpp \
-    dialognameinput.cpp \
-    groupbox_cricket.cpp \
-    groupbox_player.cpp \
-    main.cpp \
-    dartomatmain.cpp \
-    myqspinbox.cpp \
-    playeractivebutton.cpp \
-    playerclass.cpp \
-    statswindow.cpp \
-    xo1mainwindow.cpp
+    src/cricket_class.cpp \
+    src/cricket_input.cpp \
+    src/cricket_mainwindow.cpp \
+    src/dartboard_base.cpp \
+    src/dartboard_cricket.cpp \
+    src/dartboard_segment.cpp \
+    src/dartboard_view.cpp \
+    src/dartboard_x01.cpp \
+    src/dartomat_mainwindow.cpp \
+    src/dialog_name_input.cpp \
+    src/groupbox_cricket.cpp \
+    src/groupbox_x01.cpp \
+    src/main.cpp \
+    src/player_active_button.cpp \
+    src/playerclass.cpp \
+    src/spinbox.cpp \
+    src/stats_window.cpp \
+    src/x01_mainwindow.cpp
 
 HEADERS += \
-    cdartboard_base.h \
-    checkoutlists.h \
-    cricketclass.h \
-    cricketinput.h \
-    cricketmainwindow.h \
-    dartboard.h \
-    dartboard_cricket.h \
-    dartboardsegment.h \
-    dartboardview.h \
-    dartomatmain.h \
-    dialognameinput.h \
-    groupbox_cricket.h \
-    groupbox_player.h \
-    myqspinbox.h \
-    playeractivebutton.h \
-    playerclass.h \
-    settings.h \
-    statswindow.h \
-    xo1mainwindow.h
+    inc/checkout_lists.h \
+    inc/cricket_class.h \
+    inc/cricket_input.h \
+    inc/cricket_mainwindow.h \
+    inc/dartboard_base.h \
+    inc/dartboard_cricket.h \
+    inc/dartboard_segment.h \
+    inc/dartboard_view.h \
+    inc/dartboard_x01.h \
+    inc/dartomat_mainwindow.h \
+    inc/dialog_name_input.h \
+    inc/groupbox_cricket.h \
+    inc/groupbox_x01.h \
+    inc/player_active_button.h \
+    inc/playerclass.h \
+    inc/settings.h \
+    inc/spinbox.h \
+    inc/stats_window.h \
+    inc/x01_mainwindow.h
+
+INCLUDEPATH = inc/
 
 FORMS += \
-    dartomatmain.ui \
-    dialognameinput.ui \
-    groupbox_cricket.ui \
-    groupbox_player.ui \
-    statswindow.ui \
-    cricketinput.ui \
-    cricketmainwindow.ui \
-    xo1mainwindow.ui
+    ui/cricket_input.ui \
+    ui/cricket_mainwindow.ui \
+    ui/dartomat_mainwindow.ui \
+    ui/dialog_name_input.ui \
+    ui/groupbox_cricket.ui \
+    ui/groupbox_x01.ui \
+    ui/stats_window.ui \
+    ui/x01_mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    resources.qrc
+    resources/resources.qrc
