@@ -5,8 +5,8 @@
 
 CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * ipX01MainWindow, const CSettings & ipSettings)
   : CDartBoard(iGraphicsViewDartBoard, ipSettings)
+  , mpGameWindow(static_cast<CX01MainWindow*>(ipX01MainWindow))
 {
-  mpGameWindow = static_cast<CX01MainWindow*>(ipX01MainWindow);
   erase_all_darts();
   display_score(mScore);
 }

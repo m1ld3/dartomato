@@ -6,6 +6,8 @@
 #include "cricket_mainwindow.h"
 #include "settings.h"
 
+class CGameDataHandler;
+
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
@@ -21,6 +23,7 @@ public:
 
   CDartomatMain(QWidget * iParent = nullptr);
   ~CDartomatMain();
+  void add_new_players(const QVector<QString> & iPlayers);
 
 private slots:
 
@@ -39,6 +42,7 @@ private:
   QSoundEffect mGameOnSound;
 #endif
   CSettings mSettings;
+  QPointer<CGameDataHandler> mGameDataHandler;
 };
 
 #endif  // DARTOMAT_MAINWINDOW_H

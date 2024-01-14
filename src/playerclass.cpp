@@ -4,13 +4,13 @@
 
 CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings)
   : QObject(iParent)
+  , mpGameWindow(static_cast<CX01MainWindow*>(iParent))
   , mpSettings(ipSettings)
   , mRemaining(static_cast<uint32_t>(mpSettings.mGame))
   , mMarginLegs(std::ceil(mpSettings.mLegs/2.0))
   , mMarginSets(std::ceil(mpSettings.mSets/2.0))
   , mPlayerNumber(iPlayerNumber-1)
 {
-  mpGameWindow = static_cast<CX01MainWindow*>(iParent);
   mRemainingPointsOfCurrentLeg.push_back(mRemaining);
   compute_averages(0);
   update_checkout(0, 0);

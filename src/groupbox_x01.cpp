@@ -22,6 +22,7 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
   , mDartBoard(iDartBoard)
   , mpSettings(ipSettings)
   , mRemaining(static_cast<uint32_t>(mpSettings.mGame))
+  , mpGameWindow(static_cast<CX01MainWindow*>(iParent))
 #ifndef USE_TTS
   , mScoreSound(this)
 #endif
@@ -32,7 +33,6 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
   QString text = "Player " + QString::number(iPlayerNumber);
   mUi->labelPlayerName->setText(text);
   display_stats_and_finishes();
-  mpGameWindow = static_cast<CX01MainWindow*>(iParent);
   connect_slots();
 }
 

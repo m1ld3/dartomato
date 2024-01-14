@@ -17,10 +17,10 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & ipSettings, CC
   , mpGameWindow(ipGameWindow)
   , mScore(mPlayer->get_score())
   , mpSettings(ipSettings)
+  , mpGroupBox(static_cast<CCricketGroupBox*>(iParent))
 {
   mUi->setupUi(this);
   mUi->submitButton->setAutoDefault(true);
-  mpGroupBox = static_cast<CCricketGroupBox*>(iParent);
 
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
   {

@@ -1,7 +1,6 @@
 #include "dartboard_base.h"
 #include "dartboard_segment.h"
 #include "cmath"
-#include <QMessageBox>
 #ifdef USE_TTS
 #include <QtTextToSpeech>
 #endif

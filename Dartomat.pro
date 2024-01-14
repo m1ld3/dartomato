@@ -22,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    src/game_data_handler.cpp \
     src/cricket_class.cpp \
     src/cricket_input.cpp \
     src/cricket_mainwindow.cpp \
@@ -39,9 +40,11 @@ SOURCES += \
     src/playerclass.cpp \
     src/spinbox.cpp \
     src/stats_window.cpp \
-    src/x01_mainwindow.cpp
+    src/x01_mainwindow.cpp \
+    src/add_players_dialog.cpp
 
 HEADERS += \
+    inc/game_data_handler.h \
     inc/checkout_lists.h \
     inc/cricket_class.h \
     inc/cricket_input.h \
@@ -60,11 +63,13 @@ HEADERS += \
     inc/settings.h \
     inc/spinbox.h \
     inc/stats_window.h \
-    inc/x01_mainwindow.h
+    inc/x01_mainwindow.h \
+    inc/add_players_dialog.h
 
 INCLUDEPATH = inc/
 
 FORMS += \
+    ui/add_players_dialog.ui \
     ui/cricket_input.ui \
     ui/cricket_mainwindow.ui \
     ui/dartomat_mainwindow.ui \

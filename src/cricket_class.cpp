@@ -4,10 +4,10 @@
 
 CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings)
   : QObject(iParent)
+  , mpGameWindow(static_cast<CCricketMainWindow*>(iParent))
   , mPlayerNumber(iPlayerNumber-1)
   , mpSettings(ipSettings)
 {
-  mpGameWindow = static_cast<CCricketMainWindow*>(iParent);
   mMarginLegs = std::ceil(mpSettings.mLegs/2.0);
   mMarginSets = std::ceil(mpSettings.mSets/2.0);
   mHitsPerRound = compute_hits_per_round(0,0);

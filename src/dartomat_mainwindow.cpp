@@ -1,11 +1,15 @@
 #include "dartomat_mainwindow.h"
 #include "ui_dartomat_mainwindow.h"
+#include "game_data_handler.h"
+#include "add_players_dialog.h"
 #include <QPushButton>
 #include <QVector>
 #include <QGridLayout>
 #ifndef USE_TTS
 #include <QSoundEffect>
 #endif
+#include <QJsonArray>
+#include <QMessageBox>
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
@@ -23,18 +27,26 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
 #endif
 
+  mGameDataHandler = new CGameDataHandler(this);
+
   connect(mUi->pushButtonStartGame, &QPushButton::clicked, this, &CDartomatMain::push_button_startgame_clicked_slot);
   connect(mUi->comboBoxGame, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index)
   {
     const QString game = mUi->comboBoxGame->itemText(index);
     combo_box_game_current_index_changed_slot(game);
   });
+  connect(mUi->pushButtonSelectPlayers, &QPushButton::clicked, this, &CDartomatMain::push_button_select_players_clicked_slot);
 }
 
 
 CDartomatMain::~CDartomatMain()
 {
   delete mUi;
+}
+
+void CDartomatMain::add_new_players(const QVector<QString> & iPlayers)
+{
+  mGameDataHandler->add_new_players(iPlayers);
 }
 
 
@@ -97,7 +109,23 @@ void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iG
 
 void CDartomatMain::push_button_select_players_clicked_slot()
 {
-
+  QJsonArray playerArray = mGameDataHandler->read_players_array();
+  if (!playerArray.size())
+  {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Select Players", "There are no players available yet. Do you want to add new player?",
+                          QMessageBox::Yes|QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+      QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(this);
+      dialog->show();
+    }
+  }
+  else
+  {
+    QPointer<QDialog> dialog = new QDialog();
+    dialog->show();
+  }
 }
 
 void CDartomatMain::play_game_on_sound()
