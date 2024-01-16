@@ -4,6 +4,8 @@
 #include <QDialog>
 
 class CDartomatMain;
+class CGameDataHandler;
+class CGameDataModel;
 
 namespace Ui
 {
@@ -16,12 +18,12 @@ class CAddPlayersDialog : public QDialog
 
 public:
 
-  explicit CAddPlayersDialog(QWidget *parent = nullptr);
+  explicit CAddPlayersDialog(CGameDataModel & iGameDataModel, QWidget * iParent = nullptr);
   ~CAddPlayersDialog();
 
 private slots:
 
-  void push_button_ok_clicked_slot();
+  void push_button_add_clicked_slot();
   void push_button_submit_clicked_slot();
   void push_button_cancel_clicked_slot();
 
@@ -30,6 +32,7 @@ private:
   Ui::CAddPlayersDialog * mUi;
   QVector<QString> mNewPlayerNames;
   CDartomatMain * const mpMainWindow;
+  CGameDataModel & mGameDataModel;
 };
 
 #endif  // ADD_PLAYERS_DIALOG_H

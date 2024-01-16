@@ -2,8 +2,7 @@
 #include <QFile>
 #include <QJsonArray>
 
-CGameDataHandler::CGameDataHandler(QObject * iParent)
-  : QObject(iParent)
+CGameDataHandler::CGameDataHandler()
 {
   initialize_game_data_file();
 }
@@ -20,14 +19,14 @@ bool CGameDataHandler::initialize_game_data_file()
       return false;
     }
     QByteArray jsonData = file.readAll();
-    mGameData = std::make_unique<QJsonDocument>(QJsonDocument(QJsonDocument::fromJson(jsonData)));
+    mGameDocument = QJsonDocument(QJsonDocument::fromJson(jsonData));
   }
   else if (file.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QJsonObject root;
     root["players"] = QJsonArray();
-    mGameData = std::make_unique<QJsonDocument>(root);
-    file.write(mGameData->toJson());
+    mGameDocument = QJsonDocument(root);
+    file.write(mGameDocument.toJson());
     file.close();
   }
   else
@@ -35,7 +34,7 @@ bool CGameDataHandler::initialize_game_data_file()
     qWarning() << "Failed to initialize JSON file.";
   }
 
-  if (!mGameData->isObject())
+  if (!mGameDocument.isObject())
   {
     qWarning() << "Invalid JSON document";
     return false;
@@ -46,34 +45,29 @@ bool CGameDataHandler::initialize_game_data_file()
 
 QJsonArray CGameDataHandler::read_players_array() const
 {
-  if (mGameData && mGameData->isObject())
+  if (mGameDocument.isObject())
   {
-    QJsonObject root = mGameData->object();
+    QJsonObject root = mGameDocument.object();
     if (root.contains("players") && root["players"].isArray()) return root["players"].toArray();
   }
   return QJsonArray();
 }
 
-bool CGameDataHandler::add_new_players(const QVector<QString> & iPlayers)
+bool CGameDataHandler::add_new_player(const QString & iPlayerName)
 {
-  QJsonObject root = mGameData->object();
-  QJsonArray existingPlayersArray = root["players"].toArray();
-  QJsonArray newPlayersArray = QJsonArray::fromStringList(iPlayers);
-
-  for (const auto & newPlayer : newPlayersArray)
-  {
-    if (!existingPlayersArray.contains(newPlayer))
-    {
-      existingPlayersArray.append(newPlayer);
-    }
-  }
-
-  root["players"] = existingPlayersArray;
+  QJsonObject newPlayer;
+  newPlayer["name"] = iPlayerName;
+  if (!mGameDocument["players"].isArray()) return false;
+  QJsonObject root = mGameDocument.object();
+  QJsonArray playersArray = root["players"].toArray();
+  playersArray.append(newPlayer);
+  root["players"] = playersArray;
+  mGameDocument.setObject(root);
 
   QFile saveFile("game_data.json");
   if (saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    saveFile.write(QJsonDocument(root).toJson());
+    saveFile.write(mGameDocument.toJson());
     saveFile.close();
     return true;
   }
@@ -82,4 +76,21 @@ bool CGameDataHandler::add_new_players(const QVector<QString> & iPlayers)
     qWarning() << "Could not save the updated data.";
     return false;
   }
+}
+
+QStringList CGameDataHandler::get_player_names() const
+{
+  QStringList playerNames;
+  if (!mGameDocument["players"].isArray()) return playerNames;
+
+  QJsonArray playersArray = mGameDocument["players"].toArray();
+  for (const QJsonValue & player : playersArray)
+  {
+    if (player.isObject() && player.toObject().contains("name") && player.toObject()["name"].isString())
+    {
+      playerNames.append(player.toObject()["name"].toString());
+    }
+  }
+
+  return playerNames;
 }

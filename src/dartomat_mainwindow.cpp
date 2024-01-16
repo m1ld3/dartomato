@@ -1,6 +1,5 @@
 #include "dartomat_mainwindow.h"
 #include "ui_dartomat_mainwindow.h"
-#include "game_data_handler.h"
 #include "add_players_dialog.h"
 #include <QPushButton>
 #include <QVector>
@@ -16,6 +15,8 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   , mUi(new Ui::CDartomatMain)
 #ifndef USE_TTS
   , mGameOnSound(this)
+  , mGameDataHandler(CGameDataHandler())
+  , mGameDataModel(CGameDataModel(mGameDataHandler, this))
 #endif
 {
   mUi->setupUi(this);
@@ -27,8 +28,6 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
 #endif
 
-  mGameDataHandler = new CGameDataHandler(this);
-
   connect(mUi->pushButtonStartGame, &QPushButton::clicked, this, &CDartomatMain::push_button_startgame_clicked_slot);
   connect(mUi->comboBoxGame, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index)
   {
@@ -36,19 +35,13 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
     combo_box_game_current_index_changed_slot(game);
   });
   connect(mUi->pushButtonSelectPlayers, &QPushButton::clicked, this, &CDartomatMain::push_button_select_players_clicked_slot);
+  connect(mUi->pushButtonCreatePlayers, &QPushButton::clicked, this, &CDartomatMain::push_button_create_players_clicked_slot);
 }
-
 
 CDartomatMain::~CDartomatMain()
 {
   delete mUi;
 }
-
-void CDartomatMain::add_new_players(const QVector<QString> & iPlayers)
-{
-  mGameDataHandler->add_new_players(iPlayers);
-}
-
 
 void CDartomatMain::push_button_startgame_clicked_slot()
 {
@@ -107,25 +100,35 @@ void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iG
   }
 }
 
+void CDartomatMain::open_add_players_dialog()
+{
+  QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(mGameDataModel, this);
+  dialog->show();
+}
+
 void CDartomatMain::push_button_select_players_clicked_slot()
 {
-  QJsonArray playerArray = mGameDataHandler->read_players_array();
-  if (!playerArray.size())
+  QStringList playerList = mGameDataHandler.get_player_names();
+  if (playerList.isEmpty())
   {
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Select Players", "There are no players available yet. Do you want to add new player?",
                           QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
-      QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(this);
-      dialog->show();
+      open_add_players_dialog();
     }
   }
   else
   {
     QPointer<QDialog> dialog = new QDialog();
     dialog->show();
-  }
+    }
+}
+
+void CDartomatMain::push_button_create_players_clicked_slot()
+{
+  open_add_players_dialog();
 }
 
 void CDartomatMain::play_game_on_sound()

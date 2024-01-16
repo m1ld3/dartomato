@@ -5,21 +5,20 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-class CGameDataHandler : public QObject
+class CGameDataHandler
 {
-  Q_OBJECT
-
 public:
 
-  CGameDataHandler(QObject * iParent = nullptr);
+  CGameDataHandler();
   ~CGameDataHandler() = default;
   bool initialize_game_data_file();
   QJsonArray read_players_array() const;
-  bool add_new_players(const QVector<QString> & iPlayers);
+  bool add_new_player(const QString & iPlayerName);
+  QStringList get_player_names() const;
 
 private:
 
-  std::unique_ptr<QJsonDocument> mGameData;
+  QJsonDocument mGameDocument;
 
 };
 

@@ -5,6 +5,8 @@
 #include "x01_mainwindow.h"
 #include "cricket_mainwindow.h"
 #include "settings.h"
+#include "game_data_handler.h"
+#include "game_data_model.h"
 
 class CGameDataHandler;
 
@@ -23,13 +25,14 @@ public:
 
   CDartomatMain(QWidget * iParent = nullptr);
   ~CDartomatMain();
-  void add_new_players(const QVector<QString> & iPlayers);
-
+  void open_add_players_dialog();
+  
 private slots:
 
   void push_button_startgame_clicked_slot();
   void combo_box_game_current_index_changed_slot(const QString & iGame);
   void push_button_select_players_clicked_slot();
+  void push_button_create_players_clicked_slot();
 
 private:
 
@@ -42,7 +45,8 @@ private:
   QSoundEffect mGameOnSound;
 #endif
   CSettings mSettings;
-  QPointer<CGameDataHandler> mGameDataHandler;
+  CGameDataHandler mGameDataHandler;
+  CGameDataModel mGameDataModel;
 };
 
 #endif  // DARTOMAT_MAINWINDOW_H

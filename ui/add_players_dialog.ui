@@ -61,7 +61,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QListWidget" name="listWidgetPlayers"/>
+    <widget class="QListView" name="listViewPlayers"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
