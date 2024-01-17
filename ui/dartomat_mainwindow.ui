@@ -325,13 +325,6 @@
           </item>
          </layout>
         </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonCreatePlayers">
-          <property name="text">
-           <string>Create Players</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>

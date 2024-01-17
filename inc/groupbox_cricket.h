@@ -51,7 +51,6 @@ public:
 
 private slots:
 
-  void push_button_name_clicked_slot();
   void push_button_score_clicked_slot();
   void ok_button_clicked_slot(const QString & iName);
   void player_active_button_pressed_slot();

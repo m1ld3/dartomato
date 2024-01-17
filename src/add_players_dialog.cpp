@@ -12,6 +12,7 @@ CAddPlayersDialog::CAddPlayersDialog(CGameDataModel & iGameDataModel, QWidget * 
 {
   mUi->setupUi(this);
   mUi->listViewPlayers->setModel(&mGameDataModel);
+  mUi->listViewPlayers->setSelectionMode(QAbstractItemView::MultiSelection);
 
   connect(mUi->pushButtonAdd, &QPushButton::clicked, this, &CAddPlayersDialog::push_button_add_clicked_slot);
   connect(mUi->pushButtonSubmit, &QPushButton::clicked, this, &CAddPlayersDialog::push_button_submit_clicked_slot);
@@ -38,6 +39,27 @@ void CAddPlayersDialog::push_button_add_clicked_slot()
 
 void CAddPlayersDialog::push_button_submit_clicked_slot()
 {
+  QModelIndexList selectedIndexes = mUi->listViewPlayers->selectionModel()->selectedIndexes();
+  QStringList selectedPlayers;
+
+
+  for (const auto & idx : selectedIndexes)
+  {
+    selectedPlayers.append(idx.data().toString());
+  }
+
+  if (selectedPlayers.size() > 8)
+  {
+    QMessageBox::warning(this, "Too many players selected!", "You can only select eight players.");
+    return;
+  }
+  if (selectedPlayers.isEmpty())
+  {
+    QMessageBox::warning(this, "No players selected!", "Please select at least one player.");
+  }
+
+  mpMainWindow->handle_selected_players(selectedPlayers);
+
   close();
 }
 

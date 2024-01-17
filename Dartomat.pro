@@ -23,7 +23,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     game_data_model.cpp \
-    src/select_players_dialog.cpp \
     src/game_data_handler.cpp \
     src/cricket_class.cpp \
     src/cricket_input.cpp \
@@ -34,7 +33,6 @@ SOURCES += \
     src/dartboard_view.cpp \
     src/dartboard_x01.cpp \
     src/dartomat_mainwindow.cpp \
-    src/dialog_name_input.cpp \
     src/groupbox_cricket.cpp \
     src/groupbox_x01.cpp \
     src/main.cpp \
@@ -58,7 +56,6 @@ HEADERS += \
     inc/dartboard_view.h \
     inc/dartboard_x01.h \
     inc/dartomat_mainwindow.h \
-    inc/dialog_name_input.h \
     inc/groupbox_cricket.h \
     inc/groupbox_x01.h \
     inc/player_active_button.h \
@@ -67,18 +64,15 @@ HEADERS += \
     inc/spinbox.h \
     inc/stats_window.h \
     inc/x01_mainwindow.h \
-    inc/add_players_dialog.h \
-    inc/select_players_dialog.h
+    inc/add_players_dialog.h
 
 INCLUDEPATH = inc/
 
 FORMS += \
-    ui/select_players_dialog.ui \
     ui/add_players_dialog.ui \
     ui/cricket_input.ui \
     ui/cricket_mainwindow.ui \
     ui/dartomat_mainwindow.ui \
-    ui/dialog_name_input.ui \
     ui/groupbox_cricket.ui \
     ui/groupbox_x01.ui \
     ui/stats_window.ui \

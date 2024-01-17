@@ -61,7 +61,7 @@ private:
   QVector<CX01Class*> mPlayer;
   CDartBoardX01 * mDartBoard;
   const CSettings & mpSettings;
-
+  const uint32_t mNumberOfPlayers = 1;
 };
 
 #endif  // X01MAINWINDOW_H

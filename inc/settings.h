@@ -2,6 +2,7 @@
 #define CSETTINGS_H
 
 #include <stdint.h>
+#include <QStringList>
 
 //#define USE_TTS
 
@@ -34,11 +35,11 @@ enum class ECricketSlots
 
 struct CSettings
 {
-  CSettings(EGame iGame, uint32_t iPlayers, uint32_t iSets, uint32_t iLegs,
+  CSettings(EGame iGame, QStringList iPlayers, uint32_t iSets, uint32_t iLegs,
             bool iSingleIn, bool iSingleOut, bool iDoubleIn, bool iDoubleOut,
             bool iMasterIn, bool iMasterOut, bool iCutThroat)
   : mGame(iGame)
-  , mNumberOfPlayers(iPlayers)
+  , mPlayersList(iPlayers)
   , mSets(iSets)
   , mLegs(iLegs)
   , mSingleIn(iSingleIn)
@@ -53,7 +54,7 @@ struct CSettings
   CSettings(){}
 
   EGame mGame = EGame::GAME_301;
-  uint32_t mNumberOfPlayers = 1;
+  QStringList mPlayersList = {};
   uint32_t mSets = 1;
   uint32_t mLegs = 1;
   bool mSingleIn = true;

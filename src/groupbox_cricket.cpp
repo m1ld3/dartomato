@@ -2,7 +2,6 @@
 #include "ui_groupbox_cricket.h"
 #include "cricket_mainwindow.h"
 #include <QMessageBox>
-#include "dialog_name_input.h"
 #include <string>
 #include <QString>
 #include <algorithm>
@@ -28,10 +27,9 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
     set_extra_points_label(static_cast<ECricketSlots>(i), mPlayer->get_extra_points(static_cast<ECricketSlots>(i)));
   }
 
-  QString text = "Player " + QString::number(mPlayerNumber);
-  mUi->labelPlayerName->setText(text);
+  mUi->labelPlayerName->setText(mpSettings.mPlayersList.at(iPlayerNumber - 1));
   QString hitsPerRound = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
-  mUi->labelHitsPerRound->setText(hitsPerRound);
+  mUi->labelHitsPerRoundInput->setText(hitsPerRound);
   connect_slots();
 }
 
@@ -43,7 +41,6 @@ CCricketGroupBox::~CCricketGroupBox()
 void CCricketGroupBox::connect_slots()
 {
   connect(mUi->labelPic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CCricketGroupBox::player_active_button_pressed_slot);
-  connect(mUi->pushButtonName, &QPushButton::clicked, this, &CCricketGroupBox::push_button_name_clicked_slot);
   connect(mUi->pushButtonScore, &QPushButton::clicked, this, &CCricketGroupBox::push_button_score_clicked_slot);
   connect(mUi->pushButtonUndo, &QPushButton::clicked, this, &CCricketGroupBox::push_button_undo_clicked_slot);
 }
@@ -80,14 +77,6 @@ void CCricketGroupBox::close_cricket_input()
 QString CCricketGroupBox::get_player_number() const
 {
   return mUi->labelPlayerName->text();
-}
-
-void CCricketGroupBox::push_button_name_clicked_slot()
-{
-  QPointer<CDialogNameInput> dn = new CDialogNameInput(this, mUi->labelPlayerName->text());
-  dn->setAttribute(Qt::WA_DeleteOnClose);
-  connect(dn, &CDialogNameInput::signal_ok_button_clicked, this, &CCricketGroupBox::ok_button_clicked_slot);
-  dn->show();
 }
 
 void CCricketGroupBox::ok_button_clicked_slot(const QString & iName)
@@ -232,7 +221,7 @@ void CCricketGroupBox::submit_score_to_player(uint32_t iNumberOfDarts, const QVe
   mPlayer->compute_hits_per_round(iNumberOfDarts, mTotalHits);
   mPlayer->update_darts(iDarts);
   QString hpr = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
-  mUi->labelHitsPerRound->setText(hpr);
+  mUi->labelHitsPerRoundInput->setText(hpr);
 }
 
 void CCricketGroupBox::handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts)
@@ -589,7 +578,7 @@ void CCricketGroupBox::perform_undo()
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer->get_legs()));
   mUi->lcdNumberSets->display(static_cast<int>(mPlayer->get_sets()));
   QString hpr = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
-  mUi->labelHitsPerRound->setText(hpr);
+  mUi->labelHitsPerRoundInput->setText(hpr);
   set_leg_history();
 
   if (mFinished)

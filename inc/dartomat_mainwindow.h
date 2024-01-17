@@ -25,14 +25,13 @@ public:
 
   CDartomatMain(QWidget * iParent = nullptr);
   ~CDartomatMain();
-  void open_add_players_dialog();
+  void handle_selected_players(const QStringList & iSelectedPlayers);
   
 private slots:
 
   void push_button_startgame_clicked_slot();
   void combo_box_game_current_index_changed_slot(const QString & iGame);
   void push_button_select_players_clicked_slot();
-  void push_button_create_players_clicked_slot();
 
 private:
 
@@ -47,6 +46,7 @@ private:
   CSettings mSettings;
   CGameDataHandler mGameDataHandler;
   CGameDataModel mGameDataModel;
+  QStringList mSelectedPlayers = {};
 };
 
 #endif  // DARTOMAT_MAINWINDOW_H

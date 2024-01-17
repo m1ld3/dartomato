@@ -1,6 +1,5 @@
 #include "groupbox_x01.h"
 #include "ui_groupbox_x01.h"
-#include "dialog_name_input.h"
 #include "stats_window.h"
 #include "QPixmap"
 #include <sstream>
@@ -30,8 +29,7 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
   mUi->lcdNumber->display(static_cast<int>(mpSettings.mGame));
-  QString text = "Player " + QString::number(iPlayerNumber);
-  mUi->labelPlayerName->setText(text);
+  mUi->labelPlayerName->setText(mpSettings.mPlayersList.at(iPlayerNumber - 1));
   display_stats_and_finishes();
   connect_slots();
 }
@@ -44,7 +42,6 @@ CX01GroupBox::~CX01GroupBox()
 void CX01GroupBox::connect_slots()
 {
   connect(mUi->labelPic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CX01GroupBox::player_active_button_pressed_slot);
-  connect(mUi->pushButtonName, &QPushButton::clicked, this, &CX01GroupBox::push_button_name_clicked_slot);
   connect(mUi->pushButtonUndo, &QPushButton::clicked, this, &CX01GroupBox::push_button_undo_clicked_slot);
   connect(mUi->pushButtonStats, &QPushButton::clicked, this, &CX01GroupBox::push_button_stats_clicked_slot);
 }
@@ -81,14 +78,6 @@ void CX01GroupBox::unset_finished()
 QString CX01GroupBox::get_player_number() const
 {
   return mUi->labelPlayerName->text();
-}
-
-void CX01GroupBox::push_button_name_clicked_slot()
-{
-  QPointer<CDialogNameInput> dn = new CDialogNameInput(this, mUi->labelPlayerName->text());
-  dn->setAttribute(Qt::WA_DeleteOnClose);
-  connect(dn, &CDialogNameInput::signal_ok_button_clicked, this, &CX01GroupBox::ok_button_clicked_slot);
-  dn->show();
 }
 
 void CX01GroupBox::ok_button_clicked_slot(const QString & iName)

@@ -115,7 +115,7 @@ void CCricketInput::process_segment_cutthroat()
 {
   if (!mStop && mCounter > 0)
   {
-    QVector<uint32_t> scores(mpSettings.mNumberOfPlayers - 1);
+    QVector<uint32_t> scores(mpSettings.mPlayersList.size() - 1);
     compute_cutthroat_scores_for_other_players(scores);
     check_if_game_shot_cutthroat(scores);
     mCounter--;

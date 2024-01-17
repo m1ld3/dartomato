@@ -55,7 +55,7 @@ private:
   QVector<CCricketGroupBox*> mCricketBox;
   const CSettings & mpSettings;
   QVector<CCricketClass*> mCricketPlayer;
-
+  const uint32_t mNumberOfPlayers = 1;
 };
 
 #endif  // CRICKET_MAINWINDOW_H
