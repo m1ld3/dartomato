@@ -1,14 +1,14 @@
-QT       += core gui \
+QT       += core \
             multimedia \
-            svg \
-            charts \
-            widgets
+            svgwidgets \
+            widgets \
+            texttospeech
 
-greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11 \ resources_big
+CONFIG += c++17 \ resources_big
 
-RC_ICONS = dartomat.ico
+RC_ICONS = img/dartomat.ico
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -22,72 +22,65 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    chart.cpp \
-    chartview.cpp \
-    cricketclass.cpp \
-    cricketinput.cpp \
-    cricketmainwindow.cpp \
-    dartboard.cpp \
-    dartboardsegment.cpp \
-    dartboardview.cpp \
-    dialognameinput.cpp \
-    groupbox_cricket.cpp \
-    groupbox_player.cpp \
-    main.cpp \
-    dartomatmain.cpp \
-    myqspinbox.cpp \
-    playeractivebutton.cpp \
-    playerclass.cpp \
-    statswindow.cpp \
-    submitbutton.cpp \
-    undobutton.cpp \
-    xo1mainwindow.cpp
+    src/game_data_model.cpp \
+    src/game_data_handler.cpp \
+    src/cricket_class.cpp \
+    src/cricket_input.cpp \
+    src/cricket_mainwindow.cpp \
+    src/dartboard_base.cpp \
+    src/dartboard_cricket.cpp \
+    src/dartboard_segment.cpp \
+    src/dartboard_view.cpp \
+    src/dartboard_x01.cpp \
+    src/dartomat_mainwindow.cpp \
+    src/groupbox_cricket.cpp \
+    src/groupbox_x01.cpp \
+    src/main.cpp \
+    src/player_active_button.cpp \
+    src/playerclass.cpp \
+    src/spinbox.cpp \
+    src/stats_window.cpp \
+    src/x01_mainwindow.cpp \
+    src/add_players_dialog.cpp
 
 HEADERS += \
-    chart.h \
-    chartview.h \
-    checkoutlists.h \
-    cricketclass.h \
-    cricketinput.h \
-    cricketmainwindow.h \
-    dartboard.h \
-    dartboardsegment.h \
-    dartboardview.h \
-    dartomatmain.h \
-    dialognameinput.h \
-    groupbox_cricket.h \
-    groupbox_player.h \
-    myqspinbox.h \
-    playeractivebutton.h \
-    playerclass.h \
-    statswindow.h \
-    submitbutton.h \
-    undobutton.h \
-    xo1mainwindow.h
+    inc/game_data_model.h \
+    inc/game_data_handler.h \
+    inc/checkout_lists.h \
+    inc/cricket_class.h \
+    inc/cricket_input.h \
+    inc/cricket_mainwindow.h \
+    inc/dartboard_base.h \
+    inc/dartboard_cricket.h \
+    inc/dartboard_segment.h \
+    inc/dartboard_view.h \
+    inc/dartboard_x01.h \
+    inc/dartomat_mainwindow.h \
+    inc/groupbox_cricket.h \
+    inc/groupbox_x01.h \
+    inc/player_active_button.h \
+    inc/playerclass.h \
+    inc/settings.h \
+    inc/spinbox.h \
+    inc/stats_window.h \
+    inc/x01_mainwindow.h \
+    inc/add_players_dialog.h
+
+INCLUDEPATH = inc/
 
 FORMS += \
-    dartomatmain.ui \
-    dialognameinput.ui \
-    groupbox_cricket.ui \
-    groupbox_player.ui \
-    statswindow.ui \
-    cricketinput.ui \
-    cricketmainwindow.ui \
-    xo1mainwindow.ui
+    ui/add_players_dialog.ui \
+    ui/cricket_input.ui \
+    ui/cricket_mainwindow.ui \
+    ui/dartomat_mainwindow.ui \
+    ui/groupbox_cricket.ui \
+    ui/groupbox_x01.ui \
+    ui/stats_window.ui \
+    ui/x01_mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    resources.qrc
-
-android {
-    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-
-    DISTFILES += \
-        android/AndroidManifest.xml \
-        android/build.gradle \
-        android/res/values/libs.xml
-}
+    resources/resources.qrc
