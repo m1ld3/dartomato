@@ -32,10 +32,12 @@ private slots:
   void push_button_startgame_clicked_slot();
   void combo_box_game_current_index_changed_slot(const QString & iGame);
   void push_button_select_players_clicked_slot();
+  void show_about_dialog();
 
 private:
 
   void play_game_on_sound();
+  void create_menu();
 
   Ui::CDartomatMain * mUi;
   QPointer<CX01MainWindow> mX01MainWindow;

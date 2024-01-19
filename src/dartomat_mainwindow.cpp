@@ -9,6 +9,7 @@
 #endif
 #include <QJsonArray>
 #include <QMessageBox>
+#include "version.h"
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
@@ -28,6 +29,8 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
 #endif
 
+  create_menu();
+
   connect(mUi->pushButtonStartGame, &QPushButton::clicked, this, &CDartomatMain::push_button_startgame_clicked_slot);
   connect(mUi->comboBoxGame, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index)
   {
@@ -40,6 +43,16 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
 CDartomatMain::~CDartomatMain()
 {
   delete mUi;
+}
+
+void CDartomatMain::create_menu()
+{
+  QMenuBar * menuBar = new QMenuBar(this);
+  setMenuBar(menuBar);
+
+  QMenu * fileMenu = menuBar->addMenu(tr("?"));
+  QAction * aboutAction = fileMenu->addAction(tr("About"));
+  connect(aboutAction, &QAction::triggered, this, &CDartomatMain::show_about_dialog);
 }
 
 void CDartomatMain::handle_selected_players(const QStringList & iSelectedPlayers)
@@ -112,6 +125,11 @@ void CDartomatMain::push_button_select_players_clicked_slot()
 {
   QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(mGameDataModel, this);
   dialog->show();
+}
+
+void CDartomatMain::show_about_dialog()
+{
+  QMessageBox::about(this, tr("About"), tr("Version: ") + tr(VER_FILEVERSION_STR));
 }
 
 void CDartomatMain::play_game_on_sound()
