@@ -15,7 +15,8 @@ find_package(Qt6 COMPONENTS Core Gui Multimedia Widgets SvgWidgets TextToSpeech 
 include_directories(inc)
 
 set(INCLUDES
-    inc/add_players_dialog.h
+    inc/game_data_model.h
+    inc/game_data_handler.h
     inc/checkout_lists.h
     inc/cricket_class.h
     inc/cricket_input.h
@@ -26,8 +27,6 @@ set(INCLUDES
     inc/dartboard_view.h
     inc/dartboard_x01.h
     inc/dartomat_mainwindow.h
-    inc/game_data_handler.h
-    inc/game_data_model.h
     inc/groupbox_cricket.h
     inc/groupbox_x01.h
     inc/player_active_button.h
@@ -36,6 +35,7 @@ set(INCLUDES
     inc/spinbox.h
     inc/stats_window.h
     inc/x01_mainwindow.h
+    inc/add_players_dialog.h
 	)
  
  set(SOURCES
@@ -68,7 +68,48 @@ set(INCLUDES
     src/stats_window.ui
     src/x01_mainwindow.ui
 	)
+	
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 0)
+set(VERSION_BUILD 0)
+set(COMMIT_HASH 0)	
 
-add_executable(${CMAKE_PROJECT_NAME} ${INCLUDES} ${SOURCES})
+find_package(Git QUIET)
 
+if(GIT_FOUND)
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_TAG_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+	
+	message("Git Tag Version: ${GIT_TAG_VERSION}")
+	
+    string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)-([0-9]+)-g([0-9a-f]+)" VERSION_REGEX ${GIT_TAG_VERSION})
+    if(VERSION_REGEX)
+        set(VERSION_MAJOR ${CMAKE_MATCH_1})
+        set(VERSION_MINOR ${CMAKE_MATCH_2})
+        set(VERSION_PATCH ${CMAKE_MATCH_3})
+        set(VERSION_BUILD ${CMAKE_MATCH_4})
+		set(COMMIT_HASH ${CMAKE_MATCH_5})
+		add_definitions("-DVERSION_MAJOR=${VERSION_MAJOR}")
+        add_definitions("-DVERSION_MINOR=${VERSION_MINOR}")
+        add_definitions("-DVERSION_PATCH=${VERSION_PATCH}")
+		add_definitions("-DVERSION_BUILD=${VERSION_BUILD}")
+		add_definitions("-DCOMMIT_HASH=${COMMIT_HASH}")
+    endif()
+else()
+    message("Git not found, version information won't be available.")
+endif()
+
+configure_file(resources/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/version.h @ONLY)
+configure_file(resources/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)
+
+set(app_icon_resource_windows ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+
+qt_add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${INCLUDES} resources/resources.qrc ${CMAKE_CURRENT_BINARY_DIR}/version.h ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+
+target_include_directories(Dartomat PRIVATE ${CMAKE_CURRENT_BINARY_DIR})	
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia Qt6::SvgWidgets Qt6::TextToSpeech)
