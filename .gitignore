@@ -34,3 +34,5 @@
 .bat
 *pro.user*
 *.bak
+CMakeLists.txt.user
+CMakeFiles/
