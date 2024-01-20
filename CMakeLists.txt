@@ -113,5 +113,22 @@ set(app_icon_resource_windows ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
 
 qt_add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${INCLUDES} resources/resources.qrc ${CMAKE_CURRENT_BINARY_DIR}/version.h ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
 
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON)
+
 target_include_directories(Dartomat PRIVATE ${CMAKE_CURRENT_BINARY_DIR})	
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia Qt6::SvgWidgets Qt6::TextToSpeech)
+
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/../bin)
+
+install(TARGETS ${CMAKE_PROJECT_NAME}
+    BUNDLE  DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+qt_generate_deploy_app_script(
+    TARGET ${CMAKE_PROJECT_NAME}
+    OUTPUT_SCRIPT deploy_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+)
+install(SCRIPT ${deploy_script})
+

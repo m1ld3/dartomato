@@ -129,7 +129,7 @@ void CDartomatMain::push_button_select_players_clicked_slot()
 
 void CDartomatMain::show_about_dialog()
 {
-  QMessageBox::about(this, tr("About"), tr("Version: ") + tr(VER_FILEVERSION_STR));
+  QMessageBox::about(this, tr("About"), tr("Version: ") + VER_FILEVERSION_STR);
 }
 
 void CDartomatMain::play_game_on_sound()
