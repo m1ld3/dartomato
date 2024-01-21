@@ -294,11 +294,13 @@ void CCricketGroupBox::unset_set_begin()
 void CCricketGroupBox::set_leg_begin()
 {
   mLegBegin = true;
+  mUi->labelPic->setStyleSheet("QLabel{ border: 5px solid green;}");
 }
 
 void CCricketGroupBox::unset_leg_begin()
 {
   mLegBegin = false;
+  mUi->labelPic->setStyleSheet("");
 }
 
 bool CCricketGroupBox::has_begun_leg() const

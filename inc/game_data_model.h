@@ -10,7 +10,7 @@ class CGameDataModel : public QAbstractListModel
 
 public:
 
-  explicit CGameDataModel(const CGameDataHandler & iGameDataHandler, QObject *parent = nullptr);
+  explicit CGameDataModel(const CGameDataHandler & iGameDataHandler, QObject * iParent = nullptr);
 
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;

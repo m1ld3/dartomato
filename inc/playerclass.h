@@ -45,6 +45,7 @@ private:
   void undo_last_won_leg_or_set();
   void perform_undo_step();
   void notify_game_won(uint32_t iPlayerNumber);
+  void compute_checkout();
 
   CX01MainWindow * mpGameWindow;
   const CSettings & mpSettings;
@@ -71,7 +72,6 @@ private:
   QVector<QVector<QString>> mThrownDartsOfCurrentLeg = {};
   QVector<QVector<QString>> mThrownDartsOfAllLegsFlat = {};
   QVector<QVector<QVector<QString>>> mThrownDartsOfAllLegs = {};
-  void compute_checkout();
 };
 
 #endif  // PLAYERCLASS_H

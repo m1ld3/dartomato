@@ -190,7 +190,7 @@ void CX01GroupBox::unset_set_begin()
 void CX01GroupBox::set_leg_begin()
 {
   mLegBegin = true;
-  mUi->labelPic->setStyleSheet("#label_pic { border: 5px solid red; }");
+  mUi->labelPic->setStyleSheet("QLabel{ border: 5px solid green;}");
 }
 
 void CX01GroupBox::unset_leg_begin()

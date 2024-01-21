@@ -7,9 +7,9 @@ CGameDataModel::CGameDataModel(const CGameDataHandler & iGameDataHandler, QObjec
   mPlayerNames = mGameDataHandler.get_player_names();
 }
 
-int CGameDataModel::rowCount(const QModelIndex &parent) const
+int CGameDataModel::rowCount(const QModelIndex & iParent) const
 {
-  if (parent.isValid()) return 0;
+  if (iParent.isValid()) return 0;
   return mPlayerNames.count();
 }
 
