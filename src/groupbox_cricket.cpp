@@ -8,15 +8,15 @@
 #include "player_active_button.h"
 
 CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
-                                   const CSettings & ipSettings,
+                                   const CSettings & iSettings,
                                    uint32_t iPlayerNumber,
                                    CCricketClass * const iPlayer)
   : QGroupBox(iParent)
   , mUi(new Ui::CCricketGroupBox)
   , mPlayer(iPlayer)
   , mPlayerNumber(iPlayerNumber - 1)
-  , mpGameWindow(static_cast<CCricketMainWindow*>(iParent))
-  , mpSettings(ipSettings)
+  , mGameWindow(static_cast<CCricketMainWindow*>(iParent))
+  , mSettings(iSettings)
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(4);
@@ -27,7 +27,7 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
     set_extra_points_label(static_cast<ECricketSlots>(i), mPlayer->get_extra_points(static_cast<ECricketSlots>(i)));
   }
 
-  mUi->labelPlayerName->setText(mpSettings.mPlayersList.at(iPlayerNumber - 1));
+  mUi->labelPlayerName->setText(mSettings.mPlayersList.at(iPlayerNumber - 1));
   QString hitsPerRound = QString::number(mPlayer->get_hits_per_round(), 'f', 3);
   mUi->labelHitsPerRoundInput->setText(hitsPerRound);
   connect_slots();
@@ -99,9 +99,9 @@ void CCricketGroupBox::write_slot_arrays_to_player(const std::array<uint32_t, st
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
   {
     mPlayer->set_slot(static_cast<ECricketSlots>(i), mSlotArray.at(i));
-    if (mpSettings.mCutThroat)
+    if (mSettings.mCutThroat)
     {
-      mpGameWindow->increase_slot_score(static_cast<ECricketSlots>(i), iExtraPointsCutThroat.at(i));
+      mGameWindow->increase_slot_score(static_cast<ECricketSlots>(i), iExtraPointsCutThroat.at(i));
     }
     else
     {
@@ -139,13 +139,13 @@ void CCricketGroupBox::handle_switch_to_next_player()
     update_players(EUpdateType::DEFAULT);
   }
   mPlayer->set_leg_win_array(false);
-  mpGameWindow->update_extra_points_labels();
+  mGameWindow->update_extra_points_labels();
 }
 
 void CCricketGroupBox::calculate_extra_points(uint32_t iSlotIdx, uint32_t iHits, uint32_t iSlotVal,
                                               std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & oExtraPointsCutThroat)
 {
-  if (mpSettings.mCutThroat)
+  if (mSettings.mCutThroat)
   {
     oExtraPointsCutThroat.at(iSlotIdx) += iHits * iSlotVal;
   }
@@ -164,7 +164,7 @@ void CCricketGroupBox::handle_slot_hits_overflow(uint32_t iSlotIdx, uint32_t iHi
   mSlotArray.at(iSlotIdx) = 3;
   set_slot_label(static_cast<ECricketSlots>(iSlotIdx), mSlotArray.at(iSlotIdx));
 
-  if (mpGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayerNumber))
+  if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayerNumber))
   {
     calculate_extra_points(iSlotIdx, hitsNew, iSlotVal, oExtraPointsCutThroat);
     mTotalHits += iHits;
@@ -209,13 +209,13 @@ void CCricketGroupBox::process_single_dart(uint32_t iDartIdx, QVector<QString> &
 bool CCricketGroupBox::has_leg_won()
 {
   return mScoreInput->are_slots_full()
-         && ((mpGameWindow->is_score_bigger(mScore) && !mpSettings.mCutThroat) || (mpGameWindow->is_score_smaller(mScore) && mpSettings.mCutThroat));
+         && ((mGameWindow->is_score_bigger(mScore) && !mSettings.mCutThroat) || (mGameWindow->is_score_smaller(mScore) && mSettings.mCutThroat));
 }
 
 void CCricketGroupBox::submit_score_to_player(uint32_t iNumberOfDarts, const QVector<QString> & iDarts, const std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & iExtraPointsCutThroat)
 {
   write_slot_arrays_to_player(iExtraPointsCutThroat);
-  if (mpSettings.mCutThroat) mpGameWindow->set_scores();
+  if (mSettings.mCutThroat) mGameWindow->set_scores();
   else mPlayer->set_score();
   mScore = mPlayer->get_score();
   mPlayer->compute_hits_per_round(iNumberOfDarts, mTotalHits);
@@ -238,7 +238,7 @@ void CCricketGroupBox::handle_submit_button_clicked(uint32_t iNumberOfDarts, QVe
   }
 
   submit_score_to_player(iNumberOfDarts, iDarts, extraPointsCutThroat);
-  if (mpSettings.mCutThroat) mpGameWindow->update_darts(mPlayer->get_player_number());
+  if (mSettings.mCutThroat) mGameWindow->update_darts(mPlayer->get_player_number());
 
   if (has_leg_won()) handle_leg_won();
   else               handle_switch_to_next_player();
@@ -267,7 +267,7 @@ void CCricketGroupBox::push_button_score_clicked_slot()
 {
   if (mActive && !mFinished)
   {
-    mScoreInput = new CCricketInput(this, mpSettings, mPlayer, mpGameWindow);
+    mScoreInput = new CCricketInput(this, mSettings, mPlayer, mGameWindow);
     mScoreInput->setAttribute(Qt::WA_DeleteOnClose);
     mScoreInput->show();
   }
@@ -491,7 +491,7 @@ uint32_t CCricketGroupBox::get_score() const
 
 void CCricketGroupBox::filter_leg_scores_cutthroat(QVector<QVector<QString>> & oLegScores)
 {
-  if (mpSettings.mCutThroat)
+  if (mSettings.mCutThroat)
   {
     QVector<QVector<QString>> filteredScores = {};
     for (uint32_t i = 0; i < oLegScores.size(); i++)
@@ -591,22 +591,22 @@ void CCricketGroupBox::perform_undo()
 
 void CCricketGroupBox::update_players(const EUpdateType iType)
 {
-  mpGameWindow->update_players(iType);
+  mGameWindow->update_players(iType);
 }
 
 void CCricketGroupBox::reset_scores_of_all_players()
 {
-  mpGameWindow->reset_scores_of_all_players();
+  mGameWindow->reset_scores_of_all_players();
 }
 
 void CCricketGroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
 {
-  mpGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
+  mGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
 }
 
 void CCricketGroupBox::update_history_of_all_players()
 {
-  mpGameWindow->update_history_of_all_players();
+  mGameWindow->update_history_of_all_players();
 }
 
 void CCricketGroupBox::increase_extra_points(const ECricketSlots iSlot, uint32_t iPoints)

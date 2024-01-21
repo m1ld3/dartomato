@@ -1,24 +1,25 @@
 #include "x01_mainwindow.h"
 #include "ui_x01_mainwindow.h"
 #include "groupbox_x01.h"
-#include "playerclass.h"
+#include "x01_class.h"
 #include <QString>
 #include <QMessageBox>
 #include <QCloseEvent>
 
 
-CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & ipSettings)
+CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler)
   : QMainWindow(iParent)
   , mUi(new Ui::CX01MainWindow)
   , mDartBoard(nullptr)
-  , mpSettings(ipSettings)
-  , mNumberOfPlayers(mpSettings.mPlayersList.size())
+  , mSettings(iSettings)
+  , mGameDataHandler(iGameDataHandler)
+  , mNumberOfPlayers(mSettings.mPlayersList.size())
 {
   mUi->setupUi(this);
-  QString text = QString::number(static_cast<uint32_t>(mpSettings.mGame));
+  QString text = QString::number(static_cast<uint32_t>(mSettings.mGame));
   QWidget::setWindowTitle(text);
-  mDartBoard = new CDartBoardX01(mUi->graphicsViewDartBoard, this, mpSettings);
-  mDartBoard->init_dartboard(static_cast<uint32_t>(mpSettings.mGame));
+  mDartBoard = new CDartBoardX01(mUi->graphicsViewDartBoard, this, mSettings);
+  mDartBoard->init_dartboard(static_cast<uint32_t>(mSettings.mGame));
   connect_main_window_slots();
   add_players();
   mPlayerBox[mActivePlayer]->set_set_begin();
@@ -49,8 +50,8 @@ void CX01MainWindow::add_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayer.push_back(new CX01Class(this, i+1, mpSettings));
-    mPlayerBox.push_back(new CX01GroupBox(this, mpSettings, i+1, mPlayer[i], mDartBoard));
+    mPlayer.push_back(new CX01Class(this, i+1, mSettings));
+    mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i+1, mPlayer[i], mDartBoard));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mPlayerBox[i]->set_inactive();
 
@@ -67,17 +68,29 @@ void CX01MainWindow::connect_main_window_slots()
 
 void CX01MainWindow::closeEvent(QCloseEvent * iEvent)
 {
-  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Quit game",
-                                                             tr("Are you sure you want to quit the game?\n"),
-                                                             QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                             QMessageBox::No);
-  if (resBtn != QMessageBox::Yes) iEvent->ignore();
-  else                            iEvent->accept();
+  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game not yet finished!",
+                                                             tr("Do you want to save or abort the current game?\n"),
+                                                             QMessageBox::Save | QMessageBox::Abort | QMessageBox::Cancel);
+  if (resBtn == QMessageBox::Save)
+  {
+    save_current_game();
+    iEvent->accept();
+  }
+  else if (resBtn == QMessageBox::Abort)
+  {
+    iEvent->accept();
+  }
+  else iEvent->ignore();
 }
 
 void CX01MainWindow::set_active_player(uint32_t iPlayer)
 {
   mActivePlayer = iPlayer;
+}
+
+void CX01MainWindow::save_current_game()
+{
+
 }
 
 void CX01MainWindow::update_active_player()

@@ -31,7 +31,7 @@ private:
 
   Ui::CAddPlayersDialog * mUi;
   QVector<QString> mNewPlayerNames;
-  CDartomatMain * const mpMainWindow;
+  CDartomatMain * const mMainWindow;
   CGameDataModel & mGameDataModel;
 };
 

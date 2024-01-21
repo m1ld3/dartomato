@@ -12,7 +12,7 @@ class CDartBoardSegment : public QObject, public QGraphicsPathItem
 
 public:
 
-  CDartBoardSegment(CDartBoard * ipDartBoard, const QPainterPath & iPath, const uint32_t iVal = 0,
+  CDartBoardSegment(CDartBoard * iDartBoard, const QPainterPath & iPath, const uint32_t iVal = 0,
                     QString && iColor = "black", QChar iType = 's',
                     QGraphicsPathItem * iParent = nullptr);
   ~CDartBoardSegment() override = default;
@@ -38,7 +38,7 @@ private:
   bool mPressed = false;
   bool mHover = false;
   bool mDragging = false;
-  CDartBoard * mpDartBoard;
+  CDartBoard * mDartBoard;
 };
 
 #endif  // DARTBOARD_SEGMENT_H

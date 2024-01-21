@@ -21,7 +21,7 @@ class CCricketGroupBox : public QGroupBox
 public:
 
   explicit CCricketGroupBox(QWidget * iParent,
-                            const CSettings & ipSettings,
+                            const CSettings & iSettings,
                             uint32_t iPlayerNumber = 1,
                             CCricketClass * const iPlayer = nullptr);
   ~CCricketGroupBox() override;
@@ -106,11 +106,11 @@ private:
   static bool mLegStarted;
   static bool mSetStarted;
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
-  CCricketMainWindow * mpGameWindow;
+  CCricketMainWindow * mGameWindow;
   uint32_t mTotalHits = 0;
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
-  const CSettings & mpSettings;
+  const CSettings & mSettings;
 };
 
 #endif  // GROUPBOX_CRICKET_H

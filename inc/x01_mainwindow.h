@@ -8,6 +8,7 @@
 #endif
 #include "dartboard_x01.h"
 #include "settings.h"
+#include "game_data_handler.h"
 
 namespace Ui
 {
@@ -20,7 +21,7 @@ class CX01MainWindow : public QMainWindow
 
 public:
 
-  explicit CX01MainWindow(QWidget * iParent, const CSettings & ipSettings);
+  explicit CX01MainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler);
   ~CX01MainWindow() override;
   void closeEvent(QCloseEvent * iEvent) override;
   void handle_game_won(uint32_t iPlayerNumber);
@@ -53,6 +54,7 @@ private:
   void update_player_leg();
   void update_player_set();
   void set_active_player(uint32_t iPlayer);
+  void save_current_game();
 
   Ui::CX01MainWindow * mUi;
   CX01GroupBox * mX01GroupBox;
@@ -60,7 +62,8 @@ private:
   QVector<CX01GroupBox*> mPlayerBox;
   QVector<CX01Class*> mPlayer;
   CDartBoardX01 * mDartBoard;
-  const CSettings & mpSettings;
+  const CSettings & mSettings;
+  CGameDataHandler & mGameDataHandler;
   const uint32_t mNumberOfPlayers = 1;
 };
 

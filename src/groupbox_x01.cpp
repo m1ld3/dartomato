@@ -13,23 +13,23 @@
 #include <QPointer>
 #include "player_active_button.h"
 
-CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
+CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
                            uint32_t iPlayerNumber, CX01Class * const iPlayer, CDartBoardX01 * iDartBoard)
   : QGroupBox(iParent)
   , mUi(new Ui::CX01GroupBox)
   , mPlayer(iPlayer)
   , mDartBoard(iDartBoard)
-  , mpSettings(ipSettings)
-  , mRemaining(static_cast<uint32_t>(mpSettings.mGame))
-  , mpGameWindow(static_cast<CX01MainWindow*>(iParent))
+  , mSettings(iSettings)
+  , mRemaining(static_cast<uint32_t>(mSettings.mGame))
+  , mGameWindow(static_cast<CX01MainWindow*>(iParent))
 #ifndef USE_TTS
   , mScoreSound(this)
 #endif
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
-  mUi->lcdNumber->display(static_cast<int>(mpSettings.mGame));
-  mUi->labelPlayerName->setText(mpSettings.mPlayersList.at(iPlayerNumber - 1));
+  mUi->lcdNumber->display(static_cast<int>(mSettings.mGame));
+  mUi->labelPlayerName->setText(mSettings.mPlayersList.at(iPlayerNumber - 1));
   display_stats_and_finishes();
   connect_slots();
 }
@@ -60,7 +60,7 @@ void CX01GroupBox::set_inactive()
 
 void CX01GroupBox::reset()
 {
-  mRemaining = static_cast<uint32_t>(mpSettings.mGame);
+  mRemaining = static_cast<uint32_t>(mSettings.mGame);
   mUi->lcdNumber->display(static_cast<int>(mRemaining));
   mPlayer->reset_score();
 }
@@ -221,13 +221,13 @@ void CX01GroupBox::reset_legs()
 
 const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t iNumberOfDarts)
 {
-  if (mpSettings.mSingleOut)
+  if (mSettings.mSingleOut)
   {
     if (iNumberOfDarts == 1)      return singleOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return singleOutTwoDartCheckoutList;
     else                          return singleOutThreeDartCheckoutList;
   }
-  else if (mpSettings.mDoubleOut)
+  else if (mSettings.mDoubleOut)
   {
     if (iNumberOfDarts == 1)      return doubleOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return doubleOutTwoDartCheckoutList;
@@ -314,22 +314,22 @@ void CX01GroupBox::perform_undo()
 
 void CX01GroupBox::update_players(const EUpdateType iType)
 {
-  mpGameWindow->update_players(iType);
+  mGameWindow->update_players(iType);
 }
 
 void CX01GroupBox::reset_scores_of_all_players()
 {
-  mpGameWindow->reset_scores_of_all_players();
+  mGameWindow->reset_scores_of_all_players();
 }
 
 void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
 {
-  mpGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
+  mGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
 }
 
 void CX01GroupBox::update_history_of_all_players()
 {
-  mpGameWindow->update_history_of_all_players();
+  mGameWindow->update_history_of_all_players();
 }
 
 void CX01GroupBox::push_button_stats_clicked_slot()

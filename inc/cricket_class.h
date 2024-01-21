@@ -12,7 +12,7 @@ class CCricketClass : public QObject
 
 public:
 
-  CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings);
+  CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings);
   void undo();
   double compute_hits_per_round(uint32_t iNumberofdarts, uint32_t iTotalhits);
   uint32_t get_legs() const;
@@ -44,7 +44,7 @@ private:
   void notify_game_won(uint32_t iPlayerNumber);
   void perform_undo_step();
 
-  CCricketMainWindow * mpGameWindow;
+  CCricketMainWindow * mGameWindow;
   uint32_t mSetsWon = 0;  // sets won
   uint32_t mLegsWonPerSet = 0;  // legs won per set
   uint32_t mTotalLegsWon = 0;  // total legs won
@@ -65,7 +65,7 @@ private:
   uint32_t mScore = 0;
   QVector<uint32_t> mScoreArray = {0};
   QVector<bool> mLegWinArray = {false};
-  const CSettings & mpSettings;
+  const CSettings & mSettings;
 };
 
 #endif  // CRICKET_CLASS_H

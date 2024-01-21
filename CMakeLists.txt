@@ -30,7 +30,7 @@ set(INCLUDES
     inc/groupbox_cricket.h
     inc/groupbox_x01.h
     inc/player_active_button.h
-    inc/playerclass.h
+    inc/x01_class.h
     inc/settings.h
     inc/spinbox.h
     inc/stats_window.h
@@ -55,7 +55,7 @@ set(INCLUDES
     src/groupbox_x01.cpp
     src/main.cpp
     src/player_active_button.cpp
-    src/playerclass.cpp
+    src/x01_class.cpp
     src/spinbox.cpp
     src/stats_window.cpp
     src/x01_mainwindow.cpp

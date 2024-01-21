@@ -83,7 +83,7 @@ void CDartomatMain::push_button_startgame_clicked_slot()
 
   if (game > 0)
   {
-    mX01MainWindow = new CX01MainWindow(this, mSettings);
+    mX01MainWindow = new CX01MainWindow(this, mSettings, mGameDataHandler);
     mX01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
     mX01MainWindow->show();
   }

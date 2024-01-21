@@ -39,8 +39,8 @@ class CCricketInput : public QDialog
 
 public:
 
-  CCricketInput(QWidget * iParent, const CSettings & ipSettings,
-                CCricketClass * iPlayer = nullptr, CCricketMainWindow * ipGameWindow = nullptr);
+  CCricketInput(QWidget * iParent, const CSettings & iSettings,
+                CCricketClass * iPlayer = nullptr, CCricketMainWindow * iGameWindow = nullptr);
   ~CCricketInput();
   bool are_slots_full() const;
   void handle_segment_pressed_event(uint32_t iVal, QChar & iType);
@@ -77,7 +77,7 @@ private:
   QLCDNumber * mScoreDart3;
   QVector<QString> mDarts{"","",""};
   CCricketClass * mPlayer;
-  CCricketMainWindow * mpGameWindow;
+  CCricketMainWindow * mGameWindow;
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
@@ -86,8 +86,8 @@ private:
   std::array<QVector<QVector<uint32_t>>, static_cast<int>(ECricketSlots::SLOT_MAX)> mCutThroatExtraPointsHistory;
   uint32_t mScore;
   CDartBoardCricket * mDartBoard;
-  const CSettings & mpSettings;
-  CCricketGroupBox * mpGroupBox;
+  const CSettings & mSettings;
+  CCricketGroupBox * mGroupBox;
 };
 
 #endif  // CRICKET_INPUT_H

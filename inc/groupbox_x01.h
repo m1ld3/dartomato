@@ -3,7 +3,7 @@
 
 #include <QGroupBox>
 #include "dartboard_x01.h"
-#include "playerclass.h"
+#include "x01_class.h"
 #include <QPixmap>
 #ifdef USE_TTS
 #include <QtTextToSpeech>
@@ -25,7 +25,7 @@ class CX01GroupBox : public QGroupBox
 
 public:
 
-  explicit CX01GroupBox(QWidget * iParent, const CSettings & ipSettings,
+  explicit CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
                         uint32_t iPlayerNumber = 1, CX01Class * const iPlayer = nullptr,
                         CDartBoardX01 * iDartboard = nullptr);
   ~CX01GroupBox() override;
@@ -75,7 +75,7 @@ private:
   QString mPlayerName;
   CX01Class * const mPlayer;
   CDartBoardX01 * mDartBoard;
-  const CSettings & mpSettings;
+  const CSettings & mSettings;
   uint32_t mPlayerNumber, mRemaining;
   uint32_t mCurrentScore = 0;
   bool mActive = false;
@@ -85,7 +85,7 @@ private:
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
-  CX01MainWindow * mpGameWindow;
+  CX01MainWindow * mGameWindow;
 #ifndef USE_TTS
   QSoundEffect mScoreSound;
 #endif

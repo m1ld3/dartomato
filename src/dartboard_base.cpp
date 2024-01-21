@@ -5,13 +5,13 @@
 #include <QtTextToSpeech>
 #endif
 
-CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & ipSettings)
+CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & iSettings)
 #ifdef USE_TTS
-  : mpSettings(ipSettings)
+  : mSettings(iSettings)
 #else
   : mBustedSound(this)
   , mGameShotSound(this)
-  , mpSettings(ipSettings)
+  , mSettings(iSettings)
 #endif
 {
   mScene = new QGraphicsScene(0, 0, 800, 800, iGraphicsViewDartBoard);

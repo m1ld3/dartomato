@@ -23,7 +23,7 @@ public:
 
 public:
 
-  CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & ipSettings);
+  CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & iSettings);
   virtual ~CDartBoard();
   void play_game_shot_sound();
 
@@ -35,7 +35,7 @@ protected:
   QSoundEffect mBustedSound;
   QSoundEffect mGameShotSound;
 #endif
-  const CSettings & mpSettings;
+  const CSettings & mSettings;
 
   CDartBoardSegment * mS20;
   CDartBoardSegment * mS19;

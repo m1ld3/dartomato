@@ -3,9 +3,9 @@
 #include <cmath>
 #include <QMessageBox>
 
-CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * ipX01MainWindow, const CSettings & ipSettings)
-  : CDartBoard(iGraphicsViewDartBoard, ipSettings)
-  , mpGameWindow(static_cast<CX01MainWindow*>(ipX01MainWindow))
+CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * iX01MainWindow, const CSettings & iSettings)
+  : CDartBoard(iGraphicsViewDartBoard, iSettings)
+  , mGameWindow(static_cast<CX01MainWindow*>(iX01MainWindow))
 {
   erase_all_darts();
   display_score(mScore);
@@ -43,9 +43,9 @@ void CDartBoardX01::init_dartboard(uint32_t iScore)
 
 void CDartBoardX01::handle_start_val(uint32_t iVal, QChar & iType)
 {
-  if (mpSettings.mSingleIn)      set_score(iVal, iType, false);
-  else if (mpSettings.mDoubleIn) set_score(iType == 'd' ? iVal : 0, iType, false);
-  else if (mpSettings.mMasterIn) set_score(iType == 't' ? iVal : 0, iType, false);
+  if (mSettings.mSingleIn)      set_score(iVal, iType, false);
+  else if (mSettings.mDoubleIn) set_score(iType == 'd' ? iVal : 0, iType, false);
+  else if (mSettings.mMasterIn) set_score(iType == 't' ? iVal : 0, iType, false);
 }
 
 void CDartBoardX01::handle_score_in_range(uint32_t iVal, QChar & iType)
@@ -55,9 +55,9 @@ void CDartBoardX01::handle_score_in_range(uint32_t iVal, QChar & iType)
 
 bool CDartBoardX01::checkout_attempt_happened()
 {
-  return ((mpSettings.mSingleOut && mScore <= 60 && !mBoogieNumbers.contains(mScore)) ||
-         (mpSettings.mDoubleOut && ((mScore <= 40 && mScore % 2 == 0 && mScore > 1) || mScore == 50)) ||
-         (mpSettings.mMasterOut && mScore <= 60 && mScore % 3 == 0 && mScore > 2));
+  return ((mSettings.mSingleOut && mScore <= 60 && !mBoogieNumbers.contains(mScore)) ||
+         (mSettings.mDoubleOut && ((mScore <= 40 && mScore % 2 == 0 && mScore > 1) || mScore == 50)) ||
+         (mSettings.mMasterOut && mScore <= 60 && mScore % 3 == 0 && mScore > 2));
 }
 
 void CDartBoardX01::handle_game_shot_score(uint32_t iVal, QChar & iType)
@@ -70,16 +70,16 @@ void CDartBoardX01::handle_game_shot_score(uint32_t iVal, QChar & iType)
 
 void CDartBoardX01::handle_score_equals_remaining(uint32_t iVal, QChar & iType)
 {
-  if (mpSettings.mSingleOut)
+  if (mSettings.mSingleOut)
   {
     handle_game_shot_score(iVal, iType);
   }
-  else if (mpSettings.mDoubleOut)
+  else if (mSettings.mDoubleOut)
   {
     if (iType == 'd') handle_game_shot_score(iVal, iType);
     else handle_busted_score(iVal, iType, (mScore > 1 && mScore % 2 == 0 && mScore <= 40) || mScore == 50);
   }
-  else if (mpSettings.mMasterOut)
+  else if (mSettings.mMasterOut)
   {
     if (iType == 't') handle_game_shot_score(iVal, iType);
     else handle_busted_score(iVal, iType, mScore <= 60 && mScore % 3 == 0 && mScore > 2);
@@ -100,8 +100,8 @@ void CDartBoardX01::handle_busted_score(uint32_t iVal, QChar & iType, bool iChec
 
 bool CDartBoardX01::is_score_in_range(uint32_t iVal)
 {
-  if (mpSettings.mDoubleOut) return mScore  > (iVal + 1);
-  else if (mpSettings.mMasterOut) return mScore > (iVal + 2);
+  if (mSettings.mDoubleOut) return mScore  > (iVal + 1);
+  else if (mSettings.mMasterOut) return mScore > (iVal + 2);
   else return mScore > iVal;
 }
 
@@ -115,7 +115,7 @@ void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
 
   if (!mStop && mCounter > 0)
   {
-    uint32_t startVal = static_cast<uint32_t>(mpSettings.mGame);
+    uint32_t startVal = static_cast<uint32_t>(mSettings.mGame);
     if (mScore == startVal)
     {
       handle_start_val(iVal, iType);
@@ -195,22 +195,22 @@ void CDartBoardX01::submit_score()
 
 void CDartBoardX01::display_score(uint32_t iScore)
 {
-  mpGameWindow->display_score(iScore);
+  mGameWindow->display_score(iScore);
 }
 
 void CDartBoardX01::display_dart1(uint32_t iVal)
 {
-  mpGameWindow->display_dart1(iVal);
+  mGameWindow->display_dart1(iVal);
 }
 
 void CDartBoardX01::display_dart2(uint32_t iVal)
 {
-  mpGameWindow->display_dart2(iVal);
+  mGameWindow->display_dart2(iVal);
 }
 
 void CDartBoardX01::display_dart3(uint32_t iVal)
 {
-  mpGameWindow->display_dart3(iVal);
+  mGameWindow->display_dart3(iVal);
 }
 
 void CDartBoardX01::erase_all_darts()
@@ -222,17 +222,17 @@ void CDartBoardX01::erase_all_darts()
 
 void CDartBoardX01::erase_dart1()
 {
-  mpGameWindow->erase_dart1();
+  mGameWindow->erase_dart1();
 }
 
 void CDartBoardX01::erase_dart2()
 {
-  mpGameWindow->erase_dart2();
+  mGameWindow->erase_dart2();
 }
 
 void CDartBoardX01::erase_dart3()
 {
-  mpGameWindow->erase_dart3();
+  mGameWindow->erase_dart3();
 }
 
 void CDartBoardX01::set_finished()
@@ -247,17 +247,17 @@ void CDartBoardX01::unset_finished()
 
 void CDartBoardX01::submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> &iDarts)
 {
-  mpGameWindow->submit_score_to_player(iScore, iNumberOfDarts, iCheckoutAttempts, iDarts);
+  mGameWindow->submit_score_to_player(iScore, iNumberOfDarts, iCheckoutAttempts, iDarts);
 }
 
 void CDartBoardX01::update_finishes(uint32_t iScore, uint32_t iNumberOfDarts)
 {
-  mpGameWindow->update_finishes(iScore, iNumberOfDarts);
+  mGameWindow->update_finishes(iScore, iNumberOfDarts);
 }
 
 void CDartBoardX01::set_focus_to_submit_button()
 {
-  mpGameWindow->set_focus_to_submit_button();
+  mGameWindow->set_focus_to_submit_button();
 }
 
 

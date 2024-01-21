@@ -12,7 +12,7 @@ class CDartBoardX01 : public CDartBoard
 
 public:
 
-  CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * ipX01MainWindow, const CSettings & ipSettings);
+  CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * iX01MainWindow, const CSettings & iSettings);
   ~CDartBoardX01() override = default;
   void init_dartboard(uint32_t iScore);
   void perform_undo();
@@ -43,7 +43,7 @@ private:
   void handle_game_shot_score(uint32_t iVal, QChar & iType);
   bool is_score_in_range(uint32_t iVal);
 
-  CX01MainWindow * mpGameWindow;
+  CX01MainWindow * mGameWindow;
   uint32_t mScore = 0;
   uint32_t mCounter = 3;
   uint32_t mOldScore = 0;

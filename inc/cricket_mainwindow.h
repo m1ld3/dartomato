@@ -21,7 +21,7 @@ class CCricketMainWindow : public QMainWindow
 
 public:
 
-  explicit CCricketMainWindow(QWidget * iParent, const CSettings & ipSettings);
+  explicit CCricketMainWindow(QWidget * iParent, const CSettings & iSettings);
   ~CCricketMainWindow() override;
   void closeEvent(QCloseEvent * iEvent) override;
   bool is_slot_free(const ECricketSlots iSlot, uint32_t iPlayer) const;
@@ -53,7 +53,7 @@ private:
   CCricketGroupBox * mCricketGroupBox;
   uint32_t mActivePlayer = 0;
   QVector<CCricketGroupBox*> mCricketBox;
-  const CSettings & mpSettings;
+  const CSettings & mSettings;
   QVector<CCricketClass*> mCricketPlayer;
   const uint32_t mNumberOfPlayers = 1;
 };

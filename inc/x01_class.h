@@ -1,5 +1,5 @@
-#ifndef PLAYERCLASS_H
-#define PLAYERCLASS_H
+#ifndef X01_CLASS_H
+#define X01_CLASS_H
 
 #include <QVector>
 #include <QObject>
@@ -13,7 +13,7 @@ class CX01Class : public QObject
 
 public:
 
-  CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings);
+  CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings);
   uint32_t set_score(uint32_t iScore);
   void set_darts(QVector<QString> iDarts);
   QVector<QVector<QString>> get_darts() const;
@@ -47,8 +47,8 @@ private:
   void notify_game_won(uint32_t iPlayerNumber);
   void compute_checkout();
 
-  CX01MainWindow * mpGameWindow;
-  const CSettings & mpSettings;
+  CX01MainWindow * mGameWindow;
+  const CSettings & mSettings;
   uint32_t mSetsWon = 0;  // sets won
   uint32_t mLegsWonPerSet = 0;  // legs won per set
   uint32_t mTotalLegsWon = 0;  // total legs won
@@ -74,4 +74,4 @@ private:
   QVector<QVector<QVector<QString>>> mThrownDartsOfAllLegs = {};
 };
 
-#endif  // PLAYERCLASS_H
+#endif  // X01_CLASS_H

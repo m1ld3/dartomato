@@ -3,14 +3,14 @@
 #include <QString>
 #include "dartboard_base.h"
 
-CDartBoardSegment::CDartBoardSegment(CDartBoard * ipDartBoard, const QPainterPath & iPath, const uint32_t iVal, QString && iColor, QChar iType, QGraphicsPathItem * iParent)
+CDartBoardSegment::CDartBoardSegment(CDartBoard * iDartBoard, const QPainterPath & iPath, const uint32_t iVal, QString && iColor, QChar iType, QGraphicsPathItem * iParent)
   : QObject()
   , QGraphicsPathItem(iPath, iParent)
   , mValue(iVal)
   , mColor(iColor)
   , mPath(iPath)
   , mType(iType)
-  , mpDartBoard(ipDartBoard)
+  , mDartBoard(iDartBoard)
 {
   setAcceptHoverEvents(true);
 }
@@ -50,7 +50,7 @@ void CDartBoardSegment::mouseReleaseEvent(QGraphicsSceneMouseEvent * iEvent)
     else
     {
       update();
-      mpDartBoard->handle_segment_pressed_event(mValue, mType);
+      mDartBoard->handle_segment_pressed_event(mValue, mType);
     }
   }
 }

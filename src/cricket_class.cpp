@@ -2,14 +2,14 @@
 #include "cricket_mainwindow.h"
 #include <cmath>
 
-CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings)
+CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings)
   : QObject(iParent)
-  , mpGameWindow(static_cast<CCricketMainWindow*>(iParent))
+  , mGameWindow(static_cast<CCricketMainWindow*>(iParent))
   , mPlayerNumber(iPlayerNumber-1)
-  , mpSettings(ipSettings)
+  , mSettings(iSettings)
 {
-  mMarginLegs = std::ceil(mpSettings.mLegs/2.0);
-  mMarginSets = std::ceil(mpSettings.mSets/2.0);
+  mMarginLegs = std::ceil(mSettings.mLegs/2.0);
+  mMarginSets = std::ceil(mSettings.mSets/2.0);
   mHitsPerRound = compute_hits_per_round(0,0);
 }
 
@@ -36,7 +36,7 @@ bool CCricketClass::increase_setslegs()
 
 void CCricketClass::notify_game_won(uint32_t iPlayerNumber)
 {
-  mpGameWindow->handle_game_won(iPlayerNumber);
+  mGameWindow->handle_game_won(iPlayerNumber);
 }
 
 void CCricketClass::update_history()
@@ -115,7 +115,7 @@ void CCricketClass::set_slot(const ECricketSlots iSlot, uint32_t iHits)
 
 void CCricketClass::set_extra_points(const ECricketSlots iSlot, uint32_t iPoints)
 {
-  if (!mpSettings.mCutThroat)
+  if (!mSettings.mCutThroat)
   {
     mExtraPointsArray.at(static_cast<uint32_t>(iSlot)) = iPoints;
   }

@@ -7,7 +7,7 @@
 CAddPlayersDialog::CAddPlayersDialog(CGameDataModel & iGameDataModel, QWidget * iParent)
   : QDialog(iParent)
   , mUi(new Ui::CAddPlayersDialog)
-  , mpMainWindow(static_cast<CDartomatMain*>(iParent))
+  , mMainWindow(static_cast<CDartomatMain*>(iParent))
   , mGameDataModel(iGameDataModel)
 {
   mUi->setupUi(this);
@@ -58,7 +58,7 @@ void CAddPlayersDialog::push_button_submit_clicked_slot()
     QMessageBox::warning(this, "No players selected!", "Please select at least one player.");
   }
 
-  mpMainWindow->handle_selected_players(selectedPlayers);
+  mMainWindow->handle_selected_players(selectedPlayers);
 
   close();
 }

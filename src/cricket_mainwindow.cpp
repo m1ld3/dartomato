@@ -7,19 +7,19 @@
 #include <QCloseEvent>
 
 
-CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & ipSettings)
+CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & iSettings)
   : QMainWindow(iParent)
   , mUi(new Ui::CCricketMainWindow)
-  , mpSettings(ipSettings)
-  , mNumberOfPlayers(mpSettings.mPlayersList.size())
+  , mSettings(iSettings)
+  , mNumberOfPlayers(mSettings.mPlayersList.size())
 {
   mUi->setupUi(this);
   QWidget::setWindowTitle("Cricket");
 
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mCricketPlayer.push_back(new CCricketClass(this, i+1, mpSettings));
-    mCricketBox.push_back(new CCricketGroupBox(this, mpSettings, i+1, mCricketPlayer[i]));
+    mCricketPlayer.push_back(new CCricketClass(this, i+1, mSettings));
+    mCricketBox.push_back(new CCricketGroupBox(this, mSettings, i+1, mCricketPlayer[i]));
     mCricketBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mCricketBox[i]->set_inactive();
     mUi->gridLayoutCricket->addWidget(mCricketBox[i], i<4 ? 0 : 1, i%4);

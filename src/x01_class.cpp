@@ -1,14 +1,14 @@
-#include "playerclass.h"
+#include "x01_class.h"
 #include "x01_mainwindow.h"
 #include <cmath>
 
-CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & ipSettings)
+CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings)
   : QObject(iParent)
-  , mpGameWindow(static_cast<CX01MainWindow*>(iParent))
-  , mpSettings(ipSettings)
-  , mRemaining(static_cast<uint32_t>(mpSettings.mGame))
-  , mMarginLegs(std::ceil(mpSettings.mLegs/2.0))
-  , mMarginSets(std::ceil(mpSettings.mSets/2.0))
+  , mGameWindow(static_cast<CX01MainWindow*>(iParent))
+  , mSettings(iSettings)
+  , mRemaining(static_cast<uint32_t>(mSettings.mGame))
+  , mMarginLegs(std::ceil(mSettings.mLegs/2.0))
+  , mMarginSets(std::ceil(mSettings.mSets/2.0))
   , mPlayerNumber(iPlayerNumber-1)
 {
   mRemainingPointsOfCurrentLeg.push_back(mRemaining);
@@ -35,7 +35,7 @@ bool CX01Class::increment_won_legs_and_check_if_set_won()
 
 void CX01Class::notify_game_won(uint32_t iPlayerNumber)
 {
-  mpGameWindow->handle_game_won(iPlayerNumber);
+  mGameWindow->handle_game_won(iPlayerNumber);
 }
 
 uint32_t CX01Class::set_score(uint32_t score)
@@ -72,7 +72,7 @@ void CX01Class::update_history()
 
 void CX01Class::reset_score()
 {
-  mRemaining = static_cast<uint32_t>(mpSettings.mGame);
+  mRemaining = static_cast<uint32_t>(mSettings.mGame);
   mRemainingPointsOfCurrentLeg = {mRemaining};
   mScoresOfCurrentLeg = {};
   mThrownDartsOfCurrentLeg = {};

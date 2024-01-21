@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QString>
-#include "playerclass.h"
+#include "x01_class.h"
 
 class CCallout;
 
