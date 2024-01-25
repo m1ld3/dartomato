@@ -6,12 +6,12 @@ CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings 
   : QObject(iParent)
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
   , mSettings(iSettings)
-  , mRemaining(static_cast<uint32_t>(mSettings.mGame))
+  , mRemainingPoints(static_cast<uint32_t>(mSettings.mGame))
   , mMarginLegs(std::ceil(mSettings.mLegs/2.0))
   , mMarginSets(std::ceil(mSettings.mSets/2.0))
   , mPlayerNumber(iPlayerNumber-1)
 {
-  mRemainingPointsOfCurrentLeg.push_back(mRemaining);
+  mRemainingPointsOfCurrentLeg.push_back(mRemainingPoints);
   compute_averages(0);
   update_checkout(0, 0);
 }
@@ -33,6 +33,35 @@ bool CX01Class::increment_won_legs_and_check_if_set_won()
   return hasWonSet;
 }
 
+void CX01Class::restore_state(CPlayerData iData)
+{
+  mSetsWon = iData.SetsWon;
+  mLegsWonPerSet = iData.LegsWonPerSet;
+  mTotalLegsWon = iData.TotalLegsWon;
+  mRemainingPoints = iData.RemainingPoints;
+  mCheckoutAttempts = iData.CheckoutAttempts;
+  mCheckoutHits = iData.CheckoutHits;
+  mTotalDarts = iData.TotalDarts;
+  mAvg1Dart = iData.Avg1Dart;
+  mAvg3Dart = iData.Avg3Dart;
+  mCheckoutRate = iData.CheckoutRate;
+  mScoresOfCurrentLeg = iData.ScoresOfCurrentLeg;
+  mAllScoresOfAllLegs = iData.AllScoresOfAllLegs;
+  mAllScoresFlat = iData.AllScoresFlat;
+  mThrownDartsOfCurrentLeg = iData.ThrownDartsOfCurrentLeg;
+}
+
+CX01Class::CPlayerData CX01Class::create_snapshot() const
+{
+  return CPlayerData(mSetsWon, mLegsWonPerSet,
+                     mTotalLegsWon, mRemainingPoints,
+                     mCheckoutAttempts, mCheckoutHits,
+                     mTotalDarts, mAvg1Dart,
+                     mAvg3Dart, mCheckoutRate,
+                     mScoresOfCurrentLeg, mAllScoresOfAllLegs,
+                     mAllScoresFlat, mThrownDartsOfCurrentLeg);
+}
+
 void CX01Class::notify_game_won(uint32_t iPlayerNumber)
 {
   mGameWindow->handle_game_won(iPlayerNumber);
@@ -42,9 +71,9 @@ uint32_t CX01Class::set_score(uint32_t score)
 {
   mScoresOfCurrentLeg.push_back(score);
   mAllScoresFlat.push_back(score);
-  mRemaining -= score;
-  mRemainingPointsOfCurrentLeg.push_back(mRemaining);
-  return mRemaining;
+  mRemainingPoints -= score;
+  mRemainingPointsOfCurrentLeg.push_back(mRemainingPoints);
+  return mRemainingPoints;
 }
 
 void CX01Class::set_darts(QVector<QString> darts)
@@ -72,8 +101,8 @@ void CX01Class::update_history()
 
 void CX01Class::reset_score()
 {
-  mRemaining = static_cast<uint32_t>(mSettings.mGame);
-  mRemainingPointsOfCurrentLeg = {mRemaining};
+  mRemainingPoints = static_cast<uint32_t>(mSettings.mGame);
+  mRemainingPointsOfCurrentLeg = {mRemainingPoints};
   mScoresOfCurrentLeg = {};
   mThrownDartsOfCurrentLeg = {};
 }
@@ -92,7 +121,7 @@ void CX01Class::perform_undo_step()
 {
   mThrownDartsOfCurrentLeg.pop_back();
   mRemainingPointsOfCurrentLeg.pop_back();
-  mRemaining = mRemainingPointsOfCurrentLeg.back();
+  mRemainingPoints = mRemainingPointsOfCurrentLeg.back();
   mScoresOfCurrentLeg.pop_back();
   mAllScoresFlat.pop_back();
   mThrownDartsOfAllLegsFlat.pop_back();
@@ -100,7 +129,7 @@ void CX01Class::perform_undo_step()
   mNumberOfDartsArray.pop_back();
   mCheckoutAttempts -= mCheckoutAttemptsArray.back();
   mCheckoutAttemptsArray.pop_back();
-  mCheckouts -= mCheckoutsArray.back();
+  mCheckoutHits -= mCheckoutsArray.back();
   mCheckoutsArray.pop_back();
 
   compute_checkout();
@@ -119,9 +148,14 @@ void CX01Class::perform_undo_step()
   mAvg3Dart = 3 * mAvg1Dart;
 }
 
-QString CX01Class::get_checkout_attempts() const
+QString CX01Class::get_checkout_attempts_str() const
 {
-  return QString::number(mCheckouts) + " / " + QString::number(mCheckoutAttempts);
+  return QString::number(mCheckoutHits) + " / " + QString::number(mCheckoutAttempts);
+}
+
+uint32_t CX01Class::get_checkout_attempts() const
+{
+  return mCheckoutAttempts;
 }
 
 void CX01Class::undo_last_won_leg_or_set()
@@ -186,20 +220,20 @@ void CX01Class::compute_checkout()
 {
   if (mCheckoutAttempts > 0)
   {
-    mCheckout = (static_cast<double> (mCheckouts) / static_cast<double> (mCheckoutAttempts)) * 100.0;
+    mCheckoutRate = (static_cast<double> (mCheckoutHits) / static_cast<double> (mCheckoutAttempts)) * 100.0;
   }
   else
   {
-    mCheckout = 0;
+    mCheckoutRate = 0;
   }
 }
 
-void CX01Class::update_checkout(uint32_t checkoutattempts, uint32_t success)
+void CX01Class::update_checkout(uint32_t iCheckoutattempts, uint32_t iSuccess)
 {
-  mCheckoutAttempts += checkoutattempts;
-  mCheckoutAttemptsArray.push_back(checkoutattempts);
-  mCheckoutsArray.push_back(success);
-  mCheckouts += success;
+  mCheckoutAttempts += iCheckoutattempts;
+  mCheckoutAttemptsArray.push_back(iCheckoutattempts);
+  mCheckoutsArray.push_back(iSuccess);
+  mCheckoutHits += iSuccess;
 
   compute_checkout();
 }
@@ -216,7 +250,7 @@ double CX01Class::get_avg3dart() const
 
 double CX01Class::get_checkout() const
 {
-  return mCheckout;
+  return mCheckoutRate;
 }
 
 QVector<uint32_t> CX01Class::get_scores_of_current_leg() const
@@ -241,7 +275,7 @@ QVector<QVector<QVector<QString>>> CX01Class::get_thrown_darts_of_all_legs() con
 
 uint32_t CX01Class::get_remaining() const
 {
-  return mRemaining;
+  return mRemainingPoints;
 }
 
 QVector<uint32_t> CX01Class::get_remaining_points_of_current_leg() const

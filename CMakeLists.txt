@@ -36,7 +36,7 @@ set(INCLUDES
     inc/stats_window.h
     inc/x01_mainwindow.h
     inc/add_players_dialog.h
-	)
+    )
  
  set(SOURCES
     src/add_players_dialog.cpp
@@ -59,7 +59,7 @@ set(INCLUDES
     src/spinbox.cpp
     src/stats_window.cpp
     src/x01_mainwindow.cpp
-	src/add_players_dialog.ui
+    src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui
     src/dartomat_mainwindow.ui
@@ -67,7 +67,7 @@ set(INCLUDES
     src/groupbox_x01.ui
     src/stats_window.ui
     src/x01_mainwindow.ui
-	)
+    )
 	
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 0)

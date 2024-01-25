@@ -165,7 +165,7 @@ void CStatsWindow::set_stats_labels()
 {
   mUi->label1DartAvgInput->setText(QString::number(mPlayer->get_avg1dart(), 'f', 2));
   mUi->label3DartAvgInput->setText(QString::number(mPlayer->get_avg3dart(), 'f', 2));
-  set_label_checkout(mPlayer->get_checkout(), mPlayer->get_checkout_attempts());
+  set_label_checkout(mPlayer->get_checkout(), mPlayer->get_checkout_attempts_str());
   mUi->label0pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))));
   mUi->label20pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))));
   mUi->label40pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))));

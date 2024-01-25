@@ -79,12 +79,6 @@ QString CCricketGroupBox::get_player_number() const
   return mUi->labelPlayerName->text();
 }
 
-void CCricketGroupBox::ok_button_clicked_slot(const QString & iName)
-{
-  mPlayerName = iName;
-  mUi->labelPlayerName->setText(mPlayerName);
-}
-
 void CCricketGroupBox::load_slot_arrays_from_player()
 {
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)

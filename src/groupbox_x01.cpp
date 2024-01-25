@@ -80,12 +80,6 @@ QString CX01GroupBox::get_player_number() const
   return mUi->labelPlayerName->text();
 }
 
-void CX01GroupBox::ok_button_clicked_slot(const QString & iName)
-{
-  mPlayerName = iName;
-  mUi->labelPlayerName->setText(mPlayerName);
-}
-
 void CX01GroupBox::display_stats_and_finishes()
 {
   QString avg1dart = QString::number(mPlayer->get_avg1dart(), 'f', 3);

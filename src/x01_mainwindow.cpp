@@ -90,7 +90,10 @@ void CX01MainWindow::set_active_player(uint32_t iPlayer)
 
 void CX01MainWindow::save_current_game()
 {
-
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    qWarning("TODO");
+  }
 }
 
 void CX01MainWindow::update_active_player()
