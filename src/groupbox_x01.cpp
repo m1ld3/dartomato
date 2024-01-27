@@ -14,17 +14,18 @@
 #include "player_active_button.h"
 
 CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
-                           uint32_t iPlayerNumber, CX01Class * const iPlayer, CDartBoardX01 * iDartBoard)
+                           uint32_t iPlayerNumber, CDartBoardX01 * iDartBoard)
   : QGroupBox(iParent)
   , mUi(new Ui::CX01GroupBox)
-  , mPlayer(iPlayer)
+  , mPlayer(this, iPlayerNumber, iSettings)
   , mDartBoard(iDartBoard)
   , mSettings(iSettings)
-  , mRemaining(static_cast<uint32_t>(mSettings.mGame))
+  , mRemainingPoints(static_cast<uint32_t>(mSettings.mGame))
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
 #ifndef USE_TTS
   , mScoreSound(this)
 #endif
+  , mHistory({mPlayer.create_snapshot()})
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
@@ -60,9 +61,9 @@ void CX01GroupBox::set_inactive()
 
 void CX01GroupBox::reset()
 {
-  mRemaining = static_cast<uint32_t>(mSettings.mGame);
-  mUi->lcdNumber->display(static_cast<int>(mRemaining));
-  mPlayer->reset_score();
+  mRemainingPoints = static_cast<uint32_t>(mSettings.mGame);
+  mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
+  mPlayer.reset_score();
 }
 
 void CX01GroupBox::set_finished()
@@ -82,13 +83,13 @@ QString CX01GroupBox::get_player_number() const
 
 void CX01GroupBox::display_stats_and_finishes()
 {
-  QString avg1dart = QString::number(mPlayer->get_avg1dart(), 'f', 3);
-  QString avg3dart = QString::number(mPlayer->get_avg3dart(), 'f', 3);
-  QString checkout = QString::number(mPlayer->get_checkout(), 'f', 3) + "%";
+  QString avg1dart = QString::number(mPlayer.get_avg1dart(), 'f', 3);
+  QString avg3dart = QString::number(mPlayer.get_avg3dart(), 'f', 3);
+  QString checkout = QString::number(mPlayer.get_checkout(), 'f', 3) + "%";
   mUi->label1DartAvgInput->setText(avg1dart);
   mUi->label3DartAvgInput->setText(avg3dart);
   mUi->labelCheckoutInput->setText(checkout);
-  display_finishes(mRemaining, 3);
+  display_finishes(mRemainingPoints, 3);
 }
 
 void CX01GroupBox::play_score_sound()
@@ -108,8 +109,8 @@ void CX01GroupBox::play_score_sound()
 void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
 {
   bool newSet = false;
-  mPlayer->update_checkout(iCheckoutAttempts, 1);
-  newSet = mPlayer->increment_won_legs_and_check_if_set_won();
+  mPlayer.update_checkout(iCheckoutAttempts, 1);
+  newSet = mPlayer.increment_won_legs_and_check_if_set_won();
   play_score_sound();
   update_history_of_all_players();
   reset_scores_of_all_players();
@@ -124,15 +125,15 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   {
     update_players(EUpdateType::LEG);
   }
-
+  create_snapshots_of_all_players();
   set_lcd_legs_and_sets();
 }
 
 void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
 {
-  mPlayer->update_checkout(iCheckoutAttempts, 0);
+  mPlayer.update_checkout(iCheckoutAttempts, 0);
   play_score_sound();
-  mUi->lcdNumber->display(static_cast<int>(mRemaining));
+  mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
   update_players(EUpdateType::DEFAULT);
 }
 
@@ -144,14 +145,31 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
 #endif
   CX01GroupBox::mLegAlreadyStarted = true;
   CX01GroupBox::mSetAlreadyStarted = true;
-  mRemaining = mPlayer->set_score(mCurrentScore);
-  mPlayer->set_darts(iDarts);
-  mPlayer->compute_averages(iNumberOfDarts);
+  mRemainingPoints = mPlayer.set_score(mCurrentScore);
+  mPlayer.set_darts(iDarts);
+  mPlayer.compute_averages(iNumberOfDarts);
 
-  if (mRemaining == 0) handle_game_shot(iCheckoutAttempts);
-  else                 handle_default_score(iCheckoutAttempts);
+  if (mRemainingPoints == 0)
+  {
+    handle_game_shot(iCheckoutAttempts);
+  }
+  else
+  {
+    handle_default_score(iCheckoutAttempts);
+    create_snapshot();
+  }
 
   display_stats_and_finishes();
+}
+
+void CX01GroupBox::create_snapshot()
+{
+  mHistory.push_back(mPlayer.create_snapshot());
+}
+
+void CX01GroupBox::create_snapshots_of_all_players()
+{
+  mGameWindow->create_snapshots_of_all_players();
 }
 
 void CX01GroupBox::player_active_button_pressed_slot()
@@ -164,9 +182,9 @@ void CX01GroupBox::player_active_button_pressed_slot()
 
     if (reply == QMessageBox::Yes)
     {
-      inactivate_players(mPlayer->get_player_number(), CX01GroupBox::mLegAlreadyStarted, CX01GroupBox::mSetAlreadyStarted);
+      inactivate_players(mPlayer.get_player_number(), CX01GroupBox::mLegAlreadyStarted, CX01GroupBox::mSetAlreadyStarted);
       set_active();
-      mDartBoard->init_dartboard(mRemaining);
+      mDartBoard->init_dartboard(mRemainingPoints);
     }
   }
 }
@@ -205,12 +223,12 @@ bool CX01GroupBox::has_begun_set() const
 
 void CX01GroupBox::update_history()
 {
-  mPlayer->update_history();
+  mPlayer.update_history();
 }
 
 void CX01GroupBox::reset_legs()
 {
-  mPlayer->reset_legs();
+  mPlayer.reset_legs();
 }
 
 const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t iNumberOfDarts)
@@ -232,7 +250,7 @@ const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t
     if (iNumberOfDarts == 1)      return masterOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return masterOutTwoDartCheckoutList;
     else                          return masterOutThreeDartCheckoutList;
-    }
+  }
 }
 
 void CX01GroupBox::prepare_score_sound()
@@ -274,27 +292,31 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
 
 void CX01GroupBox::set_lcd_legs()
 {
-  mUi->lcdNumberLegs->display(static_cast<int>(mPlayer->get_legs()));
+  mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
 }
 
-uint32_t CX01GroupBox::get_remaining() const
+uint32_t CX01GroupBox::get_remaining_points() const
 {
-  return mPlayer->get_remaining();
+  return mPlayer.get_remaining();
 }
 
 void CX01GroupBox::set_lcd_legs_and_sets()
 {
-  mUi->lcdNumberLegs->display(static_cast<int>(mPlayer->get_legs()));
-  mUi->lcdNumberSets->display(static_cast<int>(mPlayer->get_sets()));
+  mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
+  mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
 }
 
 void CX01GroupBox::perform_undo()
 {
-  mPlayer->undo();
-  mRemaining = mPlayer->get_remaining();
-  mUi->lcdNumber->display(static_cast<int>(mRemaining));
+  if (mHistory.size() > 1)
+  {
+    mHistory.pop_back();
+    mPlayer.restore_state(mHistory.back());
+  }
+  mRemainingPoints = mPlayer.get_remaining();
+  mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
 
-  if (mActive) mDartBoard->init_dartboard(mRemaining);
+  if (mActive) mDartBoard->init_dartboard(mRemainingPoints);
 
   set_lcd_legs_and_sets();
   display_stats_and_finishes();
@@ -303,7 +325,7 @@ void CX01GroupBox::perform_undo()
   {
     unset_finished();
     mDartBoard->unset_finished();
-    }
+  }
 }
 
 void CX01GroupBox::update_players(const EUpdateType iType)
@@ -328,7 +350,7 @@ void CX01GroupBox::update_history_of_all_players()
 
 void CX01GroupBox::push_button_stats_clicked_slot()
 {
-  QPointer<CStatsWindow> stats = new CStatsWindow(this, mPlayer);
+  QPointer<CStatsWindow> stats = new CStatsWindow(this, &mPlayer);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
   stats->show();

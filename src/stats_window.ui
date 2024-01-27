@@ -133,7 +133,7 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="text">
-          <string/>
+          <string>--</string>
          </property>
         </widget>
        </item>
@@ -412,7 +412,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="text">
-              <string/>
+              <string>--</string>
              </property>
             </widget>
            </item>
@@ -485,7 +485,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="text">
-              <string/>
+              <string>--</string>
              </property>
             </widget>
            </item>
@@ -565,7 +565,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="text">
-              <string/>
+              <string>--</string>
              </property>
             </widget>
            </item>
@@ -645,7 +645,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="text">
-              <string/>
+              <string>--</string>
              </property>
             </widget>
            </item>
@@ -725,7 +725,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="text">
-              <string/>
+              <string>--</string>
              </property>
             </widget>
            </item>
@@ -805,7 +805,7 @@
               <enum>QFrame::Sunken</enum>
              </property>
              <property name="text">
-              <string/>
+              <string>--</string>
              </property>
             </widget>
            </item>

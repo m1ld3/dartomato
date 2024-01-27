@@ -11,6 +11,8 @@ class CX01Class : public QObject
 {
   Q_OBJECT
 
+public:
+
   class CPlayerData
   {
 
@@ -32,7 +34,11 @@ class CX01Class : public QObject
                 QVector<uint32_t> iScoresOfCurrentLeg,
                 QVector<QVector<uint32_t>> iAllScoresOfAllLegs,
                 QVector<uint32_t> iAllScoresFlat,
-                QVector<QVector<QString>> iThrownDartsOfCurrentLeg
+                QVector<QVector<QString>> iThrownDartsOfCurrentLeg,
+                QVector<QVector<QString>> iThrownDartsOfAllLegsFlat,
+                QVector<QVector<QVector<QString>>> iThrownDartsOfAllLegs,
+                QVector<uint32_t> iRemainingPointsOfCurrentLeg,
+                QVector<QVector<uint32_t>> iRemainingPointsOfAllLegs
                 )
       : SetsWon(iSetsWon)
       , LegsWonPerSet(iLegsWonPerSet)
@@ -48,6 +54,10 @@ class CX01Class : public QObject
       , AllScoresOfAllLegs(iAllScoresOfAllLegs)
       , AllScoresFlat(iAllScoresFlat)
       , ThrownDartsOfCurrentLeg(iThrownDartsOfCurrentLeg)
+      , ThrownDartsOfAllLegsFlat(iThrownDartsOfAllLegsFlat)
+      , ThrownDartsOfAllLegs(iThrownDartsOfAllLegs)
+      , RemainingPointsOfCurrentLeg(iRemainingPointsOfCurrentLeg)
+      , RemainingPointsOfAllLegs(iRemainingPointsOfAllLegs)
     {}
 
   private:
@@ -62,10 +72,14 @@ class CX01Class : public QObject
     double Avg1Dart           = 0.0;
     double Avg3Dart           = 0.0;
     double CheckoutRate       = 0.0;
-    QVector<uint32_t> ScoresOfCurrentLeg               = {};
-    QVector<QVector<uint32_t>> AllScoresOfAllLegs     = {};
-    QVector<uint32_t> AllScoresFlat                    = {};
-    QVector<QVector<QString>> ThrownDartsOfCurrentLeg = {};
+    QVector<uint32_t> ScoresOfCurrentLeg                    = {};
+    QVector<QVector<uint32_t>> AllScoresOfAllLegs           = {};
+    QVector<uint32_t> AllScoresFlat                         = {};
+    QVector<QVector<QString>> ThrownDartsOfCurrentLeg       = {};
+    QVector<QVector<QString>> ThrownDartsOfAllLegsFlat      = {};
+    QVector<QVector<QVector<QString>>> ThrownDartsOfAllLegs = {};
+    QVector<uint32_t> RemainingPointsOfCurrentLeg           = {};
+    QVector<QVector<uint32_t>> RemainingPointsOfAllLegs     = {};
   };
 
 public:
@@ -75,7 +89,6 @@ public:
   void set_darts(QVector<QString> iDarts);
   QVector<QVector<QString>> get_darts() const;
   QVector<uint32_t> get_total_scores_flat() const;
-  void undo();
   void compute_averages(uint32_t iNumberOfDarts);
   void update_checkout(uint32_t iCheckoutAttempts, uint32_t iSuccess);
   double get_avg1dart() const;
@@ -102,36 +115,29 @@ public:
 
 private:
 
-  void undo_last_won_leg_or_set();
-  void perform_undo_step();
   void notify_game_won(uint32_t iPlayerNumber);
   void compute_checkout();
 
   CX01MainWindow * mGameWindow;
   const CSettings & mSettings;
-  uint32_t mSetsWon = 0;  // sets won
-  uint32_t mLegsWonPerSet = 0;  // legs won per set
-  uint32_t mTotalLegsWon = 0;  // total legs won
-  uint32_t mRemainingPoints;  // current remaining points
-  double mAvg1Dart = 0.0;  // 1-dart average
-  double mAvg3Dart = 0.0;  // 3-dart average
-  double mCheckoutRate = 0.0;  // checkout percentage
-  uint32_t mCheckoutAttempts = 0;  // checkout attempts
-  uint32_t mCheckoutHits = 0;  // successful checkouts
-  uint32_t mMarginLegs, mMarginSets;  // required legs/sets to win per set/game
-  uint32_t mPlayerNumber;  // instance of player
-  uint32_t mTotalDarts = 0;  // total amount of thrown darts
-  QVector<uint32_t> mScoresOfCurrentLeg = {};  // all scores of current leg
-  QVector<uint32_t> mRemainingPointsOfCurrentLeg;  // all intermediate remaining points of current leg
-  QVector<QVector<uint32_t>> mRemainingPointsOfAllLegs = {};
-  QVector<QVector<uint32_t>> mAllScoresOfAllLegs = {};  // complete scoring history of the current game
-  QVector<uint32_t> mAllScoresFlat = {};  // all scores in one vector
-  QVector<uint32_t> mNumberOfDartsArray = {};
-  QVector<uint32_t> mCheckoutAttemptsArray = {};
-  QVector<uint32_t> mCheckoutsArray = {};
+  uint32_t mSetsWon = 0;
+  uint32_t mLegsWonPerSet = 0;
+  uint32_t mTotalLegsWon = 0;
+  uint32_t mCheckoutAttempts = 0;
+  uint32_t mCheckoutHits = 0;
+  uint32_t mTotalDarts = 0;
+  uint32_t mMarginLegs, mMarginSets, mRemainingPoints, mPlayerNumber;
+  double mAvg1Dart = 0.0;
+  double mAvg3Dart = 0.0;
+  double mCheckoutRate = 0.0;
+  QVector<uint32_t> mScoresOfCurrentLeg = {};
+  QVector<QVector<uint32_t>> mAllScoresOfAllLegs = {};
+  QVector<uint32_t> mAllScoresFlat = {};
   QVector<QVector<QString>> mThrownDartsOfCurrentLeg = {};
   QVector<QVector<QString>> mThrownDartsOfAllLegsFlat = {};
   QVector<QVector<QVector<QString>>> mThrownDartsOfAllLegs = {};
+  QVector<uint32_t> mRemainingPointsOfCurrentLeg;
+  QVector<QVector<uint32_t>> mRemainingPointsOfAllLegs = {};
 };
 
 #endif  // X01_CLASS_H

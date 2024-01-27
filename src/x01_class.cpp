@@ -10,8 +10,8 @@ CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings 
   , mMarginLegs(std::ceil(mSettings.mLegs/2.0))
   , mMarginSets(std::ceil(mSettings.mSets/2.0))
   , mPlayerNumber(iPlayerNumber-1)
+  , mRemainingPointsOfCurrentLeg({mRemainingPoints})
 {
-  mRemainingPointsOfCurrentLeg.push_back(mRemainingPoints);
   compute_averages(0);
   update_checkout(0, 0);
 }
@@ -49,6 +49,10 @@ void CX01Class::restore_state(CPlayerData iData)
   mAllScoresOfAllLegs = iData.AllScoresOfAllLegs;
   mAllScoresFlat = iData.AllScoresFlat;
   mThrownDartsOfCurrentLeg = iData.ThrownDartsOfCurrentLeg;
+  mThrownDartsOfAllLegsFlat = iData.ThrownDartsOfAllLegsFlat;
+  mThrownDartsOfAllLegs = iData.ThrownDartsOfAllLegs;
+  mRemainingPointsOfCurrentLeg = iData.RemainingPointsOfCurrentLeg;
+  mRemainingPointsOfAllLegs = iData.RemainingPointsOfAllLegs;
 }
 
 CX01Class::CPlayerData CX01Class::create_snapshot() const
@@ -59,7 +63,9 @@ CX01Class::CPlayerData CX01Class::create_snapshot() const
                      mTotalDarts, mAvg1Dart,
                      mAvg3Dart, mCheckoutRate,
                      mScoresOfCurrentLeg, mAllScoresOfAllLegs,
-                     mAllScoresFlat, mThrownDartsOfCurrentLeg);
+                     mAllScoresFlat, mThrownDartsOfCurrentLeg,
+                     mThrownDartsOfAllLegsFlat, mThrownDartsOfAllLegs,
+                     mRemainingPointsOfCurrentLeg, mRemainingPointsOfAllLegs);
 }
 
 void CX01Class::notify_game_won(uint32_t iPlayerNumber)
@@ -117,37 +123,6 @@ uint32_t CX01Class::get_player_number() const
   return mPlayerNumber;
 }
 
-void CX01Class::perform_undo_step()
-{
-  mThrownDartsOfCurrentLeg.pop_back();
-  mRemainingPointsOfCurrentLeg.pop_back();
-  mRemainingPoints = mRemainingPointsOfCurrentLeg.back();
-  mScoresOfCurrentLeg.pop_back();
-  mAllScoresFlat.pop_back();
-  mThrownDartsOfAllLegsFlat.pop_back();
-  mTotalDarts -= mNumberOfDartsArray.back();
-  mNumberOfDartsArray.pop_back();
-  mCheckoutAttempts -= mCheckoutAttemptsArray.back();
-  mCheckoutAttemptsArray.pop_back();
-  mCheckoutHits -= mCheckoutsArray.back();
-  mCheckoutsArray.pop_back();
-
-  compute_checkout();
-
-  double n = static_cast<double>(mTotalDarts);
-
-  if (mTotalDarts > 0)
-  {
-    mAvg1Dart = std::accumulate(mAllScoresFlat.begin(),mAllScoresFlat.end(), 0.0)/n;
-  }
-  else
-  {
-    mAvg1Dart = 0.0;
-  }
-
-  mAvg3Dart = 3 * mAvg1Dart;
-}
-
 QString CX01Class::get_checkout_attempts_str() const
 {
   return QString::number(mCheckoutHits) + " / " + QString::number(mCheckoutAttempts);
@@ -158,51 +133,9 @@ uint32_t CX01Class::get_checkout_attempts() const
   return mCheckoutAttempts;
 }
 
-void CX01Class::undo_last_won_leg_or_set()
-{
-  if (mTotalLegsWon % mMarginLegs == 0)
-  {
-    mTotalLegsWon -= 1;
-    mLegsWonPerSet = mMarginLegs -1;
-    mSetsWon -= 1;
-  }
-  else
-  {
-    mTotalLegsWon -= 1;
-    mLegsWonPerSet -= 1;
-  }
-}
-
-void CX01Class::undo()
-{
-  if (mScoresOfCurrentLeg.size() > 0)
-  {
-    perform_undo_step();
-  }
-  else if (mAllScoresOfAllLegs.size() > 0)
-  {
-    mScoresOfCurrentLeg = mAllScoresOfAllLegs.back();
-    mThrownDartsOfCurrentLeg = mThrownDartsOfAllLegs.back();
-    mRemainingPointsOfCurrentLeg = mRemainingPointsOfAllLegs.back();
-    mThrownDartsOfAllLegs.pop_back();
-    mRemainingPointsOfAllLegs.pop_back();
-    mAllScoresOfAllLegs.pop_back();
-
-    if (mScoresOfCurrentLeg.size() > 0)
-    {
-      if (mRemainingPointsOfCurrentLeg.back() == 0)
-      {
-        undo_last_won_leg_or_set();
-      }
-      perform_undo_step();
-    }
-  }
-}
-
 void CX01Class::compute_averages(uint32_t numberofdarts)
 {
   mTotalDarts += numberofdarts;
-  mNumberOfDartsArray.push_back(numberofdarts);
   double n = static_cast<double>(mTotalDarts);
 
   if (mTotalDarts > 0)
@@ -231,8 +164,6 @@ void CX01Class::compute_checkout()
 void CX01Class::update_checkout(uint32_t iCheckoutattempts, uint32_t iSuccess)
 {
   mCheckoutAttempts += iCheckoutattempts;
-  mCheckoutAttemptsArray.push_back(iCheckoutattempts);
-  mCheckoutsArray.push_back(iSuccess);
   mCheckoutHits += iSuccess;
 
   compute_checkout();

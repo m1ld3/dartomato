@@ -26,8 +26,7 @@ class CX01GroupBox : public QGroupBox
 public:
 
   explicit CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
-                        uint32_t iPlayerNumber = 1, CX01Class * const iPlayer = nullptr,
-                        CDartBoardX01 * iDartboard = nullptr);
+                        uint32_t iPlayerNumber = 1, CDartBoardX01 * iDartboard = nullptr);
   ~CX01GroupBox() override;
   void set_active();
   void set_inactive();
@@ -44,8 +43,9 @@ public:
   void reset_legs();
   void display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts);
   void set_lcd_legs();
-  uint32_t get_remaining() const;
+  uint32_t get_remaining_points() const;
   void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
+  void create_snapshot();
 
 private slots:
 
@@ -69,13 +69,14 @@ private:
   void handle_default_score(uint32_t iCheckoutAttempts);
   const QMap<uint32_t, QVector<QString>> & get_checkout_map(uint32_t iNumberOfDarts);
   void prepare_score_sound();
+  void create_snapshots_of_all_players();
 
   Ui::CX01GroupBox * mUi;
   QString mPlayerName;
-  CX01Class * const mPlayer;
+  CX01Class mPlayer;
   CDartBoardX01 * mDartBoard;
   const CSettings & mSettings;
-  uint32_t mPlayerNumber, mRemaining;
+  uint32_t mPlayerNumber, mRemainingPoints;
   uint32_t mCurrentScore = 0;
   bool mActive = false;
   bool mFinished = false;
@@ -88,6 +89,7 @@ private:
 #ifndef USE_TTS
   QSoundEffect mScoreSound;
 #endif
+  std::vector<CX01Class::CPlayerData> mHistory;
 };
 
 #endif  // GROUPBOX_X01_H

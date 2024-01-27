@@ -25,7 +25,7 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, C
   mPlayerBox[mActivePlayer]->set_set_begin();
   mPlayerBox[mActivePlayer]->set_leg_begin();
   mPlayerBox[mActivePlayer]->set_active();
-  display_score(mPlayerBox[mActivePlayer]->get_remaining());
+  display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
   erase_dart1();
   erase_dart2();
   erase_dart3();
@@ -36,10 +36,6 @@ CX01MainWindow::~CX01MainWindow()
 {
   delete mUi;
   if (mDartBoard) delete mDartBoard;
-  for (auto & player : mPlayer)
-  {
-    delete player;
-  }
   for (auto & box : mPlayerBox)
   {
     delete box;
@@ -50,8 +46,7 @@ void CX01MainWindow::add_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayer.push_back(new CX01Class(this, i+1, mSettings));
-    mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i+1, mPlayer[i], mDartBoard));
+    mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i+1, mDartBoard));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mPlayerBox[i]->set_inactive();
 
@@ -155,7 +150,7 @@ void CX01MainWindow::update_player_set()
     }
   }
 
-  for (auto &box: mPlayerBox)
+  for (auto & box: mPlayerBox)
   {
     box->reset_legs();
     box->set_lcd_legs();
@@ -176,7 +171,7 @@ void CX01MainWindow::update_players(const EUpdateType iType)
   {
     update_player_set();
   }
-  mDartBoard->init_dartboard(mPlayerBox[mActivePlayer]->get_remaining());
+  mDartBoard->init_dartboard(mPlayerBox[mActivePlayer]->get_remaining_points());
 }
 
 void CX01MainWindow::reset_scores_of_all_players()
@@ -184,7 +179,7 @@ void CX01MainWindow::reset_scores_of_all_players()
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     mPlayerBox[i]->reset();
-    mPlayerBox[i]->display_finishes(mPlayerBox[i]->get_remaining(), 3);
+    mPlayerBox[i]->display_finishes(mPlayerBox[i]->get_remaining_points(), 3);
   }
 }
 
@@ -232,6 +227,14 @@ void CX01MainWindow::update_history_of_all_players()
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     mPlayerBox[i]->update_history();
+  }
+}
+
+void CX01MainWindow::create_snapshots_of_all_players()
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mPlayerBox[i]->create_snapshot();
   }
 }
 
