@@ -12,12 +12,58 @@ class CCricketClass : public QObject
 
 public:
 
+  class CPlayerData
+  {
+
+    friend class CCricketClass;
+
+  public:
+
+    CPlayerData() = delete;
+    CPlayerData(uint32_t iSetsWon,
+                uint32_t iLegsWonPerSet,
+                uint32_t iTotalLegsWon,
+                uint32_t iTotalDarts,
+                uint32_t iScore,
+                uint32_t iTotalHits,
+                double iHitsPerRound,
+                QVector<QVector<QString>> iScoreOfCurrentLegs,
+                QVector<QVector<QVector<QString>>> iScoringHistory,
+                std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> iSlotArray,
+                std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> iExtraPointsArray
+                )
+      : SetsWon(iSetsWon)
+      , LegsWonPerSet(iLegsWonPerSet)
+      , TotalLegsWon(iTotalLegsWon)
+      , TotalDarts(iTotalDarts)
+      , Score(iScore)
+      , TotalHits(iTotalHits)
+      , HitsPerRound(iHitsPerRound)
+      , ScoreOfCurrentLegs(iScoreOfCurrentLegs)
+      , ScoringHistory(iScoringHistory)
+      , SlotArray(iSlotArray)
+      , ExtraPointsArray(iExtraPointsArray)
+    {}
+
+  private:
+
+    uint32_t SetsWon = 0;
+    uint32_t LegsWonPerSet = 0;
+    uint32_t TotalLegsWon = 0;
+    uint32_t TotalDarts = 0;
+    uint32_t Score = 0;
+    uint32_t TotalHits = 0;
+    double HitsPerRound = 0.0;
+    QVector<QVector<QString>> ScoreOfCurrentLegs = {};
+    QVector<QVector<QVector<QString>>> ScoringHistory = {};
+    std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> SlotArray = {};
+    std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> ExtraPointsArray = {};
+  };
+
   CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings);
-  void undo();
   double compute_hits_per_round(uint32_t iNumberofdarts, uint32_t iTotalhits);
   uint32_t get_legs() const;
   uint32_t get_sets() const;
-  void update_history();
   void update_darts(QVector<QString> iDarts);
   void reset_score();
   void reset_legs();
@@ -32,39 +78,27 @@ public:
   double get_hits_per_round() const;
   QVector<QVector<QString>> get_score_legs() const;
   QVector<QVector<QVector<QString>>> get_scoring_history() const;
-  void set_leg_win_array(bool iFinished);
   void set_total_hits(uint32_t iHits);
-  void set_total_darts(uint32_t iDarts);
-  uint32_t get_total_darts() const;
   bool increase_setslegs();
+  void restore_state(CPlayerData iData);
+  CPlayerData create_snapshot() const;
 
 private:
 
-  void handle_undo_after_legset_win();
-  void notify_game_won(uint32_t iPlayerNumber);
-  void perform_undo_step();
+  void notify_game_won();
 
   CCricketMainWindow * mGameWindow;
-  uint32_t mSetsWon = 0;  // sets won
-  uint32_t mLegsWonPerSet = 0;  // legs won per set
-  uint32_t mTotalLegsWon = 0;  // total legs won
-  QVector<QVector<QString>> mScoreLegs = {};  // all rounds of current leg
-  QVector<QVector<QVector<QString>>> mScoringHistory = {};  //  complete scoring history of the current game
-  QVector<QVector<QString>> mTotalScores = {};  // all rounds in one vector
-  uint32_t mMarginLegs, mMarginSets;  // required legs/sets to win for one set
-  uint32_t mPlayerNumber;  // instance of player
-  QVector<uint32_t> mNumberOfDartsArray = {};
-  uint32_t mTotalDarts = 0;  // total amount of thrown darts
-  uint32_t mTotalHits;  // total amount of hits
-  QVector<uint32_t> mNumberOfHitsArray;
+  uint32_t mSetsWon = 0;
+  uint32_t mLegsWonPerSet = 0;
+  uint32_t mTotalLegsWon = 0;
+  uint32_t mTotalDarts = 0;
+  uint32_t mScore = 0;
+  uint32_t mMarginLegs, mMarginSets, mPlayerNumber, mTotalHits;
   double mHitsPerRound;
+  QVector<QVector<QString>> mScoresOfCurrentLeg = {};
+  QVector<QVector<QVector<QString>>> mScoringHistory = {};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
-  std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
-  std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
-  uint32_t mScore = 0;
-  QVector<uint32_t> mScoreArray = {0};
-  QVector<bool> mLegWinArray = {false};
   const CSettings & mSettings;
 };
 

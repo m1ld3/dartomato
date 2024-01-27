@@ -22,8 +22,7 @@ public:
 
   explicit CCricketGroupBox(QWidget * iParent,
                             const CSettings & iSettings,
-                            uint32_t iPlayerNumber = 1,
-                            CCricketClass * const iPlayer = nullptr);
+                            uint32_t iPlayerNumber = 1);
   ~CCricketGroupBox() override;
   void set_active();
   void set_inactive();
@@ -36,7 +35,6 @@ public:
   void unset_leg_begin();
   bool has_begun_leg() const;
   bool has_begun_set() const;
-  void update_history();
   void reset_legs();
   void reset();
   uint32_t get_slot(const ECricketSlots iSlot) const;
@@ -48,6 +46,7 @@ public:
   void update_darts(QVector<QString> && iDarts);
   void set_lcd_legs();
   void handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
+  void create_snapshot();
 
 private slots:
 
@@ -66,12 +65,11 @@ private:
   void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
   void set_extra_points_label(const ECricketSlots iSlot, uint32_t iPoints);
   void set_slot_label(const ECricketSlots iSlot, uint32_t iHits);
-  void set_leg_history();
+  void display_leg_history();
   void perform_undo();
   void update_players(const EUpdateType iType);
   void reset_scores_of_all_players();
   void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void update_history_of_all_players();
   void connect_slots();
   void filter_leg_scores_cutthroat(QVector<QVector<QString>> & oLegScores);
   void display_leg_scores(const QVector<QVector<QString>> & iLegScores);
@@ -91,11 +89,12 @@ private:
   void handle_slot_hits_overflow(uint32_t iSlotIdx, uint32_t iHits, uint32_t iSlotVal, QString & oDart,
                                  std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & oExtraPointsCutThroat);
   void fill_slot_hits(uint32_t iSlotIdx, uint32_t iHits);
+  void create_snapshots_of_all_players();
 
   Ui::CCricketGroupBox * mUi;
   QString mPlayerName;
   QPointer<CCricketInput> mScoreInput;
-  CCricketClass * const mPlayer;
+  CCricketClass mPlayer;
   uint32_t mPlayerNumber;
   uint32_t mScore = 0;
   bool mActive = false;
@@ -110,6 +109,7 @@ private:
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
   const CSettings & mSettings;
+  std::vector<CCricketClass::CPlayerData> mHistory;
 };
 
 #endif  // GROUPBOX_CRICKET_H

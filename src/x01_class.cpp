@@ -6,10 +6,10 @@ CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings 
   : QObject(iParent)
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
   , mSettings(iSettings)
-  , mRemainingPoints(static_cast<uint32_t>(mSettings.mGame))
-  , mMarginLegs(std::ceil(mSettings.mLegs/2.0))
-  , mMarginSets(std::ceil(mSettings.mSets/2.0))
-  , mPlayerNumber(iPlayerNumber-1)
+  , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
+  , mMarginLegs(std::ceil(mSettings.Legs / 2.0))
+  , mMarginSets(std::ceil(mSettings.Sets / 2.0))
+  , mPlayerNumber(iPlayerNumber - 1)
   , mRemainingPointsOfCurrentLeg({mRemainingPoints})
 {
   compute_averages(0);
@@ -28,7 +28,7 @@ bool CX01Class::increment_won_legs_and_check_if_set_won()
   }
   if (mSetsWon == mMarginSets)
   {
-    notify_game_won(mPlayerNumber);
+    notify_game_won();
   }
   return hasWonSet;
 }
@@ -68,9 +68,9 @@ CX01Class::CPlayerData CX01Class::create_snapshot() const
                      mRemainingPointsOfCurrentLeg, mRemainingPointsOfAllLegs);
 }
 
-void CX01Class::notify_game_won(uint32_t iPlayerNumber)
+void CX01Class::notify_game_won()
 {
-  mGameWindow->handle_game_won(iPlayerNumber);
+  mGameWindow->handle_game_won(mPlayerNumber);
 }
 
 uint32_t CX01Class::set_score(uint32_t score)
@@ -98,16 +98,12 @@ QVector<uint32_t> CX01Class::get_total_scores_flat() const
   return mAllScoresFlat;
 }
 
-void CX01Class::update_history()
+void CX01Class::reset_score()
 {
   mAllScoresOfAllLegs.push_back(mScoresOfCurrentLeg);
   mThrownDartsOfAllLegs.push_back(mThrownDartsOfCurrentLeg);
   mRemainingPointsOfAllLegs.push_back(mRemainingPointsOfCurrentLeg);
-}
-
-void CX01Class::reset_score()
-{
-  mRemainingPoints = static_cast<uint32_t>(mSettings.mGame);
+  mRemainingPoints = static_cast<uint32_t>(mSettings.Game);
   mRemainingPointsOfCurrentLeg = {mRemainingPoints};
   mScoresOfCurrentLeg = {};
   mThrownDartsOfCurrentLeg = {};

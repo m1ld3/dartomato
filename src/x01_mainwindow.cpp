@@ -13,13 +13,13 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, C
   , mDartBoard(nullptr)
   , mSettings(iSettings)
   , mGameDataHandler(iGameDataHandler)
-  , mNumberOfPlayers(mSettings.mPlayersList.size())
+  , mNumberOfPlayers(mSettings.PlayersList.size())
 {
   mUi->setupUi(this);
-  QString text = QString::number(static_cast<uint32_t>(mSettings.mGame));
+  QString text = QString::number(static_cast<uint32_t>(mSettings.Game));
   QWidget::setWindowTitle(text);
   mDartBoard = new CDartBoardX01(mUi->graphicsViewDartBoard, this, mSettings);
-  mDartBoard->init_dartboard(static_cast<uint32_t>(mSettings.mGame));
+  mDartBoard->init_dartboard(static_cast<uint32_t>(mSettings.Game));
   connect_main_window_slots();
   add_players();
   mPlayerBox[mActivePlayer]->set_set_begin();
@@ -46,7 +46,7 @@ void CX01MainWindow::add_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i+1, mDartBoard));
+    mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i + 1, mDartBoard));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mPlayerBox[i]->set_inactive();
 
@@ -189,9 +189,10 @@ void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
   {
     mPlayerBox[i]->set_finished();
   }
+
   mDartBoard->set_finished();
-  QString name = mPlayerBox[iPlayerNumber]->get_player_number();
-  QString text = name + " has won the game. Congratulations!. ";
+  QString name = mSettings.PlayersList.at(iPlayerNumber);
+  QString text = name + " has won the game. Congratulations! ";
   QMessageBox::about(this,"Game finished", text);
 }
 
@@ -219,14 +220,6 @@ void CX01MainWindow::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool
     }
     mPlayerBox[iPlayer]->set_leg_begin();
     mPlayerBox[iPlayer]->set_set_begin();
-  }
-}
-
-void CX01MainWindow::update_history_of_all_players()
-{
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
-  {
-    mPlayerBox[i]->update_history();
   }
 }
 

@@ -39,7 +39,6 @@ public:
   void unset_leg_begin();
   bool has_begun_leg() const;
   bool has_begun_set() const;
-  void update_history();
   void reset_legs();
   void display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts);
   void set_lcd_legs();
@@ -58,7 +57,6 @@ private:
   void update_players(const EUpdateType iType);
   void reset_scores_of_all_players();
   void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void update_history_of_all_players();
   void perform_undo();
   void unset_finished();
   void connect_slots();

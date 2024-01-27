@@ -103,7 +103,6 @@ public:
   QVector<QVector<uint32_t>> get_remaining_points_of_all_legs() const;
   uint32_t get_legs() const;
   uint32_t get_sets() const;
-  void update_history();
   void reset_score();
   void reset_legs();
   uint32_t get_player_number() const;
@@ -115,7 +114,7 @@ public:
 
 private:
 
-  void notify_game_won(uint32_t iPlayerNumber);
+  void notify_game_won();
   void compute_checkout();
 
   CX01MainWindow * mGameWindow;

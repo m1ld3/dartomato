@@ -36,7 +36,7 @@ public:
   void reset_scores_of_all_players();
   void handle_game_won(uint32_t iPlayerNumber);
   void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void update_history_of_all_players();
+  void create_snapshots_of_all_players();
 
 private:
 
@@ -48,13 +48,12 @@ private:
   void unset_leg_begin_for_all_players();
   void unset_set_begin_for_all_players();
   void set_active_player(uint32_t iPlayer);
+  void add_players();
 
   Ui::CCricketMainWindow * mUi;
-  CCricketGroupBox * mCricketGroupBox;
   uint32_t mActivePlayer = 0;
-  QVector<CCricketGroupBox*> mCricketBox;
+  QVector<CCricketGroupBox*> mPlayerBox;
   const CSettings & mSettings;
-  QVector<CCricketClass*> mCricketPlayer;
   const uint32_t mNumberOfPlayers = 1;
 };
 

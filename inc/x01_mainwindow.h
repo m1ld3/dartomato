@@ -38,7 +38,6 @@ public:
   void update_players(const EUpdateType iType);
   void reset_scores_of_all_players();
   void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void update_history_of_all_players();
   void create_snapshots_of_all_players();
 
 private slots:
@@ -58,7 +57,6 @@ private:
   void save_current_game();
 
   Ui::CX01MainWindow * mUi;
-  CX01GroupBox * mX01GroupBox;
   uint32_t mActivePlayer = 0;
   QVector<CX01GroupBox*> mPlayerBox;
   CDartBoardX01 * mDartBoard;

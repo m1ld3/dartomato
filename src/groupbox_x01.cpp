@@ -17,10 +17,10 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
                            uint32_t iPlayerNumber, CDartBoardX01 * iDartBoard)
   : QGroupBox(iParent)
   , mUi(new Ui::CX01GroupBox)
-  , mPlayer(this, iPlayerNumber, iSettings)
+  , mPlayer(iParent, iPlayerNumber, iSettings)
   , mDartBoard(iDartBoard)
   , mSettings(iSettings)
-  , mRemainingPoints(static_cast<uint32_t>(mSettings.mGame))
+  , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
 #ifndef USE_TTS
   , mScoreSound(this)
@@ -29,8 +29,8 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
-  mUi->lcdNumber->display(static_cast<int>(mSettings.mGame));
-  mUi->labelPlayerName->setText(mSettings.mPlayersList.at(iPlayerNumber - 1));
+  mUi->lcdNumber->display(static_cast<int>(mSettings.Game));
+  mUi->labelPlayerName->setText(mSettings.PlayersList.at(iPlayerNumber - 1));
   display_stats_and_finishes();
   connect_slots();
 }
@@ -61,7 +61,7 @@ void CX01GroupBox::set_inactive()
 
 void CX01GroupBox::reset()
 {
-  mRemainingPoints = static_cast<uint32_t>(mSettings.mGame);
+  mRemainingPoints = static_cast<uint32_t>(mSettings.Game);
   mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
   mPlayer.reset_score();
 }
@@ -83,9 +83,9 @@ QString CX01GroupBox::get_player_number() const
 
 void CX01GroupBox::display_stats_and_finishes()
 {
-  QString avg1dart = QString::number(mPlayer.get_avg1dart(), 'f', 3);
-  QString avg3dart = QString::number(mPlayer.get_avg3dart(), 'f', 3);
-  QString checkout = QString::number(mPlayer.get_checkout(), 'f', 3) + "%";
+  QString avg1dart = QString::number(mPlayer.get_avg1dart(), 'f', 2);
+  QString avg3dart = QString::number(mPlayer.get_avg3dart(), 'f', 2);
+  QString checkout = QString::number(mPlayer.get_checkout(), 'f', 2) + "%";
   mUi->label1DartAvgInput->setText(avg1dart);
   mUi->label3DartAvgInput->setText(avg3dart);
   mUi->labelCheckoutInput->setText(checkout);
@@ -112,7 +112,6 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   mPlayer.update_checkout(iCheckoutAttempts, 1);
   newSet = mPlayer.increment_won_legs_and_check_if_set_won();
   play_score_sound();
-  update_history_of_all_players();
   reset_scores_of_all_players();
   CX01GroupBox::mLegAlreadyStarted = false;
 
@@ -221,11 +220,6 @@ bool CX01GroupBox::has_begun_set() const
   return mSetBegin;
 }
 
-void CX01GroupBox::update_history()
-{
-  mPlayer.update_history();
-}
-
 void CX01GroupBox::reset_legs()
 {
   mPlayer.reset_legs();
@@ -233,13 +227,13 @@ void CX01GroupBox::reset_legs()
 
 const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t iNumberOfDarts)
 {
-  if (mSettings.mSingleOut)
+  if (mSettings.SingleOut)
   {
     if (iNumberOfDarts == 1)      return singleOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return singleOutTwoDartCheckoutList;
     else                          return singleOutThreeDartCheckoutList;
   }
-  else if (mSettings.mDoubleOut)
+  else if (mSettings.DoubleOut)
   {
     if (iNumberOfDarts == 1)      return doubleOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return doubleOutTwoDartCheckoutList;
@@ -341,11 +335,6 @@ void CX01GroupBox::reset_scores_of_all_players()
 void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
 {
   mGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
-}
-
-void CX01GroupBox::update_history_of_all_players()
-{
-  mGameWindow->update_history_of_all_players();
 }
 
 void CX01GroupBox::push_button_stats_clicked_slot()

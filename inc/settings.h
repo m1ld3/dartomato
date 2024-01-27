@@ -38,32 +38,32 @@ struct CSettings
   CSettings(EGame iGame, QStringList iPlayers, uint32_t iSets, uint32_t iLegs,
             bool iSingleIn, bool iSingleOut, bool iDoubleIn, bool iDoubleOut,
             bool iMasterIn, bool iMasterOut, bool iCutThroat)
-  : mGame(iGame)
-  , mPlayersList(iPlayers)
-  , mSets(iSets)
-  , mLegs(iLegs)
-  , mSingleIn(iSingleIn)
-  , mSingleOut(iSingleOut)
-  , mDoubleIn(iDoubleIn)
-  , mDoubleOut(iDoubleOut)
-  , mMasterIn(iMasterIn)
-  , mMasterOut(iMasterOut)
-  , mCutThroat(iCutThroat)
+  : Game(iGame)
+  , PlayersList(iPlayers)
+  , Sets(iSets)
+  , Legs(iLegs)
+  , SingleIn(iSingleIn)
+  , SingleOut(iSingleOut)
+  , DoubleIn(iDoubleIn)
+  , DoubleOut(iDoubleOut)
+  , MasterIn(iMasterIn)
+  , MasterOut(iMasterOut)
+  , CutThroat(iCutThroat)
   {}
 
   CSettings(){}
 
-  EGame mGame = EGame::GAME_301;
-  QStringList mPlayersList = {};
-  uint32_t mSets = 1;
-  uint32_t mLegs = 1;
-  bool mSingleIn = true;
-  bool mSingleOut = false;
-  bool mDoubleIn = false;
-  bool mDoubleOut = true;
-  bool mMasterIn = false;
-  bool mMasterOut = false;
-  bool mCutThroat = false;
+  EGame Game = EGame::GAME_301;
+  QStringList PlayersList = {};
+  uint32_t Sets = 1;
+  uint32_t Legs = 1;
+  bool SingleIn = true;
+  bool SingleOut = false;
+  bool DoubleIn = false;
+  bool DoubleOut = true;
+  bool MasterIn = false;
+  bool MasterOut = false;
+  bool CutThroat = false;
 };
 
 #endif // CSETTINGS_H

@@ -79,7 +79,7 @@ bool CCricketInput::are_slots_full() const
 void CCricketInput::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
 {
   process_segment_common(iVal, iType);
-  if (mSettings.mCutThroat) process_segment_cutthroat();
+  if (mSettings.CutThroat) process_segment_cutthroat();
   else process_segment_default();
 }
 
@@ -115,7 +115,7 @@ void CCricketInput::process_segment_cutthroat()
 {
   if (!mStop && mCounter > 0)
   {
-    QVector<uint32_t> scores(mSettings.mPlayersList.size() - 1);
+    QVector<uint32_t> scores(mSettings.PlayersList.size() - 1);
     compute_cutthroat_scores_for_other_players(scores);
     check_if_game_shot_cutthroat(scores);
     mCounter--;
@@ -240,7 +240,7 @@ void CCricketInput::undo_button_clicked_slot()
       mExtraPointsHistory.at(i).pop_back();
       mSlotArray.at(i) = mSlotHistory.at(i).back();
       mExtraPointsArray.at(i) = mExtraPointsHistory.at(i).back();
-      if (mSettings.mCutThroat)
+      if (mSettings.CutThroat)
       {
         mCutThroatExtraPointsHistory.at(i).pop_back();
         mCutThroatExtraPointsArray.at(i) = mCutThroatExtraPointsHistory.at(i).back();
