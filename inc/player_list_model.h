@@ -4,14 +4,13 @@
 #include <QAbstractListModel>
 #include "game_data_handler.h"
 
-class CGameDataModel : public QAbstractListModel
+class CPlayerListModel : public QAbstractListModel
 {
   Q_OBJECT
 
 public:
 
-  explicit CGameDataModel(const CGameDataHandler & iGameDataHandler, QObject * iParent = nullptr);
-
+  explicit CPlayerListModel(const CGameDataHandler & iGameDataHandler, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
   bool add_player(const QString & iPlayerName);

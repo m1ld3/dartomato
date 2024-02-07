@@ -16,6 +16,7 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
   , mPlayerNumber(iPlayerNumber - 1)
   , mGameWindow(static_cast<CCricketMainWindow*>(iParent))
   , mSettings(iSettings)
+  , mPlayerName(mSettings.PlayersList.at(mPlayerNumber))
   , mHistory({mPlayer.create_snapshot()})
 {
   mUi->setupUi(this);
@@ -27,7 +28,7 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
     set_extra_points_label(static_cast<ECricketSlots>(i), mPlayer.get_extra_points(static_cast<ECricketSlots>(i)));
   }
 
-  mUi->labelPlayerName->setText(mSettings.PlayersList.at(iPlayerNumber - 1));
+  mUi->labelPlayerName->setText(mPlayerName);
   QString hitsPerRound = QString::number(mPlayer.get_hits_per_round(), 'f', 2);
   mUi->labelHitsPerRoundInput->setText(hitsPerRound);
   connect_slots();

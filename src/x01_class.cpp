@@ -88,16 +88,6 @@ void CX01Class::set_darts(QVector<QString> darts)
   mThrownDartsOfAllLegsFlat.append(darts);
 }
 
-QVector<QVector<QString>> CX01Class::get_darts() const
-{
-  return mThrownDartsOfAllLegsFlat;
-}
-
-QVector<uint32_t> CX01Class::get_total_scores_flat() const
-{
-  return mAllScoresFlat;
-}
-
 void CX01Class::reset_score()
 {
   mAllScoresOfAllLegs.push_back(mScoresOfCurrentLeg);
@@ -117,16 +107,6 @@ void CX01Class::reset_legs()
 uint32_t CX01Class::get_player_number() const
 {
   return mPlayerNumber;
-}
-
-QString CX01Class::get_checkout_attempts_str() const
-{
-  return QString::number(mCheckoutHits) + " / " + QString::number(mCheckoutAttempts);
-}
-
-uint32_t CX01Class::get_checkout_attempts() const
-{
-  return mCheckoutAttempts;
 }
 
 void CX01Class::compute_averages(uint32_t numberofdarts)
@@ -180,39 +160,9 @@ double CX01Class::get_checkout() const
   return mCheckoutRate;
 }
 
-QVector<uint32_t> CX01Class::get_scores_of_current_leg() const
-{
-  return mScoresOfCurrentLeg;
-}
-
-QVector<QVector<QString>> CX01Class::get_thrown_darts_of_current_leg() const
-{
-  return mThrownDartsOfCurrentLeg;
-}
-
-QVector<QVector<uint32_t>> CX01Class::get_all_scores_of_all_legs() const
-{
-  return mAllScoresOfAllLegs;
-}
-
-QVector<QVector<QVector<QString>>> CX01Class::get_thrown_darts_of_all_legs() const
-{
-  return mThrownDartsOfAllLegs;
-}
-
 uint32_t CX01Class::get_remaining() const
 {
   return mRemainingPoints;
-}
-
-QVector<uint32_t> CX01Class::get_remaining_points_of_current_leg() const
-{
-  return mRemainingPointsOfCurrentLeg;
-}
-
-QVector<QVector<uint32_t> > CX01Class::get_remaining_points_of_all_legs() const
-{
-  return mRemainingPointsOfAllLegs;
 }
 
 uint32_t CX01Class::get_legs() const

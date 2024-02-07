@@ -20,6 +20,7 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
   , mPlayer(iParent, iPlayerNumber, iSettings)
   , mDartBoard(iDartBoard)
   , mSettings(iSettings)
+  , mPlayerName(mSettings.PlayersList.at(iPlayerNumber - 1))
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
 #ifndef USE_TTS
@@ -30,7 +31,7 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
   mUi->lcdNumber->display(static_cast<int>(mSettings.Game));
-  mUi->labelPlayerName->setText(mSettings.PlayersList.at(iPlayerNumber - 1));
+  mUi->labelPlayerName->setText(mPlayerName);
   display_stats_and_finishes();
   connect_slots();
 }
@@ -164,6 +165,11 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
 void CX01GroupBox::create_snapshot()
 {
   mHistory.push_back(mPlayer.create_snapshot());
+}
+
+void CX01GroupBox::save_game_to_file(CGameDataHandler & iGameDataHandler)
+{
+  iGameDataHandler.save_game_to_file_x01(is_finished(), mSettings.Game, mPlayerName, mHistory);
 }
 
 void CX01GroupBox::create_snapshots_of_all_players()
@@ -339,7 +345,7 @@ void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool i
 
 void CX01GroupBox::push_button_stats_clicked_slot()
 {
-  QPointer<CStatsWindow> stats = new CStatsWindow(this, &mPlayer);
+  QPointer<CStatsWindow> stats = new CStatsWindow(mHistory.back(), this);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
   stats->show();

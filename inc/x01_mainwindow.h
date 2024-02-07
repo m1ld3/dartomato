@@ -55,6 +55,7 @@ private:
   void update_player_set();
   void set_active_player(uint32_t iPlayer);
   void save_current_game();
+  bool game_finished() const;
 
   Ui::CX01MainWindow * mUi;
   uint32_t mActivePlayer = 0;

@@ -3,9 +3,12 @@
 
 #include <QDialog>
 #include <QString>
+#include <QStyledItemDelegate>
+#include <QPainter>
+#include <QProxyStyle>
 #include "x01_class.h"
 
-class CCallout;
+class CLegStatsModel;
 
 namespace Ui
 {
@@ -69,7 +72,17 @@ public:
     , SEG_TRIPLES = 22
   };
 
-  explicit CStatsWindow(QWidget * iParent = nullptr, CX01Class * iPlayer = nullptr);
+  struct SLegStatsData
+  {
+    double Avg3Dart = 0;
+    double Avg1Dart = 0;
+    double AvgLegDartCount = 0.0;
+    uint32_t BestWonLegDartCount = 0;
+    uint32_t WorstWonLegDartCount = 0;
+    uint32_t DartCountOfCurrentLeg = 0;
+  };
+
+  explicit CStatsWindow(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
   ~CStatsWindow() override;
 
 private slots:
@@ -78,8 +91,7 @@ private slots:
 
 private:
 
-  void set_label_checkout(double iCheckout, const QString & iCheckoutAttempts);
-  void set_label_checkout_attempts(QString iAttempts);
+  void set_label_checkout();
   void set_text(QString iText);
   void clear_text();
   void init_leg_selector(uint32_t iNumberOfLegs);
@@ -90,20 +102,21 @@ private:
   void display_current_leg_scores();
   void compute_dart_count_and_checkouts();
   double compute_average(QVector<uint32_t> iScoresOfLeg);
-  void display_best_and_worst_leg_dart_count();
   void display_highest_checkout();
-  void compute_dart_count_of_indexed_leg(uint32_t iIndex);
+  uint32_t compute_dart_count_of_indexed_leg(uint32_t iIndex);
 
 private:
 
   Ui::CStatsWindow * mUi;
-  CX01Class * mPlayer;
+  const CX01Class::CPlayerData & mPlayerData;
   std::array<uint32_t, 20> mScoreCounts = {};
   std::array<uint32_t, 23> mSegmentCounts = {};
   QVector<uint32_t> mDartCountOfWonLegs = {};
   QVector<uint32_t> mAllCheckouts = {};
-  uint32_t mDartCountOfCurrentLeg = 0;
+  uint32_t mHighestCheckout = 0;
   QPixmap mPixMap = QPixmap(":/resources/img/dart.svg");
+  SLegStatsData mLegStatsData;
+  CLegStatsModel * mLegStatsModel = nullptr;
 };
 
 #endif  // STATS_WINDOW_H

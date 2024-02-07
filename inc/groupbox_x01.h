@@ -13,6 +13,7 @@
 #include "settings.h"
 
 class CX01MainWindow;
+class CGameDataHandler;
 
 namespace Ui
 {
@@ -45,6 +46,8 @@ public:
   uint32_t get_remaining_points() const;
   void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
   void create_snapshot();
+  bool is_finished() const { return mFinished; }
+  void save_game_to_file(CGameDataHandler & iGameDataHandler);
 
 private slots:
 
@@ -70,10 +73,10 @@ private:
   void create_snapshots_of_all_players();
 
   Ui::CX01GroupBox * mUi;
-  QString mPlayerName;
   CX01Class mPlayer;
   CDartBoardX01 * mDartBoard;
   const CSettings & mSettings;
+  QString mPlayerName;
   uint32_t mPlayerNumber, mRemainingPoints;
   uint32_t mCurrentScore = 0;
   bool mActive = false;

@@ -6,7 +6,7 @@
 #include "cricket_mainwindow.h"
 #include "settings.h"
 #include "game_data_handler.h"
-#include "game_data_model.h"
+#include "player_list_model.h"
 
 class CGameDataHandler;
 
@@ -47,7 +47,7 @@ private:
 #endif
   CSettings mSettings;
   CGameDataHandler mGameDataHandler;
-  CGameDataModel mGameDataModel;
+  CPlayerListModel mPlayerListModel;
   QStringList mSelectedPlayers = {};
 };
 

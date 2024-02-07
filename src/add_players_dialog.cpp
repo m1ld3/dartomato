@@ -2,16 +2,16 @@
 #include "ui_add_players_dialog.h"
 #include <QMessageBox>
 #include "dartomat_mainwindow.h"
-#include "game_data_model.h"
+#include "player_list_model.h"
 
-CAddPlayersDialog::CAddPlayersDialog(CGameDataModel & iGameDataModel, QWidget * iParent)
+CAddPlayersDialog::CAddPlayersDialog(CPlayerListModel & iPlayerListModel, QWidget * iParent)
   : QDialog(iParent)
   , mUi(new Ui::CAddPlayersDialog)
   , mMainWindow(static_cast<CDartomatMain*>(iParent))
-  , mGameDataModel(iGameDataModel)
+  , mPlayerListModel(iPlayerListModel)
 {
   mUi->setupUi(this);
-  mUi->listViewPlayers->setModel(&mGameDataModel);
+  mUi->listViewPlayers->setModel(&mPlayerListModel);
   mUi->listViewPlayers->setSelectionMode(QAbstractItemView::MultiSelection);
 
   connect(mUi->pushButtonAdd, &QPushButton::clicked, this, &CAddPlayersDialog::push_button_add_clicked_slot);
@@ -29,7 +29,7 @@ void CAddPlayersDialog::push_button_add_clicked_slot()
   QString newPlayerName = mUi->lineEditAddPlayer->text().trimmed();
   if (newPlayerName.isEmpty()) return;
 
-  if (!mGameDataModel.add_player(newPlayerName))
+  if (!mPlayerListModel.add_player(newPlayerName))
   {
     QMessageBox::warning(this, "Player name already exists!", "Please choose another name.");
   }

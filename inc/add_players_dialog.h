@@ -5,7 +5,7 @@
 
 class CDartomatMain;
 class CGameDataHandler;
-class CGameDataModel;
+class CPlayerListModel;
 
 namespace Ui
 {
@@ -18,7 +18,7 @@ class CAddPlayersDialog : public QDialog
 
 public:
 
-  explicit CAddPlayersDialog(CGameDataModel & iGameDataModel, QWidget * iParent = nullptr);
+  explicit CAddPlayersDialog(CPlayerListModel & iGameDataModel, QWidget * iParent = nullptr);
   ~CAddPlayersDialog();
 
 private slots:
@@ -32,7 +32,7 @@ private:
   Ui::CAddPlayersDialog * mUi;
   QVector<QString> mNewPlayerNames;
   CDartomatMain * const mMainWindow;
-  CGameDataModel & mGameDataModel;
+  CPlayerListModel & mPlayerListModel;
 };
 
 #endif  // ADD_PLAYERS_DIALOG_H

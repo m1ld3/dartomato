@@ -17,6 +17,9 @@ public:
   {
 
     friend class CX01Class;
+    friend class CGameDataHandler;
+    friend class CLegStatsModel;
+    friend class CStatsWindow;
 
   public:
 
@@ -87,27 +90,17 @@ public:
   CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings);
   uint32_t set_score(uint32_t iScore);
   void set_darts(QVector<QString> iDarts);
-  QVector<QVector<QString>> get_darts() const;
-  QVector<uint32_t> get_total_scores_flat() const;
   void compute_averages(uint32_t iNumberOfDarts);
   void update_checkout(uint32_t iCheckoutAttempts, uint32_t iSuccess);
   double get_avg1dart() const;
   double get_avg3dart() const;
   double get_checkout() const;
-  QVector<uint32_t> get_scores_of_current_leg() const;
-  QVector<QVector<QString>> get_thrown_darts_of_current_leg() const;
-  QVector<QVector<uint32_t>> get_all_scores_of_all_legs() const;
-  QVector<QVector<QVector<QString>>> get_thrown_darts_of_all_legs() const;
   uint32_t get_remaining() const;
-  QVector<uint32_t> get_remaining_points_of_current_leg() const;
-  QVector<QVector<uint32_t>> get_remaining_points_of_all_legs() const;
   uint32_t get_legs() const;
   uint32_t get_sets() const;
   void reset_score();
   void reset_legs();
   uint32_t get_player_number() const;
-  QString get_checkout_attempts_str() const;
-  uint32_t get_checkout_attempts() const;
   bool increment_won_legs_and_check_if_set_won();
   void restore_state(CPlayerData iData);
   CPlayerData create_snapshot() const;

@@ -15,7 +15,7 @@ find_package(Qt6 COMPONENTS Core Gui Multimedia Widgets SvgWidgets TextToSpeech 
 include_directories(inc)
 
 set(INCLUDES
-    inc/game_data_model.h
+    inc/player_list_model.h
     inc/game_data_handler.h
     inc/checkout_lists.h
     inc/cricket_class.h
@@ -36,6 +36,7 @@ set(INCLUDES
     inc/stats_window.h
     inc/x01_mainwindow.h
     inc/add_players_dialog.h
+	inc/leg_stats_model.h
     )
  
  set(SOURCES
@@ -50,7 +51,7 @@ set(INCLUDES
     src/dartboard_x01.cpp
     src/dartomat_mainwindow.cpp
     src/game_data_handler.cpp
-    src/game_data_model.cpp
+    src/player_list_model.cpp
     src/groupbox_cricket.cpp
     src/groupbox_x01.cpp
     src/main.cpp
@@ -59,6 +60,7 @@ set(INCLUDES
     src/spinbox.cpp
     src/stats_window.cpp
     src/x01_mainwindow.cpp
+	src/leg_stats_model.cpp
     src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui

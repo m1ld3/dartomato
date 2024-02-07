@@ -49,6 +49,7 @@ private:
   void unset_set_begin_for_all_players();
   void set_active_player(uint32_t iPlayer);
   void add_players();
+  bool game_finished() const;
 
   Ui::CCricketMainWindow * mUi;
   uint32_t mActivePlayer = 0;

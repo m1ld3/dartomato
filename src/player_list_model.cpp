@@ -1,26 +1,26 @@
-#include "game_data_model.h"
+#include "player_list_model.h"
 
-CGameDataModel::CGameDataModel(const CGameDataHandler & iGameDataHandler, QObject * iParent)
+CPlayerListModel::CPlayerListModel(const CGameDataHandler & iGameDataHandler, QObject * iParent)
   : QAbstractListModel(iParent)
   , mGameDataHandler(iGameDataHandler)
 {
   mPlayerNames = mGameDataHandler.get_player_names();
 }
 
-int CGameDataModel::rowCount(const QModelIndex & iParent) const
+int CPlayerListModel::rowCount(const QModelIndex & iParent) const
 {
   if (iParent.isValid()) return 0;
   return mPlayerNames.count();
 }
 
-QVariant CGameDataModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CPlayerListModel::data(const QModelIndex & iIndex, int iRole) const
 {
   if (!iIndex.isValid())        return QVariant();
   if (iRole == Qt::DisplayRole) return mPlayerNames.at(iIndex.row());
   return QVariant();
 }
 
-bool CGameDataModel::add_player(const QString & iPlayerName)
+bool CPlayerListModel::add_player(const QString & iPlayerName)
 {
   if (!mPlayerNames.contains(iPlayerName))
   {

@@ -47,6 +47,7 @@ public:
   void set_lcd_legs();
   void handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
   void create_snapshot();
+  bool is_finished() const { return mFinished; }
 
 private slots:
 
@@ -92,11 +93,15 @@ private:
   void create_snapshots_of_all_players();
 
   Ui::CCricketGroupBox * mUi;
-  QString mPlayerName;
   QPointer<CCricketInput> mScoreInput;
   CCricketClass mPlayer;
   uint32_t mPlayerNumber;
+  CCricketMainWindow * mGameWindow;
+  const CSettings & mSettings;
+  QString mPlayerName;
+  std::vector<CCricketClass::CPlayerData> mHistory;
   uint32_t mScore = 0;
+  uint32_t mTotalHits = 0;
   bool mActive = false;
   bool mFinished = false;
   bool mSetBegin = false;
@@ -104,12 +109,8 @@ private:
   static bool mLegStarted;
   static bool mSetStarted;
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
-  CCricketMainWindow * mGameWindow;
-  uint32_t mTotalHits = 0;
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
-  const CSettings & mSettings;
-  std::vector<CCricketClass::CPlayerData> mHistory;
 };
 
 #endif  // GROUPBOX_CRICKET_H

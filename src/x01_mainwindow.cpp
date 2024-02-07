@@ -5,6 +5,7 @@
 #include <QString>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QPushButton>
 
 
 CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler)
@@ -63,19 +64,27 @@ void CX01MainWindow::connect_main_window_slots()
 
 void CX01MainWindow::closeEvent(QCloseEvent * iEvent)
 {
-  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game not yet finished!",
-                                                             tr("Do you want to save or abort the current game?\n"),
-                                                             QMessageBox::Save | QMessageBox::Abort | QMessageBox::Cancel);
-  if (resBtn == QMessageBox::Save)
+  if (game_finished())
   {
     save_current_game();
-    iEvent->accept();
+    iEvent->accept();  // TODO: where restart game with same config button?
   }
-  else if (resBtn == QMessageBox::Abort)
+  else
   {
-    iEvent->accept();
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game not yet finished!",
+                                                               tr("Do you want to save or abort the current game?\n"),
+                                                               QMessageBox::Save | QMessageBox::Abort | QMessageBox::Cancel);
+    if (resBtn == QMessageBox::Save)
+    {
+      save_current_game();
+      iEvent->accept();
+    }
+    else if (resBtn == QMessageBox::Abort)
+    {
+      iEvent->accept();
+    }
+    else iEvent->ignore();
   }
-  else iEvent->ignore();
 }
 
 void CX01MainWindow::set_active_player(uint32_t iPlayer)
@@ -87,8 +96,19 @@ void CX01MainWindow::save_current_game()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    qWarning("TODO");
+    mPlayerBox[i]->save_game_to_file(mGameDataHandler);
   }
+}
+
+bool CX01MainWindow::game_finished() const
+{
+  bool finished = true;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    finished = finished && mPlayerBox[i]->is_finished();
+  }
+
+  return finished;
 }
 
 void CX01MainWindow::update_active_player()

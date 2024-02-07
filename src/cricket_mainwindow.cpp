@@ -41,6 +41,17 @@ void CCricketMainWindow::add_players()
   }
 }
 
+bool CCricketMainWindow::game_finished() const
+{
+  bool finished = true;
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    finished = finished && mPlayerBox[i]->is_finished();
+  }
+
+  return finished;
+}
+
 void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
 {
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Quit game",

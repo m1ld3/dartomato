@@ -17,7 +17,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
 #ifndef USE_TTS
   , mGameOnSound(this)
   , mGameDataHandler(CGameDataHandler())
-  , mGameDataModel(CGameDataModel(mGameDataHandler, this))
+  , mPlayerListModel(CPlayerListModel(mGameDataHandler, this))
 #endif
 {
   mUi->setupUi(this);
@@ -123,7 +123,7 @@ void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iG
 
 void CDartomatMain::push_button_select_players_clicked_slot()
 {
-  QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(mGameDataModel, this);
+  QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(mPlayerListModel, this);
   dialog->show();
 }
 
