@@ -18,9 +18,9 @@ public:
 private:
 
   CStatsWindow::SGlobalGameStatsData mData;
-  QVector<QString> mCol0Labels = {"3-Dart-Average", "1-Dart-Average"};
+  QVector<QString> mCol0Labels = {"3-Dart-Average:", "1-Dart-Average:"};
   QVector<double> mCol1Data;
-  QVector<QString> mCol2Labels = {"Checkout-Rate", "Highest Checkout"};
+  QVector<QString> mCol2Labels = {"Checkout-Rate:", "Highest Checkout:"};
 };
 
 #endif  // CGLOBALGAMESTATSMODEL_H

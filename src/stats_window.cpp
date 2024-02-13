@@ -3,6 +3,8 @@
 #include "leg_stats_model.h"
 #include "leg_scores_model.h"
 #include "global_game_stats_model.h"
+#include "global_score_stats_model.h"
+#include "global_segment_stats_model.h"
 
 CStatsWindow::CStatsWindow(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent)
   : QDialog(iParent)
@@ -13,23 +15,10 @@ CStatsWindow::CStatsWindow(const CX01Class::CPlayerData & iPlayerData, QWidget *
   setAttribute(Qt::WA_DeleteOnClose);
   count_scores();
   calculate_segment_counts();
-  set_stats_labels();
   compute_dart_count_and_checkouts();
-  mUi->tableViewLegStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewLegScores->setSelectionMode(QAbstractItemView::NoSelection);
   QObject::connect(mUi->legSelector, &QComboBox::currentIndexChanged, this, &CStatsWindow::update_leg_history);
-  display_current_leg_stats();
-  mGlobalGameStatsData.Avg3Dart = mPlayerData.Avg3Dart;
-  mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
-  mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
-  mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;;
-  mGlobalStatsModel = new CGlobalGameStatsModel(mGlobalGameStatsData, this);
-  mUi->tableViewGlobalStats->setModel(mGlobalStatsModel);
-  mUi->tableViewGlobalStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalStats->setColumnWidth(0, 125);
-  mUi->tableViewGlobalStats->setColumnWidth(1, 125);
-  mUi->tableViewGlobalStats->setColumnWidth(2, 125);
-  mUi->tableViewGlobalStats->setColumnWidth(3, 125);
+  init_leg_selector();
+  setup_table_views();
 }
 
 CStatsWindow::~CStatsWindow()
@@ -37,22 +26,59 @@ CStatsWindow::~CStatsWindow()
   delete mUi;
   delete mLegStatsModel;
   delete mLegScoresModel;
+  delete mGlobalGameStatsModel;
+  delete mGlobalScoreStatsModel;
+  delete mGlobalSegmentStatsModel;
 }
 
-void CStatsWindow::init_leg_selector(uint32_t iNumberOfLegs)
+void CStatsWindow::setup_table_views()
 {
-  if (iNumberOfLegs == 0)
+  mGlobalGameStatsData.Avg3Dart = mPlayerData.Avg3Dart;
+  mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
+  mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
+  mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;;
+  mGlobalGameStatsModel = new CGlobalGameStatsModel(mGlobalGameStatsData, this);
+  mGlobalScoreStatsModel = new CGlobalScoreStatsModel(mScoreCounts, this);
+  mGlobalSegmentStatsModel = new CGlobalSegmentStatsModel(mSegmentCounts, this);
+  mUi->tableViewGlobalGameStats->setModel(mGlobalGameStatsModel);
+  mUi->tableViewGlobalScoreStats->setModel(mGlobalScoreStatsModel);
+  mUi->tableViewGlobalSegmentStats->setModel(mGlobalSegmentStatsModel);
+  mUi->tableViewLegStats->setSelectionMode(QAbstractItemView::NoSelection);
+  mUi->tableViewLegScores->setSelectionMode(QAbstractItemView::NoSelection);
+  mUi->tableViewGlobalGameStats->setSelectionMode(QAbstractItemView::NoSelection);
+  mUi->tableViewGlobalScoreStats->setSelectionMode(QAbstractItemView::NoSelection);
+  mUi->tableViewGlobalSegmentStats->setSelectionMode(QAbstractItemView::NoSelection);
+  mUi->tableViewGlobalGameStats->setColumnWidth(0, 125);
+  mUi->tableViewGlobalGameStats->setColumnWidth(1, 125);
+  mUi->tableViewGlobalGameStats->setColumnWidth(2, 125);
+  mUi->tableViewGlobalGameStats->setColumnWidth(3, 125);
+  mUi->tableViewGlobalScoreStats->setColumnWidth(0, 50);
+  mUi->tableViewGlobalScoreStats->setColumnWidth(1, 75);
+  mUi->tableViewGlobalScoreStats->setColumnWidth(2, 50);
+  mUi->tableViewGlobalScoreStats->setColumnWidth(3, 75);
+  mUi->tableViewGlobalSegmentStats->setColumnWidth(0, 50);
+  mUi->tableViewGlobalSegmentStats->setColumnWidth(1, 75);
+  mUi->tableViewGlobalSegmentStats->setColumnWidth(2, 50);
+  mUi->tableViewGlobalSegmentStats->setColumnWidth(3, 75);
+  mUi->tableViewGlobalSegmentStats->setColumnWidth(4, 50);
+  mUi->tableViewGlobalSegmentStats->setColumnWidth(5, 75);
+}
+
+void CStatsWindow::init_leg_selector()
+{
+  uint32_t numberOfLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
+  if (numberOfLegs == 0)
   {
     mUi->legSelector->addItem("1");
     mUi->legSelector->setCurrentIndex(0);
   }
   else
   {
-    for (uint32_t i = 1; i < iNumberOfLegs + 1; i++)
+    for (uint32_t i = 1; i < numberOfLegs + 1; i++)
     {
       mUi->legSelector->addItem(QString::number(i));
     }
-    mUi->legSelector->setCurrentIndex(iNumberOfLegs - 1);
+    mUi->legSelector->setCurrentIndex(numberOfLegs - 1);
   }
 }
 
@@ -159,7 +185,7 @@ void CStatsWindow::calculate_segment_counts()
       else if (dart[0] == 't')
       {
         idx = dart.mid(1).toUInt() / 3;
-        if (idx >= 17) mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_TRIPLES)) += 1;
+        if (idx >= 15) mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_TRIPLES)) += 1;
       }
       else
       {
@@ -169,60 +195,6 @@ void CStatsWindow::calculate_segment_counts()
       mSegmentCounts.at(idx) += 1;
     }
   }
-}
-
-void CStatsWindow::set_stats_labels()
-{
-  mUi->label0pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))));
-  mUi->label20pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))));
-  mUi->label40pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))));
-  mUi->label60pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60))));
-  mUi->label80pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_80))));
-  mUi->label100pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_100))));
-  mUi->label120pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_120))));
-  mUi->label140pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_140))));
-  mUi->label160pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_160))));
-  mUi->label180Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_180))));
-  mUi->label140Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_140))));
-  mUi->label120Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_120))));
-  mUi->label100Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_100))));
-  mUi->label85Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_85))));
-  mUi->label81Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_81))));
-  mUi->label60Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_60))));
-  mUi->label45Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_45))));
-  mUi->label41Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_41))));
-  mUi->label30Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_30))));
-  mUi->label26Input->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_26))));
-
-  mUi->label25Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_25))));
-  mUi->label20Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_20))));
-  mUi->label19Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_19))));
-  mUi->label18Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_18))));
-  mUi->label17Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_17))));
-  mUi->label16Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_16))));
-  mUi->label15Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_15))));
-  mUi->label14Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_14))));
-  mUi->label13Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_13))));
-  mUi->label12Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_12))));
-  mUi->label11Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_11))));
-  mUi->label10Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_10))));
-  mUi->label9Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_9))));
-  mUi->label8Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_8))));
-  mUi->label7Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_7))));
-  mUi->label6Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_6))));
-  mUi->label5Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_5))));
-  mUi->label4Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_4))));
-  mUi->label3Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_3))));
-  mUi->label2Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_2))));
-  mUi->label1Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_1))));
-  mUi->label0Input->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_0))));
-  mUi->labelHighTriplesInput->setText(QString::number(mSegmentCounts.at(static_cast<int>(EDartCountsIdx::SEG_TRIPLES))));
-}
-
-void CStatsWindow::display_current_leg_stats()
-{
-  uint32_t numberOfLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
-  init_leg_selector(numberOfLegs);
 }
 
 void CStatsWindow::compute_dart_count_and_checkouts()

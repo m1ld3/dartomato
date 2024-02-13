@@ -1,6 +1,6 @@
 #include "global_score_stats_model.h"
 
-CGlobalScoreStatsModel::CGlobalScoreStatsModel(static_cast<int>(CStatsWindow::EScoreCountsIdx::SCORE_COUNT_MAX)> iScores, QObject * iParent)
+CGlobalScoreStatsModel::CGlobalScoreStatsModel(std::array<uint32_t, static_cast<int>(CStatsWindow::EScoreCountsIdx::SCORE_COUNT_MAX)> iScores, QObject * iParent)
   : QAbstractTableModel(iParent)
   , mScores(iScores)
 {}
@@ -8,7 +8,7 @@ CGlobalScoreStatsModel::CGlobalScoreStatsModel(static_cast<int>(CStatsWindow::ES
 int CGlobalScoreStatsModel::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return 2;
+  return 10;
 }
 
 int CGlobalScoreStatsModel::columnCount(const QModelIndex & iParent) const

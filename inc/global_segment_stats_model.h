@@ -18,6 +18,38 @@ public:
 private:
 
   std::array<uint32_t, static_cast<int>(CStatsWindow::EDartCountsIdx::SEG_MAX)> mSegments;
+  QVector<QString> mCol0Labels
+  {
+      "0:"
+    , "1:"
+    , "2:"
+    , "3:"
+    , "4:"
+    , "5:"
+    , "6:"
+    , "7:"
+    , "8:"
+    , "9:"
+  };
+  QVector<QString> mCol2Labels
+  {
+      "10:"
+    , "11:"
+    , "12:"
+    , "13:"
+    , "14:"
+    , "15:"
+    , "16:"
+    , "17:"
+    , "18:"
+    , "19:"
+  };
+  QVector<QString> mCol4Labels
+  {
+      "20:"
+    , "25:"
+    , "T15-20:"
+  };
 };
 
 #endif  // CGLOBALSEGMENTSTATSMODEL_H

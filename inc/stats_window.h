@@ -11,6 +11,8 @@
 class CLegStatsModel;
 class CLegScoresModel;
 class CGlobalGameStatsModel;
+class CGlobalScoreStatsModel;
+class CGlobalSegmentStatsModel;
 
 namespace Ui
 {
@@ -25,16 +27,16 @@ public:
 
   enum class EScoreCountsIdx
   {
-      PLUS_0          = 0
-    , PLUS_20         = 1
-    , PLUS_40         = 2
-    , PLUS_60         = 3
-    , PLUS_80         = 4
-    , PLUS_100        = 5
-    , PLUS_120        = 6
-    , PLUS_140        = 7
-    , PLUS_160        = 8
-    , THE_180         = 9
+      THE_180         = 0
+    , PLUS_160        = 1
+    , PLUS_140        = 2
+    , PLUS_120        = 3
+    , PLUS_100        = 4
+    , PLUS_80         = 5
+    , PLUS_60         = 6
+    , PLUS_40         = 7
+    , PLUS_20         = 8
+    , PLUS_0          = 9
     , THE_140         = 10
     , THE_120         = 11
     , THE_100         = 12
@@ -104,15 +106,14 @@ private slots:
 
 private:
 
-  void init_leg_selector(uint32_t iNumberOfLegs);
+  void init_leg_selector();
   void count_scores();
   std::map<uint32_t, uint32_t> calculate_score_counts();
   void calculate_segment_counts();
-  void set_stats_labels();
-  void display_current_leg_stats();
   void compute_dart_count_and_checkouts();
   double compute_average(QVector<uint32_t> iScoresOfLeg);
   uint32_t compute_dart_count_of_indexed_leg(uint32_t iIndex);
+  void setup_table_views();
 
 private:
 
@@ -125,7 +126,9 @@ private:
   SLegStatsData mLegStatsData;
   CLegStatsModel * mLegStatsModel = nullptr;
   CLegScoresModel * mLegScoresModel = nullptr;
-  CGlobalGameStatsModel * mGlobalStatsModel = nullptr;
+  CGlobalGameStatsModel * mGlobalGameStatsModel = nullptr;
+  CGlobalScoreStatsModel * mGlobalScoreStatsModel = nullptr;
+  CGlobalSegmentStatsModel * mGlobalSegmentStatsModel = nullptr;
   SGlobalGameStatsData mGlobalGameStatsData;
 };
 

@@ -5,12 +5,12 @@ CLegStatsModel::CLegStatsModel(CStatsWindow::SLegStatsData iLegStatsData, QObjec
 {
   mLegStatsData =
   {
-    {"3-Dart Leg Average", iLegStatsData.Avg3Dart},
-    {"1-Dart Leg Average", iLegStatsData.Avg1Dart},
-    {"Average Darts Per Leg", iLegStatsData.AvgLegDartCount},
-    {"Best Won Leg", iLegStatsData.BestWonLegDartCount},
-    {"Worst Won Leg", iLegStatsData.WorstWonLegDartCount},
-    {"Current Leg", iLegStatsData.DartCountOfCurrentLeg}
+    {"3-Dart Leg Average:", iLegStatsData.Avg3Dart},
+    {"1-Dart Leg Average:", iLegStatsData.Avg1Dart},
+    {"Average Darts Per Leg:", iLegStatsData.AvgLegDartCount},
+    {"Best Won Leg:", iLegStatsData.BestWonLegDartCount},
+    {"Worst Won Leg:", iLegStatsData.WorstWonLegDartCount},
+    {"Current Leg:", iLegStatsData.DartCountOfCurrentLeg}
   };
 }
 
@@ -51,15 +51,12 @@ QVariant CLegStatsModel::data(const QModelIndex & iIndex, int iRole) const
 
 void CLegStatsModel::update(CStatsWindow::SLegStatsData iLegStatsData)
 {
-  mLegStatsData =
-  {
-    {"3-Dart Leg Average", iLegStatsData.Avg3Dart},
-    {"1-Dart Leg Average", iLegStatsData.Avg1Dart},
-    {"Average Darts Per Leg", iLegStatsData.AvgLegDartCount},
-    {"Best Won Leg", iLegStatsData.BestWonLegDartCount},
-    {"Worst Won Leg", iLegStatsData.WorstWonLegDartCount},
-    {"Current Leg", iLegStatsData.DartCountOfCurrentLeg}
-  };
+  mLegStatsData[0].Value = iLegStatsData.Avg3Dart;
+  mLegStatsData[1].Value = iLegStatsData.Avg1Dart;
+  mLegStatsData[2].Value = iLegStatsData.AvgLegDartCount;
+  mLegStatsData[3].Value = iLegStatsData.BestWonLegDartCount;
+  mLegStatsData[4].Value = iLegStatsData.WorstWonLegDartCount;
+  mLegStatsData[5].Value = iLegStatsData.DartCountOfCurrentLeg;
   emit dataChanged(createIndex(0,0), createIndex(rowCount() - 1, columnCount() - 1));
 }
 
