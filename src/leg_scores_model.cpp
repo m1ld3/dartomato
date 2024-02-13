@@ -1,5 +1,4 @@
 #include "leg_scores_model.h"
-#include <QDebug>
 
 CLegScoresModel::CLegScoresModel(QVector<uint32_t> iLegScores, QVector<QVector<QString>> iLegDarts, QObject * iParent)
   : mLegScores(iLegScores)

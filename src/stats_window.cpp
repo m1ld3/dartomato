@@ -24,6 +24,12 @@ CStatsWindow::CStatsWindow(const CX01Class::CPlayerData & iPlayerData, QWidget *
   mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
   mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;;
   mGlobalStatsModel = new CGlobalGameStatsModel(mGlobalGameStatsData, this);
+  mUi->tableViewGlobalStats->setModel(mGlobalStatsModel);
+  mUi->tableViewGlobalStats->setSelectionMode(QAbstractItemView::NoSelection);
+  mUi->tableViewGlobalStats->setColumnWidth(0, 125);
+  mUi->tableViewGlobalStats->setColumnWidth(1, 125);
+  mUi->tableViewGlobalStats->setColumnWidth(2, 125);
+  mUi->tableViewGlobalStats->setColumnWidth(3, 125);
 }
 
 CStatsWindow::~CStatsWindow()
@@ -31,13 +37,6 @@ CStatsWindow::~CStatsWindow()
   delete mUi;
   delete mLegStatsModel;
   delete mLegScoresModel;
-}
-
-void CStatsWindow::set_label_checkout()
-{
-  QString checkstr = QString::number(mPlayerData.CheckoutRate, 'f', 2)
-      + "%  (" + QString::number(mPlayerData.CheckoutHits) + " / " + QString::number(mPlayerData.CheckoutAttempts) + ")";
-  mUi->labelCheckoutInput->setText(checkstr);
 }
 
 void CStatsWindow::init_leg_selector(uint32_t iNumberOfLegs)
@@ -174,9 +173,6 @@ void CStatsWindow::calculate_segment_counts()
 
 void CStatsWindow::set_stats_labels()
 {
-  mUi->label1DartAvgInput->setText(QString::number(mPlayerData.Avg1Dart, 'f', 2));
-  mUi->label3DartAvgInput->setText(QString::number(mPlayerData.Avg3Dart, 'f', 2));
-  set_label_checkout();
   mUi->label0pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))));
   mUi->label20pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))));
   mUi->label40pInput->setText(QString::number(mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))));
@@ -257,11 +253,6 @@ double CStatsWindow::compute_average(QVector<uint32_t> iScoresOfLeg)
   if (n > 0) avg = std::accumulate(iScoresOfLeg.begin(), iScoresOfLeg.end(), 0.0) / n;
   else avg = 0.0;
   return avg;
-}
-
-void CStatsWindow::display_highest_checkout()
-{
-  mUi->labelHighestCheckoutInput->setText(QString::number(mHighestCheckout));
 }
 
 uint32_t CStatsWindow::compute_dart_count_of_indexed_leg(uint32_t iIndex)

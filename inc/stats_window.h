@@ -102,7 +102,6 @@ private slots:
 
 private:
 
-  void set_label_checkout();
   void init_leg_selector(uint32_t iNumberOfLegs);
   void count_scores();
   std::map<uint32_t, uint32_t> calculate_score_counts();
@@ -111,7 +110,6 @@ private:
   void display_current_leg_stats();
   void compute_dart_count_and_checkouts();
   double compute_average(QVector<uint32_t> iScoresOfLeg);
-  void display_highest_checkout();
   uint32_t compute_dart_count_of_indexed_leg(uint32_t iIndex);
 
 private:
