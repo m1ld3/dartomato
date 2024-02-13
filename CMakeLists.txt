@@ -39,6 +39,8 @@ set(INCLUDES
     inc/leg_stats_model.h
     inc/leg_scores_model.h
     inc/global_game_stats_model.h
+    inc/global_score_stats_model.h
+    inc/global_segment_stats_model.h
     )
  
  set(SOURCES
@@ -65,6 +67,8 @@ set(INCLUDES
     src/leg_stats_model.cpp
     src/leg_scores_model.cpp
     src/global_game_stats_model.cpp
+    src/global_score_stats_model.cpp
+    src/global_segment_stats_model.cpp
     src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui

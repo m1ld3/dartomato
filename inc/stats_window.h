@@ -25,26 +25,27 @@ public:
 
   enum class EScoreCountsIdx
   {
-      PLUS_0   = 0
-    , PLUS_20  = 1
-    , PLUS_40  = 2
-    , PLUS_60  = 3
-    , PLUS_80  = 4
-    , PLUS_100 = 5
-    , PLUS_120 = 6
-    , PLUS_140 = 7
-    , PLUS_160 = 8
-    , THE_180  = 9
-    , THE_140  = 10
-    , THE_120  = 11
-    , THE_100  = 12
-    , THE_85   = 13
-    , THE_81   = 14
-    , THE_60   = 15
-    , THE_45   = 16
-    , THE_41   = 17
-    , THE_30   = 18
-    , THE_26   = 19
+      PLUS_0          = 0
+    , PLUS_20         = 1
+    , PLUS_40         = 2
+    , PLUS_60         = 3
+    , PLUS_80         = 4
+    , PLUS_100        = 5
+    , PLUS_120        = 6
+    , PLUS_140        = 7
+    , PLUS_160        = 8
+    , THE_180         = 9
+    , THE_140         = 10
+    , THE_120         = 11
+    , THE_100         = 12
+    , THE_85          = 13
+    , THE_81          = 14
+    , THE_60          = 15
+    , THE_45          = 16
+    , THE_41          = 17
+    , THE_30          = 18
+    , THE_26          = 19
+    , SCORE_COUNT_MAX = 20
   };
 
   enum class EDartCountsIdx
@@ -72,6 +73,7 @@ public:
     , SEG_20      = 20
     , SEG_25      = 21
     , SEG_TRIPLES = 22
+    , SEG_MAX     = 23
   };
 
   struct SLegStatsData
@@ -116,8 +118,8 @@ private:
 
   Ui::CStatsWindow * mUi;
   const CX01Class::CPlayerData & mPlayerData;
-  std::array<uint32_t, 20> mScoreCounts = {};
-  std::array<uint32_t, 23> mSegmentCounts = {};
+  std::array<uint32_t, static_cast<int>(EScoreCountsIdx::SCORE_COUNT_MAX)> mScoreCounts = {};
+  std::array<uint32_t, static_cast<int>(EDartCountsIdx::SEG_MAX)> mSegmentCounts = {};
   QVector<uint32_t> mDartCountOfWonLegs = {};
   QVector<uint32_t> mAllCheckouts = {};
   SLegStatsData mLegStatsData;

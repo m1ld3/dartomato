@@ -112,7 +112,7 @@ void CStatsWindow::count_scores()
     std::map<uint32_t, uint32_t>::iterator it;
     for (it = scoreCounts.begin(); it != scoreCounts.end(); it++)
     {
-      if (it->first < 20)                      mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))   += it->second;
+      if (it->first <  20)                     mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))   += it->second;
       if (it->first >= 20  && it->first < 40)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))  += it->second;
       if (it->first >= 40  && it->first < 60)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))  += it->second;
       if (it->first >= 60  && it->first < 80)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60))  += it->second;
