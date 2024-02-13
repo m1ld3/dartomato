@@ -36,7 +36,9 @@ set(INCLUDES
     inc/stats_window.h
     inc/x01_mainwindow.h
     inc/add_players_dialog.h
-	inc/leg_stats_model.h
+    inc/leg_stats_model.h
+    inc/leg_scores_model.h
+    inc/global_game_stats_model.h
     )
  
  set(SOURCES
@@ -60,7 +62,9 @@ set(INCLUDES
     src/spinbox.cpp
     src/stats_window.cpp
     src/x01_mainwindow.cpp
-	src/leg_stats_model.cpp
+    src/leg_stats_model.cpp
+    src/leg_scores_model.cpp
+    src/global_game_stats_model.cpp
     src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui

@@ -9,6 +9,8 @@
 #include "x01_class.h"
 
 class CLegStatsModel;
+class CLegScoresModel;
+class CGlobalGameStatsModel;
 
 namespace Ui
 {
@@ -74,12 +76,21 @@ public:
 
   struct SLegStatsData
   {
-    double Avg3Dart = 0;
-    double Avg1Dart = 0;
+    double Avg3Dart = 0.0;
+    double Avg1Dart = 0.0;
     double AvgLegDartCount = 0.0;
     uint32_t BestWonLegDartCount = 0;
     uint32_t WorstWonLegDartCount = 0;
     uint32_t DartCountOfCurrentLeg = 0;
+  };
+
+  struct SGlobalGameStatsData
+  {
+    double Avg3Dart = 0.0;
+    double Avg1Dart = 0.0;
+    uint32_t HighestCheckout = 0;
+    uint32_t CheckoutAttempts = 0;
+    uint32_t CheckoutHits = 0;
   };
 
   explicit CStatsWindow(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
@@ -92,14 +103,12 @@ private slots:
 private:
 
   void set_label_checkout();
-  void set_text(QString iText);
-  void clear_text();
   void init_leg_selector(uint32_t iNumberOfLegs);
   void count_scores();
   std::map<uint32_t, uint32_t> calculate_score_counts();
   void calculate_segment_counts();
   void set_stats_labels();
-  void display_current_leg_scores();
+  void display_current_leg_stats();
   void compute_dart_count_and_checkouts();
   double compute_average(QVector<uint32_t> iScoresOfLeg);
   void display_highest_checkout();
@@ -113,10 +122,11 @@ private:
   std::array<uint32_t, 23> mSegmentCounts = {};
   QVector<uint32_t> mDartCountOfWonLegs = {};
   QVector<uint32_t> mAllCheckouts = {};
-  uint32_t mHighestCheckout = 0;
-  QPixmap mPixMap = QPixmap(":/resources/img/dart.svg");
   SLegStatsData mLegStatsData;
   CLegStatsModel * mLegStatsModel = nullptr;
+  CLegScoresModel * mLegScoresModel = nullptr;
+  CGlobalGameStatsModel * mGlobalStatsModel = nullptr;
+  SGlobalGameStatsData mGlobalGameStatsData;
 };
 
 #endif  // STATS_WINDOW_H

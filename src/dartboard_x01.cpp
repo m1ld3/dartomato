@@ -23,7 +23,7 @@ void CDartBoardX01::set_score(uint32_t iVal, QChar iType, bool iCheckoutAttempt)
     mCheckoutAttempts[3 - mCounter] = iCheckoutAttempt;
     update_finishes(mScore, mCounter - 1);
   }
-  if (mCounter == 3)      display_dart1(iVal);
+  if      (mCounter == 3) display_dart1(iVal);
   else if (mCounter == 2) display_dart2(iVal);
   else if (mCounter == 1) display_dart3(iVal);
 }

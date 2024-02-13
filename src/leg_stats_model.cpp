@@ -29,7 +29,9 @@ int CLegStatsModel::columnCount(const QModelIndex & iParent) const
 QVariant CLegStatsModel::data(const QModelIndex & iIndex, int iRole) const
 {
   if (!iIndex.isValid() || iIndex.row() >= mLegStatsData.size() || iIndex.column() >= 2)
-      return QVariant();
+  {
+    return QVariant();
+  }
 
   const SDataRow & row = mLegStatsData.at(iIndex.row());
 
@@ -45,11 +47,6 @@ QVariant CLegStatsModel::data(const QModelIndex & iIndex, int iRole) const
   default:
     return QVariant();
   }
-}
-
-QVariant CLegStatsModel::headerData(int iSection, Qt::Orientation iOrientation, int iRole) const
-{
-  return QVariant();
 }
 
 void CLegStatsModel::update(CStatsWindow::SLegStatsData iLegStatsData)
