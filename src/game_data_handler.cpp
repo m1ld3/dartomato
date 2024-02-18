@@ -1,154 +1,224 @@
 #include "game_data_handler.h"
 #include <QFile>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlError>
 #include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonDocument>
 
 CGameDataHandler::CGameDataHandler()
 {
-  initialize_game_data_file();
+  create_connection();
+  create_players_table();
+  create_game_modes_table();
+  create_games_table();
 }
 
-bool CGameDataHandler::initialize_game_data_file()
+bool CGameDataHandler::create_connection()
 {
-  QFile file(mFileName);
-  if (file.exists())
-  {
-    load_file();
-  }
-  else if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-  {
-    QJsonObject root;
-    root["players"] = QJsonArray();
-    mGameDocument = QJsonDocument(root);
-    file.write(mGameDocument.toJson());
-    file.close();
-  }
-  else
-  {
-    qWarning() << "Failed to initialize JSON file.";
-  }
+  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+  db.setDatabaseName(mFileName);
 
-  if (!mGameDocument.isObject())
+  if (!db.open())
   {
-    qWarning() << "Invalid JSON document";
+    qWarning() << "Error: Unable to open database!" << db.lastError();
     return false;
   }
 
   return true;
 }
 
-QJsonArray CGameDataHandler::read_players_array() const
-{
-  if (mGameDocument.isObject())
-  {
-    QJsonObject root = mGameDocument.object();
-    if (root.contains("players") && root["players"].isArray()) return root["players"].toArray();
-  }
-  return QJsonArray();
-}
+bool CGameDataHandler::add_new_player(const QString & iPlayerName)
+{  
+  if (!create_players_table()) return false;
 
-bool CGameDataHandler::write_to_file()
-{
-  QFile saveFile(mFileName);
-  if (saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  if (player_exists(iPlayerName))
   {
-    saveFile.write(mGameDocument.toJson());
-    saveFile.close();
-    return true;
+    qWarning() << "Player name already exists!";
   }
-  else
+
+  QSqlQuery query;
+  query.prepare("INSERT INTO players (name) VALUES (:name)");
+  query.bindValue(":name", iPlayerName);
+
+  if (!query.exec())
   {
-    qWarning() << "Could not save the updated data.";
+    qWarning() << "Error: Unable to insert player name." << query.lastError();
     return false;
   }
+
+  return true;
 }
 
-bool CGameDataHandler::add_new_player(const QString & iPlayerName)
+bool CGameDataHandler::create_players_table()
 {
-  if (!load_file()) return false;
-  QJsonObject newPlayer;
-  newPlayer["name"] = iPlayerName;
-  if (!mGameDocument["players"].isArray()) return false;
-  QJsonObject root = mGameDocument.object();
-  QJsonArray playersArray = root["players"].toArray();
-  playersArray.append(newPlayer);
-  root["players"] = playersArray;
-  mGameDocument.setObject(root);
-  return write_to_file();
+  QSqlQuery query;
+
+  if (!query.exec("CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE)"))
+  {
+    qWarning() << "Error: Unable to create players table" << query.lastError();
+    return false;
+  }
+
+  return true;
+}
+
+bool CGameDataHandler::create_game_modes_table()
+{
+  QSqlQuery query;
+  const QString createQuery = "CREATE TABLE IF NOT EXISTS game_modes (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE)";
+  const QString insertQuery = "INSERT OR IGNORE INTO game_modes (name) VALUES ('301'), ('501'), ('701'), ('Cricket')";
+
+  if (!query.exec(createQuery))
+  {
+    qWarning() << "Error creating game modes table: " << query.lastError();
+    return false;
+  }
+
+  if (!query.exec(insertQuery))
+  {
+    qWarning() << "Error inserting into game modes table: " << query.lastError();
+    return false;
+  }
+  return true;
+}
+
+bool CGameDataHandler::create_games_table()
+{
+  QSqlQuery query;
+
+  if (!query.exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, game_mode_id INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (game_mode_id) REFERENCES game_modes(id))"))
+  {
+    qWarning() << "Error: Unable to create games table" << query.lastError();
+    return false;
+  }
+
+  return true;
+}
+
+bool CGameDataHandler::player_exists(const QString & iPlayerName) const
+{
+  QSqlQuery query;
+  query.prepare("SELECT COUNT(*) FROM players WHERE name = :name");
+  query.bindValue(":name", iPlayerName);
+
+  if (!query.exec())
+  {
+    qWarning() << "Error in player_exists()" << query.lastError();
+    return false;
+  }
+
+  query.next();
+  int playerCount = query.value(0).toInt();
+
+  return playerCount > 0;
 }
 
 QStringList CGameDataHandler::get_player_names() const
 {
   QStringList playerNames;
-  if (!mGameDocument["players"].isArray()) return playerNames;
+  QSqlDatabase db = QSqlDatabase::database();
 
-  QJsonArray playersArray = mGameDocument["players"].toArray();
-  for (const QJsonValue & player : playersArray)
+  if (!db.tables().contains("players"))
   {
-    if (player.isObject() && player.toObject().contains("name") && player.toObject()["name"].isString())
-    {
-      playerNames.append(player.toObject()["name"].toString());
-    }
+    return playerNames;
+  }
+
+  QSqlQuery query("SELECT name FROM players");
+
+  if (!query.exec())
+  {
+    qWarning() << "Error retrieving player names" << query.lastError();
+    return playerNames;
+  }
+
+  while (query.next())
+  {
+    QString playerName = query.value(0).toString();
+    playerNames.append(playerName);
   }
 
   return playerNames;
 }
 
-bool CGameDataHandler::load_file()
+int CGameDataHandler::get_player_id(const QString & iPlayerName) const
 {
-  QFile file(mFileName);
-  if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+  QSqlQuery query;
+  query.prepare("SELECT id FROM players WHERE name = :name");
+  query.bindValue(":name", iPlayerName);
+
+  if (!query.exec() || !query.next())
   {
-    qWarning() << "Could not open the file: " << file.errorString();
+    qWarning() << "Error retrieving player ID" << query.lastError();
+    return -1;
+  }
+
+  return query.value(0).toInt();
+}
+
+int CGameDataHandler::get_game_mode_id(const QString & iGameMode) const
+{
+  QSqlQuery query;
+  query.prepare("SELECT id FROM game_modes WHERE name = :name");
+  query.bindValue(":name", iGameMode);
+
+  if (!query.exec())
+  {
+    qWarning() << "Error executing query:" << query.lastError();
+    return -1;
+  }
+
+  if (!query.next())
+  {
+    qWarning() << "No matching game mode found for name:" << iGameMode;
+    return -1;
+  }
+
+  return query.value(0).toInt();
+}
+
+bool CGameDataHandler::save_game_to_db_x01(bool iFinished, EGame iGame, const QString & iPlayerName, const std::vector<CX01Class::CPlayerData> & iGameHistory)
+{
+
+  const QString game = QString::number(static_cast<int>(iGame));
+
+  QJsonObject gameFinishedObject;
+  gameFinishedObject["finished"] = iFinished;
+  QJsonArray gameDataArray;
+  gameDataArray.append(gameFinishedObject);
+  fill_game_data_array(iGameHistory, gameDataArray, iFinished);
+
+  int playerId = get_player_id(iPlayerName);
+  int gameModeId = get_game_mode_id(game);
+  if (playerId == -1 || gameModeId == -1)
+  {
+    qWarning() << "Error: Invalid player or game mode";
     return false;
   }
-  QByteArray jsonData = file.readAll();
-  mGameDocument = QJsonDocument(QJsonDocument::fromJson(jsonData));
-  file.close();
+
+  QSqlQuery query;
+  query.prepare("INSERT INTO games (player_id, game_mode_id, game_data) VALUES (:player_id, :game_mode_id, :game_data)");
+  query.bindValue(":player_id", playerId);
+  query.bindValue(":game_mode_id", gameModeId);
+  QByteArray jsonData = QJsonDocument(gameDataArray).toJson(QJsonDocument::Compact);
+  query.bindValue(":game_data", QString(jsonData));
+
+  if (!query.exec())
+  {
+    qWarning() << "Error: Unable to insert game entry" << query.lastError();
+    return false;
+  }
+
   return true;
 }
 
-bool CGameDataHandler::save_game_to_file_x01(bool iFinished, EGame iGame, const QString & iPlayerName, const std::vector<CX01Class::CPlayerData> & iGameHistory)
+void CGameDataHandler::fill_game_data_array(const std::vector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray, bool iFinished)
 {
-  load_file();
-  QJsonArray playersArray = mGameDocument["players"].toArray();
-  const QString game = QString::number(static_cast<int>(iGame));
-  for (uint32_t i = 0; i < playersArray.size(); i++)
-  {
-    const QJsonValue & player = playersArray.at(i);
-    QJsonObject playerObject = player.toObject();
-    if (playerObject["name"].toString() == iPlayerName)
-    {
-      QJsonObject gameFinishedObject;
-      gameFinishedObject["finished"] = iFinished;
-      QJsonArray gameDataArray;
-      gameDataArray.append(gameFinishedObject);
-
-      fill_game_data_array(iGameHistory, gameDataArray);
-
-      if (playerObject.contains("mode"))
-      {
-        add_game_data_to_existing_mode(playerObject, gameDataArray, game);
-      }
-      else
-      {
-        create_mode_with_game_data(playerObject, gameDataArray, game);
-      }
-
-      playersArray.replace(i, playerObject);
-      break;
-    }
-  }
-
-  QJsonObject root = mGameDocument.object();
-  root["players"] = playersArray;
-  mGameDocument.setObject(root);
-
-  return write_to_file();
-}
-
-void CGameDataHandler::fill_game_data_array(const std::vector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
-{
-  for (auto & data : iGameHistory)
+  std::vector<CX01Class::CPlayerData> gameHistory;
+  if (iFinished) gameHistory.push_back(*std::prev(iGameHistory.end()));
+  else gameHistory = iGameHistory;
+  for (auto & data : gameHistory)
   {
     QJsonObject gameDataObject;
     gameDataObject["SetsWon"] = static_cast<int>(data.SetsWon);
@@ -221,45 +291,4 @@ void CGameDataHandler::fill_string_array_of_array_of_arrays(const QVector<QVecto
     outerArray.append(midArray);
   }
   iGameDataObject[iKey] = outerArray;
-}
-
-void CGameDataHandler::add_game_data_to_existing_mode(QJsonObject & iPlayerObject, QJsonArray & iGameDataArray, const QString & iGame)
-{
-  QJsonArray modeArray = iPlayerObject["mode"].toArray();
-  bool modeExists = false;
-  for (uint32_t i = 0; i < modeArray.size(); i++)
-  {
-    const QJsonValue & mode = modeArray.at(i);
-    QJsonObject modeObject = mode.toObject();
-    if (modeObject.contains(iGame))
-    {
-      QJsonArray gameArray = modeObject[iGame].toArray();
-      gameArray.append(iGameDataArray);
-      modeObject[iGame] = gameArray;
-      modeArray.replace(i, modeObject);
-      iPlayerObject["mode"] = modeArray;
-      modeExists = true;
-      break;
-    }
-  }
-  if (!modeExists)
-  {
-    QJsonArray gameArray;
-    gameArray.append(iGameDataArray);
-    QJsonObject modeObject;
-    modeObject[iGame] = gameArray;
-    modeArray.append(modeObject);
-    iPlayerObject["mode"] = modeArray;
-  }
-}
-
-void CGameDataHandler::create_mode_with_game_data(QJsonObject & iPlayerObject, QJsonArray & iGameDataArray, const QString & iGame)
-{
-  QJsonArray gameArray;
-  gameArray.append(iGameDataArray);
-  QJsonObject modeObject;
-  modeObject[iGame] = gameArray;
-  QJsonArray modeArray;
-  modeArray.append(modeObject);
-  iPlayerObject["mode"] = modeArray;
 }
