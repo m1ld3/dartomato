@@ -167,9 +167,9 @@ void CX01GroupBox::create_snapshot()
   mHistory.push_back(mPlayer.create_snapshot());
 }
 
-void CX01GroupBox::save_game_to_file(CGameDataHandler & iGameDataHandler)
+void CX01GroupBox::save_game_to_file(CGameDataHandler & iGameDataHandler, const QString & iTimeStamp)
 {
-  iGameDataHandler.save_game_to_db_x01(is_finished(), mSettings.Game, mPlayerName, mHistory);
+  iGameDataHandler.save_game_to_db_x01(iTimeStamp, is_finished(), mSettings, mPlayerName, mHistory);
 }
 
 void CX01GroupBox::create_snapshots_of_all_players()
@@ -233,13 +233,13 @@ void CX01GroupBox::reset_legs()
 
 const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t iNumberOfDarts)
 {
-  if (mSettings.SingleOut)
+  if (mSettings.OutMode == EX01OutMode::SINGLE_OUT)
   {
     if (iNumberOfDarts == 1)      return singleOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return singleOutTwoDartCheckoutList;
     else                          return singleOutThreeDartCheckoutList;
   }
-  else if (mSettings.DoubleOut)
+  else if (mSettings.OutMode == EX01OutMode::DOUBLE_OUT)
   {
     if (iNumberOfDarts == 1)      return doubleOutSingleDartCheckoutList;
     else if (iNumberOfDarts == 2) return doubleOutTwoDartCheckoutList;

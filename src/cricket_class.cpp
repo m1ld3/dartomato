@@ -43,7 +43,7 @@ void CCricketClass::restore_state(CPlayerData iData)
   mScore = iData.Score;
   mTotalHits = iData.TotalHits;
   mHitsPerRound = iData.HitsPerRound;
-  mScoresOfCurrentLeg = iData.ScoreOfCurrentLegs;
+  mScoresOfCurrentLeg = iData.ScoresOfCurrentLeg;
   mScoringHistory = iData.ScoringHistory;
   mSlotArray = iData.SlotArray;
   mExtraPointsArray = iData.ExtraPointsArray;
@@ -71,8 +71,8 @@ void CCricketClass::reset_score()
   mScoresOfCurrentLeg = {};
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
   {
-    mSlotArray.at(i) = 0;
-    mExtraPointsArray.at(i) = 0;
+    mSlotArray[i] = 0;
+    mExtraPointsArray[i] = 0;
   }
   mScore = 0;
 }
@@ -94,18 +94,18 @@ uint32_t CCricketClass::get_slot(const ECricketSlots iSlot) const
 
 void CCricketClass::set_slot(const ECricketSlots iSlot, uint32_t iHits)
 {
-  mSlotArray.at(static_cast<uint32_t>(iSlot)) = iHits;
+  mSlotArray[static_cast<uint32_t>(iSlot)] = iHits;
 }
 
 void CCricketClass::set_extra_points(const ECricketSlots iSlot, uint32_t iPoints)
 {
   if (!mSettings.CutThroat)
   {
-    mExtraPointsArray.at(static_cast<uint32_t>(iSlot)) = iPoints;
+    mExtraPointsArray[static_cast<uint32_t>(iSlot)] = iPoints;
   }
   else
   {
-    mExtraPointsArray.at(static_cast<uint32_t>(iSlot)) += iPoints;
+    mExtraPointsArray[static_cast<uint32_t>(iSlot)] += iPoints;
   }
 }
 

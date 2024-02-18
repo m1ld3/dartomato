@@ -14,4 +14,3 @@ void CPlayerActiveButton::player_active_button_pressed()
 {
   emit signal_player_active_button_pressed();
 }
-

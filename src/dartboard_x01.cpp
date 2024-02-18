@@ -43,9 +43,19 @@ void CDartBoardX01::init_dartboard(uint32_t iScore)
 
 void CDartBoardX01::handle_start_val(uint32_t iVal, QChar & iType)
 {
-  if (mSettings.SingleIn)      set_score(iVal, iType, false);
-  else if (mSettings.DoubleIn) set_score(iType == 'd' ? iVal : 0, iType, false);
-  else if (mSettings.MasterIn) set_score(iType == 't' ? iVal : 0, iType, false);
+  switch(mSettings.InMode)
+  {
+  case EX01InMode::SINGLE_IN:
+    set_score(iVal, iType, false);
+    break;
+  case EX01InMode::DOUBLE_IN:
+    set_score(iType == 'd' ? iVal : 0, iType, false);
+    break;
+  case EX01InMode::MASTER_IN:
+    set_score(iType == 't' ? iVal : 0, iType, false);
+    break;
+  default:;
+  }
 }
 
 void CDartBoardX01::handle_score_in_range(uint32_t iVal, QChar & iType)
@@ -55,9 +65,9 @@ void CDartBoardX01::handle_score_in_range(uint32_t iVal, QChar & iType)
 
 bool CDartBoardX01::checkout_attempt_happened()
 {
-  return ((mSettings.SingleOut && mScore <= 60 && !mBoogieNumbers.contains(mScore)) ||
-         (mSettings.DoubleOut && ((mScore <= 40 && mScore % 2 == 0 && mScore > 1) || mScore == 50)) ||
-         (mSettings.MasterOut && mScore <= 60 && mScore % 3 == 0 && mScore > 2));
+  return ((mSettings.OutMode == EX01OutMode::SINGLE_OUT && mScore <= 60 && !mBoogieNumbers.contains(mScore)) ||
+          (mSettings.OutMode == EX01OutMode::DOUBLE_OUT && ((mScore <= 40 && mScore % 2 == 0 && mScore > 1) || mScore == 50)) ||
+          (mSettings.OutMode == EX01OutMode::MASTER_OUT && mScore <= 60 && mScore % 3 == 0 && mScore > 2));
 }
 
 void CDartBoardX01::handle_game_shot_score(uint32_t iVal, QChar & iType)
@@ -70,19 +80,20 @@ void CDartBoardX01::handle_game_shot_score(uint32_t iVal, QChar & iType)
 
 void CDartBoardX01::handle_score_equals_remaining(uint32_t iVal, QChar & iType)
 {
-  if (mSettings.SingleOut)
+  switch(mSettings.OutMode)
   {
+  case EX01OutMode::SINGLE_OUT:
     handle_game_shot_score(iVal, iType);
-  }
-  else if (mSettings.DoubleOut)
-  {
+    break;
+  case EX01OutMode::DOUBLE_OUT:
     if (iType == 'd') handle_game_shot_score(iVal, iType);
     else handle_busted_score(iVal, iType, (mScore > 1 && mScore % 2 == 0 && mScore <= 40) || mScore == 50);
-  }
-  else if (mSettings.MasterOut)
-  {
+    break;
+  case EX01OutMode::MASTER_OUT:
     if (iType == 't') handle_game_shot_score(iVal, iType);
     else handle_busted_score(iVal, iType, mScore <= 60 && mScore % 3 == 0 && mScore > 2);
+    break;
+  default:;
   }
 }
 
@@ -100,8 +111,8 @@ void CDartBoardX01::handle_busted_score(uint32_t iVal, QChar & iType, bool iChec
 
 bool CDartBoardX01::is_score_in_range(uint32_t iVal)
 {
-  if (mSettings.DoubleOut) return mScore  > (iVal + 1);
-  else if (mSettings.MasterOut) return mScore > (iVal + 2);
+  if (mSettings.OutMode == EX01OutMode::DOUBLE_OUT) return mScore  > (iVal + 1);
+  else if (mSettings.OutMode == EX01OutMode::MASTER_OUT) return mScore > (iVal + 2);
   else return mScore > iVal;
 }
 

@@ -15,6 +15,7 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, C
   , mSettings(iSettings)
   , mGameDataHandler(iGameDataHandler)
   , mNumberOfPlayers(mSettings.PlayersList.size())
+  , mTimeStamp(QDateTime::currentDateTimeUtc())
 {
   mUi->setupUi(this);
   QString text = QString::number(static_cast<uint32_t>(mSettings.Game));
@@ -96,7 +97,7 @@ void CX01MainWindow::save_current_game()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox[i]->save_game_to_file(mGameDataHandler);
+    mPlayerBox[i]->save_game_to_file(mGameDataHandler, mTimeStamp.toString());
   }
 }
 

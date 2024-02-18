@@ -9,6 +9,7 @@
 #include "dartboard_x01.h"
 #include "settings.h"
 #include "game_data_handler.h"
+#include <QDateTime>
 
 namespace Ui
 {
@@ -64,6 +65,7 @@ private:
   const CSettings & mSettings;
   CGameDataHandler & mGameDataHandler;
   const uint32_t mNumberOfPlayers = 1;
+  QDateTime mTimeStamp;
 };
 
 #endif  // X01MAINWINDOW_H

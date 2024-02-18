@@ -33,21 +33,30 @@ enum class ECricketSlots
   , SLOT_MAX = 7
 };
 
+enum class EX01InMode
+{
+    SINGLE_IN = 0
+  , DOUBLE_IN = 1
+  , MASTER_IN = 2
+};
+
+enum class EX01OutMode
+{
+    SINGLE_OUT = 0
+  , DOUBLE_OUT = 1
+  , MASTER_OUT = 2
+};
+
 struct CSettings
 {
   CSettings(EGame iGame, QStringList iPlayers, uint32_t iSets, uint32_t iLegs,
-            bool iSingleIn, bool iSingleOut, bool iDoubleIn, bool iDoubleOut,
-            bool iMasterIn, bool iMasterOut, bool iCutThroat)
+           EX01InMode iInMode, EX01OutMode iOutMode, bool iCutThroat)
   : Game(iGame)
   , PlayersList(iPlayers)
   , Sets(iSets)
   , Legs(iLegs)
-  , SingleIn(iSingleIn)
-  , SingleOut(iSingleOut)
-  , DoubleIn(iDoubleIn)
-  , DoubleOut(iDoubleOut)
-  , MasterIn(iMasterIn)
-  , MasterOut(iMasterOut)
+  , InMode(iInMode)
+  , OutMode(iOutMode)
   , CutThroat(iCutThroat)
   {}
 
@@ -57,13 +66,9 @@ struct CSettings
   QStringList PlayersList = {};
   uint32_t Sets = 1;
   uint32_t Legs = 1;
-  bool SingleIn = true;
-  bool SingleOut = false;
-  bool DoubleIn = false;
-  bool DoubleOut = true;
-  bool MasterIn = false;
-  bool MasterOut = false;
+  EX01InMode InMode = EX01InMode::SINGLE_IN;
+  EX01OutMode OutMode = EX01OutMode::DOUBLE_OUT;
   bool CutThroat = false;
 };
 
-#endif // CSETTINGS_H
+#endif  // CSETTINGS_H

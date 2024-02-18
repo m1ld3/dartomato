@@ -12,7 +12,7 @@ CGameDataHandler::CGameDataHandler()
   create_connection();
   create_players_table();
   create_game_modes_table();
-  create_games_table();
+  create_games_tables();
 }
 
 bool CGameDataHandler::create_connection()
@@ -84,13 +84,18 @@ bool CGameDataHandler::create_game_modes_table()
   return true;
 }
 
-bool CGameDataHandler::create_games_table()
+bool CGameDataHandler::create_games_tables()
 {
   QSqlQuery query;
 
-  if (!query.exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, game_mode_id INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (game_mode_id) REFERENCES game_modes(id))"))
+  if (!query.exec("CREATE TABLE IF NOT EXISTS x01_games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, game_mode_id INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, in_mode TEXT, out_mode TEXT, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (game_mode_id) REFERENCES game_modes(id))"))
   {
-    qWarning() << "Error: Unable to create games table" << query.lastError();
+    qWarning() << "Error: Unable to create x01 games table" << query.lastError();
+    return false;
+  }
+  if (!query.exec("CREATE TABLE IF NOT EXISTS cricket_games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, cutthroat INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id))"))
+  {
+    qWarning() << "Error: Unable to create cricket games table" << query.lastError();
     return false;
   }
 
@@ -178,16 +183,20 @@ int CGameDataHandler::get_game_mode_id(const QString & iGameMode) const
   return query.value(0).toInt();
 }
 
-bool CGameDataHandler::save_game_to_db_x01(bool iFinished, EGame iGame, const QString & iPlayerName, const std::vector<CX01Class::CPlayerData> & iGameHistory)
+bool CGameDataHandler::save_game_to_db_x01(const QString & iTimeStamp, bool iFinished, const CSettings & iSettings, const QString & iPlayerName, const std::vector<CX01Class::CPlayerData> & iGameHistory)
 {
+  const QString game = QString::number(static_cast<int>(iSettings.Game));
+  QString inMode, outMode;
 
-  const QString game = QString::number(static_cast<int>(iGame));
+  if (iSettings.InMode == EX01InMode::SINGLE_IN)      inMode = "Single In";
+  else if (iSettings.InMode == EX01InMode::DOUBLE_IN) inMode = "Double In";
+  else                                                inMode = "Master In";
+  if (iSettings.OutMode == EX01OutMode::SINGLE_OUT)      outMode = "Single Out";
+  else if (iSettings.OutMode == EX01OutMode::DOUBLE_OUT) outMode = "Double Out";
+  else                                                   outMode = "Master Out";
 
-  QJsonObject gameFinishedObject;
-  gameFinishedObject["finished"] = iFinished;
   QJsonArray gameDataArray;
-  gameDataArray.append(gameFinishedObject);
-  fill_game_data_array(iGameHistory, gameDataArray, iFinished);
+  fill_game_data_array_x01(iGameHistory, gameDataArray);
 
   int playerId = get_player_id(iPlayerName);
   int gameModeId = get_game_mode_id(game);
@@ -198,27 +207,62 @@ bool CGameDataHandler::save_game_to_db_x01(bool iFinished, EGame iGame, const QS
   }
 
   QSqlQuery query;
-  query.prepare("INSERT INTO games (player_id, game_mode_id, game_data) VALUES (:player_id, :game_mode_id, :game_data)");
+  query.prepare("INSERT INTO x01_games (player_id, game_mode_id, time_stamp, finished, best_of_legs, best_of_sets, in_mode, out_mode, game_data) VALUES (:player_id, :game_mode_id, :time_stamp, :finished, :best_of_legs, :best_of_sets, :in_mode, :out_mode, :game_data)");
   query.bindValue(":player_id", playerId);
   query.bindValue(":game_mode_id", gameModeId);
+  query.bindValue(":time_stamp", iTimeStamp);
+  query.bindValue(":finished", iFinished);
+  query.bindValue(":best_of_legs", iSettings.Legs);
+  query.bindValue(":best_of_sets", iSettings.Sets);
+  query.bindValue(":in_mode", inMode);
+  query.bindValue(":out_mode", outMode);
   QByteArray jsonData = QJsonDocument(gameDataArray).toJson(QJsonDocument::Compact);
   query.bindValue(":game_data", QString(jsonData));
 
   if (!query.exec())
   {
-    qWarning() << "Error: Unable to insert game entry" << query.lastError();
+    qWarning() << "Error: Unable to insert x01 game entry" << query.lastError();
     return false;
   }
 
   return true;
 }
 
-void CGameDataHandler::fill_game_data_array(const std::vector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray, bool iFinished)
+bool CGameDataHandler::save_game_to_db_cricket(const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings, const QString & iPlayerName, const std::vector<CCricketClass::CPlayerData> & iGameHistory)
 {
-  std::vector<CX01Class::CPlayerData> gameHistory;
-  if (iFinished) gameHistory.push_back(*std::prev(iGameHistory.end()));
-  else gameHistory = iGameHistory;
-  for (auto & data : gameHistory)
+  QJsonArray gameDataArray;
+  fill_game_data_array_cricket(iGameHistory, gameDataArray);
+
+  int playerId = get_player_id(iPlayerName);
+  if (playerId == -1)
+  {
+    qWarning() << "Error: Invalid player";
+    return false;
+  }
+
+  QSqlQuery query;
+  query.prepare("INSERT INTO cricket_games (player_id, time_stamp, finished, best_of_legs, best_of_sets, cutthroat, game_data) VALUES (:player_id, :time_stamp, :finished, :best_of_legs, :best_of_sets, :cutthroat, :game_data)");
+  query.bindValue(":player_id", playerId);
+  query.bindValue(":time_stamp", iTimeStamp);
+  query.bindValue(":finished", iFinished);
+  query.bindValue(":best_of_legs", iSettings.Legs);
+  query.bindValue(":best_of_sets", iSettings.Sets);
+  query.bindValue(":cutthroat", iSettings.CutThroat);
+  QByteArray jsonData = QJsonDocument(gameDataArray).toJson(QJsonDocument::Compact);
+  query.bindValue(":game_data", QString(jsonData));
+
+  if (!query.exec())
+  {
+    qWarning() << "Error: Unable to insert cricket game entry" << query.lastError();
+    return false;
+  }
+
+  return true;
+}
+
+void CGameDataHandler::fill_game_data_array_x01(const std::vector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
+{
+  for (auto & data : iGameHistory)
   {
     QJsonObject gameDataObject;
     gameDataObject["SetsWon"] = static_cast<int>(data.SetsWon);
@@ -228,31 +272,52 @@ void CGameDataHandler::fill_game_data_array(const std::vector<CX01Class::CPlayer
     gameDataObject["CheckoutAttempts"] = static_cast<int>(data.CheckoutAttempts);
     gameDataObject["CheckoutHits"] = static_cast<int>(data.CheckoutHits);
     gameDataObject["TotalDarts"] = static_cast<int>(data.TotalDarts);
-    gameDataObject["Avg1Dart"] = static_cast<int>(data.Avg1Dart);
-    gameDataObject["Avg3Dart"] = static_cast<int>(data.Avg3Dart);
-    gameDataObject["CheckoutRate"] = static_cast<int>(data.CheckoutRate);
+    gameDataObject["Avg1Dart"] = data.Avg1Dart;
+    gameDataObject["Avg3Dart"] = data.Avg3Dart;
+    gameDataObject["CheckoutRate"] = data.CheckoutRate;
 
-    fill_integer_array(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
-    fill_integer_array_of_arrays(data.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
-    fill_integer_array(data.AllScoresFlat, gameDataObject, "AllScoresFlat");
-    fill_string_array_of_arrays(data.ThrownDartsOfCurrentLeg, gameDataObject, "ThrownDartsOfCurrentLeg");
-    fill_string_array_of_arrays(data.ThrownDartsOfAllLegsFlat, gameDataObject, "ThrownDartsOfAllLegsFlat");
-    fill_string_array_of_array_of_arrays(data.ThrownDartsOfAllLegs, gameDataObject, "ThrownDartsOfAllLegs");
-    fill_integer_array(data.RemainingPointsOfCurrentLeg, gameDataObject, "RemainingPointsOfCurrentLeg");
-    fill_integer_array_of_arrays(data.RemainingPointsOfAllLegs, gameDataObject, "RemainingPointsOfAllLegs");
+    fill_integer_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
+    fill_integer_vec_of_vecs(data.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
+    fill_integer_vec(data.AllScoresFlat, gameDataObject, "AllScoresFlat");
+    fill_string_vec_of_vecs(data.ThrownDartsOfCurrentLeg, gameDataObject, "ThrownDartsOfCurrentLeg");
+    fill_string_vec_of_vecs(data.ThrownDartsOfAllLegsFlat, gameDataObject, "ThrownDartsOfAllLegsFlat");
+    fill_string_vec_of_vec_of_vecs(data.ThrownDartsOfAllLegs, gameDataObject, "ThrownDartsOfAllLegs");
+    fill_integer_vec(data.RemainingPointsOfCurrentLeg, gameDataObject, "RemainingPointsOfCurrentLeg");
+    fill_integer_vec_of_vecs(data.RemainingPointsOfAllLegs, gameDataObject, "RemainingPointsOfAllLegs");
 
     iGameDataArray.append(gameDataObject);
   }
 }
 
-void CGameDataHandler::fill_integer_array(const QVector<uint32_t> & iData, QJsonObject & iGameDataObject, const QString & iKey)
+void CGameDataHandler::fill_game_data_array_cricket(const std::vector<CCricketClass::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
+{
+  for (auto & data : iGameHistory)
+  {
+    QJsonObject gameDataObject;
+    gameDataObject["SetsWon"] = static_cast<int>(data.SetsWon);
+    gameDataObject["LegsWonPerSet"] = static_cast<int>(data.LegsWonPerSet);
+    gameDataObject["TotalLegsWon"] = static_cast<int>(data.TotalLegsWon);
+    gameDataObject["TotalDarts"] = static_cast<int>(data.TotalDarts);
+    gameDataObject["Score"] = static_cast<int>(data.Score);
+    gameDataObject["TotalHits"] = static_cast<int>(data.TotalHits);
+    gameDataObject["TotalDarts"] = data.HitsPerRound;
+
+    fill_string_vec_of_vecs(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
+    fill_string_vec_of_vec_of_vecs(data.ScoringHistory, gameDataObject, "ScoringHistory");
+    fill_integer_vec(data.SlotArray, gameDataObject, "SlotArray");
+    fill_integer_vec(data.ExtraPointsArray, gameDataObject, "ExtraPointsArray");
+    iGameDataArray.append(gameDataObject);
+  }
+}
+
+void CGameDataHandler::fill_integer_vec(const QVector<uint32_t> & iData, QJsonObject & iGameDataObject, const QString & iKey)
 {
   QJsonArray tempArray;
   for (const auto & val : iData) tempArray.append(static_cast<int>(val));
   iGameDataObject[iKey] = tempArray;
 }
 
-void CGameDataHandler::fill_integer_array_of_arrays(const QVector<QVector<uint32_t>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
+void CGameDataHandler::fill_integer_vec_of_vecs(const QVector<QVector<uint32_t>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
 {
   QJsonArray outerArray;
   for (const auto & innerVec : iData)
@@ -264,7 +329,7 @@ void CGameDataHandler::fill_integer_array_of_arrays(const QVector<QVector<uint32
   iGameDataObject[iKey] = outerArray;
 }
 
-void CGameDataHandler::fill_string_array_of_arrays(const QVector<QVector<QString>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
+void CGameDataHandler::fill_string_vec_of_vecs(const QVector<QVector<QString>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
 {
   QJsonArray outerArray;
   for (const auto & innerVec : iData)
@@ -276,7 +341,7 @@ void CGameDataHandler::fill_string_array_of_arrays(const QVector<QVector<QString
   iGameDataObject[iKey] = outerArray;
 }
 
-void CGameDataHandler::fill_string_array_of_array_of_arrays(const QVector<QVector<QVector<QString>>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
+void CGameDataHandler::fill_string_vec_of_vec_of_vecs(const QVector<QVector<QVector<QString>>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
 {
   QJsonArray outerArray;
   for (const auto & midVec : iData)

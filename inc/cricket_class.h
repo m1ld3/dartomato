@@ -16,6 +16,7 @@ public:
   {
 
     friend class CCricketClass;
+    friend class CGameDataHandler;
 
   public:
 
@@ -27,10 +28,10 @@ public:
                 uint32_t iScore,
                 uint32_t iTotalHits,
                 double iHitsPerRound,
-                QVector<QVector<QString>> iScoreOfCurrentLegs,
+                QVector<QVector<QString>> iScoresOfCurrentLeg,
                 QVector<QVector<QVector<QString>>> iScoringHistory,
-                std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> iSlotArray,
-                std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> iExtraPointsArray
+                QVector<uint32_t> iSlotArray,
+                QVector<uint32_t> iExtraPointsArray
                 )
       : SetsWon(iSetsWon)
       , LegsWonPerSet(iLegsWonPerSet)
@@ -39,7 +40,7 @@ public:
       , Score(iScore)
       , TotalHits(iTotalHits)
       , HitsPerRound(iHitsPerRound)
-      , ScoreOfCurrentLegs(iScoreOfCurrentLegs)
+      , ScoresOfCurrentLeg(iScoresOfCurrentLeg)
       , ScoringHistory(iScoringHistory)
       , SlotArray(iSlotArray)
       , ExtraPointsArray(iExtraPointsArray)
@@ -54,10 +55,10 @@ public:
     uint32_t Score = 0;
     uint32_t TotalHits = 0;
     double HitsPerRound = 0.0;
-    QVector<QVector<QString>> ScoreOfCurrentLegs = {};
+    QVector<QVector<QString>> ScoresOfCurrentLeg = {};
     QVector<QVector<QVector<QString>>> ScoringHistory = {};
-    std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> SlotArray = {};
-    std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> ExtraPointsArray = {};
+    QVector<uint32_t> SlotArray = {0, 0, 0, 0, 0, 0, 0};
+    QVector<uint32_t> ExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
   };
 
   CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings);
@@ -97,8 +98,8 @@ private:
   double mHitsPerRound;
   QVector<QVector<QString>> mScoresOfCurrentLeg = {};
   QVector<QVector<QVector<QString>>> mScoringHistory = {};
-  std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
-  std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
+  QVector<uint32_t> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
+  QVector<uint32_t> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
   const CSettings & mSettings;
 };
 

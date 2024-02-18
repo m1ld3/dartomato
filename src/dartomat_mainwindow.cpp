@@ -70,16 +70,18 @@ void CDartomatMain::push_button_startgame_clicked_slot()
   uint32_t game = (mUi->comboBoxGame->itemText(mUi->comboBoxGame->currentIndex())).toInt();
   uint32_t sets = mUi->spinBoxSets->value();
   uint32_t legs = mUi->spinBoxLegs->value();
-  bool singleIn = mUi->radioButtonSin->isChecked();
-  bool singleOut = mUi->radioButtonSout->isChecked();
-  bool doubleIn = mUi->radioButtonDin->isChecked();
-  bool doubleOut = mUi->radioButtonDout->isChecked();
-  bool masterIn = mUi->radioButtonMin->isChecked();
-  bool masterOut = mUi->radioButtonMout->isChecked();
   bool cutThroat = mUi->checkBoxCutThroat->isChecked();
+  EX01InMode inMode;
+  EX01OutMode outMode;
+  if (mUi->radioButtonSin->isChecked()) inMode = EX01InMode::SINGLE_IN;
+  else if (mUi->radioButtonDin->isChecked()) inMode = EX01InMode::DOUBLE_IN;
+  else inMode = EX01InMode::MASTER_IN;
+  if (mUi->radioButtonSout->isChecked()) outMode = EX01OutMode::SINGLE_OUT;
+  else if (mUi->radioButtonDout->isChecked()) outMode = EX01OutMode::DOUBLE_OUT;
+  else outMode = EX01OutMode::MASTER_OUT;
 
-  mSettings = CSettings(static_cast<EGame>(game), mSelectedPlayers, sets, legs, singleIn,
-                        singleOut, doubleIn, doubleOut, masterIn, masterOut, cutThroat);
+  mSettings = CSettings(static_cast<EGame>(game), mSelectedPlayers,
+                        sets, legs, inMode, outMode, cutThroat);
 
   if (game > 0)
   {
@@ -89,7 +91,7 @@ void CDartomatMain::push_button_startgame_clicked_slot()
   }
   else
   {
-    mCricketMainWindow = new CCricketMainWindow(this, mSettings);
+    mCricketMainWindow = new CCricketMainWindow(this, mSettings, mGameDataHandler);
     mCricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
     mCricketMainWindow->show();
   }

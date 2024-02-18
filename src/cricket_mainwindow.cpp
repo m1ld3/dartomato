@@ -7,11 +7,13 @@
 #include <QCloseEvent>
 
 
-CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & iSettings)
+CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler)
   : QMainWindow(iParent)
   , mUi(new Ui::CCricketMainWindow)
   , mSettings(iSettings)
+  , mGameDataHandler(iGameDataHandler)
   , mNumberOfPlayers(mSettings.PlayersList.size())
+  , mTimeStamp(QDateTime::currentDateTimeUtc())
 {
   mUi->setupUi(this);
   QWidget::setWindowTitle("Cricket" + QString(mSettings.CutThroat ? " (CutThroat)" : ""));
@@ -41,6 +43,14 @@ void CCricketMainWindow::add_players()
   }
 }
 
+void CCricketMainWindow::save_current_game()
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mPlayerBox[i]->save_game_to_file(mGameDataHandler, mTimeStamp.toString());
+  }
+}
+
 bool CCricketMainWindow::game_finished() const
 {
   bool finished = true;
@@ -54,12 +64,27 @@ bool CCricketMainWindow::game_finished() const
 
 void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
 {
-  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Quit game",
-                                                             tr("Are you sure you want to quit the game?\n"),
-                                                             QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                             QMessageBox::No);
-  if (resBtn != QMessageBox::Yes) iEvent->ignore();
-  else iEvent->accept();
+  if (game_finished())
+  {
+    save_current_game();
+    iEvent->accept();  // TODO: where restart game with same config button?
+  }
+  else
+  {
+    QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game not yet finished!",
+                                                               tr("Do you want to save or abort the current game?\n"),
+                                                               QMessageBox::Save | QMessageBox::Abort | QMessageBox::Cancel);
+    if (resBtn == QMessageBox::Save)
+    {
+      save_current_game();
+      iEvent->accept();
+    }
+    else if (resBtn == QMessageBox::Abort)
+    {
+      iEvent->accept();
+    }
+    else iEvent->ignore();
+  }
 }
 
 void CCricketMainWindow::set_active_player(uint32_t iPlayer)

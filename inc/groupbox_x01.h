@@ -47,7 +47,7 @@ public:
   void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
   void create_snapshot();
   bool is_finished() const { return mFinished; }
-  void save_game_to_file(CGameDataHandler & iGameDataHandler);
+  void save_game_to_file(CGameDataHandler & iGameDataHandler, const QString & iTimeStamp);
 
 private slots:
 
