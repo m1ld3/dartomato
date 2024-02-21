@@ -167,11 +167,6 @@ void CX01GroupBox::create_snapshot()
   mHistory.push_back(mPlayer.create_snapshot());
 }
 
-void CX01GroupBox::save_game_to_file(CGameDataHandler & iGameDataHandler, const QString & iTimeStamp)
-{
-  iGameDataHandler.save_game_to_db_x01(iTimeStamp, is_finished(), mSettings, mPlayerName, mHistory);
-}
-
 void CX01GroupBox::create_snapshots_of_all_players()
 {
   mGameWindow->create_snapshots_of_all_players();

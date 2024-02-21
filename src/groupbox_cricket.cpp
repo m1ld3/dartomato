@@ -258,11 +258,6 @@ void CCricketGroupBox::create_snapshot()
   mHistory.push_back(mPlayer.create_snapshot());
 }
 
-void CCricketGroupBox::save_game_to_file(CGameDataHandler &iGameDataHandler, const QString &iTimeStamp)
-{
-  iGameDataHandler.save_game_to_db_cricket(iTimeStamp, is_finished(), mSettings, mPlayerName, mHistory);
-}
-
 void CCricketGroupBox::player_active_button_pressed_slot()
 {
   if (!mActive)

@@ -88,14 +88,9 @@ bool CGameDataHandler::create_games_tables()
 {
   QSqlQuery query;
 
-  if (!query.exec("CREATE TABLE IF NOT EXISTS x01_games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, game_mode_id INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, in_mode TEXT, out_mode TEXT, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (game_mode_id) REFERENCES game_modes(id))"))
+  if (!query.exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, game_mode_id INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, in_mode TEXT, out_mode TEXT, cutthroat INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (game_mode_id) REFERENCES game_modes(id))"))
   {
-    qWarning() << "Error: Unable to create x01 games table" << query.lastError();
-    return false;
-  }
-  if (!query.exec("CREATE TABLE IF NOT EXISTS cricket_games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, cutthroat INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id))"))
-  {
-    qWarning() << "Error: Unable to create cricket games table" << query.lastError();
+    qWarning() << "Error: Unable to create games table" << query.lastError();
     return false;
   }
 
@@ -183,84 +178,8 @@ int CGameDataHandler::get_game_mode_id(const QString & iGameMode) const
   return query.value(0).toInt();
 }
 
-bool CGameDataHandler::save_game_to_db_x01(const QString & iTimeStamp, bool iFinished, const CSettings & iSettings, const QString & iPlayerName, const std::vector<CX01Class::CPlayerData> & iGameHistory)
-{
-  const QString game = QString::number(static_cast<int>(iSettings.Game));
-  QString inMode, outMode;
-
-  if (iSettings.InMode == EX01InMode::SINGLE_IN)      inMode = "Single In";
-  else if (iSettings.InMode == EX01InMode::DOUBLE_IN) inMode = "Double In";
-  else                                                inMode = "Master In";
-  if (iSettings.OutMode == EX01OutMode::SINGLE_OUT)      outMode = "Single Out";
-  else if (iSettings.OutMode == EX01OutMode::DOUBLE_OUT) outMode = "Double Out";
-  else                                                   outMode = "Master Out";
-
-  QJsonArray gameDataArray;
-  fill_game_data_array_x01(iGameHistory, gameDataArray);
-
-  int playerId = get_player_id(iPlayerName);
-  int gameModeId = get_game_mode_id(game);
-  if (playerId == -1 || gameModeId == -1)
-  {
-    qWarning() << "Error: Invalid player or game mode";
-    return false;
-  }
-
-  QSqlQuery query;
-  query.prepare("INSERT INTO x01_games (player_id, game_mode_id, time_stamp, finished, best_of_legs, best_of_sets, in_mode, out_mode, game_data) VALUES (:player_id, :game_mode_id, :time_stamp, :finished, :best_of_legs, :best_of_sets, :in_mode, :out_mode, :game_data)");
-  query.bindValue(":player_id", playerId);
-  query.bindValue(":game_mode_id", gameModeId);
-  query.bindValue(":time_stamp", iTimeStamp);
-  query.bindValue(":finished", iFinished);
-  query.bindValue(":best_of_legs", iSettings.Legs);
-  query.bindValue(":best_of_sets", iSettings.Sets);
-  query.bindValue(":in_mode", inMode);
-  query.bindValue(":out_mode", outMode);
-  QByteArray jsonData = QJsonDocument(gameDataArray).toJson(QJsonDocument::Compact);
-  query.bindValue(":game_data", QString(jsonData));
-
-  if (!query.exec())
-  {
-    qWarning() << "Error: Unable to insert x01 game entry" << query.lastError();
-    return false;
-  }
-
-  return true;
-}
-
-bool CGameDataHandler::save_game_to_db_cricket(const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings, const QString & iPlayerName, const std::vector<CCricketClass::CPlayerData> & iGameHistory)
-{
-  QJsonArray gameDataArray;
-  fill_game_data_array_cricket(iGameHistory, gameDataArray);
-
-  int playerId = get_player_id(iPlayerName);
-  if (playerId == -1)
-  {
-    qWarning() << "Error: Invalid player";
-    return false;
-  }
-
-  QSqlQuery query;
-  query.prepare("INSERT INTO cricket_games (player_id, time_stamp, finished, best_of_legs, best_of_sets, cutthroat, game_data) VALUES (:player_id, :time_stamp, :finished, :best_of_legs, :best_of_sets, :cutthroat, :game_data)");
-  query.bindValue(":player_id", playerId);
-  query.bindValue(":time_stamp", iTimeStamp);
-  query.bindValue(":finished", iFinished);
-  query.bindValue(":best_of_legs", iSettings.Legs);
-  query.bindValue(":best_of_sets", iSettings.Sets);
-  query.bindValue(":cutthroat", iSettings.CutThroat);
-  QByteArray jsonData = QJsonDocument(gameDataArray).toJson(QJsonDocument::Compact);
-  query.bindValue(":game_data", QString(jsonData));
-
-  if (!query.exec())
-  {
-    qWarning() << "Error: Unable to insert cricket game entry" << query.lastError();
-    return false;
-  }
-
-  return true;
-}
-
-void CGameDataHandler::fill_game_data_array_x01(const std::vector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
+template<>
+void CGameDataHandler::fill_game_data_array(const QVector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
 {
   for (auto & data : iGameHistory)
   {
@@ -289,7 +208,8 @@ void CGameDataHandler::fill_game_data_array_x01(const std::vector<CX01Class::CPl
   }
 }
 
-void CGameDataHandler::fill_game_data_array_cricket(const std::vector<CCricketClass::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
+template<>
+void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
 {
   for (auto & data : iGameHistory)
   {
@@ -308,6 +228,70 @@ void CGameDataHandler::fill_game_data_array_cricket(const std::vector<CCricketCl
     fill_integer_vec(data.ExtraPointsArray, gameDataObject, "ExtraPointsArray");
     iGameDataArray.append(gameDataObject);
   }
+}
+
+template<typename TPlayerData>
+bool CGameDataHandler::save_game_to_db(const QVector<QVector<TPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings)
+{
+  const QString game = QString::number(static_cast<int>(iSettings.Game));
+  QString inMode, outMode;
+
+  if (iSettings.InMode == EX01InMode::SINGLE_IN)      inMode = "Single In";
+  else if (iSettings.InMode == EX01InMode::DOUBLE_IN) inMode = "Double In";
+  else                                                inMode = "Master In";
+  if (iSettings.OutMode == EX01OutMode::SINGLE_OUT)      outMode = "Single Out";
+  else if (iSettings.OutMode == EX01OutMode::DOUBLE_OUT) outMode = "Double Out";
+  else                                                   outMode = "Master Out";
+
+  int gameModeId = get_game_mode_id(game);
+  if (gameModeId == -1)
+  {
+    qWarning() << "Error: Invalid game mode";
+    return false;
+  }
+
+  for (uint32_t i = 0; i < iSettings.PlayersList.size(); i++)
+  {
+    QJsonArray gameDataArray;
+    fill_game_data_array(iGameData.at(i), gameDataArray);
+
+    int playerId = get_player_id(iSettings.PlayersList.at(i));
+    if (playerId == -1 || gameModeId == -1)
+    {
+      qWarning() << "Error: Invalid player or game mode";
+      return false;
+    }
+
+    QSqlQuery query;
+    query.prepare("INSERT INTO games (player_id, game_mode_id, time_stamp, finished, best_of_legs, best_of_sets, in_mode, out_mode, cutthroat, game_data) VALUES (:player_id, :game_mode_id, :time_stamp, :finished, :best_of_legs, :best_of_sets, :in_mode, :out_mode, :cutthroat, :game_data)");
+    query.bindValue(":player_id", playerId);
+    query.bindValue(":game_mode_id", gameModeId);
+    query.bindValue(":time_stamp", iTimeStamp);
+    query.bindValue(":finished", iFinished);
+    query.bindValue(":best_of_legs", iSettings.Legs);
+    query.bindValue(":best_of_sets", iSettings.Sets);
+    query.bindValue(":in_mode", inMode);
+    query.bindValue(":out_mode", outMode);
+    query.bindValue(":cutthroat", iSettings.CutThroat);
+    QByteArray jsonData = QJsonDocument(gameDataArray).toJson(QJsonDocument::Compact);
+    query.bindValue(":game_data", QString(jsonData));
+
+    if (!query.exec())
+    {
+      qWarning() << "Error: Unable to insert game entry" << query.lastError();
+      return false;
+    }
+  }
+
+  return true;
+}
+
+template bool CGameDataHandler::save_game_to_db<CX01Class::CPlayerData>(const QVector<QVector<CX01Class::CPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings);
+template bool CGameDataHandler::save_game_to_db<CCricketClass::CPlayerData>(const QVector<QVector<CCricketClass::CPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings);
+
+void CGameDataHandler::get_game_data()
+{
+
 }
 
 void CGameDataHandler::fill_integer_vec(const QVector<uint32_t> & iData, QJsonObject & iGameDataObject, const QString & iKey)

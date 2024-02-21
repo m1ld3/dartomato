@@ -12,13 +12,17 @@ public:
   ~CGameDataHandler() = default;
   bool add_new_player(const QString & iPlayerName);
   QStringList get_player_names() const;
-  bool save_game_to_db_x01(const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings, const QString & iPlayerName, const std::vector<CX01Class::CPlayerData> & iGameHistory);
-  bool save_game_to_db_cricket(const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings, const QString & iPlayerName, const std::vector<CCricketClass::CPlayerData> & iGameHistory);
+
+  template<typename TPlayerData>
+  bool save_game_to_db(const QVector<QVector<TPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings);
+
+  void get_game_data();
 
 private:
 
-  void fill_game_data_array_x01(const std::vector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray);
-  void fill_game_data_array_cricket(const std::vector<CCricketClass::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray);
+  template<typename TPlayerData>
+  void fill_game_data_array(const QVector<TPlayerData> & iGameHistory, QJsonArray & iGameDataArray);
+
   void fill_integer_vec(const QVector<uint32_t> & iData, QJsonObject & iGameDataObject, const QString & iKey);
   void fill_integer_vec_of_vecs(const QVector<QVector<uint32_t>> & iData, QJsonObject & iGameDataObject, const QString & iKey);
   void fill_string_vec_of_vecs(const QVector<QVector<QString>> & iData, QJsonObject & iGameDataObject, const QString & iKey);

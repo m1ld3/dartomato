@@ -45,10 +45,12 @@ void CCricketMainWindow::add_players()
 
 void CCricketMainWindow::save_current_game()
 {
+  QVector<QVector<CCricketClass::CPlayerData>> gameDataVec;
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox[i]->save_game_to_file(mGameDataHandler, mTimeStamp.toString());
+    gameDataVec.append(mPlayerBox[i]->get_game_data());
   }
+  mGameDataHandler.save_game_to_db(gameDataVec, mTimeStamp.toString(), game_finished(), mSettings);
 }
 
 bool CCricketMainWindow::game_finished() const

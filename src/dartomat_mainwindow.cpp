@@ -10,6 +10,7 @@
 #include <QJsonArray>
 #include <QMessageBox>
 #include "version.h"
+#include "game_history_dialog.h"
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
@@ -38,6 +39,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
     combo_box_game_current_index_changed_slot(game);
   });
   connect(mUi->pushButtonSelectPlayers, &QPushButton::clicked, this, &CDartomatMain::push_button_select_players_clicked_slot);
+  connect(mUi->pushButtonGameHistory, &QPushButton::clicked, this, &CDartomatMain::push_button_game_history_clicked_slot);
 }
 
 CDartomatMain::~CDartomatMain()
@@ -131,7 +133,13 @@ void CDartomatMain::push_button_select_players_clicked_slot()
 
 void CDartomatMain::show_about_dialog()
 {
-  QMessageBox::about(this, tr("About"), tr("Version: ") + VER_FILEVERSION_STR);
+  QMessageBox::about(this, "About", QString("Version: ") + VER_FILEVERSION_STR);
+}
+
+void CDartomatMain::push_button_game_history_clicked_slot()
+{
+  QPointer<CGameHistoryDialog> dialog = new CGameHistoryDialog(mGameDataHandler);
+  dialog->show();
 }
 
 void CDartomatMain::play_game_on_sound()

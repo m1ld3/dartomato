@@ -33,6 +33,7 @@ private slots:
   void combo_box_game_current_index_changed_slot(const QString & iGame);
   void push_button_select_players_clicked_slot();
   void show_about_dialog();
+  void push_button_game_history_clicked_slot();
 
 private:
 

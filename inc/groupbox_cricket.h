@@ -49,7 +49,7 @@ public:
   void handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
   void create_snapshot();
   bool is_finished() const { return mFinished; }
-  void save_game_to_file(CGameDataHandler & iGameDataHandler, const QString & iTimeStamp);
+  QVector<CCricketClass::CPlayerData> & get_game_data() { return mHistory; };
 
 private slots:
 
@@ -101,7 +101,7 @@ private:
   CCricketMainWindow * mGameWindow;
   const CSettings & mSettings;
   QString mPlayerName;
-  std::vector<CCricketClass::CPlayerData> mHistory;
+  QVector<CCricketClass::CPlayerData> mHistory;
   uint32_t mScore = 0;
   uint32_t mTotalHits = 0;
   bool mActive = false;
