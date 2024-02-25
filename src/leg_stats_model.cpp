@@ -28,7 +28,7 @@ int CLegStatsModel::columnCount(const QModelIndex & iParent) const
 
 QVariant CLegStatsModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= mLegStatsData.size() || iIndex.column() >= 2)
+  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {
     return QVariant();
   }

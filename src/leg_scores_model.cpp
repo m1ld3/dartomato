@@ -19,7 +19,7 @@ int CLegScoresModel::columnCount(const QModelIndex & iParent) const
 
 QVariant CLegScoresModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= mLegScores.size() || iIndex.row() >= mLegDarts.size() || iIndex.column() >= 3)
+  if (!iIndex.isValid() || iIndex.row() >= mLegScores.size() || iIndex.row() >= mLegDarts.size() || iIndex.column() >= columnCount())
   {
     return QVariant();
   }

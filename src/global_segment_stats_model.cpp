@@ -19,7 +19,7 @@ int CGlobalSegmentStatsModel::columnCount(const QModelIndex &iParent) const
 
 QVariant CGlobalSegmentStatsModel::data(const QModelIndex &iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= 10 || iIndex.column() >= 6)
+  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {
     return QVariant();
   }

@@ -20,7 +20,7 @@ int CGlobalGameStatsModel::columnCount(const QModelIndex & iParent) const
 
 QVariant CGlobalGameStatsModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= 2 || iIndex.column() >= 4)
+  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {
     return QVariant();
   }

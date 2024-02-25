@@ -43,6 +43,8 @@ set(INCLUDES
     inc/global_segment_stats_model.h
     inc/game_history_dialog.h
     inc/game_history_model.h
+    inc/game_history_table_view.h
+	inc/game_results_model.h
     )
  
  set(SOURCES
@@ -73,6 +75,7 @@ set(INCLUDES
     src/global_segment_stats_model.cpp
     src/game_history_dialog.cpp
     src/game_history_model.cpp
+	src/game_results_model.cpp
     src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui

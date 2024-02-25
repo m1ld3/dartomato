@@ -19,7 +19,7 @@ int CGlobalScoreStatsModel::columnCount(const QModelIndex & iParent) const
 
 QVariant CGlobalScoreStatsModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= mScores.size() / 2 || iIndex.column() >= 4)
+  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {
     return QVariant();
   }
