@@ -51,8 +51,9 @@ void CCricketClass::restore_state(CPlayerData iData)
 
 CCricketClass::CPlayerData CCricketClass::create_snapshot() const
 {
-  return CPlayerData(mSetsWon, mLegsWonPerSet, mTotalLegsWon, mTotalDarts, mScore, mTotalHits,
-                     mHitsPerRound, mScoresOfCurrentLeg, mScoringHistory, mSlotArray, mExtraPointsArray);
+  return CPlayerData(mSetsWon, mLegsWonPerSet, mTotalLegsWon, mTotalDarts,
+                     mScore, mTotalHits, mHitsPerRound, mScoresOfCurrentLeg,
+                     mScoringHistory, mSlotArray, mExtraPointsArray);
 }
 
 void CCricketClass::notify_game_won()

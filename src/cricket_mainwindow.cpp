@@ -13,7 +13,7 @@ CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & iSet
   , mSettings(iSettings)
   , mGameDataHandler(iGameDataHandler)
   , mNumberOfPlayers(mSettings.PlayersList.size())
-  , mTimeStamp(QDateTime::currentDateTimeUtc())
+  , mTimeStamp(QDateTime::currentDateTime())
 {
   mUi->setupUi(this);
   QWidget::setWindowTitle("Cricket" + QString(mSettings.CutThroat ? " (CutThroat)" : ""));
@@ -50,7 +50,8 @@ void CCricketMainWindow::save_current_game()
   {
     gameDataVec.append(mPlayerBox[i]->get_game_data());
   }
-  mGameDataHandler.save_game_to_db(gameDataVec, mTimeStamp.toString(), game_finished(), mSettings);
+  auto gameData = CGameDataHandler::SGameData(mTimeStamp.toString(), game_finished(), mSettings, mWinningPlayer, {}, gameDataVec);
+  mGameDataHandler.save_game_to_db(gameData);
 }
 
 bool CCricketMainWindow::game_finished() const
@@ -194,6 +195,7 @@ void CCricketMainWindow::handle_game_won(uint32_t iPlayerNumber)
     mPlayerBox[i]->set_finished();
   }
 
+  mWinningPlayer = iPlayerNumber;
   mPlayerBox[iPlayerNumber]->close_cricket_input();
   QString name = mSettings.PlayersList.at(iPlayerNumber);
   QString text = name + " has won the game. Congratulations! ";

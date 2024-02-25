@@ -15,7 +15,7 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, C
   , mSettings(iSettings)
   , mGameDataHandler(iGameDataHandler)
   , mNumberOfPlayers(mSettings.PlayersList.size())
-  , mTimeStamp(QDateTime::currentDateTimeUtc())
+  , mTimeStamp(QDateTime::currentDateTime())
 {
   mUi->setupUi(this);
   QString text = QString::number(static_cast<uint32_t>(mSettings.Game));
@@ -100,7 +100,8 @@ void CX01MainWindow::save_current_game()
   {
     gameDataVec.append(mPlayerBox[i]->get_game_data());
   }
-  mGameDataHandler.save_game_to_db(gameDataVec, mTimeStamp.toString(), game_finished(), mSettings);
+  auto gameData = CGameDataHandler::SGameData(mTimeStamp.toString(), game_finished(), mSettings, mWinningPlayer, gameDataVec);
+  mGameDataHandler.save_game_to_db(gameData);
 }
 
 bool CX01MainWindow::game_finished() const
@@ -212,11 +213,11 @@ void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
   {
     mPlayerBox[i]->set_finished();
   }
-
+  mWinningPlayer = iPlayerNumber;
   mDartBoard->set_finished();
   QString name = mSettings.PlayersList.at(iPlayerNumber);
   QString text = name + " has won the game. Congratulations! ";
-  QMessageBox::about(this,"Game finished", text);
+  QMessageBox::about(this, "Game finished", text);
 }
 
 void CX01MainWindow::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)

@@ -8,32 +8,57 @@ class CGameDataHandler
 {
 public:
 
+  struct SGameData
+  {
+    SGameData(const QString iTimeStamp,
+              const bool iFinished,
+              const CSettings & iSettings,
+              const uint32_t iWinnerIdx,
+              QVector<QVector<CX01Class::CPlayerData>> iGameDataX01 = {},
+              QVector<QVector<CCricketClass::CPlayerData>> iGameDataCricket = {}
+              )
+      : TimeStamp(iTimeStamp)
+      , Finished(iFinished)
+      , Settings(iSettings)
+      , WinnerIdx(iWinnerIdx)
+      , GameDataX01(iGameDataX01)
+      , GameDataCricket(iGameDataCricket)
+    {}
+
+    SGameData() = default;
+
+    QString TimeStamp = "";
+    bool Finished = false;
+    CSettings Settings = CSettings();
+    uint32_t WinnerIdx = 0;
+    QVector<QVector<CX01Class::CPlayerData>> GameDataX01 = {};
+    QVector<QVector<CCricketClass::CPlayerData>> GameDataCricket = {};
+  };
+
   CGameDataHandler();
   ~CGameDataHandler() = default;
   bool add_new_player(const QString & iPlayerName);
   QStringList get_player_names() const;
 
-  template<typename TPlayerData>
-  bool save_game_to_db(const QVector<QVector<TPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings);
-
-  void get_game_data();
+  bool save_game_to_db(const SGameData & iGameData);
+  QVector<SGameData> get_game_data();
 
 private:
 
   template<typename TPlayerData>
-  void fill_game_data_array(const QVector<TPlayerData> & iGameHistory, QJsonArray & iGameDataArray);
-
-  void fill_integer_vec(const QVector<uint32_t> & iData, QJsonObject & iGameDataObject, const QString & iKey);
-  void fill_integer_vec_of_vecs(const QVector<QVector<uint32_t>> & iData, QJsonObject & iGameDataObject, const QString & iKey);
-  void fill_string_vec_of_vecs(const QVector<QVector<QString>> & iData, QJsonObject & iGameDataObject, const QString & iKey);
-  void fill_string_vec_of_vec_of_vecs(const QVector<QVector<QVector<QString>>> & iData, QJsonObject & iGameDataObject, const QString & iKey);
+  void fill_game_data_array(const QVector<TPlayerData> & iGameHistory, QJsonArray & oGameDataArray);
+  template<typename TPlayerData>
+  void get_player_data(QVector<TPlayerData> & oGameHistory, const QJsonArray & iGameDataArray);
+  template<typename T>
+  void fill_vec(const T & iData, QJsonObject & oGameDataObject, const QString & iKey);
+  template<typename T>
+  void extract_vec(T & oData, QJsonObject & iGameDataObject, const QString & iKey);
   bool create_connection();
   bool create_players_table();
-  bool create_game_modes_table();
   bool create_games_tables();
   bool player_exists(const QString & iPlayerName) const;
   int get_player_id(const QString & iPlayerName) const;
-  int get_game_mode_id(const QString & iGameType) const;
+  QString get_player_name_from_id(int iPlayerId) const;
 
   const QString mFileName = "game_data.sqlite";
 };

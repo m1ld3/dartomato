@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "game_data_handler.h"
+#include "game_history_model.h"
 
 namespace Ui
 {
@@ -21,7 +22,7 @@ public:
 private:
 
   Ui::CGameHistoryDialog * mUi;
-  CGameDataHandler & mGameDataHandler;
+  CGameHistoryModel * mGameHistoryModel;
 };
 
 #endif  // GAME_HISTORY_DIALOG_H

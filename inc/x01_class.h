@@ -23,7 +23,8 @@ public:
 
   public:
 
-    CPlayerData() = delete;
+    CPlayerData() = default;
+
     CPlayerData(uint32_t iSetsWon,
                 uint32_t iLegsWonPerSet,
                 uint32_t iTotalLegsWon,

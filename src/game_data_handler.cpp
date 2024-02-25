@@ -11,7 +11,6 @@ CGameDataHandler::CGameDataHandler()
 {
   create_connection();
   create_players_table();
-  create_game_modes_table();
   create_games_tables();
 }
 
@@ -64,31 +63,11 @@ bool CGameDataHandler::create_players_table()
   return true;
 }
 
-bool CGameDataHandler::create_game_modes_table()
-{
-  QSqlQuery query;
-  const QString createQuery = "CREATE TABLE IF NOT EXISTS game_modes (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE)";
-  const QString insertQuery = "INSERT OR IGNORE INTO game_modes (name) VALUES ('301'), ('501'), ('701'), ('Cricket')";
-
-  if (!query.exec(createQuery))
-  {
-    qWarning() << "Error creating game modes table: " << query.lastError();
-    return false;
-  }
-
-  if (!query.exec(insertQuery))
-  {
-    qWarning() << "Error inserting into game modes table: " << query.lastError();
-    return false;
-  }
-  return true;
-}
-
 bool CGameDataHandler::create_games_tables()
 {
   QSqlQuery query;
 
-  if (!query.exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, game_mode_id INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, in_mode TEXT, out_mode TEXT, cutthroat INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (game_mode_id) REFERENCES game_modes(id))"))
+  if (!query.exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, winner_id INTEGER, game_mode INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, in_mode INTEGER, out_mode INTEGER, cutthroat INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (winner_id) REFERENCES players(id))"))
   {
     qWarning() << "Error: Unable to create games table" << query.lastError();
     return false;
@@ -157,29 +136,25 @@ int CGameDataHandler::get_player_id(const QString & iPlayerName) const
   return query.value(0).toInt();
 }
 
-int CGameDataHandler::get_game_mode_id(const QString & iGameMode) const
+QString CGameDataHandler::get_player_name_from_id(int iPlayerId) const
 {
   QSqlQuery query;
-  query.prepare("SELECT id FROM game_modes WHERE name = :name");
-  query.bindValue(":name", iGameMode);
+  query.prepare("SELECT name FROM players WHERE id = :playerId");
+  query.bindValue(":playerId", iPlayerId);
 
-  if (!query.exec())
+  if (query.exec() && query.next())
   {
-    qWarning() << "Error executing query:" << query.lastError();
-    return -1;
+    return query.value("name").toString();
   }
-
-  if (!query.next())
+  else
   {
-    qWarning() << "No matching game mode found for name:" << iGameMode;
-    return -1;
+    qWarning() << "Error: Unable to retrieve player name for player id" << iPlayerId << query.lastError();
+    return "";
   }
-
-  return query.value(0).toInt();
 }
 
 template<>
-void CGameDataHandler::fill_game_data_array(const QVector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
+void CGameDataHandler::fill_game_data_array(const QVector<CX01Class::CPlayerData> & iGameHistory, QJsonArray & oGameDataArray)
 {
   for (auto & data : iGameHistory)
   {
@@ -195,21 +170,21 @@ void CGameDataHandler::fill_game_data_array(const QVector<CX01Class::CPlayerData
     gameDataObject["Avg3Dart"] = data.Avg3Dart;
     gameDataObject["CheckoutRate"] = data.CheckoutRate;
 
-    fill_integer_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
-    fill_integer_vec_of_vecs(data.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
-    fill_integer_vec(data.AllScoresFlat, gameDataObject, "AllScoresFlat");
-    fill_string_vec_of_vecs(data.ThrownDartsOfCurrentLeg, gameDataObject, "ThrownDartsOfCurrentLeg");
-    fill_string_vec_of_vecs(data.ThrownDartsOfAllLegsFlat, gameDataObject, "ThrownDartsOfAllLegsFlat");
-    fill_string_vec_of_vec_of_vecs(data.ThrownDartsOfAllLegs, gameDataObject, "ThrownDartsOfAllLegs");
-    fill_integer_vec(data.RemainingPointsOfCurrentLeg, gameDataObject, "RemainingPointsOfCurrentLeg");
-    fill_integer_vec_of_vecs(data.RemainingPointsOfAllLegs, gameDataObject, "RemainingPointsOfAllLegs");
+    fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
+    fill_vec(data.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
+    fill_vec(data.AllScoresFlat, gameDataObject, "AllScoresFlat");
+    fill_vec(data.ThrownDartsOfCurrentLeg, gameDataObject, "ThrownDartsOfCurrentLeg");
+    fill_vec(data.ThrownDartsOfAllLegsFlat, gameDataObject, "ThrownDartsOfAllLegsFlat");
+    fill_vec(data.ThrownDartsOfAllLegs, gameDataObject, "ThrownDartsOfAllLegs");
+    fill_vec(data.RemainingPointsOfCurrentLeg, gameDataObject, "RemainingPointsOfCurrentLeg");
+    fill_vec(data.RemainingPointsOfAllLegs, gameDataObject, "RemainingPointsOfAllLegs");
 
-    iGameDataArray.append(gameDataObject);
+    oGameDataArray.append(gameDataObject);
   }
 }
 
 template<>
-void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayerData> & iGameHistory, QJsonArray & iGameDataArray)
+void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayerData> & iGameHistory, QJsonArray & oGameDataArray)
 {
   for (auto & data : iGameHistory)
   {
@@ -222,57 +197,103 @@ void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayer
     gameDataObject["TotalHits"] = static_cast<int>(data.TotalHits);
     gameDataObject["TotalDarts"] = data.HitsPerRound;
 
-    fill_string_vec_of_vecs(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
-    fill_string_vec_of_vec_of_vecs(data.ScoringHistory, gameDataObject, "ScoringHistory");
-    fill_integer_vec(data.SlotArray, gameDataObject, "SlotArray");
-    fill_integer_vec(data.ExtraPointsArray, gameDataObject, "ExtraPointsArray");
-    iGameDataArray.append(gameDataObject);
+    fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
+    fill_vec(data.ScoringHistory, gameDataObject, "ScoringHistory");
+    fill_vec(data.SlotArray, gameDataObject, "SlotArray");
+    fill_vec(data.ExtraPointsArray, gameDataObject, "ExtraPointsArray");
+
+    oGameDataArray.append(gameDataObject);
   }
 }
 
-template<typename TPlayerData>
-bool CGameDataHandler::save_game_to_db(const QVector<QVector<TPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings)
+template<>
+void CGameDataHandler::get_player_data(QVector<CX01Class::CPlayerData> & oGameHistory, const QJsonArray & iGameDataArray)
 {
-  const QString game = QString::number(static_cast<int>(iSettings.Game));
-  QString inMode, outMode;
-
-  if (iSettings.InMode == EX01InMode::SINGLE_IN)      inMode = "Single In";
-  else if (iSettings.InMode == EX01InMode::DOUBLE_IN) inMode = "Double In";
-  else                                                inMode = "Master In";
-  if (iSettings.OutMode == EX01OutMode::SINGLE_OUT)      outMode = "Single Out";
-  else if (iSettings.OutMode == EX01OutMode::DOUBLE_OUT) outMode = "Double Out";
-  else                                                   outMode = "Master Out";
-
-  int gameModeId = get_game_mode_id(game);
-  if (gameModeId == -1)
+  for (const auto & jsonObject : iGameDataArray)
   {
-    qWarning() << "Error: Invalid game mode";
-    return false;
-  }
+    if (!jsonObject.isObject()) continue;
 
-  for (uint32_t i = 0; i < iSettings.PlayersList.size(); i++)
+    QJsonObject gameDataObject = jsonObject.toObject();
+    CX01Class::CPlayerData playerData;
+
+    playerData.SetsWon = gameDataObject["SetsWon"].toInt();
+    playerData.LegsWonPerSet = gameDataObject["LegsWonPerSet"].toInt();
+    playerData.TotalLegsWon = gameDataObject["TotalLegsWon"].toInt();
+    playerData.RemainingPoints = gameDataObject["RemainingPoints"].toInt();
+    playerData.CheckoutAttempts = gameDataObject["CheckoutAttempts"].toInt();
+    playerData.CheckoutHits = gameDataObject["CheckoutHits"].toInt();
+    playerData.TotalDarts = gameDataObject["TotalDarts"].toInt();
+    playerData.Avg1Dart = gameDataObject["Avg1Dart"].toDouble();
+    playerData.Avg3Dart = gameDataObject["Avg3Dart"].toDouble();
+    playerData.CheckoutRate = gameDataObject["CheckoutRate"].toDouble();
+
+    extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
+    extract_vec(playerData.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
+    extract_vec(playerData.AllScoresFlat, gameDataObject, "AllScoresFlat");
+    extract_vec(playerData.ThrownDartsOfCurrentLeg, gameDataObject, "ThrownDartsOfCurrentLeg");
+    extract_vec(playerData.ThrownDartsOfAllLegsFlat, gameDataObject, "ThrownDartsOfAllLegsFlat");
+    extract_vec(playerData.ThrownDartsOfAllLegs, gameDataObject, "ThrownDartsOfAllLegs");
+    extract_vec(playerData.RemainingPointsOfCurrentLeg, gameDataObject, "RemainingPointsOfCurrentLeg");
+    extract_vec(playerData.RemainingPointsOfAllLegs, gameDataObject, "RemainingPointsOfAllLegs");
+
+    oGameHistory.append(playerData);
+  }
+}
+
+template<>
+void CGameDataHandler::get_player_data(QVector<CCricketClass::CPlayerData> & oGameHistory, const QJsonArray & iGameDataArray)
+{
+  for (const auto & jsonObject : iGameDataArray)
+  {
+    if (!jsonObject.isObject()) continue;
+
+    QJsonObject gameDataObject = jsonObject.toObject();
+    CCricketClass::CPlayerData playerData;
+
+    playerData.SetsWon = gameDataObject["SetsWon"].toInt();
+    playerData.LegsWonPerSet = gameDataObject["LegsWonPerSet"].toInt();
+    playerData.TotalLegsWon = gameDataObject["TotalLegsWon"].toInt();
+    playerData.TotalDarts = gameDataObject["TotalDarts"].toInt();
+    playerData.Score = gameDataObject["Score"].toInt();
+    playerData.TotalHits = gameDataObject["TotalHits"].toInt();
+    playerData.TotalDarts = gameDataObject["TotalDarts"].toInt();
+
+    extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
+    extract_vec(playerData.ScoringHistory, gameDataObject, "ScoringHistory");
+    extract_vec(playerData.SlotArray, gameDataObject, "SlotArray");
+    extract_vec(playerData.ExtraPointsArray, gameDataObject, "ExtraPointsArray");
+
+    oGameHistory.append(playerData);
+  }
+}
+
+bool CGameDataHandler::save_game_to_db(const SGameData & iGameData)
+{
+  for (uint32_t i = 0; i < iGameData.Settings.PlayersList.size(); i++)
   {
     QJsonArray gameDataArray;
-    fill_game_data_array(iGameData.at(i), gameDataArray);
+    if (iGameData.GameDataX01.size() > 0) fill_game_data_array(iGameData.GameDataX01.at(i), gameDataArray);
+    else fill_game_data_array(iGameData.GameDataCricket.at(i), gameDataArray);
+    int playerId = get_player_id(iGameData.Settings.PlayersList.at(i));
 
-    int playerId = get_player_id(iSettings.PlayersList.at(i));
-    if (playerId == -1 || gameModeId == -1)
+    if (playerId == -1)
     {
       qWarning() << "Error: Invalid player or game mode";
       return false;
     }
 
     QSqlQuery query;
-    query.prepare("INSERT INTO games (player_id, game_mode_id, time_stamp, finished, best_of_legs, best_of_sets, in_mode, out_mode, cutthroat, game_data) VALUES (:player_id, :game_mode_id, :time_stamp, :finished, :best_of_legs, :best_of_sets, :in_mode, :out_mode, :cutthroat, :game_data)");
+    query.prepare("INSERT INTO games (player_id, winner_id, game_mode, time_stamp, finished, best_of_legs, best_of_sets, in_mode, out_mode, cutthroat, game_data) VALUES (:player_id, :winner_id, :game_mode, :time_stamp, :finished, :best_of_legs, :best_of_sets, :in_mode, :out_mode, :cutthroat, :game_data)");
     query.bindValue(":player_id", playerId);
-    query.bindValue(":game_mode_id", gameModeId);
-    query.bindValue(":time_stamp", iTimeStamp);
-    query.bindValue(":finished", iFinished);
-    query.bindValue(":best_of_legs", iSettings.Legs);
-    query.bindValue(":best_of_sets", iSettings.Sets);
-    query.bindValue(":in_mode", inMode);
-    query.bindValue(":out_mode", outMode);
-    query.bindValue(":cutthroat", iSettings.CutThroat);
+    query.bindValue(":winner_id", iGameData.WinnerIdx);
+    query.bindValue(":game_mode", static_cast<int>(iGameData.Settings.Game));
+    query.bindValue(":time_stamp", iGameData.TimeStamp);
+    query.bindValue(":finished", iGameData.Finished);
+    query.bindValue(":best_of_legs", iGameData.Settings.Legs);
+    query.bindValue(":best_of_sets", iGameData.Settings.Sets);
+    query.bindValue(":in_mode", static_cast<int>(iGameData.Settings.InMode));
+    query.bindValue(":out_mode", static_cast<int>(iGameData.Settings.OutMode));
+    query.bindValue(":cutthroat", iGameData.Settings.CutThroat);
     QByteArray jsonData = QJsonDocument(gameDataArray).toJson(QJsonDocument::Compact);
     query.bindValue(":game_data", QString(jsonData));
 
@@ -286,58 +307,138 @@ bool CGameDataHandler::save_game_to_db(const QVector<QVector<TPlayerData>> & iGa
   return true;
 }
 
-template bool CGameDataHandler::save_game_to_db<CX01Class::CPlayerData>(const QVector<QVector<CX01Class::CPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings);
-template bool CGameDataHandler::save_game_to_db<CCricketClass::CPlayerData>(const QVector<QVector<CCricketClass::CPlayerData>> & iGameData, const QString & iTimeStamp, const bool iFinished, const CSettings & iSettings);
-
-void CGameDataHandler::get_game_data()
+QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
 {
+  QSqlDatabase db = QSqlDatabase::database();
+  QVector<SGameData> gameData;
+  QVector<QString> timeStamps;
+  QVector<QString> playerNamesArray = {};
 
+  QSqlQuery timeStampQuery("SELECT DISTINCT time_stamp FROM games", db);
+  while (timeStampQuery.next())
+  {
+    timeStamps.append(timeStampQuery.value("time_stamp").toString());
+  }
+
+  for (const auto & timeStamp : timeStamps)
+  {
+    QSqlQuery selectQuery(QString("SELECT * FROM games WHERE time_stamp='%1'").arg(timeStamp));
+    QVector<QVector<CX01Class::CPlayerData>> x01Data {};
+    QVector<QVector<CCricketClass::CPlayerData>> cricketData {};
+    auto gameMode = EGame::GAME_501;
+    auto inMode = EX01InMode::SINGLE_IN;
+    auto outMode = EX01OutMode::DOUBLE_OUT;
+    bool finished = false;
+    bool cutthroat = false;
+    int sets = 1;
+    int legs = 1;
+    bool first = true;
+    uint32_t winnerId = 0;
+
+    while (selectQuery.next())
+    {
+      QVector<CX01Class::CPlayerData> singleX01Data {};
+      QVector<CCricketClass::CPlayerData> singleCricketData {};
+
+      if (first)
+      {
+        gameMode = static_cast<EGame>(selectQuery.value("game_mode").toInt());
+        finished = selectQuery.value("finished").toBool();
+        legs = selectQuery.value("best_of_legs").toInt();
+        sets = selectQuery.value("best_of_sets").toInt();
+        inMode = static_cast<EX01InMode>(selectQuery.value("in_mode").toInt());
+        outMode = static_cast<EX01OutMode>(selectQuery.value("out_mode").toInt());
+        cutthroat = selectQuery.value("cutthroat").toBool();
+        winnerId = selectQuery.value("winner_id").toInt();
+        first = false;
+      }
+
+      playerNamesArray.append(get_player_name_from_id(selectQuery.value("player_id").toInt()));
+      QString gameDataString = selectQuery.value("game_data").toString();
+      QJsonDocument jsonDoc = QJsonDocument::fromJson(gameDataString.toUtf8());
+      QJsonArray gameDataArray = jsonDoc.array();
+
+      if (gameMode == EGame::GAME_CRICKET) get_player_data(singleCricketData, gameDataArray);
+      else get_player_data(singleX01Data, gameDataArray);
+      x01Data.append(singleX01Data);
+      cricketData.append(singleCricketData);
+    }
+    auto settings = CSettings(gameMode, playerNamesArray, sets, legs, inMode, outMode, cutthroat);
+    auto singleGameData = SGameData(timeStamp, finished, settings, winnerId, x01Data, cricketData);
+    gameData.append(singleGameData);
+  }
+
+  return gameData;
 }
 
-void CGameDataHandler::fill_integer_vec(const QVector<uint32_t> & iData, QJsonObject & iGameDataObject, const QString & iKey)
+template<typename T>
+void CGameDataHandler::fill_vec(const T & iData, QJsonObject & oGameDataObject, const QString & iKey)
 {
   QJsonArray tempArray;
-  for (const auto & val : iData) tempArray.append(static_cast<int>(val));
-  iGameDataObject[iKey] = tempArray;
-}
-
-void CGameDataHandler::fill_integer_vec_of_vecs(const QVector<QVector<uint32_t>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
-{
-  QJsonArray outerArray;
-  for (const auto & innerVec : iData)
+  if constexpr (std::is_same_v<T, QVector<QVector<uint32_t>>> ||
+                std::is_same_v<T, QVector<QVector<QString>>> ||
+                std::is_same_v<T, QVector<QVector<QVector<QString>>>>)
   {
-    QJsonArray innerArray;
-    for (const auto & val : innerVec) innerArray.append(static_cast<int>(val));
-    outerArray.append(innerArray);
-  }
-  iGameDataObject[iKey] = outerArray;
-}
-
-void CGameDataHandler::fill_string_vec_of_vecs(const QVector<QVector<QString>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
-{
-  QJsonArray outerArray;
-  for (const auto & innerVec : iData)
-  {
-    QJsonArray innerArray;
-    for (const auto & val : innerVec) innerArray.append(val);
-    outerArray.append(innerArray);
-  }
-  iGameDataObject[iKey] = outerArray;
-}
-
-void CGameDataHandler::fill_string_vec_of_vec_of_vecs(const QVector<QVector<QVector<QString>>> & iData, QJsonObject & iGameDataObject, const QString & iKey)
-{
-  QJsonArray outerArray;
-  for (const auto & midVec : iData)
-  {
-    QJsonArray midArray;
-    for (const auto & innerVec : midVec)
+    for (const auto & val : iData)
     {
-      QJsonArray innerArray;
-      for (const auto & val : innerVec) innerArray.append(val);
-      midArray.append(innerArray);
+      QJsonObject innerObject;
+      fill_vec(val, innerObject, iKey);
+      tempArray.append(innerObject);
     }
-    outerArray.append(midArray);
   }
-  iGameDataObject[iKey] = outerArray;
+  else
+  {
+    for (const auto & val : iData)
+    {
+      if constexpr (std::is_same_v<decltype(val), const uint32_t &>)
+      {
+        tempArray.append(static_cast<int>(val));
+      }
+      else
+      {
+        tempArray.append(val);
+      }
+    }
+  }
+
+  oGameDataObject[iKey] = tempArray;
 }
+
+template void CGameDataHandler::fill_vec<QVector<uint32_t>>(const QVector<uint32_t> & iData, QJsonObject & iGameDataObject, const QString & iKey);
+template void CGameDataHandler::fill_vec<QVector<QVector<QVector<QString>>>>(const QVector<QVector<QVector<QString>>> & iData, QJsonObject & iGameDataObject, const QString & iKey);
+
+template<typename T>
+void CGameDataHandler::extract_vec(T & oData, QJsonObject & iGameDataObject, const QString & iKey)
+{
+  const QJsonValue jsonValue = iGameDataObject.value(iKey);
+  if (jsonValue.isArray())
+  {
+    const QJsonArray jsonArray = jsonValue.toArray();
+    for (const QJsonValue & data : jsonArray)
+    {
+      if constexpr (std::is_same_v<T, QVector<QVector<uint32_t>>> ||
+                    std::is_same_v<T, QVector<QVector<QString>>> ||
+                    std::is_same_v<T, QVector<QVector<QVector<QString>>>>)
+      {
+        typename T::value_type innerData;
+        QJsonObject innerObject = data.toObject();
+        extract_vec(innerData, innerObject, iKey);
+        oData.append(innerData);
+      }
+      else
+      {
+        if constexpr (std::is_same_v<T, QVector<uint32_t>>)
+        {
+          oData.append(data.toInt());
+        }
+        else
+        {
+          oData.append(data.toString());
+        }
+      }
+    }
+  }
+}
+
+template void CGameDataHandler::extract_vec<QVector<uint32_t>>(QVector<uint32_t> & oData, QJsonObject & iGameDataObject, const QString & iKey);
+template void CGameDataHandler::extract_vec<QVector<QVector<QVector<QString>>>>(QVector<QVector<QVector<QString>>> & oData, QJsonObject & iGameDataObject, const QString & iKey);

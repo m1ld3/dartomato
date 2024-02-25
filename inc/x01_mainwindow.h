@@ -60,6 +60,7 @@ private:
 
   Ui::CX01MainWindow * mUi;
   uint32_t mActivePlayer = 0;
+  uint32_t mWinningPlayer = 0;
   QVector<CX01GroupBox*> mPlayerBox;
   CDartBoardX01 * mDartBoard;
   const CSettings & mSettings;

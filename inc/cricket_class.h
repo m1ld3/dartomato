@@ -20,7 +20,8 @@ public:
 
   public:
 
-    CPlayerData() = delete;
+    CPlayerData() = default;
+
     CPlayerData(uint32_t iSetsWon,
                 uint32_t iLegsWonPerSet,
                 uint32_t iTotalLegsWon,
@@ -48,16 +49,16 @@ public:
 
   private:
 
-    uint32_t SetsWon = 0;
+    uint32_t SetsWon       = 0;
     uint32_t LegsWonPerSet = 0;
-    uint32_t TotalLegsWon = 0;
-    uint32_t TotalDarts = 0;
-    uint32_t Score = 0;
-    uint32_t TotalHits = 0;
-    double HitsPerRound = 0.0;
-    QVector<QVector<QString>> ScoresOfCurrentLeg = {};
+    uint32_t TotalLegsWon  = 0;
+    uint32_t TotalDarts    = 0;
+    uint32_t Score         = 0;
+    uint32_t TotalHits     = 0;
+    double HitsPerRound    = 0.0;
+    QVector<QVector<QString>> ScoresOfCurrentLeg      = {};
     QVector<QVector<QVector<QString>>> ScoringHistory = {};
-    QVector<uint32_t> SlotArray = {0, 0, 0, 0, 0, 0, 0};
+    QVector<uint32_t> SlotArray        = {0, 0, 0, 0, 0, 0, 0};
     QVector<uint32_t> ExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
   };
 

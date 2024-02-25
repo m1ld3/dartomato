@@ -56,6 +56,7 @@ private:
 
   Ui::CCricketMainWindow * mUi;
   uint32_t mActivePlayer = 0;
+  uint32_t mWinningPlayer = 0;
   QVector<CCricketGroupBox*> mPlayerBox;
   const CSettings & mSettings;
   CGameDataHandler & mGameDataHandler;

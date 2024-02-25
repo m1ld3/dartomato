@@ -4,12 +4,15 @@
 CGameHistoryDialog::CGameHistoryDialog(CGameDataHandler & iGameDataHandler, QWidget * iParent)
   : QDialog(iParent)
   , mUi(new Ui::CGameHistoryDialog)
-  , mGameDataHandler(iGameDataHandler)
+  , mGameHistoryModel(new CGameHistoryModel(iGameDataHandler, this))
 {
   mUi->setupUi(this);
+  mUi->tableView->setModel(mGameHistoryModel);
+  mUi->tableView->resizeColumnsToContents();
 }
 
 CGameHistoryDialog::~CGameHistoryDialog()
 {
   delete mUi;
+  delete mGameHistoryModel;
 }

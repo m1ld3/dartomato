@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <QStringList>
+#include <map>
 
 //#define USE_TTS
 
@@ -47,6 +48,20 @@ enum class EX01OutMode
   , MASTER_OUT = 2
 };
 
+static std::map<EX01InMode, QString> MapX01InMode2Str
+{
+  {EX01InMode::SINGLE_IN, "Single In"},
+  {EX01InMode::DOUBLE_IN, "Double In"},
+  {EX01InMode::MASTER_IN, "Master In"},
+};
+
+static std::map<EX01OutMode, QString> MapX01OutMode2Str
+{
+  {EX01OutMode::SINGLE_OUT, "Single Out"},
+  {EX01OutMode::DOUBLE_OUT, "Double Out"},
+  {EX01OutMode::MASTER_OUT, "Master Out"},
+};
+
 struct CSettings
 {
   CSettings(EGame iGame, QStringList iPlayers, uint32_t iSets, uint32_t iLegs,
@@ -60,7 +75,7 @@ struct CSettings
   , CutThroat(iCutThroat)
   {}
 
-  CSettings(){}
+  CSettings() = default;
 
   EGame Game = EGame::GAME_301;
   QStringList PlayersList = {};
