@@ -27,6 +27,7 @@ private:
 
   Ui::CGameHistoryDialog * mUi;
   CGameDataHandler & mGameDataHandler;
+  QVector<CGameDataHandler::SGameData> mGameData;
   CGameHistoryModel * mGameHistoryModel;
 };
 

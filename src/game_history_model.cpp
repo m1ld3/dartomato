@@ -1,9 +1,8 @@
 #include "game_history_model.h"
 
-CGameHistoryModel::CGameHistoryModel(CGameDataHandler & iGameDataHandler, QObject * iParent)
+CGameHistoryModel::CGameHistoryModel(const QVector<CGameDataHandler::SGameData> & iGameData, QObject * iParent)
   : QAbstractTableModel{iParent}
-  , mGameDataHandler(iGameDataHandler)
-  , mGameData(mGameDataHandler.get_game_data())
+  , mGameData(iGameData)
 {}
 
 int CGameHistoryModel::rowCount(const QModelIndex & iParent) const

@@ -312,7 +312,6 @@ QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
   QSqlDatabase db = QSqlDatabase::database();
   QVector<SGameData> gameData;
   QVector<QString> timeStamps;
-  QVector<QString> playerNamesArray = {};
 
   QSqlQuery timeStampQuery("SELECT DISTINCT time_stamp FROM games", db);
   while (timeStampQuery.next())
@@ -322,6 +321,7 @@ QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
 
   for (const auto & timeStamp : timeStamps)
   {
+    QVector<QString> playerNamesArray = {};
     QSqlQuery selectQuery(QString("SELECT * FROM games WHERE time_stamp='%1'").arg(timeStamp));
     QVector<QVector<CX01Class::CPlayerData>> x01Data {};
     QVector<QVector<CCricketClass::CPlayerData>> cricketData {};

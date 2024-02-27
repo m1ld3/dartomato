@@ -17,6 +17,7 @@ public:
 
     friend class CCricketClass;
     friend class CGameDataHandler;
+    friend class CGameResultsModel;
 
   public:
 

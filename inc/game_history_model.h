@@ -10,7 +10,7 @@ class CGameHistoryModel : public QAbstractTableModel
 
 public:
 
-  explicit CGameHistoryModel(CGameDataHandler & iGameDataHandler, QObject * iParent = nullptr);
+  explicit CGameHistoryModel(const QVector<CGameDataHandler::SGameData> & iGameData, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant headerData(int iSection, Qt::Orientation iOrientation, int iRole) const override;
@@ -18,7 +18,6 @@ public:
 
 private:
 
-  CGameDataHandler & mGameDataHandler;
   const QVector<CGameDataHandler::SGameData> mGameData;
   const QVector<QString> mColumnHeaders {"Date",
                                          "Game Type",
