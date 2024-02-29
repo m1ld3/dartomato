@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>509</width>
-    <height>517</height>
+    <height>523</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,6 +48,9 @@
        <width>80</width>
        <height>80</height>
       </size>
+     </property>
+     <property name="toolTip">
+      <string>Change Player Order</string>
      </property>
      <property name="autoFillBackground">
       <bool>false</bool>

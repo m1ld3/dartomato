@@ -195,7 +195,7 @@ void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayer
     gameDataObject["TotalDarts"] = static_cast<int>(data.TotalDarts);
     gameDataObject["Score"] = static_cast<int>(data.Score);
     gameDataObject["TotalHits"] = static_cast<int>(data.TotalHits);
-    gameDataObject["TotalDarts"] = data.HitsPerRound;
+    gameDataObject["HitsPerRound"] = data.HitsPerRound;
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     fill_vec(data.ScoringHistory, gameDataObject, "ScoringHistory");
@@ -256,7 +256,7 @@ void CGameDataHandler::get_player_data(QVector<CCricketClass::CPlayerData> & oGa
     playerData.TotalDarts = gameDataObject["TotalDarts"].toInt();
     playerData.Score = gameDataObject["Score"].toInt();
     playerData.TotalHits = gameDataObject["TotalHits"].toInt();
-    playerData.TotalDarts = gameDataObject["TotalDarts"].toInt();
+    playerData.HitsPerRound = gameDataObject["HitsPerRound"].toDouble();
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     extract_vec(playerData.ScoringHistory, gameDataObject, "ScoringHistory");
@@ -313,7 +313,7 @@ QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
   QVector<SGameData> gameData;
   QVector<QString> timeStamps;
 
-  QSqlQuery timeStampQuery("SELECT DISTINCT time_stamp FROM games", db);
+  QSqlQuery timeStampQuery("SELECT DISTINCT time_stamp FROM games ORDER BY id DESC", db);
   while (timeStampQuery.next())
   {
     timeStamps.append(timeStampQuery.value("time_stamp").toString());
@@ -369,6 +369,18 @@ QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
   }
 
   return gameData;
+}
+
+bool CGameDataHandler::delete_game_from_db(const QString &iTimeStamp)
+{
+  QSqlQuery query(QString("DELETE FROM games WHERE time_stamp = '%1'").arg(iTimeStamp));
+
+  if (!query.exec())
+  {
+    qWarning() << "Error deleting games at timestamp " << iTimeStamp << query.lastError().text();
+    return false;
+  }
+  return true;
 }
 
 template<typename T>

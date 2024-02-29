@@ -51,6 +51,9 @@
            <height>80</height>
           </size>
          </property>
+         <property name="toolTip">
+          <string>Change Player Order</string>
+         </property>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>

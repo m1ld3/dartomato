@@ -39,9 +39,9 @@ public:
   ~CGameDataHandler() = default;
   bool add_new_player(const QString & iPlayerName);
   QStringList get_player_names() const;
-
   bool save_game_to_db(const SGameData & iGameData);
   QVector<SGameData> get_game_data();
+  bool delete_game_from_db(const QString & iTimeStamp);
 
 private:
 

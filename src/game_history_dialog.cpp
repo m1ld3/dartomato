@@ -2,6 +2,8 @@
 #include "ui_game_history_dialog.h"
 #include "game_history_table_view.h"
 #include "game_results_model.h"
+#include <QMessageBox>
+#include <QErrorMessage>
 
 CGameHistoryDialog::CGameHistoryDialog(CGameDataHandler & iGameDataHandler, QWidget * iParent)
   : QDialog(iParent)
@@ -15,7 +17,9 @@ CGameHistoryDialog::CGameHistoryDialog(CGameDataHandler & iGameDataHandler, QWid
   mUi->tableViewGameHistory->resizeColumnsToContents();
   connect(mUi->tableViewGameHistory, &CGameHistoryTableView::signal_row_double_clicked_or_pressed, this, &CGameHistoryDialog::switch_to_game_results_page);
   connect(mUi->backButtonPage1, &QToolButton::clicked, this, [this]{ mUi->stackedWidget->setCurrentIndex(0); });
+  connect(mUi->deleteButton, &QToolButton::clicked, this, &CGameHistoryDialog::delete_current_row);
   mUi->stackedWidget->setCurrentIndex(0);
+  mUi->deleteButton->setIcon(QIcon(":/resources/img/delete_icon.svg"));
 }
 
 CGameHistoryDialog::~CGameHistoryDialog()
@@ -30,3 +34,39 @@ void CGameHistoryDialog::switch_to_game_results_page(int iRowIdx)
   mUi->tableViewRanking->setModel(gameResultsModel);
   mUi->stackedWidget->setCurrentIndex(1);
 }
+
+void CGameHistoryDialog::delete_current_row()
+{
+  if (mGameData.size() == 0)
+  {
+    QMessageBox::warning(this, "No game data.", "Nothing to delete.");
+    return;
+  }
+
+  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Delete Game.",
+                                                             tr("Do you want delete to this game?"),
+                                                             QMessageBox::Yes | QMessageBox::No);
+  if (resBtn == QMessageBox::Yes)
+  {
+    QItemSelectionModel * model = mUi->tableViewGameHistory->selectionModel();
+
+    if (model->hasSelection())
+    {
+      int rowIdx = model->currentIndex().row();
+      if (!mGameDataHandler.delete_game_from_db(mGameData.at(rowIdx).TimeStamp))
+      {
+        auto error = QErrorMessage(this);
+        error.showMessage("Game could not be deleted!");
+        return;
+      }
+      mGameHistoryModel->delete_row(rowIdx);
+    }
+    else
+    {
+      QMessageBox::warning(this, "No game selected.", "Please select a row to delete.");
+      return;
+    }
+  }
+}
+
+

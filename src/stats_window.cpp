@@ -207,6 +207,7 @@ void CStatsWindow::compute_dart_count_and_checkouts()
   if (mPlayerData.ScoresOfCurrentLeg.size()) allScoresOfAllLegs.append(mPlayerData.ScoresOfCurrentLeg);
   mDartCountOfWonLegs = {};
   mAllCheckouts = {};
+
   for (uint32_t idx = 0; idx < remainingPointsOfAllLegs.size(); idx++)
   {
     if (remainingPointsOfAllLegs.at(idx).back() == 0)
@@ -215,6 +216,7 @@ void CStatsWindow::compute_dart_count_and_checkouts()
       mAllCheckouts.append(allScoresOfAllLegs.at(idx).back());
     }
   }
+
   if (mAllCheckouts.size() > 0) mGlobalGameStatsData.HighestCheckout = *std::max_element(mAllCheckouts.begin(), mAllCheckouts.end());
 }
 

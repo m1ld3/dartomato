@@ -52,8 +52,8 @@ void CDartomatMain::create_menu()
   QMenuBar * menuBar = new QMenuBar(this);
   setMenuBar(menuBar);
 
-  QMenu * fileMenu = menuBar->addMenu(tr("?"));
-  QAction * aboutAction = fileMenu->addAction(tr("About"));
+  QMenu * fileMenu = menuBar->addMenu("?");
+  QAction * aboutAction = fileMenu->addAction("About");
   connect(aboutAction, &QAction::triggered, this, &CDartomatMain::show_about_dialog);
 }
 

@@ -1,6 +1,6 @@
 #include "game_history_model.h"
 
-CGameHistoryModel::CGameHistoryModel(const QVector<CGameDataHandler::SGameData> & iGameData, QObject * iParent)
+CGameHistoryModel::CGameHistoryModel(QVector<CGameDataHandler::SGameData> & iGameData, QObject * iParent)
   : QAbstractTableModel{iParent}
   , mGameData(iGameData)
 {}
@@ -78,6 +78,13 @@ QVariant CGameHistoryModel::data(const QModelIndex & iIndex, int iRole) const
   {
     return QVariant();
   }
+}
+
+void CGameHistoryModel::delete_row(int iRowIdx)
+{
+  beginRemoveRows(QModelIndex(), iRowIdx, iRowIdx);
+  mGameData.removeAt(iRowIdx);
+  endRemoveRows();
 }
 
 

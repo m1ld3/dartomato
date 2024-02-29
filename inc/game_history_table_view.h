@@ -41,7 +41,6 @@ public:
     }
   }
 
-
 signals:
 
   void signal_row_double_clicked_or_pressed(int iRowIdx);

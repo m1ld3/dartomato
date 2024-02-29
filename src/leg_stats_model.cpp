@@ -57,6 +57,6 @@ void CLegStatsModel::update(CStatsWindow::SLegStatsData iLegStatsData)
   mLegStatsData[3].Value = iLegStatsData.BestWonLegDartCount;
   mLegStatsData[4].Value = iLegStatsData.WorstWonLegDartCount;
   mLegStatsData[5].Value = iLegStatsData.DartCountOfCurrentLeg;
-  emit dataChanged(createIndex(0,0), createIndex(rowCount() - 1, columnCount() - 1));
+  emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, columnCount() - 1));
 }
 

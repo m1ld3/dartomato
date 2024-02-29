@@ -10,15 +10,16 @@ class CGameHistoryModel : public QAbstractTableModel
 
 public:
 
-  explicit CGameHistoryModel(const QVector<CGameDataHandler::SGameData> & iGameData, QObject * iParent = nullptr);
+  explicit CGameHistoryModel(QVector<CGameDataHandler::SGameData> & iGameData, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant headerData(int iSection, Qt::Orientation iOrientation, int iRole) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
+  void delete_row(int iRowIdx);
 
 private:
 
-  const QVector<CGameDataHandler::SGameData> mGameData;
+  QVector<CGameDataHandler::SGameData> & mGameData;
   const QVector<QString> mColumnHeaders {"Date",
                                          "Game Type",
                                          "Winner",

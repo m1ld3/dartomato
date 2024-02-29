@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "game_data_handler.h"
 #include "game_history_model.h"
+#include "QItemSelectionModel"
 
 namespace Ui
 {
@@ -22,6 +23,7 @@ public:
 private slots:
 
   void switch_to_game_results_page(int iRowIdx);
+  void delete_current_row();
 
 private:
 
