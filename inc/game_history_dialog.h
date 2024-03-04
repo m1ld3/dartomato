@@ -24,6 +24,7 @@ private slots:
 
   void switch_to_game_results_page(int iRowIdx);
   void delete_current_row();
+  void show_stats();
 
 private:
 
@@ -31,6 +32,7 @@ private:
   CGameDataHandler & mGameDataHandler;
   QVector<CGameDataHandler::SGameData> mGameData;
   CGameHistoryModel * mGameHistoryModel;
+  uint32_t mGameResultsIdx = 0;
 };
 
 #endif  // GAME_HISTORY_DIALOG_H

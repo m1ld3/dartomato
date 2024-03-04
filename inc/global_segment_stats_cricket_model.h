@@ -1,23 +1,23 @@
-#ifndef CGLOBALSEGMENTSTATSMODEL_H
-#define CGLOBALSEGMENTSTATSMODEL_H
+#ifndef CGLOBALSEGMENTSTATSCRICKETMODEL_H
+#define CGLOBALSEGMENTSTATSCRICKETMODEL_H
 
 #include <QAbstractTableModel>
-#include "stats_window.h"
+#include "stats_window_cricket.h"
 
-class CGlobalSegmentStatsModel : public QAbstractTableModel
+class CGlobalSegmentStatsCricketModel : public QAbstractTableModel
 {
   Q_OBJECT
 
 public:
 
-  explicit CGlobalSegmentStatsModel(std::array<uint32_t, static_cast<int>(CStatsWindow::EDartCountsIdx::SEG_MAX)> iSegments, QObject * iParent = nullptr);
+  explicit CGlobalSegmentStatsCricketModel(std::array<uint32_t, static_cast<int>(CStatsWindowCricket::EDartCountsIdx::SEG_MAX)> iSegments, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
 
 private:
 
-  std::array<uint32_t, static_cast<int>(CStatsWindow::EDartCountsIdx::SEG_MAX)> mSegments;
+  std::array<uint32_t, static_cast<int>(CStatsWindowCricket::EDartCountsIdx::SEG_MAX)> mSegments;
   QVector<QString> mCol0Labels
   {
       "0:"
@@ -52,4 +52,4 @@ private:
   };
 };
 
-#endif  // CGLOBALSEGMENTSTATSMODEL_H
+#endif  // CGLOBALSEGMENTSTATSCRICKETMODEL_H

@@ -56,6 +56,7 @@ private slots:
   void push_button_score_clicked_slot();
   void player_active_button_pressed_slot();
   void push_button_undo_clicked_slot();
+  void push_button_stats_clicked_slot();
 
 private:
 

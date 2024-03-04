@@ -1,23 +1,23 @@
-#include "global_score_stats_model.h"
+#include "global_score_stats_x01_model.h"
 
-CGlobalScoreStatsModel::CGlobalScoreStatsModel(std::array<uint32_t, static_cast<int>(CStatsWindow::EScoreCountsIdx::SCORE_COUNT_MAX)> iScores, QObject * iParent)
+CGlobalScoreStatsX01Model::CGlobalScoreStatsX01Model(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> iScores, QObject * iParent)
   : QAbstractTableModel(iParent)
   , mScores(iScores)
 {}
 
-int CGlobalScoreStatsModel::rowCount(const QModelIndex & iParent) const
+int CGlobalScoreStatsX01Model::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
   return 10;
 }
 
-int CGlobalScoreStatsModel::columnCount(const QModelIndex & iParent) const
+int CGlobalScoreStatsX01Model::columnCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
   return 4;
 }
 
-QVariant CGlobalScoreStatsModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CGlobalScoreStatsX01Model::data(const QModelIndex & iIndex, int iRole) const
 {
   if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {

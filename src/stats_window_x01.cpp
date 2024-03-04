@@ -1,27 +1,27 @@
-#include "stats_window.h"
-#include "ui_stats_window.h"
-#include "leg_stats_model.h"
-#include "leg_scores_model.h"
-#include "global_game_stats_model.h"
-#include "global_score_stats_model.h"
-#include "global_segment_stats_model.h"
+#include "stats_window_x01.h"
+#include "leg_stats_x01_model.h"
+#include "leg_scores_x01_model.h"
+#include "global_game_stats_x01_model.h"
+#include "global_score_stats_x01_model.h"
+#include "global_segment_stats_x01_model.h"
+#include "ui_stats_window_x01.h"
 
-CStatsWindow::CStatsWindow(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent)
-  : QDialog(iParent)
-  , mUi(new Ui::CStatsWindow)
-  , mPlayerData(iPlayerData)
+CStatsWindowX01::CStatsWindowX01(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent)
+ : QDialog(iParent)
+ , mUi(new Ui::CStatsWindowX01)
+ , mPlayerData(iPlayerData)
 {
   mUi->setupUi(this);
   setAttribute(Qt::WA_DeleteOnClose);
   count_scores();
-  calculate_segment_counts();
+  CStatsWindowX01::calculate_segment_counts();
   compute_dart_count_and_checkouts();
-  QObject::connect(mUi->legSelector, &QComboBox::currentIndexChanged, this, &CStatsWindow::update_leg_history);
-  init_leg_selector();
-  setup_table_views();
+  QObject::connect(mUi->legSelector, &QComboBox::currentIndexChanged, this, &CStatsWindowX01::update_leg_history_slot);
+  CStatsWindowX01::init_leg_selector();
+  CStatsWindowX01::setup_table_views();
 }
 
-CStatsWindow::~CStatsWindow()
+CStatsWindowX01::~CStatsWindowX01()
 {
   delete mUi;
   delete mLegStatsModel;
@@ -31,15 +31,15 @@ CStatsWindow::~CStatsWindow()
   delete mGlobalSegmentStatsModel;
 }
 
-void CStatsWindow::setup_table_views()
+void CStatsWindowX01::setup_table_views()
 {
   mGlobalGameStatsData.Avg3Dart = mPlayerData.Avg3Dart;
   mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
   mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
   mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;;
-  mGlobalGameStatsModel = new CGlobalGameStatsModel(mGlobalGameStatsData, this);
-  mGlobalScoreStatsModel = new CGlobalScoreStatsModel(mScoreCounts, this);
-  mGlobalSegmentStatsModel = new CGlobalSegmentStatsModel(mSegmentCounts, this);
+  mGlobalGameStatsModel = new CGlobalGameStatsX01Model(mGlobalGameStatsData, this);
+  mGlobalScoreStatsModel = new CGlobalScoreStatsX01Model(mScoreCounts, this);
+  mGlobalSegmentStatsModel = new CGlobalSegmentStatsX01Model(mSegmentCounts, this);
   mUi->tableViewGlobalGameStats->setModel(mGlobalGameStatsModel);
   mUi->tableViewGlobalScoreStats->setModel(mGlobalScoreStatsModel);
   mUi->tableViewGlobalSegmentStats->setModel(mGlobalSegmentStatsModel);
@@ -64,7 +64,7 @@ void CStatsWindow::setup_table_views()
   mUi->tableViewGlobalSegmentStats->setColumnWidth(5, 75);
 }
 
-void CStatsWindow::init_leg_selector()
+void CStatsWindowX01::init_leg_selector()
 {
   uint32_t numberOfLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
   if (numberOfLegs == 0)
@@ -82,7 +82,7 @@ void CStatsWindow::init_leg_selector()
   }
 }
 
-void CStatsWindow::update_leg_history(int iIndex)
+void CStatsWindowX01::update_leg_history(int iIndex)
 {
   QVector<QVector<uint32_t>> totalScores = mPlayerData.AllScoresOfAllLegs;
   QVector<QVector<QVector<QString>>> totalDarts = mPlayerData.ThrownDartsOfAllLegs;
@@ -96,7 +96,7 @@ void CStatsWindow::update_leg_history(int iIndex)
     mLegStatsData.Avg3Dart = 3 * mLegStatsData.Avg1Dart;
     if (!mLegScoresModel)
     {
-      mLegScoresModel = new CLegScoresModel(totalScores.at(iIndex), totalDarts.at(iIndex), this);
+      mLegScoresModel = new CLegScoresX01Model(totalScores.at(iIndex), totalDarts.at(iIndex), this);
       mUi->tableViewLegScores->setModel(mLegScoresModel);
       mUi->tableViewLegScores->setColumnWidth(0, 25);
       mUi->tableViewLegScores->setColumnWidth(1, 40);
@@ -118,7 +118,7 @@ void CStatsWindow::update_leg_history(int iIndex)
 
   if (!mLegStatsModel)
   {
-    mLegStatsModel = new CLegStatsModel(mLegStatsData, this);
+    mLegStatsModel = new CLegStatsX01Model(mLegStatsData, this);
     mUi->tableViewLegStats->setModel(mLegStatsModel);
     mUi->tableViewLegStats->setColumnWidth(0, 150);
     mUi->tableViewLegStats->setColumnWidth(1, 50);
@@ -129,7 +129,7 @@ void CStatsWindow::update_leg_history(int iIndex)
   }
 }
 
-void CStatsWindow::count_scores()
+void CStatsWindowX01::count_scores()
 {
   std::map<uint32_t, uint32_t> scoreCounts = calculate_score_counts();
 
@@ -162,7 +162,7 @@ void CStatsWindow::count_scores()
   }
 }
 
-std::map<uint32_t, uint32_t> CStatsWindow::calculate_score_counts()
+std::map<uint32_t, uint32_t> CStatsWindowX01::calculate_score_counts()
 {
   std::map<uint32_t, uint32_t> scoreCounts;
   for (auto & score : mPlayerData.AllScoresFlat) ++scoreCounts[score];
@@ -170,7 +170,7 @@ std::map<uint32_t, uint32_t> CStatsWindow::calculate_score_counts()
   return scoreCounts;
 }
 
-void CStatsWindow::calculate_segment_counts()
+void CStatsWindowX01::calculate_segment_counts()
 {
   for (const auto & darts : mPlayerData.ThrownDartsOfAllLegsFlat)
   {
@@ -197,7 +197,7 @@ void CStatsWindow::calculate_segment_counts()
   }
 }
 
-void CStatsWindow::compute_dart_count_and_checkouts()
+void CStatsWindowX01::compute_dart_count_and_checkouts()
 {
   QVector<QVector<QVector<QString>>> dartsOfAllLegs = mPlayerData.ThrownDartsOfAllLegs;
   if (mPlayerData.ThrownDartsOfCurrentLeg.size()) dartsOfAllLegs.append(mPlayerData.ThrownDartsOfCurrentLeg);
@@ -220,7 +220,7 @@ void CStatsWindow::compute_dart_count_and_checkouts()
   if (mAllCheckouts.size() > 0) mGlobalGameStatsData.HighestCheckout = *std::max_element(mAllCheckouts.begin(), mAllCheckouts.end());
 }
 
-double CStatsWindow::compute_average(QVector<uint32_t> iScoresOfLeg)
+double CStatsWindowX01::compute_average(QVector<uint32_t> iScoresOfLeg)
 {
   double avg;
   double n = static_cast<double>(iScoresOfLeg.size());
@@ -229,7 +229,7 @@ double CStatsWindow::compute_average(QVector<uint32_t> iScoresOfLeg)
   return avg;
 }
 
-uint32_t CStatsWindow::compute_dart_count_of_indexed_leg(uint32_t iIndex)
+uint32_t CStatsWindowX01::compute_dart_count_of_indexed_leg(uint32_t iIndex)
 {
   QVector<QVector<QString>> dartsOfIndexedLeg;
   QVector<QVector<QVector<QString>>> dartsOfAllLegs = mPlayerData.ThrownDartsOfAllLegs;

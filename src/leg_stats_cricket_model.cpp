@@ -1,12 +1,11 @@
-#include "leg_stats_model.h"
+#include "leg_stats_cricket_model.h"
 
-CLegStatsModel::CLegStatsModel(CStatsWindow::SLegStatsData iLegStatsData, QObject * iParent)
+CLegStatsCricketModel::CLegStatsCricketModel(CStatsWindowCricket::SLegStatsData iLegStatsData, QObject * iParent)
   : QAbstractTableModel(iParent)
 {
   mLegStatsData =
   {
-    {"3-Dart Leg Average:", iLegStatsData.Avg3Dart},
-    {"1-Dart Leg Average:", iLegStatsData.Avg1Dart},
+    {"Leg Hits Per Round:", iLegStatsData.HitsPerRound},
     {"Average Darts Per Leg:", iLegStatsData.AvgLegDartCount},
     {"Best Won Leg:", iLegStatsData.BestWonLegDartCount},
     {"Worst Won Leg:", iLegStatsData.WorstWonLegDartCount},
@@ -14,19 +13,19 @@ CLegStatsModel::CLegStatsModel(CStatsWindow::SLegStatsData iLegStatsData, QObjec
   };
 }
 
-int CLegStatsModel::rowCount(const QModelIndex & iParent) const
+int CLegStatsCricketModel::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
   return mLegStatsData.size();
 }
 
-int CLegStatsModel::columnCount(const QModelIndex & iParent) const
+int CLegStatsCricketModel::columnCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
   return 2;
 }
 
-QVariant CLegStatsModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CLegStatsCricketModel::data(const QModelIndex & iIndex, int iRole) const
 {
   if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {
@@ -49,14 +48,13 @@ QVariant CLegStatsModel::data(const QModelIndex & iIndex, int iRole) const
   }
 }
 
-void CLegStatsModel::update(CStatsWindow::SLegStatsData iLegStatsData)
+void CLegStatsCricketModel::update(CStatsWindowCricket::SLegStatsData iLegStatsData)
 {
-  mLegStatsData[0].Value = iLegStatsData.Avg3Dart;
-  mLegStatsData[1].Value = iLegStatsData.Avg1Dart;
-  mLegStatsData[2].Value = iLegStatsData.AvgLegDartCount;
-  mLegStatsData[3].Value = iLegStatsData.BestWonLegDartCount;
-  mLegStatsData[4].Value = iLegStatsData.WorstWonLegDartCount;
-  mLegStatsData[5].Value = iLegStatsData.DartCountOfCurrentLeg;
+  mLegStatsData[0].Value = iLegStatsData.HitsPerRound;
+  mLegStatsData[1].Value = iLegStatsData.AvgLegDartCount;
+  mLegStatsData[2].Value = iLegStatsData.BestWonLegDartCount;
+  mLegStatsData[3].Value = iLegStatsData.WorstWonLegDartCount;
+  mLegStatsData[4].Value = iLegStatsData.DartCountOfCurrentLeg;
   emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, columnCount() - 1));
 }
 

@@ -18,6 +18,7 @@ public:
     friend class CCricketClass;
     friend class CGameDataHandler;
     friend class CGameResultsModel;
+    friend class CStatsWindowCricket;
 
   public:
 
@@ -32,8 +33,12 @@ public:
                 double iHitsPerRound,
                 QVector<QVector<QString>> iScoresOfCurrentLeg,
                 QVector<QVector<QVector<QString>>> iScoringHistory,
+                QVector<uint32_t> iHitsOfCurrentLeg,
+                QVector<QVector<uint32_t>> iHitsHistory,
                 QVector<uint32_t> iSlotArray,
-                QVector<uint32_t> iExtraPointsArray
+                QVector<uint32_t> iExtraPointsArray,
+                QVector<bool> iLegWonVec,
+                QVector<QVector<bool>> iLegWonHistory
                 )
       : SetsWon(iSetsWon)
       , LegsWonPerSet(iLegsWonPerSet)
@@ -44,8 +49,12 @@ public:
       , HitsPerRound(iHitsPerRound)
       , ScoresOfCurrentLeg(iScoresOfCurrentLeg)
       , ScoringHistory(iScoringHistory)
+      , HitsOfCurrentLeg(iHitsOfCurrentLeg)
+      , HitsHistory(iHitsHistory)
       , SlotArray(iSlotArray)
       , ExtraPointsArray(iExtraPointsArray)
+      , LegWonVec(iLegWonVec)
+      , LegWonHistory(iLegWonHistory)
     {}
 
   private:
@@ -59,8 +68,12 @@ public:
     double HitsPerRound    = 0.0;
     QVector<QVector<QString>> ScoresOfCurrentLeg      = {};
     QVector<QVector<QVector<QString>>> ScoringHistory = {};
+    QVector<uint32_t> HitsOfCurrentLeg                = {};
+    QVector<QVector<uint32_t>> HitsHistory            = {};
     QVector<uint32_t> SlotArray        = {0, 0, 0, 0, 0, 0, 0};
     QVector<uint32_t> ExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
+    QVector<bool> LegWonVec = {};
+    QVector<QVector<bool>> LegWonHistory = {};
   };
 
   CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings);
@@ -81,10 +94,10 @@ public:
   double get_hits_per_round() const;
   QVector<QVector<QString>> get_score_legs() const;
   QVector<QVector<QVector<QString>>> get_scoring_history() const;
-  void set_total_hits(uint32_t iHits);
   bool increase_setslegs();
   void restore_state(CPlayerData iData);
   CPlayerData create_snapshot() const;
+  void set_leg_won(bool iHasWon) { mLegWonVec.append(iHasWon); }
 
 private:
 
@@ -102,6 +115,10 @@ private:
   QVector<QVector<QVector<QString>>> mScoringHistory = {};
   QVector<uint32_t> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   QVector<uint32_t> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
+  QVector<uint32_t> mHitsOfCurrentLeg = {};
+  QVector<QVector<uint32_t>> mHitsHistory = {};
+  QVector<bool> mLegWonVec = {};
+  QVector<QVector<bool>> mLegWonHistory = {};
   const CSettings & mSettings;
 };
 

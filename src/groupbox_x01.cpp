@@ -1,6 +1,6 @@
 #include "groupbox_x01.h"
 #include "ui_groupbox_x01.h"
-#include "stats_window.h"
+#include "stats_window_x01.h"
 #include "QPixmap"
 #include <sstream>
 #include <iomanip>
@@ -340,7 +340,7 @@ void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool i
 
 void CX01GroupBox::push_button_stats_clicked_slot()
 {
-  QPointer<CStatsWindow> stats = new CStatsWindow(mHistory.back(), this);
+  auto stats = CStatsWindow::create(mHistory.back(), this);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
   stats->show();

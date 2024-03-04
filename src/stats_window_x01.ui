@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CStatsWindow</class>
- <widget class="QDialog" name="CStatsWindow">
+ <class>CStatsWindowX01</class>
+ <widget class="QDialog" name="CStatsWindowX01">
   <property name="geometry">
    <rect>
     <x>0</x>

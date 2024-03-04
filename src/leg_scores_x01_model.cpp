@@ -1,23 +1,23 @@
-#include "leg_scores_model.h"
+#include "leg_scores_x01_model.h"
 
-CLegScoresModel::CLegScoresModel(QVector<uint32_t> iLegScores, QVector<QVector<QString>> iLegDarts, QObject * iParent)
+CLegScoresX01Model::CLegScoresX01Model(QVector<uint32_t> iLegScores, QVector<QVector<QString>> iLegDarts, QObject * iParent)
   : mLegScores(iLegScores)
   , mLegDarts(iLegDarts)
 {}
 
-int CLegScoresModel::rowCount(const QModelIndex & iParent) const
+int CLegScoresX01Model::rowCount(const QModelIndex & iParent) const
 {
   if (iParent.isValid()) return 0;
   return mLegScores.count();
 }
 
-int CLegScoresModel::columnCount(const QModelIndex & iParent) const
+int CLegScoresX01Model::columnCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
   return 3;
 }
 
-QVariant CLegScoresModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CLegScoresX01Model::data(const QModelIndex & iIndex, int iRole) const
 {
   if (!iIndex.isValid() || iIndex.row() >= mLegScores.size() || iIndex.row() >= mLegDarts.size() || iIndex.column() >= columnCount())
   {
@@ -47,7 +47,7 @@ QVariant CLegScoresModel::data(const QModelIndex & iIndex, int iRole) const
   return QVariant();
 }
 
-void CLegScoresModel::update(QVector<uint32_t> iLegScores, QVector<QVector<QString>> iLegDarts)
+void CLegScoresX01Model::update(QVector<uint32_t> iLegScores, QVector<QVector<QString>> iLegDarts)
 {
   mLegScores = iLegScores;
   mLegDarts = iLegDarts;

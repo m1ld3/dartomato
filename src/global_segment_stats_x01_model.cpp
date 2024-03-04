@@ -1,23 +1,23 @@
-#include "global_segment_stats_model.h"
+#include "global_segment_stats_x01_model.h"
 
-CGlobalSegmentStatsModel::CGlobalSegmentStatsModel(std::array<uint32_t, static_cast<int>(CStatsWindow::EDartCountsIdx::SEG_MAX)> iSegments, QObject * iParent)
+CGlobalSegmentStatsX01Model::CGlobalSegmentStatsX01Model(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> iSegments, QObject * iParent)
   : QAbstractTableModel(iParent)
   , mSegments(iSegments)
 {}
 
-int CGlobalSegmentStatsModel::rowCount(const QModelIndex &iParent) const
+int CGlobalSegmentStatsX01Model::rowCount(const QModelIndex &iParent) const
 {
   Q_UNUSED(iParent);
   return 10;
 }
 
-int CGlobalSegmentStatsModel::columnCount(const QModelIndex &iParent) const
+int CGlobalSegmentStatsX01Model::columnCount(const QModelIndex &iParent) const
 {
   Q_UNUSED(iParent);
   return 6;
 }
 
-QVariant CGlobalSegmentStatsModel::data(const QModelIndex &iIndex, int iRole) const
+QVariant CGlobalSegmentStatsX01Model::data(const QModelIndex &iIndex, int iRole) const
 {
   if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {

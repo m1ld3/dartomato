@@ -33,18 +33,24 @@ set(INCLUDES
     inc/x01_class.h
     inc/settings.h
     inc/spinbox.h
-    inc/stats_window.h
+    inc/stats_window_if.h
+    inc/stats_window_x01.h
+	inc/stats_window_cricket.h
     inc/x01_mainwindow.h
     inc/add_players_dialog.h
-    inc/leg_stats_model.h
-    inc/leg_scores_model.h
-    inc/global_game_stats_model.h
-    inc/global_score_stats_model.h
-    inc/global_segment_stats_model.h
+    inc/leg_stats_x01_model.h
+	inc/leg_stats_cricket_model.h
+    inc/leg_scores_x01_model.h
+	inc/leg_scores_cricket_model.h
+    inc/global_game_stats_x01_model.h
+	inc/global_game_stats_cricket_model.h
+    inc/global_score_stats_x01_model.h
+    inc/global_segment_stats_x01_model.h
+	inc/global_segment_stats_cricket_model.h
     inc/game_history_dialog.h
     inc/game_history_model.h
     inc/game_history_table_view.h
-	inc/game_results_model.h
+    inc/game_results_model.h
     )
  
  set(SOURCES
@@ -66,25 +72,32 @@ set(INCLUDES
     src/player_active_button.cpp
     src/x01_class.cpp
     src/spinbox.cpp
-    src/stats_window.cpp
+    src/stats_window_if.cpp
+    src/stats_window_x01.cpp
+    src/stats_window_cricket.cpp
     src/x01_mainwindow.cpp
-    src/leg_stats_model.cpp
-    src/leg_scores_model.cpp
-    src/global_game_stats_model.cpp
-    src/global_score_stats_model.cpp
-    src/global_segment_stats_model.cpp
+    src/leg_stats_x01_model.cpp
+    src/leg_stats_cricket_model.cpp
+    src/leg_scores_x01_model.cpp
+    src/leg_scores_cricket_model.cpp
+    src/global_game_stats_x01_model.cpp
+    src/global_game_stats_cricket_model.cpp
+    src/global_score_stats_x01_model.cpp
+    src/global_segment_stats_x01_model.cpp
+    src/global_segment_stats_cricket_model.cpp
     src/game_history_dialog.cpp
     src/game_history_model.cpp
-	src/game_results_model.cpp
+    src/game_results_model.cpp
     src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui
     src/dartomat_mainwindow.ui
     src/groupbox_cricket.ui
     src/groupbox_x01.ui
-    src/stats_window.ui
     src/x01_mainwindow.ui
     src/game_history_dialog.ui
+    src/stats_window_x01.ui
+    src/stats_window_cricket.ui
     )
 	
 set(VERSION_MAJOR 1)

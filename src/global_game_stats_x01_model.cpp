@@ -1,24 +1,24 @@
-#include "global_game_stats_model.h"
+#include "global_game_stats_x01_model.h"
 
-CGlobalGameStatsModel::CGlobalGameStatsModel(const CStatsWindow::SGlobalGameStatsData & iData, QObject * iParent)
+CGlobalGameStatsX01Model::CGlobalGameStatsX01Model(const CStatsWindowX01::SGlobalGameStatsData & iData, QObject * iParent)
   : QAbstractTableModel(iParent)
   , mData(iData)
   , mCol1Data({mData.Avg3Dart, mData.Avg1Dart})
 {}
 
-int CGlobalGameStatsModel::rowCount(const QModelIndex & iParent) const
+int CGlobalGameStatsX01Model::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
   return 2;
 }
 
-int CGlobalGameStatsModel::columnCount(const QModelIndex & iParent) const
+int CGlobalGameStatsX01Model::columnCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
   return 4;
 }
 
-QVariant CGlobalGameStatsModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CGlobalGameStatsX01Model::data(const QModelIndex & iIndex, int iRole) const
 {
   if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {

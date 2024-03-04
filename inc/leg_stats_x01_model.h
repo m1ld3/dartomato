@@ -1,20 +1,20 @@
-#ifndef CLEGSTATSMODEL_H
-#define CLEGSTATSMODEL_H
+#ifndef CLEGSTATSX01MODEL_H
+#define CLEGSTATSX01MODEL_H
 
 #include <QAbstractTableModel>
-#include "stats_window.h"
+#include "stats_window_x01.h"
 
-class CLegStatsModel : public QAbstractTableModel
+class CLegStatsX01Model : public QAbstractTableModel
 {
   Q_OBJECT
 
 public:
 
-  explicit CLegStatsModel(CStatsWindow::SLegStatsData iLegStatsData, QObject * iParent = nullptr);
+  explicit CLegStatsX01Model(CStatsWindowX01::SLegStatsData iLegStatsData, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
-  void update(CStatsWindow::SLegStatsData iLegStatsData);
+  void update(CStatsWindowX01::SLegStatsData iLegStatsData);
 
 private:
 
@@ -26,4 +26,4 @@ private:
   QVector<SDataRow> mLegStatsData;
 };
 
-#endif  // CLEGSTATSMODEL_H
+#endif  // CLEGSTATSX01MODEL_H

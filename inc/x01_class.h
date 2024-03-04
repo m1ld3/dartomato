@@ -19,7 +19,7 @@ public:
     friend class CX01Class;
     friend class CGameDataHandler;
     friend class CLegStatsModel;
-    friend class CStatsWindow;
+    friend class CStatsWindowX01;
     friend class CGameResultsModel;
 
   public:

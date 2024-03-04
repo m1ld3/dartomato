@@ -364,6 +364,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonStats">
+             <property name="text">
+              <string>Statistics</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>

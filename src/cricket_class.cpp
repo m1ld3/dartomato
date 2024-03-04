@@ -17,13 +17,13 @@ bool CCricketClass::increase_setslegs()
 {
   mLegsWonPerSet += 1;
   mTotalLegsWon += 1;
-  bool temp = false;
+  bool setWon = false;
 
   if (((mLegsWonPerSet % mMarginLegs) == 0) && (mLegsWonPerSet > 0))
   {
     mSetsWon += 1;
     mLegsWonPerSet = 0;
-    temp = true;
+    setWon = true;
   }
 
   if (mSetsWon == mMarginSets)
@@ -31,7 +31,7 @@ bool CCricketClass::increase_setslegs()
     notify_game_won();
   }
 
-  return temp;
+  return setWon;
 }
 
 void CCricketClass::restore_state(CPlayerData iData)
@@ -45,15 +45,19 @@ void CCricketClass::restore_state(CPlayerData iData)
   mHitsPerRound = iData.HitsPerRound;
   mScoresOfCurrentLeg = iData.ScoresOfCurrentLeg;
   mScoringHistory = iData.ScoringHistory;
+  mHitsOfCurrentLeg = iData.HitsOfCurrentLeg;
+  mHitsHistory = iData.HitsHistory;
   mSlotArray = iData.SlotArray;
   mExtraPointsArray = iData.ExtraPointsArray;
+  mLegWonVec = iData.LegWonVec;
+  mLegWonHistory = iData.LegWonHistory;
 }
 
 CCricketClass::CPlayerData CCricketClass::create_snapshot() const
 {
   return CPlayerData(mSetsWon, mLegsWonPerSet, mTotalLegsWon, mTotalDarts,
                      mScore, mTotalHits, mHitsPerRound, mScoresOfCurrentLeg,
-                     mScoringHistory, mSlotArray, mExtraPointsArray);
+                     mScoringHistory, mHitsOfCurrentLeg, mHitsHistory, mSlotArray, mExtraPointsArray, mLegWonVec, mLegWonHistory);
 }
 
 void CCricketClass::notify_game_won()
@@ -69,7 +73,11 @@ void CCricketClass::update_darts(QVector<QString> iDarts)
 void CCricketClass::reset_score()
 {
   mScoringHistory.push_back(mScoresOfCurrentLeg);
+  mHitsHistory.push_back(mHitsOfCurrentLeg);
+  mLegWonHistory.push_back(mLegWonVec);
   mScoresOfCurrentLeg = {};
+  mHitsOfCurrentLeg = {};
+  mLegWonVec = {};
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
   {
     mSlotArray[i] = 0;
@@ -149,15 +157,11 @@ QVector<QVector<QVector<QString>>> CCricketClass::get_scoring_history() const
   return mScoringHistory;
 }
 
-void CCricketClass::set_total_hits(uint32_t iHits)
-{
-  mTotalHits = iHits;
-}
-
 double CCricketClass::compute_hits_per_round(uint32_t iNumberOfDarts, uint32_t iTotalHits)
 {
   mTotalDarts += iNumberOfDarts;
   mTotalHits = iTotalHits;
+  mHitsOfCurrentLeg.append(iTotalHits - mTotalHits);
 
   if (mTotalDarts > 0)
   {

@@ -6,6 +6,7 @@
 #include <QString>
 #include <algorithm>
 #include "player_active_button.h"
+#include "stats_window_cricket.h"
 
 CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
                                    const CSettings & iSettings,
@@ -44,6 +45,7 @@ void CCricketGroupBox::connect_slots()
   connect(mUi->labelPic, &CPlayerActiveButton::signal_player_active_button_pressed, this, &CCricketGroupBox::player_active_button_pressed_slot);
   connect(mUi->pushButtonScore, &QPushButton::clicked, this, &CCricketGroupBox::push_button_score_clicked_slot);
   connect(mUi->pushButtonUndo, &QPushButton::clicked, this, &CCricketGroupBox::push_button_undo_clicked_slot);
+  connect(mUi->pushButtonStats, &QPushButton::clicked, this, &CCricketGroupBox::push_button_stats_clicked_slot);
 }
 
 void CCricketGroupBox::set_active()
@@ -240,10 +242,12 @@ void CCricketGroupBox::handle_submit_button_clicked(uint32_t iNumberOfDarts, QVe
 
   if (has_leg_won())
   {
+    mPlayer.set_leg_won(true);
     handle_leg_won();
   }
   else
   {
+    mPlayer.set_leg_won(false);
     handle_switch_to_next_player();
     if (mSettings.CutThroat) create_snapshots_of_all_players();
     else create_snapshot();
@@ -568,6 +572,14 @@ void CCricketGroupBox::push_button_undo_clicked_slot()
   {
     perform_undo();
   }
+}
+
+void CCricketGroupBox::push_button_stats_clicked_slot()
+{
+  auto stats = CStatsWindow::create(mHistory.back(), this);
+  stats->setAttribute(Qt::WA_DeleteOnClose);
+  stats->setModal(true);
+  stats->show();
 }
 
 void CCricketGroupBox::perform_undo()

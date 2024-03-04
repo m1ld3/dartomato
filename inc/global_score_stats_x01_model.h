@@ -2,22 +2,22 @@
 #define CGLOBALSCORESTATSMODEL_H
 
 #include <QAbstractTableModel>
-#include "stats_window.h"
+#include "stats_window_x01.h"
 
-class CGlobalScoreStatsModel : public QAbstractTableModel
+class CGlobalScoreStatsX01Model : public QAbstractTableModel
 {
   Q_OBJECT
 
 public:
 
-  explicit CGlobalScoreStatsModel(std::array<uint32_t, static_cast<int>(CStatsWindow::EScoreCountsIdx::SCORE_COUNT_MAX)> iScores, QObject * iParent = nullptr);
+  explicit CGlobalScoreStatsX01Model(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> iScores, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
 
 private:
 
-  std::array<uint32_t, static_cast<int>(CStatsWindow::EScoreCountsIdx::SCORE_COUNT_MAX)> mScores;
+  std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> mScores;
   QVector<QString> mCol0Labels
   {
       "180s:"

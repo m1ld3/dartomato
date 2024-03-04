@@ -1,15 +1,15 @@
-#ifndef CLEGHISTORYLISTMODEL_H
-#define CLEGHISTORYLISTMODEL_H
+#ifndef CLEGSCORESX01MODEL_H
+#define CLEGSCORESX01MODEL_H
 
 #include <QAbstractTableModel>
 
-class CLegScoresModel : public QAbstractTableModel
+class CLegScoresX01Model : public QAbstractTableModel
 {
   Q_OBJECT
 
 public:
 
-  explicit CLegScoresModel(QVector<uint32_t> iLegScores, QVector<QVector<QString>> iLegDarts, QObject * iParent = nullptr);
+  explicit CLegScoresX01Model(QVector<uint32_t> iLegScores, QVector<QVector<QString>> iLegDarts, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
@@ -21,4 +21,4 @@ private:
   QVector<QVector<QString>> mLegDarts;
 };
 
-#endif  // CLEGHISTORYLISTMODEL_H
+#endif  // CLEGSCORESX01MODEL_H
