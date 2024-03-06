@@ -70,7 +70,7 @@ void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
   if (game_finished())
   {
     save_current_game();
-    iEvent->accept();  // TODO: where restart game with same config button?
+    iEvent->accept();
   }
   else
   {
@@ -197,9 +197,15 @@ void CCricketMainWindow::handle_game_won(uint32_t iPlayerNumber)
 
   mWinningPlayer = iPlayerNumber;
   mPlayerBox[iPlayerNumber]->close_cricket_input();
+
   QString name = mSettings.PlayersList.at(iPlayerNumber);
-  QString text = name + " has won the game. Congratulations! ";
-  QMessageBox::about(this,"Game finished", text);
+  QString text = name + " has won the game. Congratulations!\n Play again?";
+  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game finished!", text,
+                                                             QMessageBox::Yes | QMessageBox::Close);
+  if (resBtn == QMessageBox::Yes)
+  {
+    // play another game...
+  }
 }
 
 void CCricketMainWindow::unset_set_begin_for_all_players()

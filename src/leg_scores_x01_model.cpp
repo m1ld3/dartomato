@@ -39,7 +39,11 @@ QVariant CLegScoresX01Model::data(const QModelIndex & iIndex, int iRole) const
       QString row;
       for (const auto & dart : mLegDarts.at(iIndex.row()))
       {
-        row.append(QString("%1  ").arg(dart.toUpper()));
+        QChar type = dart[0];
+        int val = dart.mid(1).toInt();
+        if (type == 't') val = val / 3;
+        else if (type == 'd') val = val / 2;
+        row.append(type.toUpper() + QString::number(val) + "  ");
       }
       return row;
     }

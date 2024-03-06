@@ -51,9 +51,7 @@ void CCricketGroupBox::connect_slots()
 void CCricketGroupBox::set_active()
 {
   mActive = true;
-  uint32_t w = 80;
-  uint32_t h = 80;
-  mUi->labelPic->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+  mUi->labelPic->setPixmap(mPixMap.scaled(80, 80, Qt::KeepAspectRatio));
 }
 
 void CCricketGroupBox::set_inactive()
@@ -115,13 +113,13 @@ void CCricketGroupBox::handle_leg_won()
   if (mActive && !newSet)
   {
     update_players(EUpdateType::LEG);
-    CCricketGroupBox::mLegStarted = false;
+    CCricketGroupBox::mLegAlreadyStarted = false;
   }
   else if (mActive && newSet)
   {
     update_players(EUpdateType::SET);
-    CCricketGroupBox::mSetStarted = false;
-    CCricketGroupBox::mLegStarted = false;
+    CCricketGroupBox::mSetAlreadyStarted = false;
+    CCricketGroupBox::mLegAlreadyStarted = false;
   }
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
   mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
@@ -226,8 +224,8 @@ void CCricketGroupBox::submit_score_to_player(uint32_t iNumberOfDarts, const QVe
 
 void CCricketGroupBox::handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts)
 {
-  CCricketGroupBox::mLegStarted = true;
-  CCricketGroupBox::mSetStarted = true;
+  CCricketGroupBox::mLegAlreadyStarted = true;
+  CCricketGroupBox::mSetAlreadyStarted = true;
   std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> extraPointsCutThroat = {0, 0, 0, 0, 0, 0, 0};
 
   load_slot_arrays_from_player();
@@ -271,7 +269,7 @@ void CCricketGroupBox::player_active_button_pressed_slot()
                           QMessageBox::Yes|QMessageBox::No);
     if (reply == QMessageBox::Yes)
     {
-      inactivate_players(mPlayer.get_player_number(), CCricketGroupBox::mLegStarted, CCricketGroupBox::mSetStarted);
+      inactivate_players(mPlayer.get_player_number(), CCricketGroupBox::mLegAlreadyStarted, CCricketGroupBox::mSetAlreadyStarted);
       set_active();
     }
   }
@@ -349,22 +347,22 @@ void CCricketGroupBox::reset()
 
 void CCricketGroupBox::set_leg_started()
 {
-  mLegStarted = true;
+  mLegAlreadyStarted = true;
 }
 
 void CCricketGroupBox::set_set_started()
 {
-  mSetStarted = true;
+  mSetAlreadyStarted = true;
 }
 
 void CCricketGroupBox::unset_leg_started()
 {
-  mLegStarted = false;
+  mLegAlreadyStarted = false;
 }
 
 void CCricketGroupBox::unset_set_started()
 {
-  mSetStarted = false;
+  mSetAlreadyStarted = false;
 }
 
 uint32_t CCricketGroupBox::get_slot(const ECricketSlots iSlot) const
@@ -659,5 +657,5 @@ void CCricketGroupBox::set_lcd_legs()
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
 }
 
-bool CCricketGroupBox::mLegStarted = false;
-bool CCricketGroupBox::mSetStarted = false;
+bool CCricketGroupBox::mLegAlreadyStarted = false;
+bool CCricketGroupBox::mSetAlreadyStarted = false;

@@ -8,13 +8,14 @@ CGameResultsModel::CGameResultsModel(const CGameDataHandler::SGameData & iGameDa
   if (mIsX01)
   {
     find_player_ranking_x01();
-    mColumnHeaders = {"Rank", "Player", "Sets / Legs", "3-Dart-Average", "Checkout-Rate"};
+    mColumnHeaders = {"Rank", "Player", "Final Score", "Legs won", "3-Dart-Average", "Checkout-Rate"};
   }
   else
   {
     find_player_ranking_cricket();
-    mColumnHeaders = {"Rank", "Player", "Sets / Legs", "Hits per Round"};
+    mColumnHeaders = {"Rank", "Player", "Final Score", "Legs won", "Hits per Round"};
   }
+  if (!mGameData.Finished) mColumnHeaders[2] = "Current Score";
 }
 
 void CGameResultsModel::find_player_ranking_x01()
@@ -48,7 +49,7 @@ int CGameResultsModel::rowCount(const QModelIndex & iParent) const
 int CGameResultsModel::columnCount(const QModelIndex &iParent) const
 {
   Q_UNUSED(iParent);
-  return mIsX01 ? 5 : 4;
+  return mColumnHeaders.size();
 }
 
 QVariant CGameResultsModel::headerData(int iSection, Qt::Orientation iOrientation, int iRole) const
@@ -77,8 +78,19 @@ QVariant CGameResultsModel::data(const QModelIndex & iIndex, int iRole) const
   {
     if (iIndex.column() == 0)      return mRankLabels.at(iIndex.row());
     else if (iIndex.column() == 1) return mGameData.Settings.PlayersList.at(mScores.at(iIndex.row()).PlayerId);
-    else if (iIndex.column() == 2) return QString::number(mScores.at(iIndex.row()).Sets) + " / " + QString::number(mScores.at(iIndex.row()).Legs);
+    else if (iIndex.column() == 2) return "Sets: " + QString::number(mScores.at(iIndex.row()).Sets) + " / Legs: " + QString::number(mScores.at(iIndex.row()).Legs);
     else if (iIndex.column() == 3)
+    {
+      if (mIsX01)
+      {
+        return QString::number(mGameData.GameDataX01.at(mScores.at(iIndex.row()).PlayerId).back().TotalLegsWon);
+      }
+      else
+      {
+        return QString::number(mGameData.GameDataCricket.at(mScores.at(iIndex.row()).PlayerId).back().TotalLegsWon);
+      }
+    }
+    else if (iIndex.column() == 4)
     {
       if (mIsX01)
       {
@@ -89,7 +101,7 @@ QVariant CGameResultsModel::data(const QModelIndex & iIndex, int iRole) const
         return QString::number(mGameData.GameDataCricket.at(mScores.at(iIndex.row()).PlayerId).back().HitsPerRound, 'f', 2);
       }
     }
-    else if (iIndex.column() == 4 && mIsX01)
+    else if (iIndex.column() == 5 && mIsX01)
     {
       return QString::number(mGameData.GameDataX01.at(mScores.at(iIndex.row()).PlayerId).back().CheckoutRate, 'f', 2);
     }

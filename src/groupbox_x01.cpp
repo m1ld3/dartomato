@@ -20,7 +20,8 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
   , mPlayer(iParent, iPlayerNumber, iSettings)
   , mDartBoard(iDartBoard)
   , mSettings(iSettings)
-  , mPlayerName(mSettings.PlayersList.at(iPlayerNumber - 1))
+  , mPlayerName(mSettings.PlayersList.at(iPlayerNumber))
+  , mPlayerNumber(iPlayerNumber)
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
 #ifndef USE_TTS
@@ -127,6 +128,7 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   }
   create_snapshots_of_all_players();
   set_lcd_legs_and_sets();
+  if (mPlayer.has_won_game()) mGameWindow->handle_game_won(mPlayerNumber);
 }
 
 void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)

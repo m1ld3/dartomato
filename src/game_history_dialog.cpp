@@ -37,6 +37,8 @@ void CGameHistoryDialog::switch_to_game_results_page(int iRowIdx)
   mGameResultsIdx = iRowIdx;
   QPointer<CGameResultsModel> gameResultsModel = new CGameResultsModel(mGameData.at(mGameResultsIdx), this);
   mUi->tableViewRanking->setModel(gameResultsModel);
+  if (!mGameData.at(mGameResultsIdx).Finished) mUi->pushButtonPlayGame->setText("Resume Game");
+  else                                         mUi->pushButtonPlayGame->setText("Play again");
   mUi->stackedWidget->setCurrentIndex(1);
 }
 

@@ -25,6 +25,19 @@ class CStatsWindowCricket : public QDialog, public CStatsWindow
 
 public:
 
+  enum class EDartCountsIdx
+  {
+      SEG_15  = 0
+    , SEG_16  = 1
+    , SEG_17  = 2
+    , SEG_18  = 3
+    , SEG_19  = 4
+    , SEG_20  = 5
+    , SEG_25  = 6
+    , SEG_0   = 6
+    , SEG_MAX = 21
+  };
+
   struct SLegStatsData
   {
     double HitsPerRound = 0.0;
@@ -40,7 +53,7 @@ public:
     uint32_t TotalHits = 0;
   };
 
-  explicit CStatsWindowCricket(const CCricketClass::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
+  explicit CStatsWindowCricket(const CCricketClass::CPlayerData iPlayerData, QWidget * iParent = nullptr);
   ~CStatsWindowCricket() override;
 
 private slots:
@@ -61,7 +74,7 @@ private:
 private:
 
   Ui::CStatsWindowCricket * mUi;
-  const CCricketClass::CPlayerData & mPlayerData;
+  const CCricketClass::CPlayerData mPlayerData;
   std::array<uint32_t, static_cast<int>(EDartCountsIdx::SEG_MAX)> mSegmentCounts = {};
   QVector<uint32_t> mDartCountOfWonLegs = {};
   QVector<uint32_t> mAllCheckouts = {};

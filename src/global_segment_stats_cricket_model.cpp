@@ -8,7 +8,7 @@ CGlobalSegmentStatsCricketModel::CGlobalSegmentStatsCricketModel(std::array<uint
 int CGlobalSegmentStatsCricketModel::rowCount(const QModelIndex &iParent) const
 {
   Q_UNUSED(iParent);
-  return 10;
+  return 7;
 }
 
 int CGlobalSegmentStatsCricketModel::columnCount(const QModelIndex &iParent) const
@@ -17,7 +17,7 @@ int CGlobalSegmentStatsCricketModel::columnCount(const QModelIndex &iParent) con
   return 6;
 }
 
-QVariant CGlobalSegmentStatsCricketModel::data(const QModelIndex &iIndex, int iRole) const
+QVariant CGlobalSegmentStatsCricketModel::data(const QModelIndex & iIndex, int iRole) const
 {
   if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
   {
@@ -40,15 +40,15 @@ QVariant CGlobalSegmentStatsCricketModel::data(const QModelIndex &iIndex, int iR
     }
     else if (iIndex.column() == 3)
     {
-      return QString::number(mSegments.at(iIndex.row() + 10));
+      return QString::number(mSegments.at(iIndex.row() + 7));
     }
     else if (iIndex.column() == 4)
     {
-      return (iIndex.row() < 3) ? mCol4Labels.at(iIndex.row()) : QVariant();
+      return mCol4Labels.at(iIndex.row());
     }
     else
     {
-      return (iIndex.row() < 3) ? QString::number(mSegments.at(iIndex.row() + 20)) : QVariant();
+      return QString::number(mSegments.at(iIndex.row() + 14));
     }
   }
   else

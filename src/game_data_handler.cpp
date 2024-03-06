@@ -199,8 +199,12 @@ void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayer
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     fill_vec(data.ScoringHistory, gameDataObject, "ScoringHistory");
+    fill_vec(data.HitsOfCurrentLeg, gameDataObject, "HitsOfCurrentLeg");
+    fill_vec(data.HitsHistory, gameDataObject, "HitsHistory");
     fill_vec(data.SlotArray, gameDataObject, "SlotArray");
     fill_vec(data.ExtraPointsArray, gameDataObject, "ExtraPointsArray");
+    fill_vec(data.LegWonVec, gameDataObject, "LegWonVec");
+    fill_vec(data.LegWonHistory, gameDataObject, "LegWonHistory");
 
     oGameDataArray.append(gameDataObject);
   }
@@ -260,8 +264,12 @@ void CGameDataHandler::get_player_data(QVector<CCricketClass::CPlayerData> & oGa
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     extract_vec(playerData.ScoringHistory, gameDataObject, "ScoringHistory");
+    extract_vec(playerData.HitsOfCurrentLeg, gameDataObject, "HitsOfCurrentLeg");
+    extract_vec(playerData.HitsHistory, gameDataObject, "HitsHistory");
     extract_vec(playerData.SlotArray, gameDataObject, "SlotArray");
     extract_vec(playerData.ExtraPointsArray, gameDataObject, "ExtraPointsArray");
+    extract_vec(playerData.LegWonVec, gameDataObject, "LegWonVec");
+    extract_vec(playerData.LegWonHistory, gameDataObject, "LegWonHistory");
 
     oGameHistory.append(playerData);
   }
@@ -389,7 +397,8 @@ void CGameDataHandler::fill_vec(const T & iData, QJsonObject & oGameDataObject, 
   QJsonArray tempArray;
   if constexpr (std::is_same_v<T, QVector<QVector<uint32_t>>> ||
                 std::is_same_v<T, QVector<QVector<QString>>> ||
-                std::is_same_v<T, QVector<QVector<QVector<QString>>>>)
+                std::is_same_v<T, QVector<QVector<QVector<QString>>>> ||
+                std::is_same_v<T, QVector<QVector<bool>>>)
   {
     for (const auto & val : iData)
     {
@@ -402,14 +411,8 @@ void CGameDataHandler::fill_vec(const T & iData, QJsonObject & oGameDataObject, 
   {
     for (const auto & val : iData)
     {
-      if constexpr (std::is_same_v<decltype(val), const uint32_t &>)
-      {
-        tempArray.append(static_cast<int>(val));
-      }
-      else
-      {
-        tempArray.append(val);
-      }
+      if constexpr (std::is_same_v<decltype(val), const uint32_t &>) tempArray.append(static_cast<int>(val));
+      else                                                           tempArray.append(val);
     }
   }
 
@@ -430,7 +433,8 @@ void CGameDataHandler::extract_vec(T & oData, QJsonObject & iGameDataObject, con
     {
       if constexpr (std::is_same_v<T, QVector<QVector<uint32_t>>> ||
                     std::is_same_v<T, QVector<QVector<QString>>> ||
-                    std::is_same_v<T, QVector<QVector<QVector<QString>>>>)
+                    std::is_same_v<T, QVector<QVector<QVector<QString>>>> ||
+                    std::is_same_v<T, QVector<QVector<bool>>>)
       {
         typename T::value_type innerData;
         QJsonObject innerObject = data.toObject();
@@ -439,14 +443,9 @@ void CGameDataHandler::extract_vec(T & oData, QJsonObject & iGameDataObject, con
       }
       else
       {
-        if constexpr (std::is_same_v<T, QVector<uint32_t>>)
-        {
-          oData.append(data.toInt());
-        }
-        else
-        {
-          oData.append(data.toString());
-        }
+        if constexpr (std::is_same_v<T, QVector<uint32_t>>)  oData.append(data.toInt());
+        else if constexpr (std::is_same_v<T, QVector<bool>>) oData.append(data.toBool());
+        else                                                 oData.append(data.toString());
       }
     }
   }

@@ -51,6 +51,34 @@ public:
     , SCORE_COUNT_MAX = 20
   };
 
+  enum class EDartCountsIdx
+  {
+      SEG_0       = 0
+    , SEG_1       = 1
+    , SEG_2       = 2
+    , SEG_3       = 3
+    , SEG_4       = 4
+    , SEG_5       = 5
+    , SEG_6       = 6
+    , SEG_7       = 7
+    , SEG_8       = 8
+    , SEG_9       = 9
+    , SEG_10      = 10
+    , SEG_11      = 11
+    , SEG_12      = 12
+    , SEG_13      = 13
+    , SEG_14      = 14
+    , SEG_15      = 15
+    , SEG_16      = 16
+    , SEG_17      = 17
+    , SEG_18      = 18
+    , SEG_19      = 19
+    , SEG_20      = 20
+    , SEG_25      = 21
+    , SEG_TRIPLES = 22
+    , SEG_MAX     = 23
+  };
+
   struct SLegStatsData
   {
     double Avg3Dart = 0.0;
@@ -70,7 +98,7 @@ public:
     uint32_t CheckoutHits = 0;
   };
 
-  explicit CStatsWindowX01(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
+  explicit CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidget * iParent = nullptr);
   ~CStatsWindowX01() override;
 
 private slots:
@@ -92,7 +120,7 @@ private:
 private:
 
   Ui::CStatsWindowX01 * mUi;
-  const CX01Class::CPlayerData & mPlayerData;
+  const CX01Class::CPlayerData mPlayerData;
   std::array<uint32_t, static_cast<int>(EScoreCountsIdx::SCORE_COUNT_MAX)> mScoreCounts = {};
   std::array<uint32_t, static_cast<int>(EDartCountsIdx::SEG_MAX)> mSegmentCounts = {};
   QVector<uint32_t> mDartCountOfWonLegs = {};

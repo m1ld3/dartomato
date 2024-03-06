@@ -27,7 +27,7 @@ class CX01GroupBox : public QGroupBox
 public:
 
   explicit CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
-                        uint32_t iPlayerNumber = 1, CDartBoardX01 * iDartboard = nullptr);
+                        uint32_t iPlayerNumber = 0, CDartBoardX01 * iDartboard = nullptr);
   ~CX01GroupBox() override;
   void set_active();
   void set_inactive();

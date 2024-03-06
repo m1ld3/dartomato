@@ -34,7 +34,8 @@ QVariant CLegScoresCricketModel::data(const QModelIndex & iIndex, int iRole) con
       QString row;
       for (const auto & dart : mLegDarts.at(iIndex.row()))
       {
-        row.append(QString("%1  ").arg(dart.toUpper()));
+        if (dart.mid(1).toInt() == 0) row.append("0      ");
+        else row.append(QString("%1  ").arg(dart.toUpper()));
       }
       return row;
     }

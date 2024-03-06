@@ -57,6 +57,9 @@ private:
   void set_active_player(uint32_t iPlayer);
   void save_current_game();
   bool game_finished() const;
+  void start_new_game_with_same_settings();
+  void delete_players();
+  void clear_group_box_widgets();
 
   Ui::CX01MainWindow * mUi;
   uint32_t mActivePlayer = 0;

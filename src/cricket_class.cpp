@@ -160,8 +160,8 @@ QVector<QVector<QVector<QString>>> CCricketClass::get_scoring_history() const
 double CCricketClass::compute_hits_per_round(uint32_t iNumberOfDarts, uint32_t iTotalHits)
 {
   mTotalDarts += iNumberOfDarts;
-  mTotalHits = iTotalHits;
   mHitsOfCurrentLeg.append(iTotalHits - mTotalHits);
+  mTotalHits = iTotalHits;
 
   if (mTotalDarts > 0)
   {

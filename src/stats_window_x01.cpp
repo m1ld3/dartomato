@@ -6,7 +6,7 @@
 #include "global_segment_stats_x01_model.h"
 #include "ui_stats_window_x01.h"
 
-CStatsWindowX01::CStatsWindowX01(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent)
+CStatsWindowX01::CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidget * iParent)
  : QDialog(iParent)
  , mUi(new Ui::CStatsWindowX01)
  , mPlayerData(iPlayerData)

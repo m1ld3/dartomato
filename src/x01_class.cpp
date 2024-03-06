@@ -4,12 +4,11 @@
 
 CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings)
   : QObject(iParent)
-  , mGameWindow(static_cast<CX01MainWindow*>(iParent))
   , mSettings(iSettings)
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mMarginLegs(std::ceil(mSettings.Legs / 2.0))
   , mMarginSets(std::ceil(mSettings.Sets / 2.0))
-  , mPlayerNumber(iPlayerNumber - 1)
+  , mPlayerNumber(iPlayerNumber)
   , mRemainingPointsOfCurrentLeg({mRemainingPoints})
 {
   compute_averages(0);
@@ -25,10 +24,6 @@ bool CX01Class::increment_won_legs_and_check_if_set_won()
   {
     mSetsWon += 1;
     hasWonSet = true;
-  }
-  if (mSetsWon == mMarginSets)
-  {
-    notify_game_won();
   }
   return hasWonSet;
 }
@@ -67,9 +62,9 @@ CX01Class::CPlayerData CX01Class::create_snapshot() const
                      mRemainingPointsOfCurrentLeg, mRemainingPointsOfAllLegs);
 }
 
-void CX01Class::notify_game_won()
+bool CX01Class::has_won_game() const
 {
-  mGameWindow->handle_game_won(mPlayerNumber);
+  return mSetsWon == mMarginSets;
 }
 
 uint32_t CX01Class::set_score(uint32_t score)

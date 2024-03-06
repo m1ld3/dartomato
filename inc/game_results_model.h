@@ -10,7 +10,7 @@ class CGameResultsModel : public QAbstractTableModel
 
 public:
 
-  explicit CGameResultsModel(const CGameDataHandler::SGameData & iGameData, QObject * iParent = nullptr);
+  explicit CGameResultsModel(const CGameDataHandler::SGameData & iGameData, QObject * iParent);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant headerData(int iSection, Qt::Orientation iOrientation, int iRole) const override;

@@ -106,13 +106,12 @@ public:
   bool increment_won_legs_and_check_if_set_won();
   void restore_state(CPlayerData iData);
   CPlayerData create_snapshot() const;
+  bool has_won_game() const;
 
 private:
 
-  void notify_game_won();
   void compute_checkout();
 
-  CX01MainWindow * mGameWindow;
   const CSettings & mSettings;
   uint32_t mSetsWon = 0;
   uint32_t mLegsWonPerSet = 0;

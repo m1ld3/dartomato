@@ -38,7 +38,7 @@ CX01MainWindow::~CX01MainWindow()
 {
   delete mUi;
   if (mDartBoard) delete mDartBoard;
-  for (auto & box : mPlayerBox)
+  for (auto box : mPlayerBox)
   {
     delete box;
   }
@@ -48,7 +48,7 @@ void CX01MainWindow::add_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i + 1, mDartBoard));
+    mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i, mDartBoard));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mPlayerBox[i]->set_inactive();
 
@@ -68,7 +68,7 @@ void CX01MainWindow::closeEvent(QCloseEvent * iEvent)
   if (game_finished())
   {
     save_current_game();
-    iEvent->accept();  // TODO: where restart game with same config button?
+    iEvent->accept();
   }
   else
   {
@@ -113,6 +113,38 @@ bool CX01MainWindow::game_finished() const
   }
 
   return finished;
+}
+
+void CX01MainWindow::start_new_game_with_same_settings()
+{
+  mActivePlayer = mWinningPlayer = 0;
+  clear_group_box_widgets();
+  add_players();
+  mPlayerBox[mActivePlayer]->set_set_begin();
+  mPlayerBox[mActivePlayer]->set_leg_begin();
+  mPlayerBox[mActivePlayer]->set_active();
+  display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
+  erase_dart1();
+  erase_dart2();
+  erase_dart3();
+  mDartBoard->unset_finished();
+  mTimeStamp = QDateTime::currentDateTime();
+}
+
+void CX01MainWindow::clear_group_box_widgets()
+{
+  QLayoutItem * item;
+  while ((item = mUi->gridForLeftHandPlayers->takeAt(0)) != nullptr)
+  {
+    delete item->widget();
+    delete item;
+  }
+  while ((item = mUi->gridForRightHandPlayers->takeAt(0)) != nullptr)
+  {
+    delete item->widget();
+    delete item;
+  }
+  mPlayerBox = {};
 }
 
 void CX01MainWindow::update_active_player()
@@ -215,9 +247,16 @@ void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
   }
   mWinningPlayer = iPlayerNumber;
   mDartBoard->set_finished();
+
   QString name = mSettings.PlayersList.at(iPlayerNumber);
-  QString text = name + " has won the game. Congratulations! ";
-  QMessageBox::about(this, "Game finished", text);
+  QString text = name + " has won the game. Congratulations!\n Play again?";
+  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game finished!", text,
+                                                             QMessageBox::Yes | QMessageBox::Close);
+  if (resBtn == QMessageBox::Yes)
+  {
+    save_current_game();
+    start_new_game_with_same_settings();
+  }
 }
 
 void CX01MainWindow::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)

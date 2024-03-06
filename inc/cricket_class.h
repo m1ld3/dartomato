@@ -109,7 +109,8 @@ private:
   uint32_t mTotalLegsWon = 0;
   uint32_t mTotalDarts = 0;
   uint32_t mScore = 0;
-  uint32_t mMarginLegs, mMarginSets, mPlayerNumber, mTotalHits;
+  uint32_t mTotalHits = 0;
+  uint32_t mMarginLegs, mMarginSets, mPlayerNumber;
   double mHitsPerRound;
   QVector<QVector<QString>> mScoresOfCurrentLeg = {};
   QVector<QVector<QVector<QString>>> mScoringHistory = {};

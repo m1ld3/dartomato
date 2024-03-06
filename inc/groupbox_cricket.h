@@ -109,8 +109,8 @@ private:
   bool mFinished = false;
   bool mSetBegin = false;
   bool mLegBegin = false;
-  static bool mLegStarted;
-  static bool mSetStarted;
+  static bool mLegAlreadyStarted;
+  static bool mSetAlreadyStarted;
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
