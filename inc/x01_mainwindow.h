@@ -22,7 +22,8 @@ class CX01MainWindow : public QMainWindow
 
 public:
 
-  explicit CX01MainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler);
+  explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
+  explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, QVector<QVector<CX01Class::CPlayerData>> iGameData);
   ~CX01MainWindow() override;
   void closeEvent(QCloseEvent * iEvent) override;
   void handle_game_won(uint32_t iPlayerNumber);
@@ -58,7 +59,6 @@ private:
   void save_current_game();
   bool game_finished() const;
   void start_new_game_with_same_settings();
-  void delete_players();
   void clear_group_box_widgets();
 
   Ui::CX01MainWindow * mUi;
@@ -66,7 +66,7 @@ private:
   uint32_t mWinningPlayer = 0;
   QVector<CX01GroupBox*> mPlayerBox;
   CDartBoardX01 * mDartBoard;
-  const CSettings & mSettings;
+  const CSettings mSettings;
   CGameDataHandler & mGameDataHandler;
   const uint32_t mNumberOfPlayers = 1;
   QDateTime mTimeStamp;

@@ -43,7 +43,8 @@ public:
                 QVector<QVector<QString>> iThrownDartsOfAllLegsFlat,
                 QVector<QVector<QVector<QString>>> iThrownDartsOfAllLegs,
                 QVector<uint32_t> iRemainingPointsOfCurrentLeg,
-                QVector<QVector<uint32_t>> iRemainingPointsOfAllLegs
+                QVector<QVector<uint32_t>> iRemainingPointsOfAllLegs,
+                bool iActive = false
                 )
       : SetsWon(iSetsWon)
       , LegsWonPerSet(iLegsWonPerSet)
@@ -63,7 +64,10 @@ public:
       , ThrownDartsOfAllLegs(iThrownDartsOfAllLegs)
       , RemainingPointsOfCurrentLeg(iRemainingPointsOfCurrentLeg)
       , RemainingPointsOfAllLegs(iRemainingPointsOfAllLegs)
+      , Active(iActive)
     {}
+
+    bool Active = false;
 
   private:
 

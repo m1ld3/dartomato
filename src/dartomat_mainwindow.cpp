@@ -62,6 +62,40 @@ void CDartomatMain::handle_selected_players(const QStringList & iSelectedPlayers
   mSelectedPlayers = iSelectedPlayers;
 }
 
+void CDartomatMain::start_game(CSettings iSettings)
+{
+  if (iSettings.Game == EGame::GAME_CRICKET)
+  {
+    mCricketMainWindow = new CCricketMainWindow(this, iSettings, mGameDataHandler);
+    mCricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+    mCricketMainWindow->show();
+  }
+  else
+  {
+    mX01MainWindow = new CX01MainWindow(this, iSettings, mGameDataHandler);
+    mX01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
+    mX01MainWindow->show();
+  }
+
+  play_game_on_sound();
+}
+
+void CDartomatMain::resume_game(const CGameDataHandler::SGameData iGameData)
+{
+  if (iGameData.Settings.Game == EGame::GAME_CRICKET)
+  {
+    mCricketMainWindow = new CCricketMainWindow(this, iGameData.Settings, mGameDataHandler, iGameData.GameDataCricket);
+    mCricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+    mCricketMainWindow->show();
+  }
+  else
+  {
+    mX01MainWindow = new CX01MainWindow(this, iGameData.Settings, mGameDataHandler, iGameData.GameDataX01);
+    mX01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
+    mX01MainWindow->show();
+  }
+}
+
 void CDartomatMain::push_button_startgame_clicked_slot()
 {
   if (mSelectedPlayers.empty())
@@ -82,23 +116,10 @@ void CDartomatMain::push_button_startgame_clicked_slot()
   else if (mUi->radioButtonDout->isChecked()) outMode = EX01OutMode::DOUBLE_OUT;
   else outMode = EX01OutMode::MASTER_OUT;
 
-  mSettings = CSettings(static_cast<EGame>(game), mSelectedPlayers,
+  auto settings = CSettings(static_cast<EGame>(game), mSelectedPlayers,
                         sets, legs, inMode, outMode, cutThroat);
 
-  if (game > 0)
-  {
-    mX01MainWindow = new CX01MainWindow(this, mSettings, mGameDataHandler);
-    mX01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
-    mX01MainWindow->show();
-  }
-  else
-  {
-    mCricketMainWindow = new CCricketMainWindow(this, mSettings, mGameDataHandler);
-    mCricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
-    mCricketMainWindow->show();
-  }
-
-  play_game_on_sound();
+  start_game(settings);
 }
 
 void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iGame)
@@ -138,7 +159,7 @@ void CDartomatMain::show_about_dialog()
 
 void CDartomatMain::push_button_game_history_clicked_slot()
 {
-  QPointer<CGameHistoryDialog> dialog = new CGameHistoryDialog(mGameDataHandler);
+  QPointer<CGameHistoryDialog> dialog = new CGameHistoryDialog(mGameDataHandler, this);
   dialog->show();
 }
 

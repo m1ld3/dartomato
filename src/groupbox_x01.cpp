@@ -128,6 +128,7 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   }
   create_snapshots_of_all_players();
   set_lcd_legs_and_sets();
+  display_stats_and_finishes();
   if (mPlayer.has_won_game()) mGameWindow->handle_game_won(mPlayerNumber);
 }
 
@@ -159,14 +160,22 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
   {
     handle_default_score(iCheckoutAttempts);
     create_snapshot();
+    display_stats_and_finishes();
   }
-
-  display_stats_and_finishes();
 }
 
 void CX01GroupBox::create_snapshot()
 {
-  mHistory.push_back(mPlayer.create_snapshot());
+  auto snap = mPlayer.create_snapshot();
+  snap.Active = mActive;
+  mHistory.push_back(snap);
+}
+
+void CX01GroupBox::set_game_data(QVector<CX01Class::CPlayerData> iGameData)
+{
+  mHistory = iGameData;
+  mActive = iGameData.back().Active;
+  mPlayer.restore_state(mHistory.back());
 }
 
 void CX01GroupBox::create_snapshots_of_all_players()

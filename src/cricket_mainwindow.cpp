@@ -7,7 +7,7 @@
 #include <QCloseEvent>
 
 
-CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler)
+CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler)
   : QMainWindow(iParent)
   , mUi(new Ui::CCricketMainWindow)
   , mSettings(iSettings)
@@ -23,6 +23,16 @@ CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings & iSet
   mPlayerBox[mActivePlayer]->set_active();
 }
 
+CCricketMainWindow::CCricketMainWindow(QWidget *iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const QVector<QVector<CCricketClass::CPlayerData> > iGameData)
+  : CCricketMainWindow(iParent, iSettings, iGameDataHandler)
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mPlayerBox[i]->set_game_data(iGameData.at(i));
+    if (iGameData.at(i).back().Active) mActivePlayer = i;
+  }
+}
+
 CCricketMainWindow::~CCricketMainWindow()
 {
   delete mUi;
@@ -36,7 +46,7 @@ void CCricketMainWindow::add_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox.push_back(new CCricketGroupBox(this, mSettings, i + 1));
+    mPlayerBox.push_back(new CCricketGroupBox(this, mSettings, i));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mPlayerBox[i]->set_inactive();
     mUi->gridLayoutCricket->addWidget(mPlayerBox[i], i < 4 ? 0 : 1, i % 4);
@@ -63,6 +73,28 @@ bool CCricketMainWindow::game_finished() const
   }
 
   return finished;
+}
+
+void CCricketMainWindow::start_new_game_with_same_settings()
+{
+  mActivePlayer = mWinningPlayer = 0;
+  clear_group_box_widgets();
+  add_players();
+  mPlayerBox[mActivePlayer]->set_set_begin();
+  mPlayerBox[mActivePlayer]->set_leg_begin();
+  mPlayerBox[mActivePlayer]->set_active();
+  mTimeStamp = QDateTime::currentDateTime();
+}
+
+void CCricketMainWindow::clear_group_box_widgets()
+{
+  QLayoutItem * item;
+  while ((item = mUi->gridLayoutCricket->takeAt(0)) != nullptr)
+  {
+    delete item->widget();
+    delete item;
+  }
+  mPlayerBox = {};
 }
 
 void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
@@ -196,15 +228,14 @@ void CCricketMainWindow::handle_game_won(uint32_t iPlayerNumber)
   }
 
   mWinningPlayer = iPlayerNumber;
-  mPlayerBox[iPlayerNumber]->close_cricket_input();
-
   QString name = mSettings.PlayersList.at(iPlayerNumber);
   QString text = name + " has won the game. Congratulations!\n Play again?";
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game finished!", text,
                                                              QMessageBox::Yes | QMessageBox::Close);
   if (resBtn == QMessageBox::Yes)
   {
-    // play another game...
+    save_current_game();
+    start_new_game_with_same_settings();
   }
 }
 

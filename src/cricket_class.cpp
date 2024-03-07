@@ -4,8 +4,7 @@
 
 CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings)
   : QObject(iParent)
-  , mGameWindow(static_cast<CCricketMainWindow*>(iParent))
-  , mPlayerNumber(iPlayerNumber - 1)
+  , mPlayerNumber(iPlayerNumber)
   , mSettings(iSettings)
 {
   mMarginLegs = std::ceil(mSettings.Legs / 2.0);
@@ -13,25 +12,17 @@ CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CS
   mHitsPerRound = compute_hits_per_round(0, 0);
 }
 
-bool CCricketClass::increase_setslegs()
+bool CCricketClass::increment_won_legs_and_check_if_set_won()
 {
-  mLegsWonPerSet += 1;
+  mLegsWonPerSet = (mLegsWonPerSet + 1) % mMarginLegs;
   mTotalLegsWon += 1;
-  bool setWon = false;
-
-  if (((mLegsWonPerSet % mMarginLegs) == 0) && (mLegsWonPerSet > 0))
+  bool hasWonSet = false;
+  if (mLegsWonPerSet == 0)
   {
     mSetsWon += 1;
-    mLegsWonPerSet = 0;
-    setWon = true;
+    hasWonSet = true;
   }
-
-  if (mSetsWon == mMarginSets)
-  {
-    notify_game_won();
-  }
-
-  return setWon;
+  return hasWonSet;
 }
 
 void CCricketClass::restore_state(CPlayerData iData)
@@ -60,9 +51,9 @@ CCricketClass::CPlayerData CCricketClass::create_snapshot() const
                      mScoringHistory, mHitsOfCurrentLeg, mHitsHistory, mSlotArray, mExtraPointsArray, mLegWonVec, mLegWonHistory);
 }
 
-void CCricketClass::notify_game_won()
+bool CCricketClass::has_won_game() const
 {
-  mGameWindow->handle_game_won(mPlayerNumber);
+  return mSetsWon == mMarginSets;
 }
 
 void CCricketClass::update_darts(QVector<QString> iDarts)

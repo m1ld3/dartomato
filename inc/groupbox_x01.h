@@ -48,6 +48,7 @@ public:
   void create_snapshot();
   bool is_finished() const { return mFinished; }
   QVector<CX01Class::CPlayerData> & get_game_data() { return mHistory; };
+  void set_game_data(QVector<CX01Class::CPlayerData> iGameData);
 
 private slots:
 

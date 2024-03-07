@@ -23,7 +23,8 @@ class CCricketMainWindow : public QMainWindow
 
 public:
 
-  explicit CCricketMainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler);
+  explicit CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
+  explicit CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const QVector<QVector<CCricketClass::CPlayerData>> iGameData);
   ~CCricketMainWindow() override;
   void closeEvent(QCloseEvent * iEvent) override;
   bool is_slot_free(const ECricketSlots iSlot, uint32_t iPlayer) const;
@@ -53,12 +54,14 @@ private:
   void add_players();
   void save_current_game();
   bool game_finished() const;
+  void start_new_game_with_same_settings();
+  void clear_group_box_widgets();
 
   Ui::CCricketMainWindow * mUi;
   uint32_t mActivePlayer = 0;
   uint32_t mWinningPlayer = 0;
   QVector<CCricketGroupBox*> mPlayerBox;
-  const CSettings & mSettings;
+  const CSettings mSettings;
   CGameDataHandler & mGameDataHandler;
   const uint32_t mNumberOfPlayers = 1;
   QDateTime mTimeStamp;

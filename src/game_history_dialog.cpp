@@ -6,13 +6,15 @@
 #include <QErrorMessage>
 #include "stats_window_x01.h"
 #include "stats_window_cricket.h"
+#include "dartomat_mainwindow.h"
 
-CGameHistoryDialog::CGameHistoryDialog(CGameDataHandler & iGameDataHandler, QWidget * iParent)
+CGameHistoryDialog::CGameHistoryDialog(CGameDataHandler & iGameDataHandler, CDartomatMain * iParent)
   : QDialog(iParent)
   , mUi(new Ui::CGameHistoryDialog)
   , mGameDataHandler(iGameDataHandler)
   , mGameData(iGameDataHandler.get_game_data())
   , mGameHistoryModel(new CGameHistoryModel(mGameData, this))
+  , mMainWindow(iParent)
 {
   mUi->setupUi(this);
   mUi->tableViewGameHistory->setModel(mGameHistoryModel);
@@ -21,6 +23,7 @@ CGameHistoryDialog::CGameHistoryDialog(CGameDataHandler & iGameDataHandler, QWid
   connect(mUi->backButtonPage1, &QToolButton::clicked, this, [this]{ mUi->stackedWidget->setCurrentIndex(0); });
   connect(mUi->deleteButton, &QToolButton::clicked, this, &CGameHistoryDialog::delete_current_row);
   connect(mUi->statsButton, &QToolButton::clicked, this, &CGameHistoryDialog::show_stats);
+  connect(mUi->pushButtonPlayGame, &QPushButton::clicked, this, &CGameHistoryDialog::start_game);
   mUi->stackedWidget->setCurrentIndex(0);
   mUi->deleteButton->setIcon(QIcon(":/resources/img/delete_icon.svg"));
   mUi->statsButton->setIcon(QIcon(":/resources/img/stats_icon.svg"));
@@ -103,6 +106,18 @@ void CGameHistoryDialog::show_stats()
   {
     QMessageBox::warning(this, "No player selected.", "Please select a player.");
     return;
+    }
+}
+
+void CGameHistoryDialog::start_game()
+{
+  if (mGameData.at(mGameResultsIdx).Finished)
+  {
+    mMainWindow->start_game(mGameData.at(mGameResultsIdx).Settings);
+  }
+  else
+  {
+    mMainWindow->resume_game(mGameData.at(mGameResultsIdx));
   }
 }
 

@@ -50,6 +50,7 @@ public:
   void create_snapshot();
   bool is_finished() const { return mFinished; }
   QVector<CCricketClass::CPlayerData> & get_game_data() { return mHistory; };
+  void set_game_data(QVector<CCricketClass::CPlayerData> iGameData);
 
 private slots:
 

@@ -169,6 +169,7 @@ void CGameDataHandler::fill_game_data_array(const QVector<CX01Class::CPlayerData
     gameDataObject["Avg1Dart"] = data.Avg1Dart;
     gameDataObject["Avg3Dart"] = data.Avg3Dart;
     gameDataObject["CheckoutRate"] = data.CheckoutRate;
+    gameDataObject["Active"] = data.Active;
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     fill_vec(data.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
@@ -196,6 +197,7 @@ void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayer
     gameDataObject["Score"] = static_cast<int>(data.Score);
     gameDataObject["TotalHits"] = static_cast<int>(data.TotalHits);
     gameDataObject["HitsPerRound"] = data.HitsPerRound;
+    gameDataObject["Active"] = data.Active;
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     fill_vec(data.ScoringHistory, gameDataObject, "ScoringHistory");
@@ -230,6 +232,7 @@ void CGameDataHandler::get_player_data(QVector<CX01Class::CPlayerData> & oGameHi
     playerData.Avg1Dart = gameDataObject["Avg1Dart"].toDouble();
     playerData.Avg3Dart = gameDataObject["Avg3Dart"].toDouble();
     playerData.CheckoutRate = gameDataObject["CheckoutRate"].toDouble();
+    playerData.Active = gameDataObject["Active"].toBool();
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     extract_vec(playerData.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
@@ -261,6 +264,7 @@ void CGameDataHandler::get_player_data(QVector<CCricketClass::CPlayerData> & oGa
     playerData.Score = gameDataObject["Score"].toInt();
     playerData.TotalHits = gameDataObject["TotalHits"].toInt();
     playerData.HitsPerRound = gameDataObject["HitsPerRound"].toDouble();
+    playerData.Active = gameDataObject["Active"].toBool();
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     extract_vec(playerData.ScoringHistory, gameDataObject, "ScoringHistory");

@@ -38,7 +38,8 @@ public:
                 QVector<uint32_t> iSlotArray,
                 QVector<uint32_t> iExtraPointsArray,
                 QVector<bool> iLegWonVec,
-                QVector<QVector<bool>> iLegWonHistory
+                QVector<QVector<bool>> iLegWonHistory,
+                bool iActive = false
                 )
       : SetsWon(iSetsWon)
       , LegsWonPerSet(iLegsWonPerSet)
@@ -55,7 +56,10 @@ public:
       , ExtraPointsArray(iExtraPointsArray)
       , LegWonVec(iLegWonVec)
       , LegWonHistory(iLegWonHistory)
+      , Active(iActive)
     {}
+
+    bool Active = false;
 
   private:
 
@@ -94,16 +98,14 @@ public:
   double get_hits_per_round() const;
   QVector<QVector<QString>> get_score_legs() const;
   QVector<QVector<QVector<QString>>> get_scoring_history() const;
-  bool increase_setslegs();
+  bool increment_won_legs_and_check_if_set_won();
   void restore_state(CPlayerData iData);
   CPlayerData create_snapshot() const;
   void set_leg_won(bool iHasWon) { mLegWonVec.append(iHasWon); }
+  bool has_won_game() const;
 
 private:
 
-  void notify_game_won();
-
-  CCricketMainWindow * mGameWindow;
   uint32_t mSetsWon = 0;
   uint32_t mLegsWonPerSet = 0;
   uint32_t mTotalLegsWon = 0;

@@ -8,7 +8,7 @@
 #include <QPushButton>
 
 
-CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, CGameDataHandler & iGameDataHandler)
+CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler)
   : QMainWindow(iParent)
   , mUi(new Ui::CX01MainWindow)
   , mDartBoard(nullptr)
@@ -32,6 +32,18 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings & iSettings, C
   erase_dart2();
   erase_dart3();
   mUi->submitButton->setAutoDefault(true);
+}
+
+CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, QVector<QVector<CX01Class::CPlayerData>> iGameData)
+  : CX01MainWindow(iParent, iSettings, iGameDataHandler)
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mPlayerBox[i]->set_game_data(iGameData.at(i));
+    if (iGameData.at(i).back().Active) mActivePlayer = i;
+  }
+//  todo, delete savegame at previous timestamp and store this game completely new at new mTimeStamp
+//  todo, update gui elements for scores which is yet missing!
 }
 
 CX01MainWindow::~CX01MainWindow()

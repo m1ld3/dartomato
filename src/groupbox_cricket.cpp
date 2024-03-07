@@ -14,7 +14,7 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
   : QGroupBox(iParent)
   , mUi(new Ui::CCricketGroupBox)
   , mPlayer(iParent, iPlayerNumber, iSettings)
-  , mPlayerNumber(iPlayerNumber - 1)
+  , mPlayerNumber(iPlayerNumber)
   , mGameWindow(static_cast<CCricketMainWindow*>(iParent))
   , mSettings(iSettings)
   , mPlayerName(mSettings.PlayersList.at(mPlayerNumber))
@@ -108,22 +108,25 @@ void CCricketGroupBox::write_slot_arrays_to_player(const std::array<uint32_t, st
 void CCricketGroupBox::handle_leg_won()
 {
   bool newSet = false;
-  newSet = mPlayer.increase_setslegs();
+  newSet = mPlayer.increment_won_legs_and_check_if_set_won();
   reset_scores_of_all_players();
+  CCricketGroupBox::mLegAlreadyStarted = false;
+
   if (mActive && !newSet)
   {
     update_players(EUpdateType::LEG);
-    CCricketGroupBox::mLegAlreadyStarted = false;
   }
   else if (mActive && newSet)
   {
     update_players(EUpdateType::SET);
     CCricketGroupBox::mSetAlreadyStarted = false;
-    CCricketGroupBox::mLegAlreadyStarted = false;
   }
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
   mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
   create_snapshots_of_all_players();
+  display_leg_history();
+  close_cricket_input();
+  if (mPlayer.has_won_game()) mGameWindow->handle_game_won(mPlayerNumber);
 }
 
 void CCricketGroupBox::handle_switch_to_next_player()
@@ -249,15 +252,23 @@ void CCricketGroupBox::handle_submit_button_clicked(uint32_t iNumberOfDarts, QVe
     handle_switch_to_next_player();
     if (mSettings.CutThroat) create_snapshots_of_all_players();
     else create_snapshot();
+    display_leg_history();
+    close_cricket_input();
   }
-
-  display_leg_history();
-  close_cricket_input();
 }
 
 void CCricketGroupBox::create_snapshot()
 {
-  mHistory.push_back(mPlayer.create_snapshot());
+  auto snap = mPlayer.create_snapshot();
+  snap.Active = mActive;
+  mHistory.push_back(snap);
+}
+
+void CCricketGroupBox::set_game_data(QVector<CCricketClass::CPlayerData> iGameData)
+{
+  mHistory = iGameData;
+  mActive = iGameData.back().Active;
+  mPlayer.restore_state(mHistory.back());
 }
 
 void CCricketGroupBox::player_active_button_pressed_slot()
@@ -556,7 +567,6 @@ void CCricketGroupBox::display_leg_history()
   }
 
   filter_leg_scores_cutthroat(legscores);
-
   display_leg_scores(legscores);
 }
 

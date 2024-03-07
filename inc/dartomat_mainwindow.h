@@ -26,6 +26,8 @@ public:
   CDartomatMain(QWidget * iParent = nullptr);
   ~CDartomatMain();
   void handle_selected_players(const QStringList & iSelectedPlayers);
+  void start_game(CSettings iSettings);
+  void resume_game(const CGameDataHandler::SGameData iGameData);
   
 private slots:
 
@@ -46,7 +48,6 @@ private:
 #ifndef USE_TTS
   QSoundEffect mGameOnSound;
 #endif
-  CSettings mSettings;
   CGameDataHandler mGameDataHandler;
   CPlayerListModel mPlayerListModel;
   QStringList mSelectedPlayers = {};
