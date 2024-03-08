@@ -264,11 +264,31 @@ void CCricketGroupBox::create_snapshot()
   mHistory.push_back(snap);
 }
 
+void CCricketGroupBox::update_gui_elements()
+{
+  mUi->lcdNumber->display(static_cast<int>(mScore));
+  mTotalHits = mPlayer.get_total_hits();
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    set_slot_label(static_cast<ECricketSlots>(i), get_slot(static_cast<ECricketSlots>(i)));
+    set_extra_points_label(static_cast<ECricketSlots>(i), get_extra_points(static_cast<ECricketSlots>(i)));
+  }
+
+  mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
+  mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
+  QString hpr = QString::number(mPlayer.get_hits_per_round(), 'f', 2);
+  mUi->labelHitsPerRoundInput->setText(hpr);
+  display_leg_history();
+}
+
 void CCricketGroupBox::set_game_data(QVector<CCricketClass::CPlayerData> iGameData)
 {
   mHistory = iGameData;
   mActive = iGameData.back().Active;
   mPlayer.restore_state(mHistory.back());
+  mScore = mPlayer.get_score();
+  update_gui_elements();
 }
 
 void CCricketGroupBox::player_active_button_pressed_slot()
@@ -598,20 +618,7 @@ void CCricketGroupBox::perform_undo()
     mPlayer.restore_state(mHistory.back());
   }
   mScore = mPlayer.get_score();
-  mUi->lcdNumber->display(static_cast<int>(mScore));
-  mTotalHits = mPlayer.get_total_hits();
-
-  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
-  {
-    set_slot_label(static_cast<ECricketSlots>(i), get_slot(static_cast<ECricketSlots>(i)));
-    set_extra_points_label(static_cast<ECricketSlots>(i), get_extra_points(static_cast<ECricketSlots>(i)));
-  }
-
-  mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
-  mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
-  QString hpr = QString::number(mPlayer.get_hits_per_round(), 'f', 2);
-  mUi->labelHitsPerRoundInput->setText(hpr);
-  display_leg_history();
+  update_gui_elements();
 
   if (mFinished)
   {

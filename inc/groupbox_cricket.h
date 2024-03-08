@@ -95,6 +95,7 @@ private:
                                  std::array<uint32_t, static_cast<uint32_t>(ECricketSlots::SLOT_MAX)> & oExtraPointsCutThroat);
   void fill_slot_hits(uint32_t iSlotIdx, uint32_t iHits);
   void create_snapshots_of_all_players();
+  void update_gui_elements();
 
   Ui::CCricketGroupBox * mUi;
   QPointer<CCricketInput> mScoreInput;

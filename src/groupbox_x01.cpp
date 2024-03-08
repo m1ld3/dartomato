@@ -176,6 +176,11 @@ void CX01GroupBox::set_game_data(QVector<CX01Class::CPlayerData> iGameData)
   mHistory = iGameData;
   mActive = iGameData.back().Active;
   mPlayer.restore_state(mHistory.back());
+  mRemainingPoints = mPlayer.get_remaining();
+  mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
+  if (mActive) mDartBoard->init_dartboard(mRemainingPoints);
+  set_lcd_legs_and_sets();
+  display_stats_and_finishes();
 }
 
 void CX01GroupBox::create_snapshots_of_all_players()

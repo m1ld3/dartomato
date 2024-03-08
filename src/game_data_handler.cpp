@@ -256,6 +256,8 @@ void CGameDataHandler::get_player_data(QVector<CCricketClass::CPlayerData> & oGa
 
     QJsonObject gameDataObject = jsonObject.toObject();
     CCricketClass::CPlayerData playerData;
+    playerData.SlotArray = {};
+    playerData.ExtraPointsArray = {};
 
     playerData.SetsWon = gameDataObject["SetsWon"].toInt();
     playerData.LegsWonPerSet = gameDataObject["LegsWonPerSet"].toInt();

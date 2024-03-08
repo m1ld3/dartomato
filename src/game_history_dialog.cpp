@@ -119,6 +119,7 @@ void CGameHistoryDialog::start_game()
   {
     mMainWindow->resume_game(mGameData.at(mGameResultsIdx));
   }
+  close();
 }
 
 

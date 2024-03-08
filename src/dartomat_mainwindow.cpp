@@ -94,6 +94,7 @@ void CDartomatMain::resume_game(const CGameDataHandler::SGameData iGameData)
     mX01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
     mX01MainWindow->show();
   }
+  mGameDataHandler.delete_game_from_db(iGameData.TimeStamp);
 }
 
 void CDartomatMain::push_button_startgame_clicked_slot()

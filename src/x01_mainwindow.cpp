@@ -42,8 +42,7 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
     mPlayerBox[i]->set_game_data(iGameData.at(i));
     if (iGameData.at(i).back().Active) mActivePlayer = i;
   }
-//  todo, delete savegame at previous timestamp and store this game completely new at new mTimeStamp
-//  todo, update gui elements for scores which is yet missing!
+  display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
 }
 
 CX01MainWindow::~CX01MainWindow()
