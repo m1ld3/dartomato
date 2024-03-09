@@ -40,6 +40,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   });
   connect(mUi->pushButtonSelectPlayers, &QPushButton::clicked, this, &CDartomatMain::push_button_select_players_clicked_slot);
   connect(mUi->pushButtonGameHistory, &QPushButton::clicked, this, &CDartomatMain::push_button_game_history_clicked_slot);
+  check_for_unfinished_game();
 }
 
 CDartomatMain::~CDartomatMain()
@@ -55,6 +56,11 @@ void CDartomatMain::create_menu()
   QMenu * fileMenu = menuBar->addMenu("?");
   QAction * aboutAction = fileMenu->addAction("About");
   connect(aboutAction, &QAction::triggered, this, &CDartomatMain::show_about_dialog);
+}
+
+void CDartomatMain::check_for_unfinished_game()
+{
+
 }
 
 void CDartomatMain::handle_selected_players(const QStringList & iSelectedPlayers)

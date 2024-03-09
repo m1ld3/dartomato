@@ -41,6 +41,7 @@ private:
 
   void play_game_on_sound();
   void create_menu();
+  void check_for_unfinished_game();
 
   Ui::CDartomatMain * mUi;
   QPointer<CX01MainWindow> mX01MainWindow;

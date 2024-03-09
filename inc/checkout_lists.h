@@ -244,7 +244,7 @@ const QMap<uint32_t, QVector<QString>> doubleOutTwoDartCheckoutList =
   {3,   {"S01   D01"}},
   {5,   {"S01   D02"}},
   {6,   {"S02   D02"}},
-  {7,   {"S03   D04"}},
+  {7,   {"S03   D02"}},
   {9,   {"S01   D04", "S05   D02"}},
   {10,  {"S02   D04", "S06   D02"}},
   {11,  {"S03   D04", "S07   D02"}},
