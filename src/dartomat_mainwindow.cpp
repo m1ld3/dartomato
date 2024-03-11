@@ -12,6 +12,7 @@
 #include "version.h"
 #include "game_history_dialog.h"
 #include <QFile>
+#include <QTimer>
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
@@ -41,7 +42,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   });
   connect(mUi->pushButtonSelectPlayers, &QPushButton::clicked, this, &CDartomatMain::push_button_select_players_clicked_slot);
   connect(mUi->pushButtonGameHistory, &QPushButton::clicked, this, &CDartomatMain::push_button_game_history_clicked_slot);
-  check_for_unfinished_game();
+  QTimer::singleShot(500, this, &CDartomatMain::check_for_unfinished_game);
 }
 
 CDartomatMain::~CDartomatMain()
