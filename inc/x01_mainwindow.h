@@ -60,6 +60,7 @@ private:
   bool game_finished() const;
   void start_new_game_with_same_settings();
   void clear_group_box_widgets();
+  void save_unfinished_game_file();
 
   Ui::CX01MainWindow * mUi;
   uint32_t mActivePlayer = 0;

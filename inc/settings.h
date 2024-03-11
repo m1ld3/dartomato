@@ -86,4 +86,6 @@ struct CSettings
   bool CutThroat = false;
 };
 
+static const QString OpenGamePath = "open_game.txt";
+
 #endif  // CSETTINGS_H

@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QPushButton>
+#include <QFile>
 
 
 CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler)
@@ -89,6 +90,7 @@ void CX01MainWindow::closeEvent(QCloseEvent * iEvent)
     if (resBtn == QMessageBox::Save)
     {
       save_current_game();
+      save_unfinished_game_file();
       iEvent->accept();
     }
     else if (resBtn == QMessageBox::Abort)
@@ -96,6 +98,18 @@ void CX01MainWindow::closeEvent(QCloseEvent * iEvent)
       iEvent->accept();
     }
     else iEvent->ignore();
+  }
+}
+
+void CX01MainWindow::save_unfinished_game_file()
+{
+  QFile file(OpenGamePath);
+
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    stream << mTimeStamp.toString();
+    file.close();
   }
 }
 

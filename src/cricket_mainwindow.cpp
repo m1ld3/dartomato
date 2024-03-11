@@ -5,6 +5,7 @@
 #include <QString>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QFile>
 
 
 CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler)
@@ -97,6 +98,18 @@ void CCricketMainWindow::clear_group_box_widgets()
   mPlayerBox = {};
 }
 
+void CCricketMainWindow::save_unfinished_game_file()
+{
+  QFile file(OpenGamePath);
+
+  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    stream << mTimeStamp.toString();
+    file.close();
+  }
+}
+
 void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
 {
   if (game_finished())
@@ -112,6 +125,7 @@ void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
     if (resBtn == QMessageBox::Save)
     {
       save_current_game();
+      save_unfinished_game_file();
       iEvent->accept();
     }
     else if (resBtn == QMessageBox::Abort)

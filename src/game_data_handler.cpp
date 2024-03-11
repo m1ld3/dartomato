@@ -1,5 +1,4 @@
 #include "game_data_handler.h"
-#include <QFile>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>

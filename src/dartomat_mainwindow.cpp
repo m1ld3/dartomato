@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include "version.h"
 #include "game_history_dialog.h"
+#include <QFile>
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
@@ -60,7 +61,14 @@ void CDartomatMain::create_menu()
 
 void CDartomatMain::check_for_unfinished_game()
 {
-
+  QFile file(OpenGamePath);
+  if (file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream in(&file);
+    auto timeStamp = in.readLine().toStdString();
+    show_unfinished_game_popup(QString::fromStdString(timeStamp));
+    file.remove();
+  }
 }
 
 void CDartomatMain::handle_selected_players(const QStringList & iSelectedPlayers)
@@ -168,6 +176,22 @@ void CDartomatMain::push_button_game_history_clicked_slot()
 {
   QPointer<CGameHistoryDialog> dialog = new CGameHistoryDialog(mGameDataHandler, this);
   dialog->show();
+}
+
+void CDartomatMain::show_unfinished_game_popup(const QString & iTimeStamp)
+{
+  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Resume Game.",
+                                                             "Do you want to resume the last unfinished game?",
+                                                             QMessageBox::Yes | QMessageBox::No);
+  if (resBtn == QMessageBox::Yes)
+  {
+    const QVector<CGameDataHandler::SGameData> gameData = mGameDataHandler.get_game_data();
+    for (const auto & data : gameData)
+    {
+      if (data.TimeStamp == iTimeStamp) resume_game(data);
+      break;
+    }
+  }
 }
 
 void CDartomatMain::play_game_on_sound()
