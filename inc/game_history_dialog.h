@@ -4,7 +4,6 @@
 #include <QDialog>
 #include "game_data_handler.h"
 #include "game_history_model.h"
-#include "QItemSelectionModel"
 
 class CDartomatMain;
 

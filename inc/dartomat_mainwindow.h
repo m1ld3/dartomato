@@ -37,6 +37,7 @@ private slots:
   void show_about_dialog();
   void push_button_game_history_clicked_slot();
   void show_unfinished_game_popup(const QString & iTimeStamp);
+  void push_button_stats_clicked_slot();
 
 private:
 

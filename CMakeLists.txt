@@ -51,6 +51,7 @@ set(INCLUDES
     inc/game_history_model.h
     inc/game_history_table_view.h
     inc/game_results_model.h
+    inc/alltime_stats_dialog.h
     )
  
 set(SOURCES
@@ -88,6 +89,7 @@ set(SOURCES
     src/game_history_dialog.cpp
     src/game_history_model.cpp
     src/game_results_model.cpp
+    src/alltime_stats_dialog.cpp
     src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui
@@ -98,6 +100,7 @@ set(SOURCES
     src/game_history_dialog.ui
     src/stats_window_x01.ui
     src/stats_window_cricket.ui
+    src/alltime_stats_dialog.ui
     )
 	
 set(VERSION_MAJOR 1)

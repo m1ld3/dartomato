@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include "version.h"
 #include "game_history_dialog.h"
+#include "alltime_stats_dialog.h"
 #include <QFile>
 #include <QTimer>
 
@@ -42,6 +43,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   });
   connect(mUi->pushButtonSelectPlayers, &QPushButton::clicked, this, &CDartomatMain::push_button_select_players_clicked_slot);
   connect(mUi->pushButtonGameHistory, &QPushButton::clicked, this, &CDartomatMain::push_button_game_history_clicked_slot);
+  connect(mUi->pushButtonStats, &QPushButton::clicked, this, &CDartomatMain::push_button_stats_clicked_slot);
   QTimer::singleShot(500, this, &CDartomatMain::check_for_unfinished_game);
 }
 
@@ -193,6 +195,12 @@ void CDartomatMain::show_unfinished_game_popup(const QString & iTimeStamp)
       break;
     }
   }
+}
+
+void CDartomatMain::push_button_stats_clicked_slot()
+{
+  QPointer<CAllTimeStatsDialog> dialog = new CAllTimeStatsDialog(mGameDataHandler);
+  dialog->show();
 }
 
 void CDartomatMain::play_game_on_sound()
