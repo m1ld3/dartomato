@@ -28,7 +28,19 @@ void CAllTimeStatsDialog::setup_drop_down_menu()
     QPointer<QAction> action = new QAction(player, menu);
     action->setCheckable(true);
     menu->addAction(action);
+    connect(action, &QAction::triggered, this, &CAllTimeStatsDialog::player_selected_slot);
   }
 
   mUi->pushButtonSelectPlayers->setMenu(menu);
 }
+
+void CAllTimeStatsDialog::player_selected_slot()
+{
+  QStringList selectedPlayers;
+  for (auto * action : mUi->pushButtonSelectPlayers->menu()->actions())
+  {
+    if (action->isChecked()) selectedPlayers.append(action->text());
+  }
+
+}
+

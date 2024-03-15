@@ -20,6 +20,8 @@ public:
 
 private slots:
 
+  void player_selected_slot();
+
 private:
 
   void setup_drop_down_menu();
