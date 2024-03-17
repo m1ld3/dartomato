@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "game_data_handler.h"
+#include "alltime_player_stats_model.h"
 
 namespace Ui
 {
@@ -21,6 +22,7 @@ public:
 private slots:
 
   void player_selected_slot();
+  void game_selected_slot();
 
 private:
 
@@ -29,6 +31,7 @@ private:
   Ui::CAllTimeStatsDialog * mUi;
   CGameDataHandler & mGameDataHandler;
   QVector<CGameDataHandler::SGameData> mGameData;
+  CAlltimePlayerStatsModel * mStatsModel = nullptr;
 };
 
 #endif  // ALLTIME_STATS_DIALOG_H
