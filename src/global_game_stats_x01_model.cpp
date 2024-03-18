@@ -3,13 +3,13 @@
 CGlobalGameStatsX01Model::CGlobalGameStatsX01Model(const CStatsWindowX01::SGlobalGameStatsData & iData, QObject * iParent)
   : QAbstractTableModel(iParent)
   , mData(iData)
-  , mCol1Data({mData.Avg3Dart, mData.Avg1Dart})
+  , mCol1Data({mData.Avg3Dart, mData.Avg1Dart, mData.First9Avg})
 {}
 
 int CGlobalGameStatsX01Model::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return 2;
+  return 3;
 }
 
 int CGlobalGameStatsX01Model::columnCount(const QModelIndex & iParent) const
@@ -35,7 +35,7 @@ QVariant CGlobalGameStatsX01Model::data(const QModelIndex & iIndex, int iRole) c
     {
       return QString::number(mCol1Data.at(iIndex.row()), 'f', 2);
     }
-    else if (iIndex.column() == 2)
+    else if (iIndex.column() == 2 && iIndex.row() < 2)
     {
       return mCol2Labels.at(iIndex.row());
     }
@@ -49,10 +49,11 @@ QVariant CGlobalGameStatsX01Model::data(const QModelIndex & iIndex, int iRole) c
       }
       return checkoutRateStr + "    (" + QString::number(mData.CheckoutHits) + " / " + QString::number(mData.CheckoutAttempts) + ")";
     }
-    else
+    else if (iIndex.column() == 3 && iIndex.row() == 1)
     {
       return QString::number(mData.HighestCheckout);
     }
+    else return QVariant();
   }
   else
   {

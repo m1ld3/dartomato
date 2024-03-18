@@ -84,6 +84,7 @@ public:
     double Avg3Dart = 0.0;
     double Avg1Dart = 0.0;
     double AvgLegDartCount = 0.0;
+    double First9Avg = 0.0;
     uint32_t BestWonLegDartCount = 0;
     uint32_t WorstWonLegDartCount = 0;
     uint32_t DartCountOfCurrentLeg = 0;
@@ -93,6 +94,7 @@ public:
   {
     double Avg3Dart = 0.0;
     double Avg1Dart = 0.0;
+    double First9Avg = 0.0;
     uint32_t HighestCheckout = 0;
     uint32_t CheckoutAttempts = 0;
     uint32_t CheckoutHits = 0;
@@ -116,6 +118,7 @@ private:
   void count_scores();
   std::map<uint32_t, uint32_t> calculate_score_counts();
   void compute_dart_count_and_checkouts();
+  void compute_first9_leg_average(const QVector<uint32_t> & iScores);
 
 private:
 

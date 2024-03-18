@@ -35,6 +35,7 @@ void CStatsWindowX01::setup_table_views()
 {
   mGlobalGameStatsData.Avg3Dart = mPlayerData.Avg3Dart;
   mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
+  mGlobalGameStatsData.First9Avg = mPlayerData.First9Avg;
   mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
   mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;;
   mGlobalGameStatsModel = new CGlobalGameStatsX01Model(mGlobalGameStatsData, this);
@@ -94,6 +95,7 @@ void CStatsWindowX01::update_leg_history(int iIndex)
     uint32_t numberOfDarts = (totalDarts.at(iIndex).size() - 1) * 3 + totalDarts.at(iIndex).back().size();
     mLegStatsData.Avg1Dart = std::accumulate(totalScores.at(iIndex).begin(), totalScores.at(iIndex).end(), 0.0) / numberOfDarts;
     mLegStatsData.Avg3Dart = 3 * mLegStatsData.Avg1Dart;
+    compute_first9_leg_average(totalScores.at(iIndex));
     if (!mLegScoresModel)
     {
       mLegScoresModel = new CLegScoresX01Model(totalScores.at(iIndex), totalDarts.at(iIndex), this);
@@ -127,6 +129,19 @@ void CStatsWindowX01::update_leg_history(int iIndex)
   {
     mLegStatsModel->update(mLegStatsData);
   }
+}
+
+void CStatsWindowX01::compute_first9_leg_average(const QVector<uint32_t> &iScores)
+{
+  uint32_t points = 0;
+  int idx = 0;
+  for (const auto score : iScores)
+  {
+    if (idx < 3) points += score;
+    idx++;
+  }
+
+  mLegStatsData.First9Avg = static_cast<double>(points) / 3;
 }
 
 void CStatsWindowX01::count_scores()

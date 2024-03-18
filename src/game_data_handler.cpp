@@ -168,6 +168,7 @@ void CGameDataHandler::fill_game_data_array(const QVector<CX01Class::CPlayerData
     gameDataObject["Avg1Dart"] = data.Avg1Dart;
     gameDataObject["Avg3Dart"] = data.Avg3Dart;
     gameDataObject["CheckoutRate"] = data.CheckoutRate;
+    gameDataObject["First9Avg"] = data.First9Avg;
     gameDataObject["Active"] = data.Active;
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
@@ -231,6 +232,7 @@ void CGameDataHandler::get_player_data(QVector<CX01Class::CPlayerData> & oGameHi
     playerData.Avg1Dart = gameDataObject["Avg1Dart"].toDouble();
     playerData.Avg3Dart = gameDataObject["Avg3Dart"].toDouble();
     playerData.CheckoutRate = gameDataObject["CheckoutRate"].toDouble();
+    playerData.First9Avg = gameDataObject["First9Avg"].toDouble();
     playerData.Active = gameDataObject["Active"].toBool();
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
