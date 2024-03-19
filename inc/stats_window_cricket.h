@@ -51,6 +51,8 @@ public:
   {
     double HitsPerRound = 0.0;
     uint32_t TotalHits = 0;
+    uint32_t LegsWon = 0;
+    uint32_t NumLegs = 0;
   };
 
   explicit CStatsWindowCricket(const CCricketClass::CPlayerData iPlayerData, QWidget * iParent = nullptr);

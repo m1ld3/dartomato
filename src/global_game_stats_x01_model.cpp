@@ -35,11 +35,15 @@ QVariant CGlobalGameStatsX01Model::data(const QModelIndex & iIndex, int iRole) c
     {
       return QString::number(mCol1Data.at(iIndex.row()), 'f', 2);
     }
-    else if (iIndex.column() == 2 && iIndex.row() < 2)
+    else if (iIndex.column() == 2)
     {
       return mCol2Labels.at(iIndex.row());
     }
     else if (iIndex.column() == 3 && iIndex.row() == 0)
+    {
+      return QString::number(mData.LegsWon) + " of " + QString::number(mData.NumLegs);
+    }
+    else if (iIndex.column() == 3 && iIndex.row() == 1)
     {
       QString checkoutRateStr = "--";
       if (mData.CheckoutAttempts > 0)
@@ -49,7 +53,7 @@ QVariant CGlobalGameStatsX01Model::data(const QModelIndex & iIndex, int iRole) c
       }
       return checkoutRateStr + "    (" + QString::number(mData.CheckoutHits) + " / " + QString::number(mData.CheckoutAttempts) + ")";
     }
-    else if (iIndex.column() == 3 && iIndex.row() == 1)
+    else if (iIndex.column() == 3 && iIndex.row() == 2)
     {
       return QString::number(mData.HighestCheckout);
     }

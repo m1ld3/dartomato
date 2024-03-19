@@ -126,7 +126,13 @@ void CX01Class::compute_first9_avg()
   uint32_t points = 0;
   for (const auto & scores : mAllScoresOfAllLegs)
   {
-    points += scores.at(0) + scores.at(1) + scores.at(2);
+    for (size_t i = 0; i < 3; i++)
+    {
+      if (i < scores.size())
+      {
+        points += scores.at(i);
+      }
+    }
   }
 
   int idx = 0;

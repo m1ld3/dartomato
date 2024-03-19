@@ -95,6 +95,8 @@ public:
     double Avg3Dart = 0.0;
     double Avg1Dart = 0.0;
     double First9Avg = 0.0;
+    uint32_t LegsWon = 0;
+    uint32_t NumLegs = 0;
     uint32_t HighestCheckout = 0;
     uint32_t CheckoutAttempts = 0;
     uint32_t CheckoutHits = 0;

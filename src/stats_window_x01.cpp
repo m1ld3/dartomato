@@ -36,6 +36,8 @@ void CStatsWindowX01::setup_table_views()
   mGlobalGameStatsData.Avg3Dart = mPlayerData.Avg3Dart;
   mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
   mGlobalGameStatsData.First9Avg = mPlayerData.First9Avg;
+  mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
+  mGlobalGameStatsData.NumLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
   mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
   mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;;
   mGlobalGameStatsModel = new CGlobalGameStatsX01Model(mGlobalGameStatsData, this);

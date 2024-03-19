@@ -14,7 +14,7 @@ int CGlobalGameStatsCricketModel::rowCount(const QModelIndex & iParent) const
 int CGlobalGameStatsCricketModel::columnCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return 4;
+  return 6;
 }
 
 QVariant CGlobalGameStatsCricketModel::data(const QModelIndex & iIndex, int iRole) const
@@ -28,7 +28,7 @@ QVariant CGlobalGameStatsCricketModel::data(const QModelIndex & iIndex, int iRol
   {
     if (iIndex.column() == 0)
     {
-      return "Hits per Round:";
+      return "Hits Per Round:";
     }
     else if (iIndex.column() == 1)
     {
@@ -38,9 +38,17 @@ QVariant CGlobalGameStatsCricketModel::data(const QModelIndex & iIndex, int iRol
     {
       return "Total Hits:";
     }
-    else
+    else if (iIndex.column() == 3)
     {
       return QString::number(mData.TotalHits);
+    }
+    else if (iIndex.column() == 4)
+    {
+      return "Legs Won:";
+    }
+    else
+    {
+      return QString::number(mData.LegsWon) + " of " + QString::number(mData.NumLegs);
     }
   }
   else

@@ -32,6 +32,8 @@ void CStatsWindowCricket::setup_table_views()
 {
   mGlobalGameStatsData.HitsPerRound = mPlayerData.HitsPerRound;
   mGlobalGameStatsData.TotalHits = mPlayerData.TotalHits;
+  mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
+  mGlobalGameStatsData.NumLegs = mPlayerData.LegWonVec.size() > 0 ? mPlayerData.LegWonHistory.size() + 1 : mPlayerData.LegWonHistory.size();
   mGlobalGameStatsModel = new CGlobalGameStatsCricketModel(mGlobalGameStatsData, this);
   mGlobalSegmentStatsModel = new CGlobalSegmentStatsCricketModel(mSegmentCounts, this);
   mUi->tableViewGlobalGameStats->setModel(mGlobalGameStatsModel);
@@ -40,10 +42,12 @@ void CStatsWindowCricket::setup_table_views()
   mUi->tableViewLegScores->setSelectionMode(QAbstractItemView::NoSelection);
   mUi->tableViewGlobalGameStats->setSelectionMode(QAbstractItemView::NoSelection);
   mUi->tableViewGlobalSegmentStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalGameStats->setColumnWidth(0, 125);
-  mUi->tableViewGlobalGameStats->setColumnWidth(1, 125);
-  mUi->tableViewGlobalGameStats->setColumnWidth(2, 125);
-  mUi->tableViewGlobalGameStats->setColumnWidth(3, 125);
+  mUi->tableViewGlobalGameStats->setColumnWidth(0, 100);
+  mUi->tableViewGlobalGameStats->setColumnWidth(1, 80);
+  mUi->tableViewGlobalGameStats->setColumnWidth(2, 70);
+  mUi->tableViewGlobalGameStats->setColumnWidth(3, 80);
+  mUi->tableViewGlobalGameStats->setColumnWidth(4, 70);
+  mUi->tableViewGlobalGameStats->setColumnWidth(5, 50);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(0, 50);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(1, 75);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(2, 50);
