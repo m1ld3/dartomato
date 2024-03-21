@@ -10,7 +10,7 @@ class CAlltimePlayerStatsModel : public QAbstractTableModel
 
 public:
 
-  explicit CAlltimePlayerStatsModel(const QVector<CGameDataHandler::SGameData> & iGameData, const QVector<QString> iSelectedPlayers, bool iIsCricket, QObject * iParent = nullptr);
+  explicit CAlltimePlayerStatsModel(CGameDataHandler & iGameDataHandler, const QVector<QString> iSelectedPlayers, bool iIsCricket, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
@@ -21,9 +21,10 @@ private:
 
   void prepare_data();
 
-  const QVector<CGameDataHandler::SGameData> & mGameData;
   QVector<QString> mSelectedPlayers;
   bool mIsCricket = false;
+  CGameDataHandler & mGameDataHandler;
+  QVector<CGameDataHandler::SStatsData> mGameStats = {};
   QStringList mStatLabelsX01 = {   "Games Played"
                                  , "Games Won"
                                  , "Win Rate"
@@ -54,7 +55,7 @@ private:
                                      , "Best Won Leg"
                                      , "Worst Won Leg"
                                      , "Darts-Per-Leg Average"
-                                   };
+                                   };  
 };
 
 #endif  // CALLTIMEPLAYERSTATSMODEL_H

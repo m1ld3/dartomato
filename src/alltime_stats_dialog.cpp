@@ -45,7 +45,7 @@ void CAllTimeStatsDialog::player_selected_slot()
   }
   if (!mStatsModel)
   {
-    mStatsModel = new CAlltimePlayerStatsModel(mGameData, selectedPlayers, mUi->comboBoxGame->currentIndex() == 1, this);
+    mStatsModel = new CAlltimePlayerStatsModel(mGameDataHandler, selectedPlayers, mUi->comboBoxGame->currentIndex() == 1, this);
   }
   else
   {

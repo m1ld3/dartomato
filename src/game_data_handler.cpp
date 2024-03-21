@@ -386,6 +386,47 @@ QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
   return gameData;
 }
 
+QVector<CGameDataHandler::SStatsData> CGameDataHandler::get_stats_data()
+{
+  QSqlDatabase db = QSqlDatabase::database();
+  QVector<SStatsData> gameData;
+  QStringList playerNames = get_player_names();
+
+  for (const auto & player : playerNames)
+  {
+    int playerId = get_player_id(player);
+    QSqlQuery selectQuery(QString("SELECT * FROM games WHERE player_id='%1'").arg(playerId));
+    QVector<CX01Class::CPlayerData> x01Data {};
+    QVector<CCricketClass::CPlayerData> cricketData {};
+    auto gameMode = EGame::GAME_501;
+
+    while (selectQuery.next())
+    {
+      QVector<CX01Class::CPlayerData> singleX01Data {};
+      QVector<CCricketClass::CPlayerData> singleCricketData {};
+      gameMode = static_cast<EGame>(selectQuery.value("game_mode").toInt());
+      QString gameDataString = selectQuery.value("game_data").toString();
+      QJsonDocument jsonDoc = QJsonDocument::fromJson(gameDataString.toUtf8());
+      QJsonArray gameDataArray = jsonDoc.array();
+
+      if (gameMode == EGame::GAME_CRICKET)
+      {
+        get_player_data(singleCricketData, gameDataArray);
+        cricketData.append(singleCricketData.back());
+      }
+      else
+      {
+        get_player_data(singleX01Data, gameDataArray);
+        x01Data.append(singleX01Data.back());
+      }
+    }
+    auto singlePlayerData = SStatsData(player, gameMode, x01Data, cricketData);
+    gameData.append(singlePlayerData);
+  }
+
+  return gameData;
+}
+
 bool CGameDataHandler::delete_game_from_db(const QString &iTimeStamp)
 {
   QSqlQuery query(QString("DELETE FROM games WHERE time_stamp = '%1'").arg(iTimeStamp));

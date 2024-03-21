@@ -1,13 +1,12 @@
 #include "alltime_player_stats_model.h"
 
-CAlltimePlayerStatsModel::CAlltimePlayerStatsModel(const QVector<CGameDataHandler::SGameData> & iGameData, const QVector<QString> iSelectedPlayers, bool iIsCricket, QObject * iParent)
+CAlltimePlayerStatsModel::CAlltimePlayerStatsModel(CGameDataHandler & iGameDataHandler, const QVector<QString> iSelectedPlayers, bool iIsCricket, QObject * iParent)
   : QAbstractTableModel{iParent}
-  , mGameData(iGameData)
   , mSelectedPlayers(iSelectedPlayers)
   , mIsCricket(iIsCricket)
-{
-
-}
+  , mGameDataHandler(iGameDataHandler)
+  , mGameStats(mGameDataHandler.get_stats_data())
+{}
 
 int CAlltimePlayerStatsModel::rowCount(const QModelIndex & iParent) const
 {
@@ -22,7 +21,7 @@ int CAlltimePlayerStatsModel::columnCount(const QModelIndex & iParent) const
 
 QVariant CAlltimePlayerStatsModel::data(const QModelIndex & iIndex, int iRole) const
 {
-
+  return QVariant();
 }
 
 void CAlltimePlayerStatsModel::prepare_data()
