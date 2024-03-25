@@ -399,12 +399,16 @@ QVector<CGameDataHandler::SStatsData> CGameDataHandler::get_stats_data()
     QVector<CX01Class::CPlayerData> x01Data {};
     QVector<CCricketClass::CPlayerData> cricketData {};
     auto gameMode = EGame::GAME_501;
+    bool finished = false;
+    bool gameWon = false;
 
     while (selectQuery.next())
     {
       QVector<CX01Class::CPlayerData> singleX01Data {};
       QVector<CCricketClass::CPlayerData> singleCricketData {};
       gameMode = static_cast<EGame>(selectQuery.value("game_mode").toInt());
+      finished = selectQuery.value("finished").toBool();
+
       QString gameDataString = selectQuery.value("game_data").toString();
       QJsonDocument jsonDoc = QJsonDocument::fromJson(gameDataString.toUtf8());
       QJsonArray gameDataArray = jsonDoc.array();
@@ -420,8 +424,12 @@ QVector<CGameDataHandler::SStatsData> CGameDataHandler::get_stats_data()
         x01Data.append(singleX01Data.back());
       }
     }
-    auto singlePlayerData = SStatsData(player, gameMode, x01Data, cricketData);
-    gameData.append(singlePlayerData);
+
+    if (x01Data.size() || cricketData.size())
+    {
+      auto singlePlayerData = SStatsData(player, x01Data, cricketData);
+      gameData.append(singlePlayerData);
+    }
   }
 
   return gameData;

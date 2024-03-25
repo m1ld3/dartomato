@@ -38,12 +38,10 @@ public:
   struct SStatsData
   {
     SStatsData(const QString iPlayerName,
-              const EGame iGame,
               QVector<CX01Class::CPlayerData> iGameDataX01 = {},
               QVector<CCricketClass::CPlayerData> iGameDataCricket = {}
               )
       : PlayerName(iPlayerName)
-      , Game(iGame)
       , GameDataX01(iGameDataX01)
       , GameDataCricket(iGameDataCricket)
     {}
@@ -52,7 +50,6 @@ public:
 
     QString PlayerName = "";
     CSettings Settings = CSettings();
-    EGame Game = EGame::GAME_501;
     QVector<CX01Class::CPlayerData> GameDataX01 = {};
     QVector<CCricketClass::CPlayerData> GameDataCricket = {};
   };

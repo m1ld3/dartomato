@@ -168,6 +168,7 @@ void CX01GroupBox::create_snapshot()
 {
   auto snap = mPlayer.create_snapshot();
   snap.Active = mActive;
+  snap.Finished = mFinished;
   mHistory.push_back(snap);
 }
 

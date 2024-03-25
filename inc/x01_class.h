@@ -21,6 +21,7 @@ public:
     friend class CLegStatsModel;
     friend class CStatsWindowX01;
     friend class CGameResultsModel;
+    friend class CAlltimePlayerStatsModel;
 
   public:
 
@@ -70,6 +71,7 @@ public:
     {}
 
     bool Active = false;
+    bool Finished = false;
 
   private:
 

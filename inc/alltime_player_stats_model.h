@@ -14,17 +14,40 @@ public:
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
-  void update_selected_players(const QVector<QString> iSelectedPlayers) { mSelectedPlayers = iSelectedPlayers; };
+  void update_selected_players(const QVector<QString> iSelectedPlayers);
   void update_selected_game(bool iIsCricket) { mIsCricket = iIsCricket; }
 
 private:
 
-  void prepare_data();
+  struct SPlayerStats
+  {
+    QString PlayerName = "";
+    uint32_t GamesPlayed = 0;
+    uint32_t GamesWon = 0;
+    double WinRate = 0.0;
+    uint32_t LegsPlayed = 0;
+    uint32_t LegsWon = 0;
+    double LegWinRate = 0.0;
+    uint32_t ThrownDarts = 0;
+    double Avg3Dart = 0.0;
+    double Avg1Dart = 0.0;
+    double First9Avg = 0.0;
+    double BestLegAvg = 0.0;
+    uint32_t BestWonLegDartCount = 0;
+    uint32_t WorstWonLegDartCount = 0;
+    double CheckoutRate = 0.0;
+    uint32_t HighestCheckout = 0;
+    double DartsPerLegAvg = 0.0;
+    uint32_t TotalHits = 0;
+    double HitsPerRound = 0.0;
+  };
 
   QVector<QString> mSelectedPlayers;
   bool mIsCricket = false;
   CGameDataHandler & mGameDataHandler;
   QVector<CGameDataHandler::SStatsData> mGameStats = {};
+  QVector<SPlayerStats> mSelectedStats = {};
+
   QStringList mStatLabelsX01 = {   "Games Played"
                                  , "Games Won"
                                  , "Win Rate"
