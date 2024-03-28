@@ -123,10 +123,17 @@ void CCricketGroupBox::handle_leg_won()
   }
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
   mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
-  create_snapshots_of_all_players();
   display_leg_history();
   close_cricket_input();
-  if (mPlayer.has_won_game()) mGameWindow->handle_game_won(mPlayerNumber);
+
+  if (mPlayer.has_won_game())
+  {
+    mGameWindow->handle_game_won(mPlayerNumber);
+  }
+  else
+  {
+    create_snapshots_of_all_players();
+  }
 }
 
 void CCricketGroupBox::handle_switch_to_next_player()

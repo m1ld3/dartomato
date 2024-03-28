@@ -57,6 +57,7 @@ private:
   void start_new_game_with_same_settings();
   void clear_group_box_widgets();
   void save_unfinished_game_file();
+  void set_global_finished();
 
   Ui::CCricketMainWindow * mUi;
   uint32_t mActivePlayer = 0;

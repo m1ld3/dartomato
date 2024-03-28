@@ -264,15 +264,20 @@ void CX01MainWindow::reset_scores_of_all_players()
   }
 }
 
-void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
+void CX01MainWindow::set_global_finished()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     mPlayerBox[i]->set_finished();
   }
-  mWinningPlayer = iPlayerNumber;
   mDartBoard->set_finished();
+}
 
+void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
+{
+  set_global_finished();
+  create_snapshots_of_all_players();
+  mWinningPlayer = iPlayerNumber;
   QString name = mSettings.PlayersList.at(iPlayerNumber);
   QString text = name + " has won the game. Congratulations!\n Play again?";
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game finished!", text,

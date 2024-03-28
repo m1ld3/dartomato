@@ -126,10 +126,17 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   {
     update_players(EUpdateType::LEG);
   }
-  create_snapshots_of_all_players();
   set_lcd_legs_and_sets();
   display_stats_and_finishes();
-  if (mPlayer.has_won_game()) mGameWindow->handle_game_won(mPlayerNumber);
+
+  if (mPlayer.has_won_game())
+  {
+    mGameWindow->handle_game_won(mPlayerNumber);
+  }
+  else
+  {
+    create_snapshots_of_all_players();
+  }
 }
 
 void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)

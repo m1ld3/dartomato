@@ -47,48 +47,74 @@ QVariant CAlltimePlayerStatsModel::data(const QModelIndex & iIndex, int iRole) c
 void CAlltimePlayerStatsModel::update_selected_players(const QVector<QString> iSelectedPlayers)
 {
   mSelectedPlayers = iSelectedPlayers;
-  QVector<CGameDataHandler::SStatsData> selectedStats = {};
+  QVector<SPlayerStats> selectedStats = {};
 
   for (const auto & data : mGameStats)
   {
     if (!mSelectedPlayers.contains(data.PlayerName)) continue;
-    for (const auto & gamedata : data.GameDataX01)
+    SPlayerStats stats;
+
+    double avg3 = 0.0;
+    double avg1 = 0.0;
+    double first9Avg = 0.0;
+    double bestLegAvg = 0.0;
+    uint32_t bestWonLegDartCount = UINT32_MAX;
+    uint32_t worstWonLegDartCount = 0;
+    uint32_t checkoutHits = 0;
+    uint32_t checkoutAttempts = 0;
+    uint32_t highestCheckout = 0;
+    uint32_t totalDarts = 0;
+
+    for (const auto & gameData : data.GameDataX01)
     {
-      SPlayerStats stats;
-      double avg3 = 0.0;
-      double avg1 = 0.0;
-      double first9Avg = 0.0;
-      double bestLegAvg = 0.0;
-      stats.PlayerName = data.PlayerName;
-      for (const auto & gameStats : data.GameDataX01)
+
+      if (gameData.Finished)
       {
-
-        if (gameStats.Finished)
-        {
-          stats.GamesPlayed++;
-          if (gameStats.RemainingPoints == 0) stats.GamesWon++;
-        }
-        stats.LegsWon += gameStats.TotalLegsWon;
-        stats.LegsPlayed += gameStats.AllScoresOfAllLegs.size();
-        stats.ThrownDarts += gameStats.TotalDarts;
-        avg3 += gameStats.Avg3Dart;
-        avg1 += gameStats.Avg1Dart;
-        first9Avg += gameStats.First9Avg;
-        // todo if (gameStats.bestLegAvg > bestLegAvg) bestLegAvg = gameStats.bestLegAvg;
+        stats.GamesPlayed++;
+        if (gameData.RemainingPointsOfAllLegs.back().back() == 0) stats.GamesWon++;
       }
-      stats.WinRate = static_cast<double>(stats.GamesWon) / stats.GamesPlayed * 100;
-      stats.LegWinRate = static_cast<double>(stats.LegsWon) / stats.LegsPlayed * 100;
-      stats.Avg3Dart = avg3 / data.GameDataX01.size();
-      stats.Avg1Dart = avg1 / data.GameDataX01.size();
-      stats.First9Avg = first9Avg / data.GameDataX01.size();
-    }
-  }
+      stats.LegsWon += gameData.TotalLegsWon;
+      stats.LegsPlayed += gameData.AllScoresOfAllLegs.size();
+      stats.ThrownDarts += gameData.TotalDarts;
+      avg3 += gameData.Avg3Dart;
+      avg1 += gameData.Avg1Dart;
+      first9Avg += gameData.First9Avg;
+      QVector<QVector<uint32_t>> totalScores = gameData.AllScoresOfAllLegs;
+      QVector<QVector<QVector<QString>>> totalDarts = gameData.ThrownDartsOfAllLegs;
+      QVector<QVector<uint32_t>> remainingPointsOfAllLegs = gameData.RemainingPointsOfAllLegs;
+      if (gameData.ScoresOfCurrentLeg.size()) totalScores.append(gameData.ScoresOfCurrentLeg);
+      if (gameData.ThrownDartsOfCurrentLeg.size()) totalDarts.append(gameData.ThrownDartsOfCurrentLeg);
 
-//  for (const auto & stats : selectedStats)
-//  {
-//    for (const auto & stat : stats.GameDataX01)
-//    {
-//      stat.
-//    }
-//  }
+      for (auto idx = 0; idx < totalScores.size(); idx++)
+      {
+        uint32_t numberOfDarts = (totalDarts.at(idx).size() - 1) * 3 + totalDarts.at(idx).back().size();
+        double avg = std::accumulate(totalScores.at(idx).begin(), totalScores.at(idx).end(), 0.0) / numberOfDarts;
+        if (avg > bestLegAvg) bestLegAvg = avg;
+        if (remainingPointsOfAllLegs.at(idx).back() == 0)
+        {
+          if (numberOfDarts < bestWonLegDartCount) bestWonLegDartCount = numberOfDarts;
+          if (numberOfDarts > worstWonLegDartCount) worstWonLegDartCount = numberOfDarts;
+          if (totalScores.at(idx).back() > highestCheckout) highestCheckout = totalScores.at(idx).back();
+        }
+      }
+      checkoutAttempts += gameData.CheckoutAttempts;
+      checkoutHits += gameData.CheckoutHits;
+    }
+
+    stats.PlayerName = data.PlayerName;
+    stats.WinRate = stats.GamesPlayed > 0 ? static_cast<double>(stats.GamesWon) / stats.GamesPlayed * 100 : 0.0;
+    stats.LegWinRate = stats.LegsPlayed > 0 ? static_cast<double>(stats.LegsWon) / stats.LegsPlayed * 100 : 0.0;
+    stats.Avg3Dart = avg3 / data.GameDataX01.size();
+    stats.Avg1Dart = avg1 / data.GameDataX01.size();
+    stats.First9Avg = first9Avg / data.GameDataX01.size();
+    stats.BestLegAvg = 3 * bestLegAvg;
+    stats.BestWonLegDartCount = bestWonLegDartCount;
+    stats.WorstWonLegDartCount = worstWonLegDartCount;
+    stats.CheckoutAttempts = checkoutAttempts;
+    stats.CheckoutHits = checkoutHits;
+    stats.CheckoutRate = checkoutAttempts > 0 ? static_cast<double>(checkoutHits) / checkoutAttempts * 100 : 0.0;
+    stats.HighestCheckout = highestCheckout;
+    stats.DartsPerLegAvg = stats.LegsPlayed > 0 ? static_cast<double>(stats.ThrownDarts) / stats.LegsPlayed : 0.0;
+    selectedStats.append(stats);
+  }
 }

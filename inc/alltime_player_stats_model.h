@@ -36,6 +36,8 @@ private:
     uint32_t BestWonLegDartCount = 0;
     uint32_t WorstWonLegDartCount = 0;
     double CheckoutRate = 0.0;
+    uint32_t CheckoutHits = 0;
+    uint32_t CheckoutAttempts = 0;
     uint32_t HighestCheckout = 0;
     double DartsPerLegAvg = 0.0;
     uint32_t TotalHits = 0;
