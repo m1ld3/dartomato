@@ -14,7 +14,8 @@ public:
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
-  void update_selected_players(const QVector<QString> iSelectedPlayers);
+  void update_selected_players_x01(const QVector<QString> iSelectedPlayers);
+  void update_selected_players_cricket(const QVector<QString> iSelectedPlayers);
   void update_selected_game(bool iIsCricket) { mIsCricket = iIsCricket; }
 
 private:

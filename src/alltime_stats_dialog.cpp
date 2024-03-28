@@ -47,9 +47,13 @@ void CAllTimeStatsDialog::player_selected_slot()
   {
     mStatsModel = new CAlltimePlayerStatsModel(mGameDataHandler, selectedPlayers, mUi->comboBoxGame->currentIndex() == 1, this);
   }
+  else if (mUi->comboBoxGame->currentIndex() == 1)
+  {
+    mStatsModel->update_selected_players_cricket(selectedPlayers);
+  }
   else
   {
-    mStatsModel->update_selected_players(selectedPlayers);
+    mStatsModel->update_selected_players_x01(selectedPlayers);
   }
 }
 

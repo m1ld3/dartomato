@@ -128,6 +128,7 @@ void CCricketGroupBox::handle_leg_won()
 
   if (mPlayer.has_won_game())
   {
+    mGameWon = true;
     mGameWindow->handle_game_won(mPlayerNumber);
   }
   else
@@ -269,6 +270,7 @@ void CCricketGroupBox::create_snapshot()
   auto snap = mPlayer.create_snapshot();
   snap.Active = mActive;
   snap.Finished = mFinished;
+  snap.GameWon = mGameWon;
   mHistory.push_back(snap);
 }
 
@@ -627,11 +629,8 @@ void CCricketGroupBox::perform_undo()
   }
   mScore = mPlayer.get_score();
   update_gui_elements();
-
-  if (mFinished)
-  {
-    unset_finished();
-  }
+  mFinished = false;
+  mGameWon = false;
 }
 
 void CCricketGroupBox::update_players(const EUpdateType iType)

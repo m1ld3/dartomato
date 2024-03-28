@@ -111,6 +111,7 @@ private:
   bool mFinished = false;
   bool mSetBegin = false;
   bool mLegBegin = false;
+  bool mGameWon = false;
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
   QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");

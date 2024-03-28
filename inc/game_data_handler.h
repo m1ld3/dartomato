@@ -49,7 +49,6 @@ public:
     SStatsData() = default;
 
     QString PlayerName = "";
-    CSettings Settings = CSettings();
     QVector<CX01Class::CPlayerData> GameDataX01 = {};
     QVector<CCricketClass::CPlayerData> GameDataCricket = {};
   };
