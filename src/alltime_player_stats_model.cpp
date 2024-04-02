@@ -18,25 +18,61 @@ int CAlltimePlayerStatsModel::rowCount(const QModelIndex & iParent) const
 int CAlltimePlayerStatsModel::columnCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return mSelectedPlayers.size() + 1;
+  return mSelectedPlayers.size();
+}
+
+QVariant CAlltimePlayerStatsModel::headerData(int iSection, Qt::Orientation iOrientation, int iRole) const
+{
+  if (iRole == Qt::DisplayRole)
+  {
+    if (iOrientation == Qt::Horizontal)
+    {
+      if (iSection >= 0 && iSection < mSelectedPlayers.size())
+      {
+        return mSelectedPlayers.at(iSection);
+      }
+    }
+    else if (iOrientation == Qt::Vertical)
+    {
+      return mIsCricket? mStatLabelsCricket.at(iSection) : mStatLabelsX01.at(iSection);
+    }
+  }
+  return QVariant();
 }
 
 QVariant CAlltimePlayerStatsModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
+  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount() || iIndex.column() >= mSelectedStats.size())
   {
     return QVariant();
   }
 
   if (iRole == Qt::DisplayRole)
   {
-    if (iIndex.column() == 0)
+    size_t playerIdx = iIndex.column();
+    switch (iIndex.row())
     {
-      return mIsCricket? mStatLabelsCricket.at(iIndex.row()) : mStatLabelsX01.at(iIndex.row());
-    }
-    else
-    {
-      return QVariant();
+    case  0: return QString::number(mSelectedStats.at(playerIdx).GamesPlayed);
+    case  1: return QString::number(mSelectedStats.at(playerIdx).GamesWon);
+    case  2: return QString::number(mSelectedStats.at(playerIdx).WinRate, 'f', 2);
+    case  3: return QString::number(mSelectedStats.at(playerIdx).LegsPlayed);
+    case  4: return QString::number(mSelectedStats.at(playerIdx).LegsWon);
+    case  5: return QString::number(mSelectedStats.at(playerIdx).LegWinRate, 'f', 2);
+    case  6: return QString::number(mSelectedStats.at(playerIdx).ThrownDarts);
+    case  7: return QString::number(mSelectedStats.at(playerIdx).BestWonLegDartCount);
+    case  8: return QString::number(mSelectedStats.at(playerIdx).WorstWonLegDartCount);
+    case  9: return QString::number(mSelectedStats.at(playerIdx).DartsPerLegAvg, 'f', 2);
+    case 10:
+      if (mIsCricket) return QString::number(mSelectedStats.at(playerIdx).HitsPerRound, 'f', 2);
+      else            return QString::number(mSelectedStats.at(playerIdx).Avg3Dart, 'f', 2);
+    case 11:
+      if (mIsCricket) return QString::number(mSelectedStats.at(playerIdx).TotalHits);
+      else            return QString::number(mSelectedStats.at(playerIdx).Avg1Dart, 'f', 2);
+    case 12: return QString::number(mSelectedStats.at(playerIdx).First9Avg, 'f', 2);
+    case 13: return QString::number(mSelectedStats.at(playerIdx).BestLegAvg, 'f', 2);
+    case 14: return QString::number(mSelectedStats.at(playerIdx).CheckoutRate, 'f', 2);
+    case 15: return QString::number(mSelectedStats.at(playerIdx).HighestCheckout);
+    default: return QVariant();
     }
   }
   else
@@ -48,11 +84,12 @@ QVariant CAlltimePlayerStatsModel::data(const QModelIndex & iIndex, int iRole) c
 void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString> iSelectedPlayers)
 {
   mSelectedPlayers = iSelectedPlayers;
-  QVector<SPlayerStats> selectedStats = {};
+  mSelectedStats = {};
 
   for (const auto & data : mGameStats)
   {
     if (!mSelectedPlayers.contains(data.PlayerName)) continue;
+    if (data.GameDataX01.size() == 0) continue;
     SPlayerStats stats;
 
     double avg3 = 0.0;
@@ -101,6 +138,8 @@ void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString
       checkoutHits += gameData.CheckoutHits;
     }
 
+    if (bestWonLegDartCount == UINT32_MAX) bestWonLegDartCount = 0;
+
     stats.PlayerName = data.PlayerName;
     stats.WinRate = stats.GamesPlayed > 0 ? static_cast<double>(stats.GamesWon) / stats.GamesPlayed * 100 : 0.0;
     stats.LegWinRate = stats.LegsPlayed > 0 ? static_cast<double>(stats.LegsWon) / stats.LegsPlayed * 100 : 0.0;
@@ -115,24 +154,28 @@ void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString
     stats.CheckoutRate = checkoutAttempts > 0 ? static_cast<double>(checkoutHits) / checkoutAttempts * 100 : 0.0;
     stats.HighestCheckout = highestCheckout;
     stats.DartsPerLegAvg = stats.LegsPlayed > 0 ? static_cast<double>(stats.ThrownDarts) / stats.LegsPlayed : 0.0;
-    selectedStats.append(stats);
+    mSelectedStats.append(stats);
   }
+  emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, 0));
+  emit layoutChanged();
 }
 
 void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QString> iSelectedPlayers)
 {
   mSelectedPlayers = iSelectedPlayers;
-  QVector<SPlayerStats> selectedStats = {};
+  mSelectedStats = {};
 
   for (const auto & data : mGameStats)
   {
     if (!mSelectedPlayers.contains(data.PlayerName)) continue;
+    if (data.GameDataCricket.size() == 0) continue;
+
     SPlayerStats stats;
 
-    double bestLegAvg = 0.0;
     uint32_t bestWonLegDartCount = UINT32_MAX;
     uint32_t worstWonLegDartCount = 0;
     uint32_t totalDarts = 0;
+    uint32_t totalHits = 0;
 
     for (const auto & gameData : data.GameDataCricket)
     {
@@ -144,6 +187,7 @@ void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QSt
       stats.LegsWon += gameData.TotalLegsWon;
       stats.LegsPlayed += gameData.ScoringHistory.size();
       stats.ThrownDarts += gameData.TotalDarts;
+      stats.TotalHits += gameData.TotalHits;
       QVector<QVector<QVector<QString>>> totalDarts = gameData.ScoringHistory;
       QVector<QVector<bool>> wonLegs = gameData.LegWonHistory;
       if (gameData.LegWonVec.size()) wonLegs.append(gameData.LegWonVec);
@@ -160,13 +204,24 @@ void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QSt
       }
     }
 
+    if (bestWonLegDartCount == UINT32_MAX) bestWonLegDartCount = 0;
+
     stats.PlayerName = data.PlayerName;
     stats.WinRate = stats.GamesPlayed > 0 ? static_cast<double>(stats.GamesWon) / stats.GamesPlayed * 100 : 0.0;
     stats.LegWinRate = stats.LegsPlayed > 0 ? static_cast<double>(stats.LegsWon) / stats.LegsPlayed * 100 : 0.0;
-    stats.BestLegAvg = 3 * bestLegAvg;
     stats.BestWonLegDartCount = bestWonLegDartCount;
     stats.WorstWonLegDartCount = worstWonLegDartCount;
     stats.DartsPerLegAvg = stats.LegsPlayed > 0 ? static_cast<double>(stats.ThrownDarts) / stats.LegsPlayed : 0.0;
-    selectedStats.append(stats);
+    stats.HitsPerRound = stats.ThrownDarts > 0 ? 3 * static_cast<double>(stats.TotalHits) / stats.ThrownDarts : 0.0;
+    mSelectedStats.append(stats);
   }
+  emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, 0));
+  emit layoutChanged();
+}
+
+void CAlltimePlayerStatsModel::update_selected_game(bool iIsCricket)
+{
+  mIsCricket = iIsCricket;
+  if (mIsCricket) update_selected_players_cricket(mSelectedPlayers);
+  else update_selected_players_x01(mSelectedPlayers);
 }

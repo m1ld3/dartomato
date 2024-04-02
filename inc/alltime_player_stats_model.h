@@ -13,10 +13,11 @@ public:
   explicit CAlltimePlayerStatsModel(CGameDataHandler & iGameDataHandler, const QVector<QString> iSelectedPlayers, bool iIsCricket, QObject * iParent = nullptr);
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
+  QVariant headerData(int iSection, Qt::Orientation iOrientation, int iRole) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
   void update_selected_players_x01(const QVector<QString> iSelectedPlayers);
   void update_selected_players_cricket(const QVector<QString> iSelectedPlayers);
-  void update_selected_game(bool iIsCricket) { mIsCricket = iIsCricket; }
+  void update_selected_game(bool iIsCricket);
 
 private:
 
@@ -58,15 +59,15 @@ private:
                                  , "Legs Won"
                                  , "Leg Win Rate"
                                  , "Thrown Darts"
+                                 , "Best Won Leg"
+                                 , "Worst Won Leg"
+                                 , "Darts-Per-Leg Average"
                                  , "3-Dart-Average"
                                  , "1-Dart-Average"
                                  , "First-9 Average"
                                  , "Best Leg Average"
-                                 , "Best Won Leg"
-                                 , "Worst Won Leg"
                                  , "Checkout Rate"
                                  , "Highest Checkout"
-                                 , "Darts-Per-Leg Average"
                                };
   QStringList mStatLabelsCricket = {   "Games Played"
                                      , "Games Won"
@@ -75,12 +76,11 @@ private:
                                      , "Legs Won"
                                      , "Leg Win Rate"
                                      , "Thrown Darts"
-                                     , "Hits Per Round"
-                                     , "Total Hits"
-                                     , "Best Leg Average"
                                      , "Best Won Leg"
                                      , "Worst Won Leg"
                                      , "Darts-Per-Leg Average"
+                                     , "Hits Per Round"
+                                     , "Total Hits"
                                    };  
 };
 

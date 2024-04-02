@@ -200,6 +200,7 @@ void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayer
     gameDataObject["HitsPerRound"] = data.HitsPerRound;
     gameDataObject["Active"] = data.Active;
     gameDataObject["Finished"] = data.Finished;
+    gameDataObject["GameWon"] = data.GameWon;
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     fill_vec(data.ScoringHistory, gameDataObject, "ScoringHistory");
@@ -272,6 +273,7 @@ void CGameDataHandler::get_player_data(QVector<CCricketClass::CPlayerData> & oGa
     playerData.HitsPerRound = gameDataObject["HitsPerRound"].toDouble();
     playerData.Active = gameDataObject["Active"].toBool();
     playerData.Finished = gameDataObject["Finished"].toBool();
+    playerData.GameWon = gameDataObject["GameWon"].toBool();
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     extract_vec(playerData.ScoringHistory, gameDataObject, "ScoringHistory");
