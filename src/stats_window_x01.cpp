@@ -46,11 +46,6 @@ void CStatsWindowX01::setup_table_views()
   mUi->tableViewGlobalGameStats->setModel(mGlobalGameStatsModel);
   mUi->tableViewGlobalScoreStats->setModel(mGlobalScoreStatsModel);
   mUi->tableViewGlobalSegmentStats->setModel(mGlobalSegmentStatsModel);
-  mUi->tableViewLegStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewLegScores->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalGameStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalScoreStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalSegmentStats->setSelectionMode(QAbstractItemView::NoSelection);
   mUi->tableViewGlobalGameStats->setColumnWidth(0, 125);
   mUi->tableViewGlobalGameStats->setColumnWidth(1, 125);
   mUi->tableViewGlobalGameStats->setColumnWidth(2, 125);

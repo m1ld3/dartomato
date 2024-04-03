@@ -70,7 +70,7 @@ QVariant CAlltimePlayerStatsModel::data(const QModelIndex & iIndex, int iRole) c
       else            return QString::number(mSelectedStats.at(playerIdx).Avg1Dart, 'f', 2);
     case 12: return QString::number(mSelectedStats.at(playerIdx).First9Avg, 'f', 2);
     case 13: return QString::number(mSelectedStats.at(playerIdx).BestLegAvg, 'f', 2);
-    case 14: return QString::number(mSelectedStats.at(playerIdx).CheckoutRate, 'f', 2);
+    case 14: return QString::number(mSelectedStats.at(playerIdx).CheckoutRate, 'f', 2) + "  (" + QString::number(mSelectedStats.at(playerIdx).CheckoutHits) + " / " + QString::number(mSelectedStats.at(playerIdx).CheckoutAttempts) + ")";
     case 15: return QString::number(mSelectedStats.at(playerIdx).HighestCheckout);
     default: return QVariant();
     }

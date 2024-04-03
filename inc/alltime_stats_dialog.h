@@ -26,7 +26,13 @@ private slots:
 
 private:
 
+//  class CAlltimeStatsChart
+//  {
+
+//  };
+
   void setup_drop_down_menu();
+  void prepare_plot_data();
 
   Ui::CAllTimeStatsDialog * mUi;
   CGameDataHandler & mGameDataHandler;

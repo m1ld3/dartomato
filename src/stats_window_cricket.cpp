@@ -38,10 +38,6 @@ void CStatsWindowCricket::setup_table_views()
   mGlobalSegmentStatsModel = new CGlobalSegmentStatsCricketModel(mSegmentCounts, this);
   mUi->tableViewGlobalGameStats->setModel(mGlobalGameStatsModel);
   mUi->tableViewGlobalSegmentStats->setModel(mGlobalSegmentStatsModel);
-  mUi->tableViewLegStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewLegScores->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalGameStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalSegmentStats->setSelectionMode(QAbstractItemView::NoSelection);
   mUi->tableViewGlobalGameStats->setColumnWidth(0, 100);
   mUi->tableViewGlobalGameStats->setColumnWidth(1, 80);
   mUi->tableViewGlobalGameStats->setColumnWidth(2, 70);
