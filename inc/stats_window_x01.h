@@ -114,7 +114,6 @@ private:
   void update_leg_history(int iIndex) override;
   void init_leg_selector() override;
   void calculate_segment_counts() override;
-  double compute_average(QVector<uint32_t> iScoresOfLeg) override;
   uint32_t compute_dart_count_of_indexed_leg(uint32_t iIndex) override;
   void setup_table_views() override;
   void count_scores();

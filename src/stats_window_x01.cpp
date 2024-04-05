@@ -109,7 +109,6 @@ void CStatsWindowX01::update_leg_history(int iIndex)
 
   if (mDartCountOfWonLegs.size())
   {
-    mLegStatsData.AvgLegDartCount = compute_average(mDartCountOfWonLegs);
     mLegStatsData.BestWonLegDartCount = *std::min_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
     mLegStatsData.WorstWonLegDartCount = *std::max_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
   }
@@ -228,17 +227,9 @@ void CStatsWindowX01::compute_dart_count_and_checkouts()
       mAllCheckouts.append(allScoresOfAllLegs.at(idx).back());
     }
   }
+  if (dartsOfAllLegs.size()) mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / dartsOfAllLegs.size();
 
   if (mAllCheckouts.size() > 0) mGlobalGameStatsData.HighestCheckout = *std::max_element(mAllCheckouts.begin(), mAllCheckouts.end());
-}
-
-double CStatsWindowX01::compute_average(QVector<uint32_t> iScoresOfLeg)
-{
-  double avg;
-  double n = static_cast<double>(iScoresOfLeg.size());
-  if (n > 0) avg = std::accumulate(iScoresOfLeg.begin(), iScoresOfLeg.end(), 0.0) / n;
-  else avg = 0.0;
-  return avg;
 }
 
 uint32_t CStatsWindowX01::compute_dart_count_of_indexed_leg(uint32_t iIndex)

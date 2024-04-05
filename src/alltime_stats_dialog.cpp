@@ -15,6 +15,7 @@ CAllTimeStatsDialog::CAllTimeStatsDialog(CGameDataHandler & iGameDataHandler, QW
   mUi->tableView->setModel(mStatsModel);
   mUi->tableView->resizeColumnsToContents();
   connect(mUi->comboBoxGame, &QComboBox::currentIndexChanged, this, &CAllTimeStatsDialog::game_selected_slot);
+  update_stats_combobox(mUi->comboBoxGame->currentIndex() == 1);
 }
 
 CAllTimeStatsDialog::~CAllTimeStatsDialog()
@@ -41,7 +42,30 @@ void CAllTimeStatsDialog::setup_drop_down_menu()
 
 void CAllTimeStatsDialog::prepare_plot_data()
 {
+  for (const auto & game : mGameData)
+  {
 
+  }
+}
+
+void CAllTimeStatsDialog::update_stats_combobox(bool isCricket)
+{
+  if (isCricket)
+  {
+    mUi->comboBoxStats->clear();
+    mUi->comboBoxStats->addItems({"Darts Per Leg Average",
+                                  "Checkout Rate"
+                                 });
+  }
+  else
+  {
+    mUi->comboBoxStats->clear();
+    mUi->comboBoxStats->addItems({"3-Dart Average",
+                                  "First-9-Average",
+                                  "Darts Per Leg Average",
+                                  "Checkout Rate"
+                                 });
+  }
 }
 
 void CAllTimeStatsDialog::player_selected_slot()
@@ -64,7 +88,9 @@ void CAllTimeStatsDialog::player_selected_slot()
 
 void CAllTimeStatsDialog::game_selected_slot()
 {
-  mStatsModel->update_selected_game(mUi->comboBoxGame->currentIndex() == 1);
+  bool isCricket = mUi->comboBoxGame->currentIndex() == 1;
+  mStatsModel->update_selected_game(isCricket);
   mUi->tableView->resizeColumnsToContents();
+  update_stats_combobox(isCricket);
 }
 

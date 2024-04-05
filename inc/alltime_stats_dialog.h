@@ -33,6 +33,7 @@ private:
 
   void setup_drop_down_menu();
   void prepare_plot_data();
+  void update_stats_combobox(bool isCricket);
 
   Ui::CAllTimeStatsDialog * mUi;
   CGameDataHandler & mGameDataHandler;
