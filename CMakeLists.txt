@@ -10,7 +10,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Qt6 COMPONENTS Core Gui Multimedia Widgets SvgWidgets Sql TextToSpeech REQUIRED)
+find_package(Qt6 COMPONENTS Core Gui Multimedia Widgets SvgWidgets Sql TextToSpeech Charts REQUIRED)
 
 include_directories(inc)
 
@@ -153,7 +153,7 @@ qt_add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${INCLUDES} resources/resourc
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON)
 
 target_include_directories(Dartomat PRIVATE ${CMAKE_CURRENT_BINARY_DIR})	
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia Qt6::SvgWidgets Qt6::Sql Qt6::TextToSpeech)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia Qt6::SvgWidgets Qt6::Sql Qt6::TextToSpeech Qt6::Charts)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/../bin)
 

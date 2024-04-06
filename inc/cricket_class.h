@@ -20,6 +20,7 @@ public:
     friend class CGameResultsModel;
     friend class CStatsWindowCricket;
     friend class CAlltimePlayerStatsModel;
+    friend class CAllTimeStatsDialog;
 
   public:
 

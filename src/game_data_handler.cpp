@@ -328,13 +328,14 @@ bool CGameDataHandler::save_game_to_db(const SGameData & iGameData)
   return true;
 }
 
-QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
+QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data(bool iAscending)
 {
   QSqlDatabase db = QSqlDatabase::database();
   QVector<SGameData> gameData;
   QVector<QString> timeStamps;
-
-  QSqlQuery timeStampQuery("SELECT DISTINCT time_stamp FROM games ORDER BY id DESC", db);
+  QString sortDir = iAscending ? "ASC" : "DESC";
+  QString queryStr = "SELECT DISTINCT time_stamp FROM games ORDER BY id " + sortDir;
+  QSqlQuery timeStampQuery(queryStr, db);
   while (timeStampQuery.next())
   {
     timeStamps.append(timeStampQuery.value("time_stamp").toString());

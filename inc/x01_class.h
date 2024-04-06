@@ -22,6 +22,7 @@ public:
     friend class CStatsWindowX01;
     friend class CGameResultsModel;
     friend class CAlltimePlayerStatsModel;
+    friend class CAllTimeStatsDialog;
 
   public:
 
