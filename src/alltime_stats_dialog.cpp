@@ -110,13 +110,21 @@ void CAllTimeStatsDialog::update_stats_combobox(bool iIsCricket)
   }
 }
 
+void CAllTimeStatsDialog::get_min_max(SPlotRange & oPlotRange, const QLineSeries * const iSeries)
+{
+  for (auto & point : iSeries->points())
+  {
+    if (point.x() < oPlotRange.MinX) oPlotRange.MinX = point.x();
+    if (point.x() > oPlotRange.MaxX) oPlotRange.MaxX = point.x();
+    if (point.y() < oPlotRange.MinY) oPlotRange.MinY = point.y();
+    if (point.y() > oPlotRange.MaxY) oPlotRange.MaxY = point.y();
+  }
+}
+
 void CAllTimeStatsDialog::plot_data()
 {
   for (auto * series : mChart->series()) mChart->removeSeries(series);
-  int minX = INT_MAX;
-  int maxX = 0;
-  float minY = 100000;
-  float maxY = 0;
+  SPlotRange range;
   for (uint32_t idx = 0; idx < mPlayerList.size(); idx++)
   {
     if (mSelectedPlayers.contains(mPlayerList.at(idx)))
@@ -127,9 +135,11 @@ void CAllTimeStatsDialog::plot_data()
         {
         case 0:
           mChart->addSeries(mPlotData.at(idx).HitsPerRound);
+          get_min_max(range, mPlotData.at(idx).HitsPerRound);
           break;
         case 1:
           mChart->addSeries(mPlotData.at(idx).DartsPerLegAvgCricket);
+          get_min_max(range, mPlotData.at(idx).DartsPerLegAvgCricket);
           break;
         }
       }
@@ -139,47 +149,19 @@ void CAllTimeStatsDialog::plot_data()
         {
         case 0:
           mChart->addSeries(mPlotData.at(idx).Avg3Dart);
-          for (auto & point : mPlotData.at(idx).Avg3Dart->points())
-          {
-            if (point.x() < minX) minX = point.x();
-            if (point.x() > maxX) maxX = point.x();
-            if (point.y() < minY) minY = point.y();
-            if (point.y() > maxY) maxY = point.y();
-          }
-          for (auto & point : mPlotData.at(idx).Avg3Dart->points()) qDebug() << mPlayerList.at(idx) << "  x: " << point.x() << "  y: " << point.y() << "\n";
+          get_min_max(range, mPlotData.at(idx).Avg3Dart);
           break;
         case 1:
           mChart->addSeries(mPlotData.at(idx).First9Avg);
-          for (auto & point : mPlotData.at(idx).First9Avg->points())
-          {
-            if (point.x() < minX) minX = point.x();
-            if (point.x() > maxX) maxX = point.x();
-            if (point.y() < minY) minY = point.y();
-            if (point.y() > maxY) maxY = point.y();
-          }
-          for (auto & point : mPlotData.at(idx).First9Avg->points()) qDebug() << mPlayerList.at(idx) << "x: " << point.x() << "  y: " << point.y() << "\n";
+          get_min_max(range, mPlotData.at(idx).First9Avg);
           break;
         case 2:
           mChart->addSeries(mPlotData.at(idx).CheckoutRate);
-          for (auto & point : mPlotData.at(idx).CheckoutRate->points())
-          {
-            if (point.x() < minX) minX = point.x();
-            if (point.x() > maxX) maxX = point.x();
-            if (point.y() < minY) minY = point.y();
-            if (point.y() > maxY) maxY = point.y();
-          }
-          for (auto & point : mPlotData.at(idx).CheckoutRate->points()) qDebug() << mPlayerList.at(idx) << "x: " << point.x() << "  y: " << point.y() << "\n";
+          get_min_max(range, mPlotData.at(idx).CheckoutRate);
           break;
         case 3:
           mChart->addSeries(mPlotData.at(idx).DartsPerLegAvgX01);
-          for (auto & point : mPlotData.at(idx).DartsPerLegAvgX01->points())
-          {
-            if (point.x() < minX) minX = point.x();
-            if (point.x() > maxX) maxX = point.x();
-            if (point.y() < minY) minY = point.y();
-            if (point.y() > maxY) maxY = point.y();
-          }
-          for (auto & point : mPlotData.at(idx).DartsPerLegAvgX01->points()) qDebug() << mPlayerList.at(idx) << "x: " << point.x() << "  y: " << point.y() << "\n";
+          get_min_max(range, mPlotData.at(idx).DartsPerLegAvgX01);
           break;
         }
       }
@@ -191,9 +173,19 @@ void CAllTimeStatsDialog::plot_data()
   auto axisY = new QValueAxis();
   axisX->setTitleText("Game");
   axisX->setLabelFormat("%d");
-  if (maxX < 5) axisX->setRange(minX, 5);
-  else axisX->setRange(minX, maxX);
-  axisY->setRange(minY, maxY);
+
+  if (range.MaxX < 5)
+  {
+    axisX->setRange(range.MinX, 5);
+    axisX->setTickCount(5 - range.MinX + 1);
+  }
+  else
+  {
+    axisX->setRange(range.MinX, range.MaxX);
+    axisX->setTickCount(range.MaxX - range.MinX + 1);
+  }
+
+  axisY->setRange(range.MinY - 1, range.MaxY);
   mChart->addAxis(axisX, Qt::AlignBottom);
   mChart->addAxis(axisY, Qt::AlignLeft);
 

@@ -40,10 +40,19 @@ private:
     QPointer<QLineSeries> HitsPerRound = new QLineSeries();
   };
 
+  struct SPlotRange
+  {
+    int MinX = INT_MAX;
+    int MaxX = 0;
+    float MinY = 100000;
+    float MaxY = 0;
+  };
+
   void setup_drop_down_menu();
   void prepare_plot_data();
   void update_stats_combobox(bool iIsCricket);
   void plot_data();
+  void get_min_max(SPlotRange & oPlotRange, const QLineSeries * const iSeries);
 
   Ui::CAllTimeStatsDialog * mUi;
   CGameDataHandler & mGameDataHandler;
