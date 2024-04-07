@@ -32,18 +32,18 @@ void CStatsWindowCricket::setup_table_views()
 {
   mGlobalGameStatsData.HitsPerRound = mPlayerData.HitsPerRound;
   mGlobalGameStatsData.TotalHits = mPlayerData.TotalHits;
+  mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
+  mGlobalGameStatsData.NumLegs = mPlayerData.LegWonVec.size() > 0 ? mPlayerData.LegWonHistory.size() + 1 : mPlayerData.LegWonHistory.size();
   mGlobalGameStatsModel = new CGlobalGameStatsCricketModel(mGlobalGameStatsData, this);
   mGlobalSegmentStatsModel = new CGlobalSegmentStatsCricketModel(mSegmentCounts, this);
   mUi->tableViewGlobalGameStats->setModel(mGlobalGameStatsModel);
   mUi->tableViewGlobalSegmentStats->setModel(mGlobalSegmentStatsModel);
-  mUi->tableViewLegStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewLegScores->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalGameStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalSegmentStats->setSelectionMode(QAbstractItemView::NoSelection);
-  mUi->tableViewGlobalGameStats->setColumnWidth(0, 125);
-  mUi->tableViewGlobalGameStats->setColumnWidth(1, 125);
-  mUi->tableViewGlobalGameStats->setColumnWidth(2, 125);
-  mUi->tableViewGlobalGameStats->setColumnWidth(3, 125);
+  mUi->tableViewGlobalGameStats->setColumnWidth(0, 100);
+  mUi->tableViewGlobalGameStats->setColumnWidth(1, 80);
+  mUi->tableViewGlobalGameStats->setColumnWidth(2, 70);
+  mUi->tableViewGlobalGameStats->setColumnWidth(3, 80);
+  mUi->tableViewGlobalGameStats->setColumnWidth(4, 70);
+  mUi->tableViewGlobalGameStats->setColumnWidth(5, 50);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(0, 50);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(1, 75);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(2, 50);
@@ -94,16 +94,15 @@ void CStatsWindowCricket::update_leg_history(int iIndex)
     {
       mLegScoresModel->update(totalDarts.at(iIndex));
     }
+    mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / totalDarts.size();
   }
 
   if (mDartCountOfWonLegs.size())
   {
-    mLegStatsData.AvgLegDartCount = compute_average(mDartCountOfWonLegs);
     mLegStatsData.BestWonLegDartCount = *std::min_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
     mLegStatsData.WorstWonLegDartCount = *std::max_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
   }
   mLegStatsData.DartCountOfCurrentLeg = compute_dart_count_of_indexed_leg(iIndex);
-
   if (!mLegStatsModel)
   {
     mLegStatsModel = new CLegStatsCricketModel(mLegStatsData, this);
@@ -149,15 +148,6 @@ void CStatsWindowCricket::compute_dart_count_of_won_legs()
       mDartCountOfWonLegs.append((mPlayerData.ScoringHistory.at(idx).size() - 1) * 3 + mPlayerData.ScoringHistory.at(idx).back().size());
     }
   }
-}
-
-double CStatsWindowCricket::compute_average(QVector<uint32_t> iScoresOfLeg)
-{
-  double avg;
-  double n = static_cast<double>(iScoresOfLeg.size());
-  if (n > 0) avg = std::accumulate(iScoresOfLeg.begin(), iScoresOfLeg.end(), 0.0) / n;
-  else avg = 0.0;
-  return avg;
 }
 
 uint32_t CStatsWindowCricket::compute_dart_count_of_indexed_leg(uint32_t iIndex)

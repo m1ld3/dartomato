@@ -21,7 +21,6 @@ private:
   virtual void init_leg_selector() = 0;
   virtual void update_leg_history(int iIndex) = 0;
   virtual void calculate_segment_counts() = 0;
-  virtual double compute_average(QVector<uint32_t> iScoresOfLeg) = 0;
   virtual uint32_t compute_dart_count_of_indexed_leg(uint32_t iIndex) = 0;
   virtual void setup_table_views() = 0;
 };

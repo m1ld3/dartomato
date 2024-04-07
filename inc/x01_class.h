@@ -21,6 +21,8 @@ public:
     friend class CLegStatsModel;
     friend class CStatsWindowX01;
     friend class CGameResultsModel;
+    friend class CAlltimePlayerStatsModel;
+    friend class CAllTimeStatsDialog;
 
   public:
 
@@ -36,6 +38,7 @@ public:
                 double iAvg1Dart,
                 double iAvg3Dart,
                 double iCheckoutRate,
+                double iFirst9Avg,
                 QVector<uint32_t> iScoresOfCurrentLeg,
                 QVector<QVector<uint32_t>> iAllScoresOfAllLegs,
                 QVector<uint32_t> iAllScoresFlat,
@@ -56,6 +59,7 @@ public:
       , Avg1Dart(iAvg1Dart)
       , Avg3Dart(iAvg3Dart)
       , CheckoutRate(iCheckoutRate)
+      , First9Avg(iFirst9Avg)
       , ScoresOfCurrentLeg(iScoresOfCurrentLeg)
       , AllScoresOfAllLegs(iAllScoresOfAllLegs)
       , AllScoresFlat(iAllScoresFlat)
@@ -68,6 +72,7 @@ public:
     {}
 
     bool Active = false;
+    bool Finished = false;
 
   private:
 
@@ -81,6 +86,7 @@ public:
     double Avg1Dart           = 0.0;
     double Avg3Dart           = 0.0;
     double CheckoutRate       = 0.0;
+    double First9Avg          = 0.0;
     QVector<uint32_t> ScoresOfCurrentLeg                    = {};
     QVector<QVector<uint32_t>> AllScoresOfAllLegs           = {};
     QVector<uint32_t> AllScoresFlat                         = {};
@@ -115,6 +121,7 @@ public:
 private:
 
   void compute_checkout();
+  void compute_first9_avg();
 
   const CSettings & mSettings;
   uint32_t mSetsWon = 0;
@@ -127,6 +134,7 @@ private:
   double mAvg1Dart = 0.0;
   double mAvg3Dart = 0.0;
   double mCheckoutRate = 0.0;
+  double mFirst9Avg = 0.0;
   QVector<uint32_t> mScoresOfCurrentLeg = {};
   QVector<QVector<uint32_t>> mAllScoresOfAllLegs = {};
   QVector<uint32_t> mAllScoresFlat = {};

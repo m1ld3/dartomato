@@ -40,6 +40,7 @@ void CX01Class::restore_state(CPlayerData iData)
   mAvg1Dart = iData.Avg1Dart;
   mAvg3Dart = iData.Avg3Dart;
   mCheckoutRate = iData.CheckoutRate;
+  mFirst9Avg = iData.First9Avg;
   mScoresOfCurrentLeg = iData.ScoresOfCurrentLeg;
   mAllScoresOfAllLegs = iData.AllScoresOfAllLegs;
   mAllScoresFlat = iData.AllScoresFlat;
@@ -56,7 +57,7 @@ CX01Class::CPlayerData CX01Class::create_snapshot() const
                      mTotalLegsWon, mRemainingPoints,
                      mCheckoutAttempts, mCheckoutHits,
                      mTotalDarts, mAvg1Dart, mAvg3Dart, mCheckoutRate,
-                     mScoresOfCurrentLeg, mAllScoresOfAllLegs,
+                     mFirst9Avg, mScoresOfCurrentLeg, mAllScoresOfAllLegs,
                      mAllScoresFlat, mThrownDartsOfCurrentLeg,
                      mThrownDartsOfAllLegsFlat, mThrownDartsOfAllLegs,
                      mRemainingPointsOfCurrentLeg, mRemainingPointsOfAllLegs);
@@ -110,13 +111,40 @@ void CX01Class::compute_averages(uint32_t numberofdarts)
 
   if (mTotalDarts > 0)
   {
-    mAvg1Dart = std::accumulate(mAllScoresFlat.begin(),mAllScoresFlat.end(), 0.0)/n;
+    mAvg1Dart = std::accumulate(mAllScoresFlat.begin(), mAllScoresFlat.end(), 0.0) / n;
   }
   else
   {
     mAvg1Dart = 0.0;
   }
   mAvg3Dart = 3 * mAvg1Dart;
+  compute_first9_avg();
+}
+
+void CX01Class::compute_first9_avg()
+{
+  uint32_t points = 0;
+  for (const auto & scores : mAllScoresOfAllLegs)
+  {
+    for (size_t i = 0; i < 3; i++)
+    {
+      if (i < scores.size())
+      {
+        points += scores.at(i);
+      }
+    }
+  }
+
+  int idx = 0;
+  for (const auto score : mScoresOfCurrentLeg)
+  {
+    if (idx < 3) points += score;
+    idx++;
+  }
+
+  auto legs = mScoresOfCurrentLeg.size() > 0 ? mAllScoresOfAllLegs.size() + 1 : mAllScoresOfAllLegs.size();
+  if (legs == 0) mFirst9Avg = 0.0;
+  else mFirst9Avg = static_cast<double>(points) / (legs * 3);
 }
 
 void CX01Class::compute_checkout()

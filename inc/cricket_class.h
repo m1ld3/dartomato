@@ -19,6 +19,8 @@ public:
     friend class CGameDataHandler;
     friend class CGameResultsModel;
     friend class CStatsWindowCricket;
+    friend class CAlltimePlayerStatsModel;
+    friend class CAllTimeStatsDialog;
 
   public:
 
@@ -60,6 +62,8 @@ public:
     {}
 
     bool Active = false;
+    bool Finished = false;
+    bool GameWon = false;
 
   private:
 

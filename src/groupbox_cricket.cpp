@@ -123,10 +123,18 @@ void CCricketGroupBox::handle_leg_won()
   }
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
   mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
-  create_snapshots_of_all_players();
   display_leg_history();
   close_cricket_input();
-  if (mPlayer.has_won_game()) mGameWindow->handle_game_won(mPlayerNumber);
+
+  if (mPlayer.has_won_game())
+  {
+    mGameWon = true;
+    mGameWindow->handle_game_won(mPlayerNumber);
+  }
+  else
+  {
+    create_snapshots_of_all_players();
+  }
 }
 
 void CCricketGroupBox::handle_switch_to_next_player()
@@ -261,6 +269,8 @@ void CCricketGroupBox::create_snapshot()
 {
   auto snap = mPlayer.create_snapshot();
   snap.Active = mActive;
+  snap.Finished = mFinished;
+  snap.GameWon = mGameWon;
   mHistory.push_back(snap);
 }
 
@@ -619,11 +629,8 @@ void CCricketGroupBox::perform_undo()
   }
   mScore = mPlayer.get_score();
   update_gui_elements();
-
-  if (mFinished)
-  {
-    unset_finished();
-  }
+  mFinished = false;
+  mGameWon = false;
 }
 
 void CCricketGroupBox::update_players(const EUpdateType iType)

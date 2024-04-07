@@ -168,7 +168,9 @@ void CGameDataHandler::fill_game_data_array(const QVector<CX01Class::CPlayerData
     gameDataObject["Avg1Dart"] = data.Avg1Dart;
     gameDataObject["Avg3Dart"] = data.Avg3Dart;
     gameDataObject["CheckoutRate"] = data.CheckoutRate;
+    gameDataObject["First9Avg"] = data.First9Avg;
     gameDataObject["Active"] = data.Active;
+    gameDataObject["Finished"] = data.Finished;
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     fill_vec(data.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
@@ -197,6 +199,8 @@ void CGameDataHandler::fill_game_data_array(const QVector<CCricketClass::CPlayer
     gameDataObject["TotalHits"] = static_cast<int>(data.TotalHits);
     gameDataObject["HitsPerRound"] = data.HitsPerRound;
     gameDataObject["Active"] = data.Active;
+    gameDataObject["Finished"] = data.Finished;
+    gameDataObject["GameWon"] = data.GameWon;
 
     fill_vec(data.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     fill_vec(data.ScoringHistory, gameDataObject, "ScoringHistory");
@@ -231,7 +235,9 @@ void CGameDataHandler::get_player_data(QVector<CX01Class::CPlayerData> & oGameHi
     playerData.Avg1Dart = gameDataObject["Avg1Dart"].toDouble();
     playerData.Avg3Dart = gameDataObject["Avg3Dart"].toDouble();
     playerData.CheckoutRate = gameDataObject["CheckoutRate"].toDouble();
+    playerData.First9Avg = gameDataObject["First9Avg"].toDouble();
     playerData.Active = gameDataObject["Active"].toBool();
+    playerData.Finished = gameDataObject["Finished"].toBool();
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     extract_vec(playerData.AllScoresOfAllLegs, gameDataObject, "AllScoresOfAllLegs");
@@ -266,6 +272,8 @@ void CGameDataHandler::get_player_data(QVector<CCricketClass::CPlayerData> & oGa
     playerData.TotalHits = gameDataObject["TotalHits"].toInt();
     playerData.HitsPerRound = gameDataObject["HitsPerRound"].toDouble();
     playerData.Active = gameDataObject["Active"].toBool();
+    playerData.Finished = gameDataObject["Finished"].toBool();
+    playerData.GameWon = gameDataObject["GameWon"].toBool();
 
     extract_vec(playerData.ScoresOfCurrentLeg, gameDataObject, "ScoresOfCurrentLeg");
     extract_vec(playerData.ScoringHistory, gameDataObject, "ScoringHistory");
@@ -320,13 +328,14 @@ bool CGameDataHandler::save_game_to_db(const SGameData & iGameData)
   return true;
 }
 
-QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
+QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data(bool iAscending)
 {
   QSqlDatabase db = QSqlDatabase::database();
   QVector<SGameData> gameData;
   QVector<QString> timeStamps;
-
-  QSqlQuery timeStampQuery("SELECT DISTINCT time_stamp FROM games ORDER BY id DESC", db);
+  QString sortDir = iAscending ? "ASC" : "DESC";
+  QString queryStr = "SELECT DISTINCT time_stamp FROM games ORDER BY id " + sortDir;
+  QSqlQuery timeStampQuery(queryStr, db);
   while (timeStampQuery.next())
   {
     timeStamps.append(timeStampQuery.value("time_stamp").toString());
@@ -379,6 +388,55 @@ QVector<CGameDataHandler::SGameData> CGameDataHandler::get_game_data()
     auto settings = CSettings(gameMode, playerNamesArray, sets, legs, inMode, outMode, cutthroat);
     auto singleGameData = SGameData(timeStamp, finished, settings, winnerId, x01Data, cricketData);
     gameData.append(singleGameData);
+  }
+
+  return gameData;
+}
+
+QVector<CGameDataHandler::SStatsData> CGameDataHandler::get_stats_data()
+{
+  QSqlDatabase db = QSqlDatabase::database();
+  QVector<SStatsData> gameData;
+  QStringList playerNames = get_player_names();
+
+  for (const auto & player : playerNames)
+  {
+    int playerId = get_player_id(player);
+    QSqlQuery selectQuery(QString("SELECT * FROM games WHERE player_id='%1'").arg(playerId));
+    QVector<CX01Class::CPlayerData> x01Data {};
+    QVector<CCricketClass::CPlayerData> cricketData {};
+    auto gameMode = EGame::GAME_501;
+    bool finished = false;
+    bool gameWon = false;
+
+    while (selectQuery.next())
+    {
+      QVector<CX01Class::CPlayerData> singleX01Data {};
+      QVector<CCricketClass::CPlayerData> singleCricketData {};
+      gameMode = static_cast<EGame>(selectQuery.value("game_mode").toInt());
+      finished = selectQuery.value("finished").toBool();
+
+      QString gameDataString = selectQuery.value("game_data").toString();
+      QJsonDocument jsonDoc = QJsonDocument::fromJson(gameDataString.toUtf8());
+      QJsonArray gameDataArray = jsonDoc.array();
+
+      if (gameMode == EGame::GAME_CRICKET)
+      {
+        get_player_data(singleCricketData, gameDataArray);
+        cricketData.append(singleCricketData.back());
+      }
+      else
+      {
+        get_player_data(singleX01Data, gameDataArray);
+        x01Data.append(singleX01Data.back());
+      }
+    }
+
+    if (x01Data.size() || cricketData.size())
+    {
+      auto singlePlayerData = SStatsData(player, x01Data, cricketData);
+      gameData.append(singlePlayerData);
+    }
   }
 
   return gameData;

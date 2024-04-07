@@ -40,7 +40,7 @@
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>60</height>
+       <height>90</height>
       </size>
      </property>
      <property name="focusPolicy">
@@ -57,6 +57,9 @@
      </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
      </property>
      <property name="showGrid">
       <bool>false</bool>
@@ -309,6 +312,9 @@
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAlwaysOff</enum>
            </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::NoSelection</enum>
+           </property>
            <property name="showGrid">
             <bool>false</bool>
            </property>
@@ -354,6 +360,9 @@
          </property>
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
          </property>
          <property name="showGrid">
           <bool>false</bool>

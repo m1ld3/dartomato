@@ -35,12 +35,31 @@ public:
     QVector<QVector<CCricketClass::CPlayerData>> GameDataCricket = {};
   };
 
+  struct SStatsData
+  {
+    SStatsData(const QString iPlayerName,
+              QVector<CX01Class::CPlayerData> iGameDataX01 = {},
+              QVector<CCricketClass::CPlayerData> iGameDataCricket = {}
+              )
+      : PlayerName(iPlayerName)
+      , GameDataX01(iGameDataX01)
+      , GameDataCricket(iGameDataCricket)
+    {}
+
+    SStatsData() = default;
+
+    QString PlayerName = "";
+    QVector<CX01Class::CPlayerData> GameDataX01 = {};
+    QVector<CCricketClass::CPlayerData> GameDataCricket = {};
+  };
+
   CGameDataHandler();
   ~CGameDataHandler() = default;
   bool add_new_player(const QString & iPlayerName);
   QStringList get_player_names() const;
   bool save_game_to_db(const SGameData & iGameData);
-  QVector<SGameData> get_game_data();
+  QVector<SGameData> get_game_data(bool iAscending = false);
+  QVector<SStatsData> get_stats_data();
   bool delete_game_from_db(const QString & iTimeStamp);
 
 private:

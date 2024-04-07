@@ -234,13 +234,18 @@ void CCricketMainWindow::reset_scores_of_all_players()
   }
 }
 
-void CCricketMainWindow::handle_game_won(uint32_t iPlayerNumber)
+void CCricketMainWindow::set_global_finished()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     mPlayerBox[i]->set_finished();
   }
+}
 
+void CCricketMainWindow::handle_game_won(uint32_t iPlayerNumber)
+{
+  set_global_finished();
+  create_snapshots_of_all_players();
   mWinningPlayer = iPlayerNumber;
   QString name = mSettings.PlayersList.at(iPlayerNumber);
   QString text = name + " has won the game. Congratulations!\n Play again?";
