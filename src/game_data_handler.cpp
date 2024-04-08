@@ -454,6 +454,20 @@ bool CGameDataHandler::delete_game_from_db(const QString &iTimeStamp)
   return true;
 }
 
+bool CGameDataHandler::delete_player_from_db(const QString &iPlayerName)
+{
+  int playerId = get_player_id(iPlayerName);
+  QSqlQuery query(QString("DELETE FROM games WHERE player_id = '%1'").arg(playerId));
+  QSqlQuery query2(QString("DELETE FROM players WHERE name = '%1'").arg(iPlayerName));
+  if (!query.exec() || !query2.exec())
+  {
+    qWarning() << "Error deleting data for player " << iPlayerName << query.lastError().text();
+    return false;
+  }
+
+  return true;
+}
+
 template<typename T>
 void CGameDataHandler::fill_vec(const T & iData, QJsonObject & oGameDataObject, const QString & iKey)
 {

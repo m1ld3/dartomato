@@ -29,7 +29,6 @@ public:
   void set_inactive();
   void set_finished();
   void close_cricket_input();
-  QString get_player_number() const;
   void set_set_begin();
   void unset_set_begin();
   void set_leg_begin();
@@ -114,7 +113,8 @@ private:
   bool mGameWon = false;
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
-  QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
+  QPixmap mPixMapHand = QPixmap(":/resources/img/hand.svg");
+  QPixmap mPixMapDot = QPixmap(":/resources/img/dot.png");
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
 };

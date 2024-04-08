@@ -74,6 +74,13 @@ void CDartomatMain::check_for_unfinished_game()
   }
 }
 
+bool CDartomatMain::delete_player_data(const QStringList & iSelectedPlayers)
+{
+  bool result = true;
+  for (const auto & player : iSelectedPlayers) result = result && mGameDataHandler.delete_player_from_db(player);
+  return result;
+}
+
 void CDartomatMain::handle_selected_players(const QStringList & iSelectedPlayers)
 {
   mSelectedPlayers = iSelectedPlayers;

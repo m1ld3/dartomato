@@ -61,6 +61,7 @@ public:
   QVector<SGameData> get_game_data(bool iAscending = false);
   QVector<SStatsData> get_stats_data();
   bool delete_game_from_db(const QString & iTimeStamp);
+  bool delete_player_from_db(const QString & iPlayerName);
 
 private:
 

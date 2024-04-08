@@ -28,7 +28,8 @@ public:
   void handle_selected_players(const QStringList & iSelectedPlayers);
   void start_game(CSettings iSettings);
   void resume_game(const CGameDataHandler::SGameData iGameData);
-  
+  bool delete_player_data(const QStringList & iSelectedPlayers);
+
 private slots:
 
   void push_button_startgame_clicked_slot();

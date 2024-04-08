@@ -26,6 +26,7 @@ private slots:
   void push_button_add_clicked_slot();
   void push_button_submit_clicked_slot();
   void push_button_cancel_clicked_slot();
+  void delete_player_data();
 
 private:
 

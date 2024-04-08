@@ -33,7 +33,6 @@ public:
   void set_inactive();
   void reset();
   void set_finished();
-  QString get_player_number() const;
   void set_set_begin();
   void unset_set_begin();
   void set_leg_begin();
@@ -84,7 +83,8 @@ private:
   bool mFinished = false;
   bool mSetBegin = false;
   bool mLegBegin = false;
-  QPixmap mPixMap = QPixmap(":/resources/img/darts.svg");
+  QPixmap mPixMapHand = QPixmap(":/resources/img/hand.svg");
+  QPixmap mPixMapDot = QPixmap(":/resources/img/dot.png");
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
   CX01MainWindow * mGameWindow;

@@ -53,7 +53,7 @@ void CGameHistoryDialog::delete_current_row()
     return;
   }
 
-  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Delete Game.",
+  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Delete Game",
                                                              "Do you want to delete this game?",
                                                              QMessageBox::Yes | QMessageBox::No);
   if (resBtn == QMessageBox::Yes)

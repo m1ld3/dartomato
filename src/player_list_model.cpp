@@ -9,13 +9,13 @@ CPlayerListModel::CPlayerListModel(const CGameDataHandler & iGameDataHandler, QO
 
 int CPlayerListModel::rowCount(const QModelIndex & iParent) const
 {
-  if (iParent.isValid()) return 0;
+  Q_UNUSED(iParent);
   return mPlayerNames.count();
 }
 
 QVariant CPlayerListModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid())        return QVariant();
+  if (!iIndex.isValid() || iIndex.row() > mPlayerNames.count()) return QVariant();
   if (iRole == Qt::DisplayRole) return mPlayerNames.at(iIndex.row());
   return QVariant();
 }
@@ -32,4 +32,20 @@ bool CPlayerListModel::add_player(const QString & iPlayerName)
     return true;
   }
   return false;
+}
+
+void CPlayerListModel::remove_players(const QStringList & iPlayerNames)
+{
+  bool changed = false;
+
+  for (const auto & player : iPlayerNames)
+  {
+    int index = mPlayerNames.indexOf(player);
+    if (index != -1)
+    {
+      beginRemoveRows(QModelIndex(), index, index);
+      mPlayerNames.removeAt(index);
+      endRemoveRows();
+    }
+  }
 }

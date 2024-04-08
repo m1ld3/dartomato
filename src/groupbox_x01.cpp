@@ -52,7 +52,7 @@ void CX01GroupBox::connect_slots()
 void CX01GroupBox::set_active()
 {
   mActive = true;
-  mUi->labelPic->setPixmap(mPixMap.scaled(80, 80, Qt::KeepAspectRatio));
+  mUi->labelPic->setPixmap(mPixMapHand.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void CX01GroupBox::set_inactive()
@@ -76,11 +76,6 @@ void CX01GroupBox::set_finished()
 void CX01GroupBox::unset_finished()
 {
   mFinished = false;
-}
-
-QString CX01GroupBox::get_player_number() const
-{
-  return mUi->labelPlayerName->text();
 }
 
 void CX01GroupBox::display_stats_and_finishes()
@@ -226,13 +221,13 @@ void CX01GroupBox::unset_set_begin()
 void CX01GroupBox::set_leg_begin()
 {
   mLegBegin = true;
-  mUi->labelPic->setStyleSheet("QLabel{ border: 5px solid green;}");
+  mUi->labelLegBegin->setPixmap(mPixMapDot.scaled(20, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void CX01GroupBox::unset_leg_begin()
 {
   mLegBegin = false;
-  mUi->labelPic->setStyleSheet("");
+  mUi->labelLegBegin->clear();
 }
 
 bool CX01GroupBox::has_begun_leg() const

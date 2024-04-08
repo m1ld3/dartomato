@@ -51,7 +51,7 @@ void CCricketGroupBox::connect_slots()
 void CCricketGroupBox::set_active()
 {
   mActive = true;
-  mUi->labelPic->setPixmap(mPixMap.scaled(80, 80, Qt::KeepAspectRatio));
+  mUi->labelPic->setPixmap(mPixMapHand.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void CCricketGroupBox::set_inactive()
@@ -73,11 +73,6 @@ void CCricketGroupBox::unset_finished()
 void CCricketGroupBox::close_cricket_input()
 {
   this->mScoreInput->close();
-}
-
-QString CCricketGroupBox::get_player_number() const
-{
-  return mUi->labelPlayerName->text();
 }
 
 void CCricketGroupBox::load_slot_arrays_from_player()
@@ -347,13 +342,13 @@ void CCricketGroupBox::unset_set_begin()
 void CCricketGroupBox::set_leg_begin()
 {
   mLegBegin = true;
-  mUi->labelPic->setStyleSheet("QLabel{ border: 5px solid green;}");
+  mUi->labelLegBegin->setPixmap(mPixMapDot.scaled(20, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void CCricketGroupBox::unset_leg_begin()
 {
   mLegBegin = false;
-  mUi->labelPic->setStyleSheet("");
+  mUi->labelLegBegin->clear();
 }
 
 bool CCricketGroupBox::has_begun_leg() const
@@ -469,63 +464,63 @@ void CCricketGroupBox::set_slot_label(const ECricketSlots iSlot, uint32_t iHits)
       {
         mUi->label15Slot1->clear(); mUi->label15Slot2->clear(); mUi->label15Slot3->clear();
       }
-      else if (i == 1) mUi->label15Slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 2) mUi->label15Slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 3) mUi->label15Slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 1) mUi->label15Slot1->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label15Slot2->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label15Slot3->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
       break;
     case ECricketSlots::SLOT_16:
       if (i == 0)
       {
         mUi->label16Slot1->clear(); mUi->label16Slot2->clear(); mUi->label16Slot3->clear();
       }
-      else if (i == 1) mUi->label16Slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 2) mUi->label16Slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 3) mUi->label16Slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 1) mUi->label16Slot1->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label16Slot2->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label16Slot3->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
       break;
     case ECricketSlots::SLOT_17:
       if (i == 0)
       {
         mUi->label17Slot1->clear(); mUi->label17Slot2->clear(); mUi->label17Slot3->clear();
       }
-      else if (i == 1) mUi->label17Slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 2) mUi->label17Slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 3) mUi->label17Slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 1) mUi->label17Slot1->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label17Slot2->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label17Slot3->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
       break;
     case ECricketSlots::SLOT_18:
       if (i == 0)
       {
         mUi->label18Slot1->clear(); mUi->label18Slot2->clear(); mUi->label18Slot3->clear();
       }
-      else if (i == 1) mUi->label18Slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 2) mUi->label18Slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 3) mUi->label18Slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 1) mUi->label18Slot1->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label18Slot2->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label18Slot3->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
       break;
     case ECricketSlots::SLOT_19:
       if (i == 0)
       {
         mUi->label19Slot1->clear(); mUi->label19Slot2->clear(); mUi->label19Slot3->clear();
       }
-      else if (i == 1) mUi->label19Slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 2) mUi->label19Slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 3) mUi->label19Slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 1) mUi->label19Slot1->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label19Slot2->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label19Slot3->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
       break;
     case ECricketSlots::SLOT_20:
       if (i == 0)
       {
         mUi->label20Slot1->clear(); mUi->label20Slot2->clear(); mUi->label20Slot3->clear();
       }
-      else if (i == 1) mUi->label20Slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 2) mUi->label20Slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 3) mUi->label20Slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 1) mUi->label20Slot1->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label20Slot2->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label20Slot3->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
       break;
     case ECricketSlots::SLOT_25:
       if (i == 0)
       {
         mUi->label25Slot1->clear(); mUi->label25Slot2->clear(); mUi->label25Slot3->clear();
       }
-      else if (i == 1) mUi->label25Slot1->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 2) mUi->label25Slot2->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
-      else if (i == 3) mUi->label25Slot3->setPixmap(mPixMap.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 1) mUi->label25Slot1->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 2) mUi->label25Slot2->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
+      else if (i == 3) mUi->label25Slot3->setPixmap(mPixMapDot.scaled(w, h, Qt::KeepAspectRatio));
       break;
     default:;
     }

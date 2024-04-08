@@ -14,6 +14,7 @@ public:
   int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
   QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
   bool add_player(const QString & iPlayerName);
+  void remove_players(const QStringList & iPlayerNames);
 
 private:
 
