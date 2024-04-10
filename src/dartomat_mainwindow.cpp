@@ -29,6 +29,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   mUi->radioButtonDout->setChecked(true);
   mUi->comboBoxGame->setCurrentIndex(1);
   mUi->checkBoxCutThroat->setVisible(false);
+  mUi->labelLogo->setPixmap(mLogo.scaled(180, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 #ifndef USE_TTS
   mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
 #endif

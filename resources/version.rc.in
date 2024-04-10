@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "version.h"
 
-IDI_ICON1 ICON "..\\dartomat\\resources\\img\\dartomato.ico"
+IDI_ICON1 ICON "..\\dartomato\\resources\\img\\dartomato.ico"
 
 VS_VERSION_INFO VERSIONINFO
 	FILEVERSION @VERSION_MAJOR@,@VERSION_MINOR@,@VERSION_PATCH@
@@ -22,13 +22,13 @@ VS_VERSION_INFO VERSIONINFO
 			BLOCK "040904b0"
 			BEGIN
 				VALUE "CompanyName", ""
-				VALUE "FileDescription", "Dartomat"
-				VALUE "FileVersion", "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@COMMIT_HASH@\0"
+				VALUE "FileDescription", "Dartomato"
+				VALUE "FileVersion", "v@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@\0"
 				VALUE "LegalCopyright", ""
-				VALUE "OriginalFilename", "Dartomat.exe"
-				VALUE "ProductName", "Dartomat"
-				VALUE "ProductVersion", "@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@COMMIT_HASH@\0"
-				VALUE "InternalName", "Dartomat"
+				VALUE "OriginalFilename", "Dartomato.exe"
+				VALUE "ProductName", "Dartomato"
+				VALUE "ProductVersion", "v@VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@.@COMMIT_HASH@\0"
+				VALUE "InternalName", "Dartomato"
 				VALUE "Comments", ""
 				VALUE "LegalTrademarks", ""
 			END

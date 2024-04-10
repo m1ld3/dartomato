@@ -55,6 +55,7 @@ private:
   CGameDataHandler mGameDataHandler;
   CPlayerListModel mPlayerListModel;
   QStringList mSelectedPlayers = {};
+  QPixmap mLogo = QPixmap(":/resources/img/dartomato.png");
 };
 
 #endif  // DARTOMAT_MAINWINDOW_H
