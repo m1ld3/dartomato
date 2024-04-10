@@ -2,7 +2,7 @@
 # You may attempt to use it for building too, by modifying this file here.
 
 cmake_minimum_required(VERSION 3.5)
-project(Dartomat)
+project(Dartomato)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
@@ -152,7 +152,7 @@ qt_add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${INCLUDES} resources/resourc
 
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON)
 
-target_include_directories(Dartomat PRIVATE ${CMAKE_CURRENT_BINARY_DIR})	
+target_include_directories(Dartomato PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia Qt6::SvgWidgets Qt6::Sql Qt6::TextToSpeech Qt6::Charts)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/../bin)

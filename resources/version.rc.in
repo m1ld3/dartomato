@@ -2,7 +2,7 @@
 #include <windows.h>
 #include "version.h"
 
-IDI_ICON1 ICON "..\\dartomat\\resources\\img\\dartomat.ico"
+IDI_ICON1 ICON "..\\dartomat\\resources\\img\\dartomato.ico"
 
 VS_VERSION_INFO VERSIONINFO
 	FILEVERSION @VERSION_MAJOR@,@VERSION_MINOR@,@VERSION_PATCH@
