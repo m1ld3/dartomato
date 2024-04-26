@@ -1,16 +1,14 @@
-# Created by and for Qt Creator This file was created for editing the project sources only.
-# You may attempt to use it for building too, by modifying this file here.
-
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 project(Dartomato)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)  
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-find_package(Qt6 COMPONENTS Core Gui Multimedia Widgets SvgWidgets Sql TextToSpeech Charts REQUIRED)
+
+find_package(Qt6 COMPONENTS Core Gui Multimedia Widgets SvgWidgets Sql Charts Test REQUIRED)
 
 include_directories(inc)
 
@@ -52,7 +50,7 @@ set(INCLUDES
     inc/game_history_table_view.h
     inc/game_results_model.h
     inc/alltime_stats_dialog.h
-	inc/alltime_player_stats_model.h
+    inc/alltime_player_stats_model.h
     )
  
 set(SOURCES
@@ -91,7 +89,7 @@ set(SOURCES
     src/game_history_model.cpp
     src/game_results_model.cpp
     src/alltime_stats_dialog.cpp
-	src/alltime_player_stats_model.cpp
+    src/alltime_player_stats_model.cpp
     src/add_players_dialog.ui
     src/cricket_input.ui
     src/cricket_mainwindow.ui
@@ -153,7 +151,9 @@ qt_add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${INCLUDES} resources/resourc
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON)
 
 target_include_directories(Dartomato PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia Qt6::SvgWidgets Qt6::Sql Qt6::TextToSpeech Qt6::Charts)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Multimedia Qt6::SvgWidgets Qt6::Sql Qt6::Charts)
+
+add_subdirectory(tests)
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/../bin)
 
@@ -168,5 +168,6 @@ qt_generate_deploy_app_script(
   OUTPUT_SCRIPT deploy_script
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
+
 install(SCRIPT ${deploy_script})
 

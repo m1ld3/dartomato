@@ -3,9 +3,7 @@
 
 #include <QMainWindow>
 #include "groupbox_cricket.h"
-#ifndef USE_TTS
 #include <QSoundEffect>
-#endif
 #include <QGridLayout>
 #include "game_data_handler.h"
 #include <QDateTime>

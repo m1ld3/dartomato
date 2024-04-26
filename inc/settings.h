@@ -5,8 +5,6 @@
 #include <QStringList>
 #include <map>
 
-//#define USE_TTS
-
 enum class EGame
 {
     GAME_301 = 301

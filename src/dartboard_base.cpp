@@ -1,18 +1,11 @@
 #include "dartboard_base.h"
 #include "dartboard_segment.h"
 #include "cmath"
-#ifdef USE_TTS
-#include <QtTextToSpeech>
-#endif
 
 CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & iSettings)
-#ifdef USE_TTS
-  : mSettings(iSettings)
-#else
   : mBustedSound(this)
   , mGameShotSound(this)
   , mSettings(iSettings)
-#endif
 {
   mScene = new QGraphicsScene(0, 0, 800, 800, iGraphicsViewDartBoard);
   mScene->setSceneRect(0, 0, 800, 800);
@@ -629,10 +622,8 @@ CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings 
   mLabels->setZValue(1);
   mLabels->setScale(0.98);
   mLabels->setPos(10, 10);
-#ifndef USE_TTS
   mBustedSound.setSource(QUrl("qrc:/resources/sounds/busted.wav"));
   mGameShotSound.setSource(QUrl("qrc:/resources/sounds/gameshot.wav"));
-#endif
 }
 
 CDartBoard::~CDartBoard()
@@ -706,15 +697,5 @@ CDartBoard::~CDartBoard()
 
 void CDartBoard::play_game_shot_sound()
 {
-#ifdef USE_TTS
-  auto * tts = new QTextToSpeech;
-  QLocale locale(QLocale::English, QLocale::UnitedKingdom);
-  tts->setLocale(locale);
-  tts->setVolume(1.0);
-  tts->setRate(0.1);
-  tts->say("Game shot!");
-#else
   mGameShotSound.play();
-#endif
-
 }

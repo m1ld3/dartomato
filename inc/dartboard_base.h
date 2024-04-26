@@ -6,9 +6,7 @@
 #include <QGraphicsSvgItem>
 #include <QLabel>
 #include "dartboard_view.h"
-#ifndef USE_TTS
 #include <QSoundEffect>
-#endif
 #include "settings.h"
 
 class CDartBoardSegment;
@@ -31,10 +29,8 @@ protected:
 
   QGraphicsView * mView;
   QGraphicsScene * mScene;
-#ifndef USE_TTS
   QSoundEffect mBustedSound;
   QSoundEffect mGameShotSound;
-#endif
   const CSettings & mSettings;
 
   CDartBoardSegment * mS20;

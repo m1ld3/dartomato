@@ -24,9 +24,7 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
   , mPlayerNumber(iPlayerNumber)
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
-#ifndef USE_TTS
   , mScoreSound(this)
-#endif
   , mHistory({mPlayer.create_snapshot()})
 {
   mUi->setupUi(this);
@@ -91,16 +89,7 @@ void CX01GroupBox::display_stats_and_finishes()
 
 void CX01GroupBox::play_score_sound()
 {
-#ifdef USE_TTS
-  auto * tts = new QTextToSpeech;
-  QLocale locale(QLocale::English, QLocale::UnitedKingdom);
-  tts->setLocale(locale);
-  tts->setVolume(1.0);
-  tts->setRate(0.1);
-  tts->say(QString::number(mCurrentScore));
-#else
   mScoreSound.play();
-#endif
 }
 
 void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
@@ -145,9 +134,7 @@ void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
 void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
 {
   mCurrentScore = iScore;
-#ifndef USE_TTS
   prepare_score_sound();
-#endif
   CX01GroupBox::mLegAlreadyStarted = true;
   CX01GroupBox::mSetAlreadyStarted = true;
   mRemainingPoints = mPlayer.set_score(mCurrentScore);
@@ -269,14 +256,12 @@ const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t
 
 void CX01GroupBox::prepare_score_sound()
 {
-#ifndef USE_TTS
   std::stringstream ss;
   ss << std::setw(3) << std::setfill('0') << mCurrentScore;
   std::string digits = ss.str();
   std::string strpath = "qrc:/resources/sounds/" + digits + ".wav";
   QString filepath = QString::fromStdString(strpath);
   mScoreSound.setSource(filepath);
-#endif
 }
 
 void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts)

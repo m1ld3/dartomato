@@ -4,9 +4,7 @@
 #include <QPushButton>
 #include <QVector>
 #include <QGridLayout>
-#ifndef USE_TTS
 #include <QSoundEffect>
-#endif
 #include <QJsonArray>
 #include <QMessageBox>
 #include "version.h"
@@ -18,11 +16,9 @@
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
   , mUi(new Ui::CDartomatMain)
-#ifndef USE_TTS
   , mGameOnSound(this)
   , mGameDataHandler(CGameDataHandler())
   , mPlayerListModel(CPlayerListModel(mGameDataHandler, this))
-#endif
 {
   mUi->setupUi(this);
   mUi->radioButtonSin->setChecked(true);
@@ -30,9 +26,7 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   mUi->comboBoxGame->setCurrentIndex(1);
   mUi->checkBoxCutThroat->setVisible(false);
   mUi->labelLogo->setPixmap(mLogo.scaled(180, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-#ifndef USE_TTS
   mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
-#endif
 
   create_menu();
 
@@ -213,14 +207,5 @@ void CDartomatMain::push_button_stats_clicked_slot()
 
 void CDartomatMain::play_game_on_sound()
 {
-#ifdef USE_TTS
-  auto * tts = new QTextToSpeech;
-  QLocale locale(QLocale::English, QLocale::UnitedKingdom);
-  tts->setLocale(locale);
-  tts->setVolume(1.0);
-  tts->setRate(0.1);
-  tts->say("Game on!");
-#else
   mGameOnSound.play();
-#endif
 }

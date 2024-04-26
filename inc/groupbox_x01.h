@@ -5,11 +5,7 @@
 #include "dartboard_x01.h"
 #include "x01_class.h"
 #include <QPixmap>
-#ifdef USE_TTS
-#include <QtTextToSpeech>
-#else
 #include <QSoundEffect>
-#endif
 #include "settings.h"
 
 class CX01MainWindow;
@@ -88,9 +84,7 @@ private:
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
   CX01MainWindow * mGameWindow;
-#ifndef USE_TTS
   QSoundEffect mScoreSound;
-#endif
   QVector<CX01Class::CPlayerData> mHistory;
 };
 

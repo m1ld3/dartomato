@@ -3,9 +3,7 @@
 
 #include <QMainWindow>
 #include "groupbox_x01.h"
-#ifndef USE_TTS
 #include <QSoundEffect>
-#endif
 #include "dartboard_x01.h"
 #include "settings.h"
 #include "game_data_handler.h"

@@ -49,9 +49,7 @@ private:
   Ui::CDartomatMain * mUi;
   QPointer<CX01MainWindow> mX01MainWindow;
   QPointer<CCricketMainWindow> mCricketMainWindow;
-#ifndef USE_TTS
   QSoundEffect mGameOnSound;
-#endif
   CGameDataHandler mGameDataHandler;
   CPlayerListModel mPlayerListModel;
   QStringList mSelectedPlayers = {};

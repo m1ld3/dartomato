@@ -7,9 +7,7 @@
 #include <QLCDNumber>
 #include <QLabel>
 #include <QGraphicsSvgItem>
-#ifndef USE_TTS
 #include <QSoundEffect>
-#endif
 #include "dartboard_cricket.h"
 #include "settings.h"
 
