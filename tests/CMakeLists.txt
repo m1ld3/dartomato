@@ -25,6 +25,7 @@ enable_testing()
 include_directories(../inc)
 
 set(INCLUDES
+    fakes.h
     ../inc/player_list_model.h
     ../inc/game_data_handler.h
     ../inc/checkout_lists.h
@@ -127,6 +128,7 @@ set_target_properties(dartomato_test PROPERTIES
 target_link_libraries(dartomato_test
   PUBLIC
     GTest::gtest_main
+    gmock
   PRIVATE
     Qt6::Core
     Qt6::Gui
@@ -146,4 +148,4 @@ install(CODE "
 ")
 
 include(GoogleTest)
-gtest_discover_tests(dartomato_test)
+gtest_discover_tests(dartomato_test DISCOVERY_MODE PRE_TEST)

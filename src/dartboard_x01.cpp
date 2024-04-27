@@ -3,13 +3,24 @@
 #include <cmath>
 #include <QMessageBox>
 
+#ifndef TESTING
+#define PUT_WARNING(TITLE, MESSAGE) \
+    QMessageBox::warning(this, (TITLE), (MESSAGE));
+#else
+#include <iostream>
+#define PUT_WARNING(TITLE, MESSAGE) \
+    std::cout << TITLE << ": " << MESSAGE;
+#endif
+
+#ifndef TESTING
 CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * iX01MainWindow, const CSettings & iSettings)
   : CDartBoard(iGraphicsViewDartBoard, iSettings)
-  , mGameWindow(static_cast<CX01MainWindow*>(iX01MainWindow))
+  , mGameWindow(iX01MainWindow)
 {
   erase_all_darts();
   display_score(mScore);
 }
+#endif
 
 void CDartBoardX01::set_score(uint32_t iVal, QChar iType, bool iCheckoutAttempt)
 {
@@ -118,7 +129,7 @@ void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
 {
   if (mFinished)
   {
-    QMessageBox::warning(this, "", "Game already finished!");
+    PUT_WARNING("", "Game already finished!")
     return;
   }
 
@@ -149,9 +160,9 @@ void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
       set_focus_to_submit_button();
     }
   }
-  else if (mBusted)                     QMessageBox::warning(this, "Warning", "You are already busted!");
-  else if (mScore == 0)                 QMessageBox::warning(this, "Warning", "You have already won this leg!");
-  else if (mScore > 0 && mCounter == 0) QMessageBox::warning(this, "Warning", "You only have three darts!");
+  else if (mBusted)                     PUT_WARNING("Warning", "You are already busted!")
+  else if (mScore == 0)                 PUT_WARNING("Warning", "You have already won this leg!")
+  else if (mScore > 0 && mCounter == 0) PUT_WARNING("Warning", "You only have three darts!")
 }
 
 void CDartBoardX01::perform_undo()
@@ -194,11 +205,11 @@ void CDartBoardX01::submit_score()
   }
   else if (!mFinished)
   {
-    QMessageBox::warning(this, "Score incomplete", "Please enter all darts.");
+    PUT_WARNING("Score incomplete", "Please enter all darts.")
   }
   else
   {
-    QMessageBox::warning(this, "", "Game already finished!");
+    PUT_WARNING("", "Game already finished!")
   }
 }
 

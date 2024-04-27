@@ -21,7 +21,11 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
   mUi->setupUi(this);
   QString text = QString::number(static_cast<uint32_t>(mSettings.Game));
   QWidget::setWindowTitle(text);
+#ifndef TESTING
   mDartBoard = new CDartBoardX01(mUi->graphicsViewDartBoard, this, mSettings);
+#else
+  mDartBoard = new CDartBoardX01();
+#endif
   mDartBoard->init_dartboard(static_cast<uint32_t>(mSettings.Game));
   connect_main_window_slots();
   add_players();

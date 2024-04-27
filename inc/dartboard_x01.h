@@ -3,17 +3,29 @@
 
 #include "dartboard_base.h"
 #include "settings.h"
+#ifdef TESTING
+#include "fakes.h"
+#endif
 
 class CX01MainWindow;
 
+#ifdef TESTING
+class CDartBoardX01 : public CDartBoardFake
+{
+#else
 class CDartBoardX01 : public CDartBoard
 {
   Q_OBJECT
-
+#endif
 public:
 
+#ifdef TESTING
+  CDartBoardX01(){};
+#else
   CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * iX01MainWindow, const CSettings & iSettings);
   ~CDartBoardX01() override = default;
+#endif
+
   void init_dartboard(uint32_t iScore);
   void perform_undo();
   void submit_score();
@@ -55,5 +67,4 @@ private:
   QVector<bool> mCheckoutAttempts = {false, false, false};
   QVector<uint32_t> mBoogieNumbers = {23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59};
 };
-
 #endif  // DARTBOARD_X01_H

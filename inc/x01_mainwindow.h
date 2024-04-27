@@ -23,6 +23,9 @@ public:
   explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
   explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, QVector<QVector<CX01Class::CPlayerData>> iGameData);
   ~CX01MainWindow() override;
+#ifdef TESTING
+  CX01MainWindow(){};
+#endif
   void closeEvent(QCloseEvent * iEvent) override;
   void handle_game_won(uint32_t iPlayerNumber);
   void display_score(uint32_t iScore);
@@ -67,7 +70,7 @@ private:
   QVector<CX01GroupBox*> mPlayerBox;
   CDartBoardX01 * mDartBoard;
   const CSettings mSettings;
-  CGameDataHandler & mGameDataHandler;
+  CGameDataHandler mGameDataHandler;
   const uint32_t mNumberOfPlayers = 1;
   QDateTime mTimeStamp;
 };
