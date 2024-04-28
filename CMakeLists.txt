@@ -51,6 +51,7 @@ set(INCLUDES
     inc/game_results_model.h
     inc/alltime_stats_dialog.h
     inc/alltime_player_stats_model.h
+    inc/mainwindow_if.h
     )
  
 set(SOURCES

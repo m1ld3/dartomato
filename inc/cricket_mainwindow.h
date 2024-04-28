@@ -42,6 +42,7 @@ public:
 private:
 
   void update_active_player();
+  void add_players();
   void handle_update_default();
   void handle_update_leg();
   void handle_update_set();
@@ -49,7 +50,6 @@ private:
   void unset_leg_begin_for_all_players();
   void unset_set_begin_for_all_players();
   void set_active_player(uint32_t iPlayer);
-  void add_players();
   void save_current_game();
   bool game_finished() const;
   void start_new_game_with_same_settings();
