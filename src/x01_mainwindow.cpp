@@ -105,18 +105,6 @@ void CX01MainWindow::closeEvent(QCloseEvent * iEvent)
   }
 }
 
-void CX01MainWindow::save_unfinished_game_file()
-{
-  QFile file(OpenGamePath);
-
-  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-  {
-    QTextStream stream(&file);
-    stream << mTimeStamp.toString();
-    file.close();
-  }
-}
-
 void CX01MainWindow::set_active_player(uint32_t iPlayer)
 {
   mActivePlayer = iPlayer;
@@ -176,24 +164,24 @@ void CX01MainWindow::clear_group_box_widgets()
   mPlayerBox = {};
 }
 
-void CX01MainWindow::update_active_player()
+void CX01MainWindow::inactivate_all_players()
 {
-  mActivePlayer = (mActivePlayer + 1) % mNumberOfPlayers;
-}
-
-void CX01MainWindow::update_player_default()
-{
-  update_active_player();
-
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     mPlayerBox[i]->set_inactive();
   }
+}
+
+void CX01MainWindow::handle_update_default()
+{
+  update_active_player();
+  inactivate_all_players();
   mPlayerBox[mActivePlayer]->set_active();
 }
 
-void CX01MainWindow::update_player_leg()
+void CX01MainWindow::handle_update_leg()
 {
+  inactivate_all_players();
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     if (mPlayerBox[i]->has_begun_leg())
@@ -201,11 +189,6 @@ void CX01MainWindow::update_player_leg()
       mPlayerBox[i]->unset_leg_begin();
       mActivePlayer = i;
       update_active_player();
-
-      for (uint32_t i = 0; i < mNumberOfPlayers; i++)
-      {
-        mPlayerBox[i]->set_inactive();
-      }
       mPlayerBox[mActivePlayer]->set_active();
       mPlayerBox[mActivePlayer]->set_leg_begin();
       break;
@@ -213,8 +196,11 @@ void CX01MainWindow::update_player_leg()
   }
 }
 
-void CX01MainWindow::update_player_set()
+void CX01MainWindow::handle_update_set()
 {
+  inactivate_all_players();
+  unset_leg_begin_for_all_players();
+
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     if (mPlayerBox[i]->has_begun_set())
@@ -222,12 +208,6 @@ void CX01MainWindow::update_player_set()
       mPlayerBox[i]->unset_set_begin();
       mActivePlayer = i;
       update_active_player();
-
-      for (uint32_t i = 0; i < mNumberOfPlayers; i++)
-      {
-        mPlayerBox[i]->set_inactive();
-        mPlayerBox[i]->unset_leg_begin();
-      }
       mPlayerBox[mActivePlayer]->set_active();
       mPlayerBox[mActivePlayer]->set_set_begin();
       mPlayerBox[mActivePlayer]->set_leg_begin();
@@ -246,15 +226,15 @@ void CX01MainWindow::update_players(const EUpdateType iType)
 {
   if (iType == EUpdateType::DEFAULT)
   {
-    update_player_default();
+    handle_update_default();
   }
   else if (iType == EUpdateType::LEG)
   {
-    update_player_leg();
+    handle_update_leg();
   }
   else if (iType == EUpdateType::SET)
   {
-    update_player_set();
+    handle_update_set();
   }
   mDartBoard->init_dartboard(mPlayerBox[mActivePlayer]->get_remaining_points());
 }
@@ -293,28 +273,37 @@ void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
   }
 }
 
-void CX01MainWindow::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
+void CX01MainWindow::unset_leg_begin_for_all_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox[i]->set_inactive();
+    mPlayerBox[i]->unset_leg_begin();
   }
+}
+
+void CX01MainWindow::unset_set_begin_for_all_players()
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mPlayerBox[i]->unset_set_begin();
+  }
+}
+
+void CX01MainWindow::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
+{
+  inactivate_all_players();
   set_active_player(iPlayer);
+
   if (!iLegStarted)
   {
-    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
-    {
-      mPlayerBox[i]->unset_leg_begin();
-    }
+    unset_leg_begin_for_all_players();
     mPlayerBox[iPlayer]->set_leg_begin();
   }
+
   if (!iSetStarted)
   {
-    for (uint32_t i = 0; i < mNumberOfPlayers; i++)
-    {
-      mPlayerBox[i]->unset_set_begin();
-      mPlayerBox[i]->unset_leg_begin();
-    }
+    unset_leg_begin_for_all_players();
+    unset_set_begin_for_all_players();
     mPlayerBox[iPlayer]->set_leg_begin();
     mPlayerBox[iPlayer]->set_set_begin();
   }

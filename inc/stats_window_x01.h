@@ -22,7 +22,7 @@ class CGlobalSegmentStatsX01Model;
 class CStatsWindowX01 : public QDialog, public CStatsWindow
 {
   Q_OBJECT
-  Q_INTERFACES(CStatsWindow)
+//  Q_INTERFACES(CStatsWindow)
 
 public:
 

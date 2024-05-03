@@ -21,7 +21,7 @@ class CGlobalSegmentStatsCricketModel;
 class CStatsWindowCricket : public QDialog, public CStatsWindow
 {
   Q_OBJECT
-  Q_INTERFACES(CStatsWindow)
+//  Q_INTERFACES(CStatsWindow)
 
 public:
 

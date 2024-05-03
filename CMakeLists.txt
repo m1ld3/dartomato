@@ -52,6 +52,8 @@ set(INCLUDES
     inc/alltime_stats_dialog.h
     inc/alltime_player_stats_model.h
     inc/mainwindow_if.h
+    inc/x01_mainwindow_if.h
+    inc/cricket_mainwindow_if.h
     )
  
 set(SOURCES

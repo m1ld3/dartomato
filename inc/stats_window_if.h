@@ -25,6 +25,6 @@ private:
   virtual void setup_table_views() = 0;
 };
 
-Q_DECLARE_INTERFACE(CStatsWindow, "com.CStatsWindow")
+//Q_DECLARE_INTERFACE(CStatsWindow, "com.CStatsWindow")
 
 #endif  // STATS_WINDOW_IF_H

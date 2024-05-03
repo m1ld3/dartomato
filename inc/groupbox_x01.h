@@ -2,13 +2,13 @@
 #define GROUPBOX_X01_H
 
 #include <QGroupBox>
-#include "dartboard_x01.h"
 #include "x01_class.h"
 #include <QPixmap>
 #include <QSoundEffect>
 #include "settings.h"
 
 class CX01MainWindow;
+class CDartBoardX01;
 class CGameDataHandler;
 
 namespace Ui

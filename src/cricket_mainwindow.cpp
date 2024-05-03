@@ -98,18 +98,6 @@ void CCricketMainWindow::clear_group_box_widgets()
   mPlayerBox = {};
 }
 
-void CCricketMainWindow::save_unfinished_game_file()
-{
-  QFile file(OpenGamePath);
-
-  if (file.open(QIODevice::WriteOnly | QIODevice::Text))
-  {
-    QTextStream stream(&file);
-    stream << mTimeStamp.toString();
-    file.close();
-  }
-}
-
 void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
 {
   if (game_finished())
@@ -139,11 +127,6 @@ void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
 void CCricketMainWindow::set_active_player(uint32_t iPlayer)
 {
   mActivePlayer = iPlayer;
-}
-
-void CCricketMainWindow::update_active_player()
-{
-  mActivePlayer = (mActivePlayer + 1) % mNumberOfPlayers;
 }
 
 void CCricketMainWindow::inactivate_all_players()
@@ -178,18 +161,11 @@ void CCricketMainWindow::handle_update_leg()
   }
 }
 
-void CCricketMainWindow::unset_leg_begin_for_all_players()
-{
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
-  {
-    mPlayerBox[i]->unset_leg_begin();
-  }
-}
-
 void CCricketMainWindow::handle_update_set()
 {
   inactivate_all_players();
   unset_leg_begin_for_all_players();
+
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
     if (mPlayerBox[i]->has_begun_set())
@@ -207,6 +183,14 @@ void CCricketMainWindow::handle_update_set()
   {
     box->reset_legs();
     box->set_lcd_legs();
+  }
+}
+
+void CCricketMainWindow::unset_leg_begin_for_all_players()
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mPlayerBox[i]->unset_leg_begin();
   }
 }
 

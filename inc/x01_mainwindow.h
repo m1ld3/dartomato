@@ -2,6 +2,8 @@
 #define X01MAINWINDOW_H
 
 #include <QMainWindow>
+#include "x01_mainwindow_if.h"
+#include "mainwindow_if.h"
 #include "groupbox_x01.h"
 #include <QSoundEffect>
 #include "dartboard_x01.h"
@@ -14,9 +16,10 @@ namespace Ui
   class CX01MainWindow;
 }
 
-class CX01MainWindow : public QMainWindow
+class CX01MainWindow : public QMainWindow, public CX01MainWindowIf, public CMainWindowIf
 {
   Q_OBJECT
+//  Q_INTERFACES(CX01MainWindowIf)
 
 public:
 
@@ -27,42 +30,50 @@ public:
   CX01MainWindow(){};
 #endif
   void closeEvent(QCloseEvent * iEvent) override;
-  void handle_game_won(uint32_t iPlayerNumber);
-  void display_score(uint32_t iScore);
-  void display_dart1(uint32_t iVal);
-  void display_dart2(uint32_t iVal);
-  void display_dart3(uint32_t iVal);
-  void erase_dart1();
-  void erase_dart2();
-  void erase_dart3();
-  void submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
-  void update_finishes(uint32_t iScore, uint32_t iNumberOfDarts);
-  void set_focus_to_submit_button();
-  void update_players(const EUpdateType iType);
-  void reset_scores_of_all_players();
-  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
-  void create_snapshots_of_all_players();
+
+  // CMainWindowIf
+  void update_players(const EUpdateType iType) override;
+  void reset_scores_of_all_players() override;
+  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) override;
+  void create_snapshots_of_all_players() override;
+  void handle_game_won(uint32_t iPlayerNumber) override;
+
+  // CX01MainWindowIf
+  void display_dart1(uint32_t iVal) override;
+  void display_dart2(uint32_t iVal) override;
+  void display_dart3(uint32_t iVal) override;
+  void erase_dart1() override;
+  void erase_dart2() override;
+  void erase_dart3() override;
+  void submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts) override;
+  void update_finishes(uint32_t iScore, uint32_t iNumberOfDarts) override;
+  void set_focus_to_submit_button() override;
+  void display_score(uint32_t iScore) override;
 
 private slots:
 
-  void submit_button_clicked_slot();
-  void undo_button_clicked_slot();
+  void submit_button_clicked_slot() override;
+  void undo_button_clicked_slot() override;
 
 private:
 
-  void update_active_player();
-  void add_players();
-  void connect_main_window_slots();
-  void update_player_default();
-  void update_player_leg();
-  void update_player_set();
-  void set_active_player(uint32_t iPlayer);
-  void save_current_game();
-  bool game_finished() const;
-  void start_new_game_with_same_settings();
-  void clear_group_box_widgets();
-  void save_unfinished_game_file();
-  void set_global_finished();
+  // CMainWindowIf
+  void set_active_player(uint32_t iPlayer) override;
+  void add_players() override;
+  void save_current_game() override;
+  bool game_finished() const override;
+  void start_new_game_with_same_settings() override;
+  void clear_group_box_widgets() override;
+  void set_global_finished() override;
+  void handle_update_default() override;
+  void handle_update_leg() override;
+  void handle_update_set() override;
+  void inactivate_all_players() override;
+  void unset_leg_begin_for_all_players() override;
+  void unset_set_begin_for_all_players() override;
+
+  // CX01MainWindowIf
+  void connect_main_window_slots() override;
 
   Ui::CX01MainWindow * mUi;
   uint32_t mActivePlayer = 0;
