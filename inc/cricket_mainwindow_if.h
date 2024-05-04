@@ -2,9 +2,11 @@
 
 #include "settings.h"
 
-class CCricketMainWindowIf
+class ICricketMainWindow
 {
 public:
+
+  virtual ~ICricketMainWindow() = default;
 
   virtual bool is_slot_free(const ECricketSlots iSlot, uint32_t iPlayer) const = 0;
   virtual bool is_score_bigger(uint32_t iScore) const = 0;
@@ -15,3 +17,5 @@ public:
   virtual void update_extra_points_labels() = 0;
   virtual void update_darts(uint32_t iPlayer) = 0;
 };
+
+//Q_DECLARE_INTERFACE(ICricketMainWindow, "com.ICricketMainWindow");

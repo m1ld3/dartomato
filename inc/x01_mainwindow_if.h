@@ -1,11 +1,13 @@
 #pragma once
 
+#include <QObject>
 #include "settings.h"
 
-class CX01MainWindowIf
+class IX01MainWindow
 {
-
 public:
+
+  virtual ~IX01MainWindow() = default;
 
   virtual void display_dart1(uint32_t iVal) = 0;
   virtual void display_dart2(uint32_t iVal) = 0;
@@ -28,4 +30,4 @@ protected slots:
   virtual void undo_button_clicked_slot() = 0;
 };
 
-//Q_DECLARE_INTERFACE(CX01MainWindowIf, "com.CX01MainWindowIf")
+Q_DECLARE_INTERFACE(IX01MainWindow, "com.IX01MainWindow")

@@ -609,7 +609,7 @@ void CCricketGroupBox::push_button_undo_clicked_slot()
 
 void CCricketGroupBox::push_button_stats_clicked_slot()
 {
-  auto stats = CStatsWindow::create(mHistory.back(), this);
+  auto stats = IStatsWindow::create(mHistory.back(), this);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
   stats->show();

@@ -83,36 +83,18 @@ void CDartomatMain::handle_selected_players(const QStringList & iSelectedPlayers
 
 void CDartomatMain::start_game(CSettings iSettings)
 {
-  if (iSettings.Game == EGame::GAME_CRICKET)
-  {
-    mCricketMainWindow = new CCricketMainWindow(this, iSettings, mGameDataHandler);
-    mCricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
-    mCricketMainWindow->show();
-  }
-  else
-  {
-    mX01MainWindow = new CX01MainWindow(this, iSettings, mGameDataHandler);
-    mX01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
-    mX01MainWindow->show();
-  }
+  mMainWindow = IMainWindow::create(this, iSettings, mGameDataHandler);
+  mMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+  mMainWindow->show();
 
   play_game_on_sound();
 }
 
 void CDartomatMain::resume_game(const CGameDataHandler::SGameData iGameData)
 {
-  if (iGameData.Settings.Game == EGame::GAME_CRICKET)
-  {
-    mCricketMainWindow = new CCricketMainWindow(this, iGameData.Settings, mGameDataHandler, iGameData.GameDataCricket);
-    mCricketMainWindow->setAttribute(Qt::WA_DeleteOnClose);
-    mCricketMainWindow->show();
-  }
-  else
-  {
-    mX01MainWindow = new CX01MainWindow(this, iGameData.Settings, mGameDataHandler, iGameData.GameDataX01);
-    mX01MainWindow->setAttribute(Qt::WA_DeleteOnClose);
-    mX01MainWindow->show();
-  }
+  mMainWindow = IMainWindow::create(this, iGameData.Settings, mGameDataHandler, iGameData);
+  mMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+  mMainWindow->show();
   mGameDataHandler.delete_game_from_db(iGameData.TimeStamp);
 }
 

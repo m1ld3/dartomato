@@ -7,12 +7,12 @@
 class CStatsWindowX01;
 class CStatsWindowCricket;
 
-class CStatsWindow
+class IStatsWindow
 {
 
 public:
 
-  virtual ~CStatsWindow() = default;
+  virtual ~IStatsWindow() = default;
   static CStatsWindowX01 * const create(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
   static CStatsWindowCricket * const create(const CCricketClass::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
 

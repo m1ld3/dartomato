@@ -17,16 +17,26 @@ namespace Ui
   class CCricketMainWindow;
 }
 
-class CCricketMainWindow : public QMainWindow, public CCricketMainWindowIf, public CMainWindowIf
+class CCricketMainWindow : public QMainWindow, public ICricketMainWindow, public IMainWindow
 {
-  Q_OBJECT
+//  Q_OBJECT
+//  Q_INTERFACES(IMainWindow)
+//  Q_INTERFACES(ICricketMainWindow)
 
 public:
 
   explicit CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
-  explicit CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const QVector<QVector<CCricketClass::CPlayerData>> iGameData);
+  explicit CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData);
   ~CCricketMainWindow() override;
   void closeEvent(QCloseEvent * iEvent) override;
+  void setAttribute(Qt::WidgetAttribute iAttribute, bool iOn = true) override
+  {
+    QMainWindow::setAttribute(iAttribute, iOn);
+  }
+  void show() override
+  {
+    QMainWindow::show();
+  }
 
   // CMainWindowIf
   void update_players(const EUpdateType iType) override;

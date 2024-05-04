@@ -3,16 +3,25 @@
 #include <QDateTime>
 #include <QFile>
 #include "settings.h"
+#include "game_data_handler.h"
 
-class CMainWindowIf
+class IMainWindow
 {
 public:
+
+  virtual ~IMainWindow() = default;
+
+  static std::unique_ptr<IMainWindow> create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
+  static std::unique_ptr<IMainWindow> create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData);
 
   virtual void update_players(const EUpdateType iType) = 0;
   virtual void reset_scores_of_all_players() = 0;
   virtual void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) = 0;
   virtual void create_snapshots_of_all_players() = 0;
   virtual void handle_game_won(uint32_t iPlayerNumber) = 0;
+
+  virtual void setAttribute(Qt::WidgetAttribute iAttribute, bool iOn = true) = 0;
+  virtual void show() = 0;
 
 protected:
 
@@ -50,3 +59,6 @@ protected:
   const uint32_t mNumberOfPlayers = 1;
   QDateTime mTimeStamp;
 };
+
+//Q_DECLARE_INTERFACE(IMainWindow, "com.IMainWindow")
+

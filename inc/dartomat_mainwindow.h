@@ -2,10 +2,9 @@
 #define DARTOMAT_MAINWINDOW_H
 
 #include <QMainWindow>
-#include "x01_mainwindow.h"
-#include "cricket_mainwindow.h"
+#include <QSoundEffect>
+#include "mainwindow_if.h"
 #include "settings.h"
-#include "game_data_handler.h"
 #include "player_list_model.h"
 
 class CGameDataHandler;
@@ -47,8 +46,7 @@ private:
   void check_for_unfinished_game();
 
   Ui::CDartomatMain * mUi;
-  QPointer<CX01MainWindow> mX01MainWindow;
-  QPointer<CCricketMainWindow> mCricketMainWindow;
+  std::unique_ptr<IMainWindow> mMainWindow;
   QSoundEffect mGameOnSound;
   CGameDataHandler mGameDataHandler;
   CPlayerListModel mPlayerListModel;

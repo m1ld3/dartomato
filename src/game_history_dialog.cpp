@@ -89,14 +89,14 @@ void CGameHistoryDialog::show_stats()
     auto gameDataCricket = mGameData.at(mGameResultsIdx).GameDataCricket.at(rowIdx);
     if (gameDataX01.size() > 0)
     {
-      auto stats = CStatsWindow::create(gameDataX01.back(), this);
+      auto stats = IStatsWindow::create(gameDataX01.back(), this);
       stats->setAttribute(Qt::WA_DeleteOnClose);
       stats->setModal(true);
       stats->show();
     }
     else
     {
-      auto stats = CStatsWindow::create(gameDataCricket.back(), this);
+      auto stats = IStatsWindow::create(gameDataCricket.back(), this);
       stats->setAttribute(Qt::WA_DeleteOnClose);
       stats->setModal(true);
       stats->show();

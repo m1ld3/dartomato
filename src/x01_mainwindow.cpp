@@ -39,13 +39,13 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
   mUi->submitButton->setAutoDefault(true);
 }
 
-CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, QVector<QVector<CX01Class::CPlayerData>> iGameData)
+CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData)
   : CX01MainWindow(iParent, iSettings, iGameDataHandler)
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox[i]->set_game_data(iGameData.at(i));
-    if (iGameData.at(i).back().Active) mActivePlayer = i;
+    mPlayerBox[i]->set_game_data(iGameData.GameDataX01.at(i));
+    if (iGameData.GameDataX01.at(i).back().Active) mActivePlayer = i;
   }
   display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
 }

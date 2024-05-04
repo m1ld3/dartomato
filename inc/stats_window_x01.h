@@ -19,7 +19,7 @@ class CGlobalGameStatsX01Model;
 class CGlobalScoreStatsX01Model;
 class CGlobalSegmentStatsX01Model;
 
-class CStatsWindowX01 : public QDialog, public CStatsWindow
+class CStatsWindowX01 : public QDialog, public IStatsWindow
 {
   Q_OBJECT
 //  Q_INTERFACES(CStatsWindow)

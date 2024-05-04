@@ -16,20 +16,29 @@ namespace Ui
   class CX01MainWindow;
 }
 
-class CX01MainWindow : public QMainWindow, public CX01MainWindowIf, public CMainWindowIf
+class CX01MainWindow : public QMainWindow, public IX01MainWindow, public IMainWindow
 {
   Q_OBJECT
-//  Q_INTERFACES(CX01MainWindowIf)
+//  Q_INTERFACES(IMainWindow)
+  Q_INTERFACES(IX01MainWindow)
 
 public:
 
   explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
-  explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, QVector<QVector<CX01Class::CPlayerData>> iGameData);
+  explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData);
   ~CX01MainWindow() override;
 #ifdef TESTING
   CX01MainWindow(){};
 #endif
   void closeEvent(QCloseEvent * iEvent) override;
+  void setAttribute(Qt::WidgetAttribute iAttribute, bool iOn = true) override
+  {
+    QMainWindow::setAttribute(iAttribute, iOn);
+  }
+  void show() override
+  {
+    QMainWindow::show();
+  }
 
   // CMainWindowIf
   void update_players(const EUpdateType iType) override;

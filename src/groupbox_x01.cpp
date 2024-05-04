@@ -344,7 +344,7 @@ void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool i
 
 void CX01GroupBox::push_button_stats_clicked_slot()
 {
-  auto stats = CStatsWindow::create(mHistory.back(), this);
+  auto stats = IStatsWindow::create(mHistory.back(), this);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
   stats->show();

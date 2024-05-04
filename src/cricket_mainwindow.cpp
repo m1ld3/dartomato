@@ -24,13 +24,13 @@ CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings iSetti
   mPlayerBox[mActivePlayer]->set_active();
 }
 
-CCricketMainWindow::CCricketMainWindow(QWidget *iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const QVector<QVector<CCricketClass::CPlayerData> > iGameData)
+CCricketMainWindow::CCricketMainWindow(QWidget *iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData)
   : CCricketMainWindow(iParent, iSettings, iGameDataHandler)
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
-    mPlayerBox[i]->set_game_data(iGameData.at(i));
-    if (iGameData.at(i).back().Active) mActivePlayer = i;
+    mPlayerBox[i]->set_game_data(iGameData.GameDataCricket.at(i));
+    if (iGameData.GameDataCricket.at(i).back().Active) mActivePlayer = i;
   }
 }
 
