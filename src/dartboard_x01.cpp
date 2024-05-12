@@ -13,7 +13,7 @@
 #endif
 
 #ifndef TESTING
-CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * iX01MainWindow, const CSettings & iSettings)
+CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings & iSettings)
   : CDartBoard(iGraphicsViewDartBoard, iSettings)
   , mGameWindow(iX01MainWindow)
 {
@@ -125,7 +125,7 @@ bool CDartBoardX01::is_score_in_range(uint32_t iVal)
   else return mScore > iVal;
 }
 
-void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
+void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar iType)
 {
   if (mFinished)
   {
@@ -279,6 +279,4 @@ void CDartBoardX01::set_focus_to_submit_button()
 {
   mGameWindow->set_focus_to_submit_button();
 }
-
-
 

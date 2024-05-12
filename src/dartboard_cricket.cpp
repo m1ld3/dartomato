@@ -49,7 +49,7 @@ CDartBoardCricket::CDartBoardCricket(CDartBoardView * iGraphicsViewDartBoard, co
   mT1->set_value(0);
 }
 
-void CDartBoardCricket::handle_segment_pressed_event(uint32_t iVal, QChar &iType)
+void CDartBoardCricket::handle_segment_pressed_event(uint32_t iVal, QChar iType)
 {
   mCricketInput->handle_segment_pressed_event(iVal, iType);
 }

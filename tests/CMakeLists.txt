@@ -26,6 +26,7 @@ include_directories(../inc)
 
 set(INCLUDES
     fakes.h
+    mocks.h
     ../inc/player_list_model.h
     ../inc/game_data_handler.h
     ../inc/checkout_lists.h

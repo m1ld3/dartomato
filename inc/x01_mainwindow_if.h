@@ -1,6 +1,6 @@
 #pragma once
 
-#include <QObject>
+//#include <QObject>
 #include "settings.h"
 
 class IX01MainWindow
@@ -30,4 +30,4 @@ protected slots:
   virtual void undo_button_clicked_slot() = 0;
 };
 
-Q_DECLARE_INTERFACE(IX01MainWindow, "com.IX01MainWindow")
+//Q_DECLARE_INTERFACE(IX01MainWindow, "com.IX01MainWindow")

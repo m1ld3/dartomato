@@ -17,7 +17,7 @@ class CDartBoard : public QWidget
 
 public:
 
-  virtual void handle_segment_pressed_event(uint32_t iVal, QChar & iType) = 0;
+  virtual void handle_segment_pressed_event(uint32_t iVal, QChar iType) = 0;
 
 public:
 

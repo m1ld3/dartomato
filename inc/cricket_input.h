@@ -41,7 +41,7 @@ public:
                 CCricketClass * iPlayer = nullptr, CCricketMainWindow * iGameWindow = nullptr);
   ~CCricketInput();
   bool are_slots_full() const;
-  void handle_segment_pressed_event(uint32_t iVal, QChar & iType);
+  void handle_segment_pressed_event(uint32_t iVal, QChar iType);
   void notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
 
 private slots:

@@ -14,7 +14,7 @@ public:
 
   CDartBoardCricket(CDartBoardView * iGraphicsViewDartBoard, const CSettings & iSettings, CCricketInput * iCricketInput);
   ~CDartBoardCricket() override = default;
-  void handle_segment_pressed_event(uint32_t iVal, QChar & iType) override;
+  void handle_segment_pressed_event(uint32_t iVal, QChar iType) override;
 
 private:
 

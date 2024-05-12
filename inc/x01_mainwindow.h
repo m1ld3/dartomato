@@ -20,7 +20,7 @@ class CX01MainWindow : public QMainWindow, public IX01MainWindow, public IMainWi
 {
   Q_OBJECT
 //  Q_INTERFACES(IMainWindow)
-  Q_INTERFACES(IX01MainWindow)
+//  Q_INTERFACES(IX01MainWindow)
 
 public:
 
@@ -28,7 +28,9 @@ public:
   explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData);
   ~CX01MainWindow() override;
 #ifdef TESTING
-  CX01MainWindow(){};
+  CX01MainWindow(QWidget * iParent = nullptr)
+    : QMainWindow(iParent)
+  {}
 #endif
   void closeEvent(QCloseEvent * iEvent) override;
   void setAttribute(Qt::WidgetAttribute iAttribute, bool iOn = true) override

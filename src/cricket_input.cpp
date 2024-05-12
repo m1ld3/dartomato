@@ -76,7 +76,7 @@ bool CCricketInput::are_slots_full() const
   return temp;
 }
 
-void CCricketInput::handle_segment_pressed_event(uint32_t iVal, QChar & iType)
+void CCricketInput::handle_segment_pressed_event(uint32_t iVal, QChar iType)
 {
   process_segment_common(iVal, iType);
   if (mSettings.CutThroat) process_segment_cutthroat();

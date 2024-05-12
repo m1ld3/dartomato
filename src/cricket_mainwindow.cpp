@@ -108,7 +108,7 @@ void CCricketMainWindow::closeEvent(QCloseEvent * iEvent)
   else
   {
     QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Game not yet finished!",
-                                                               tr("Do you want to save or abort the current game?\n"),
+                                                               "Do you want to save or abort the current game?\n",
                                                                QMessageBox::Save | QMessageBox::Abort | QMessageBox::Cancel);
     if (resBtn == QMessageBox::Save)
     {

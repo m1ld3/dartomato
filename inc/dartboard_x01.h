@@ -7,7 +7,7 @@
 #include "fakes.h"
 #endif
 
-class CX01MainWindow;
+class IX01MainWindow;
 
 #ifdef TESTING
 class CDartBoardX01 : public CDartBoardFake
@@ -20,9 +20,11 @@ class CDartBoardX01 : public CDartBoard
 public:
 
 #ifdef TESTING
-  CDartBoardX01(){};
+  CDartBoardX01(IX01MainWindow * iMainWindow)
+    : mGameWindow(iMainWindow)
+  {}
 #else
-  CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, CX01MainWindow * iX01MainWindow, const CSettings & iSettings);
+  CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings & iSettings);
   ~CDartBoardX01() override = default;
 #endif
 
@@ -31,7 +33,7 @@ public:
   void submit_score();
   void set_finished();
   void unset_finished();
-  void handle_segment_pressed_event(uint32_t iVal, QChar & iType) override;
+  void handle_segment_pressed_event(uint32_t iVal, QChar iType) override;
   
 private:
 
@@ -55,7 +57,7 @@ private:
   void handle_game_shot_score(uint32_t iVal, QChar & iType);
   bool is_score_in_range(uint32_t iVal);
 
-  CX01MainWindow * mGameWindow;
+  IX01MainWindow * mGameWindow = nullptr;
   uint32_t mScore = 0;
   uint32_t mCounter = 3;
   uint32_t mOldScore = 0;
@@ -65,6 +67,6 @@ private:
   QVector<uint32_t> mUndo{0, 0, 0};
   QVector<QString> mDarts = {};
   QVector<bool> mCheckoutAttempts = {false, false, false};
-  QVector<uint32_t> mBoogieNumbers = {23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59};
+  const QVector<uint32_t> mBoogieNumbers = {23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59};
 };
 #endif  // DARTBOARD_X01_H
