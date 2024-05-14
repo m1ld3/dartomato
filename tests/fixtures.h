@@ -14,6 +14,37 @@ protected:
     , mDartBoard(std::make_unique<CDartBoardX01>(mMockWindow.get()))
   {}
 
+  struct SState
+  {
+    bool Stop = false;
+    bool Busted = false;
+    uint32_t Score = 0;
+    uint32_t OldScore = Score;
+    uint32_t Counter = 3;
+    QVector<bool> CheckoutAttempts = {false, false, false};
+    QVector<QString> Darts = {};
+    QVector<uint32_t> Undo = {0, 0, 0};
+  };
+
+  testing::AssertionResult verify_dartboard_x01(const SState iExpectedState)
+  {
+    if (iExpectedState.Stop == mDartBoard->mStop &&
+        iExpectedState.Busted == mDartBoard->mBusted &&
+        iExpectedState.Score == mDartBoard->mScore &&
+        iExpectedState.OldScore == mDartBoard->mOldScore &&
+        iExpectedState.Counter == mDartBoard->mCounter &&
+        iExpectedState.CheckoutAttempts == mDartBoard->mCheckoutAttempts &&
+        iExpectedState.Darts == mDartBoard->mDarts &&
+        iExpectedState.Undo == mDartBoard->mUndo
+        )
+    {
+      return testing::AssertionSuccess();
+    }
+    return testing::AssertionFailure();
+  }
+
+
   std::unique_ptr<CX01MainWindowMock> mMockWindow;
   std::unique_ptr<CDartBoardX01> mDartBoard;
+  SState mExpectedState;
 };

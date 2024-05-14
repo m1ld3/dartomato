@@ -27,15 +27,15 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
   mDartBoard = new CDartBoardX01(this);
 #endif
   mDartBoard->init_dartboard(static_cast<uint32_t>(mSettings.Game));
-  connect_main_window_slots();
-  add_players();
+  CX01MainWindow::connect_main_window_slots();
+  CX01MainWindow::add_players();
   mPlayerBox[mActivePlayer]->set_set_begin();
   mPlayerBox[mActivePlayer]->set_leg_begin();
   mPlayerBox[mActivePlayer]->set_active();
-  display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
-  erase_dart1();
-  erase_dart2();
-  erase_dart3();
+  CX01MainWindow::display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
+  CX01MainWindow::erase_dart1();
+  CX01MainWindow::erase_dart2();
+  CX01MainWindow::erase_dart3();
   mUi->submitButton->setAutoDefault(true);
 }
 

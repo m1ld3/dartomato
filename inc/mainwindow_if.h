@@ -11,8 +11,8 @@ public:
 
   virtual ~IMainWindow() = default;
 
-  static std::unique_ptr<IMainWindow> create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
-  static std::unique_ptr<IMainWindow> create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData);
+  static IMainWindow * create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
+  static IMainWindow * create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData);
 
   virtual void update_players(const EUpdateType iType) = 0;
   virtual void reset_scores_of_all_players() = 0;

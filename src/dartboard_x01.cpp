@@ -50,6 +50,8 @@ void CDartBoardX01::init_dartboard(uint32_t iScore)
   display_score(mScore);
   mCounter = 3;
   mDarts = {};
+  mUndo = {0, 0, 0};
+//  mFinished = false;
 }
 
 void CDartBoardX01::handle_start_val(uint32_t iVal, QChar & iType)

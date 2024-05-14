@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSoundEffect>
+#include <QPointer>
 #include "mainwindow_if.h"
 #include "settings.h"
 #include "player_list_model.h"
@@ -46,7 +47,7 @@ private:
   void check_for_unfinished_game();
 
   Ui::CDartomatMain * mUi;
-  std::unique_ptr<IMainWindow> mMainWindow;
+  IMainWindow * mMainWindow;
   QSoundEffect mGameOnSound;
   CGameDataHandler mGameDataHandler;
   CPlayerListModel mPlayerListModel;

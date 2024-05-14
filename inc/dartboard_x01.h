@@ -12,6 +12,7 @@ class IX01MainWindow;
 #ifdef TESTING
 class CDartBoardX01 : public CDartBoardFake
 {
+  friend class CDartBoardX01Test;
 #else
 class CDartBoardX01 : public CDartBoard
 {
