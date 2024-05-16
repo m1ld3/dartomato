@@ -9,7 +9,7 @@
 #else
 #include <iostream>
 #define PUT_WARNING(TITLE, MESSAGE) \
-    std::cout << TITLE << ": " << MESSAGE;
+    mOutput << TITLE << ": " << MESSAGE;
 #endif
 
 #ifndef TESTING
@@ -51,7 +51,6 @@ void CDartBoardX01::init_dartboard(uint32_t iScore)
   mCounter = 3;
   mDarts = {};
   mUndo = {0, 0, 0};
-//  mFinished = false;
 }
 
 void CDartBoardX01::handle_start_val(uint32_t iVal, QChar & iType)

@@ -43,6 +43,21 @@ protected:
     return testing::AssertionFailure();
   }
 
+  testing::AssertionResult verify_dartboard_x01_warning(const std::string iExpectedStr)
+  {
+    if (mDartBoard->mOutput.str() == iExpectedStr) return testing::AssertionSuccess();
+    return testing::AssertionFailure();
+  }
+
+  void set_in_mode(EX01InMode iMode)
+  {
+    mDartBoard->mSettings.InMode = iMode;
+  }
+
+  void set_out_mode(EX01OutMode iMode)
+  {
+    mDartBoard->mSettings.OutMode = iMode;
+  }
 
   std::unique_ptr<CX01MainWindowMock> mMockWindow;
   std::unique_ptr<CDartBoardX01> mDartBoard;

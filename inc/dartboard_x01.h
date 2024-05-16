@@ -5,6 +5,7 @@
 #include "settings.h"
 #ifdef TESTING
 #include "fakes.h"
+#include <sstream>
 #endif
 
 class IX01MainWindow;
@@ -69,5 +70,8 @@ private:
   QVector<QString> mDarts = {};
   QVector<bool> mCheckoutAttempts = {false, false, false};
   const QVector<uint32_t> mBoogieNumbers = {23, 29, 31, 35, 37, 41, 43, 44, 46, 47, 49, 52, 53, 55, 56, 58, 59};
+#ifdef TESTING
+  std::stringstream mOutput = std::stringstream("");
+#endif
 };
 #endif  // DARTBOARD_X01_H
