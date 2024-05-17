@@ -30,7 +30,7 @@ void CDartBoardX01::set_score(uint32_t iVal, QChar iType, bool iCheckoutAttempt)
   if (mCounter > 0)
   {
     mUndo[3 - mCounter] = iVal;
-    mDarts.append(mBusted ? "S0" : iType + QString::number(iVal));
+    mDarts.append(mBusted ? "s0" : iType + QString::number(iVal));
     mCheckoutAttempts[3 - mCounter] = iCheckoutAttempt;
     update_finishes(mScore, mCounter - 1);
   }
@@ -99,23 +99,22 @@ void CDartBoardX01::handle_score_equals_remaining(uint32_t iVal, QChar & iType)
     break;
   case EX01OutMode::DOUBLE_OUT:
     if (iType == 'd') handle_game_shot_score(iVal, iType);
-    else handle_busted_score(iVal, iType, (mScore > 1 && mScore % 2 == 0 && mScore <= 40) || mScore == 50);
+    else handle_busted_score(iType, (mScore > 1 && mScore % 2 == 0 && mScore <= 40) || mScore == 50);
     break;
   case EX01OutMode::MASTER_OUT:
     if (iType == 't') handle_game_shot_score(iVal, iType);
-    else handle_busted_score(iVal, iType, mScore <= 60 && mScore % 3 == 0 && mScore > 2);
+    else handle_busted_score(iType, mScore <= 60 && mScore % 3 == 0 && mScore > 2);
     break;
   default:;
   }
 }
 
-void CDartBoardX01::handle_busted_score(uint32_t iVal, QChar & iType, bool iCheckoutAttempt)
+void CDartBoardX01::handle_busted_score(QChar & iType, bool iCheckoutAttempt)
 {
   mStop = true;
   mBusted = true;
   set_focus_to_submit_button();
-  set_score(iVal, iType, iCheckoutAttempt);
-  display_score(mOldScore);
+  set_score(0, iType, iCheckoutAttempt);
   mBustedSound.play();
 }
 
@@ -151,7 +150,7 @@ void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar iType)
     }
     else
     {
-      handle_busted_score(iVal, iType, checkout_attempt_happened());
+      handle_busted_score(iType, checkout_attempt_happened());
     }
 
     mCounter--;

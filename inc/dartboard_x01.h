@@ -55,7 +55,7 @@ private:
   void handle_score_in_range(uint32_t iVal, QChar & iType);
   bool checkout_attempt_happened();
   void handle_score_equals_remaining(uint32_t iVal, QChar & iType);
-  void handle_busted_score(uint32_t iVal, QChar & iType, bool iCheckoutAttempt);
+  void handle_busted_score(QChar & iType, bool iCheckoutAttempt);
   void handle_game_shot_score(uint32_t iVal, QChar & iType);
   bool is_score_in_range(uint32_t iVal);
 

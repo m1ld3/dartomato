@@ -59,6 +59,11 @@ protected:
     mDartBoard->mSettings.OutMode = iMode;
   }
 
+  void set_x01_mode(EGame iGame)
+  {
+    mDartBoard->mSettings.Game = iGame;
+  }
+
   std::unique_ptr<CX01MainWindowMock> mMockWindow;
   std::unique_ptr<CDartBoardX01> mDartBoard;
   SState mExpectedState;
