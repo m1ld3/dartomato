@@ -258,3 +258,147 @@ TEST_F(CDartBoardX01Test, TooManyDartsTest)
   EXPECT_TRUE(verify_dartboard_x01({true, false, 475, 501, 0, {false, false, false}, {"s20", "s5", "s1"}, {20, 5, 1}}));
 }
 
+TEST_F(CDartBoardX01Test, SingleOutCheckoutTests)
+{
+  set_x01_mode(EGame::GAME_501);
+  set_out_mode(EX01OutMode::SINGLE_OUT);
+  QChar type = 's';
+
+  mDartBoard->init_dartboard(1);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 1, 1, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
+
+  mDartBoard->init_dartboard(61);
+  mDartBoard->handle_segment_pressed_event(10, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 51, 61, 2, {false, false, false}, {"s10"}, {10, 0, 0}}));
+
+  mDartBoard->init_dartboard(52);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 52, 52, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
+
+  mDartBoard->init_dartboard(45);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 45, 45, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
+}
+
+TEST_F(CDartBoardX01Test, DoubleOutCheckoutTests)
+{
+  set_x01_mode(EGame::GAME_501);
+  set_out_mode(EX01OutMode::DOUBLE_OUT);
+  QChar type = 's';
+
+  mDartBoard->init_dartboard(2);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 2, 2, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
+
+  mDartBoard->init_dartboard(50);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 50, 50, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
+
+  mDartBoard->init_dartboard(42);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 42, 42, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
+
+  mDartBoard->init_dartboard(32);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 32, 32, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
+}
+
+TEST_F(CDartBoardX01Test, MasterOutCheckoutTests)
+{
+  set_x01_mode(EGame::GAME_501);
+  set_out_mode(EX01OutMode::MASTER_OUT);
+  QChar type = 's';
+
+  mDartBoard->init_dartboard(3);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 3, 3, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
+
+  mDartBoard->init_dartboard(61);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 61, 61, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
+
+  mDartBoard->init_dartboard(42);
+  mDartBoard->handle_segment_pressed_event(0, type);
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 42, 42, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
+}
+
+TEST_F(CDartBoardX01Test, UndoTest)
+{
+  mDartBoard->init_dartboard(501);
+  set_x01_mode(EGame::GAME_501);
+  QChar type = 's';
+  mDartBoard->handle_segment_pressed_event(1, type);
+  mDartBoard->handle_segment_pressed_event(2, type);
+  mDartBoard->handle_segment_pressed_event(3, type);
+
+  EXPECT_CALL(*mMockWindow.get(), display_score(498));
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(498, 1));
+  mDartBoard->perform_undo();
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 498, 501, 1, {false, false, false}, {"s1", "s2"}, {1, 2, 0}}));
+
+  EXPECT_CALL(*mMockWindow.get(), display_score(500));
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(500, 2));
+  mDartBoard->perform_undo();
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 500, 501, 2, {false, false, false}, {"s1"}, {1, 0, 0}}));
+
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(501, 3));
+  mDartBoard->perform_undo();
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 501, 501, 3, {false, false, false}, {}, {0, 0, 0}}));
+}
+
+TEST_F(CDartBoardX01Test, UndoBustedTest)
+{
+  mDartBoard->init_dartboard(2);
+  set_x01_mode(EGame::GAME_501);
+  set_out_mode(EX01OutMode::DOUBLE_OUT);
+  QChar type = 's';
+  mDartBoard->handle_segment_pressed_event(1, type);
+  mDartBoard->perform_undo();
+  EXPECT_TRUE(verify_dartboard_x01({false, false, 2, 2, 3, {false, false, false}, {}, {0, 0, 0}}));
+}
+
+TEST_F(CDartBoardX01Test, SubmitScoreIncompleteTest)
+{
+  mDartBoard->init_dartboard(123);
+  set_x01_mode(EGame::GAME_501);
+  mDartBoard->submit_score();
+  verify_dartboard_x01_warning("Score incomplete: Please enter all darts.");
+}
+
+TEST_F(CDartBoardX01Test, SubmitScoreAlreadyFinishedTest)
+{
+  mDartBoard->init_dartboard(0);
+  set_x01_mode(EGame::GAME_501);
+  mDartBoard->set_finished();
+  mDartBoard->submit_score();
+  verify_dartboard_x01_warning(": Game already finished!");
+}
+
+TEST_F(CDartBoardX01Test, SubmitScoreTest)
+{
+  mDartBoard->init_dartboard(501);
+  set_x01_mode(EGame::GAME_501);
+  QChar type = 's';
+  mDartBoard->handle_segment_pressed_event(20, type);
+  mDartBoard->handle_segment_pressed_event(19, type);
+  mDartBoard->handle_segment_pressed_event(18, type);
+  QVector<QString> darts = {"s20", "s19", "s18"};
+  EXPECT_CALL(*mMockWindow.get(), submit_score_to_player(57, 3, 0, darts));
+  mDartBoard->submit_score();
+}
+
+TEST_F(CDartBoardX01Test, SubmitScoreBustedTest)
+{
+  mDartBoard->init_dartboard(10);
+  set_x01_mode(EGame::GAME_501);
+  QChar type = 's';
+  mDartBoard->handle_segment_pressed_event(20, type);
+  QVector<QString> darts = {"s0", "s0", "s0"};
+  EXPECT_CALL(*mMockWindow.get(), submit_score_to_player(0, 3, 1, darts));
+  mDartBoard->submit_score();
+}

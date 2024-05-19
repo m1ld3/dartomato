@@ -179,9 +179,9 @@ void CDartBoardX01::perform_undo()
   else if (mCounter == 1) erase_dart2();
   else if (mCounter == 0) erase_dart3();
 
-  update_finishes(mScore, mCounter + 1);
-
   mCounter++;
+  update_finishes(mScore, mCounter);
+
   mStop = false;
   mBusted = false;
 }
@@ -192,16 +192,17 @@ void CDartBoardX01::submit_score()
   {
     QVector<QString> darts = mDarts;
     uint32_t score = mOldScore - mScore;
+    uint32_t numberOfDarts = 3 - mCounter;
 
     if (mBusted)
     {
-      darts = {"S0", "S0", "S0"};
+      darts = {"s0", "s0", "s0"};
       score = 0;
+      numberOfDarts = 3;
     }
 
-    uint32_t numberofdarts = 3 - mCounter;
     uint32_t checkoutattempts = static_cast<uint32_t>(std::count(mCheckoutAttempts.begin(), mCheckoutAttempts.end(), true));
-    submit_score_to_player(score, numberofdarts, checkoutattempts, darts);
+    submit_score_to_player(score, numberOfDarts, checkoutattempts, darts);
   }
   else if (!mFinished)
   {
