@@ -63,7 +63,7 @@ static std::map<EX01OutMode, QString> MapX01OutMode2Str
 struct CSettings
 {
   CSettings(EGame iGame, QStringList iPlayers, uint32_t iSets, uint32_t iLegs,
-           EX01InMode iInMode, EX01OutMode iOutMode, bool iCutThroat)
+            EX01InMode iInMode, EX01OutMode iOutMode, bool iCutThroat)
   : Game(iGame)
   , PlayersList(iPlayers)
   , Sets(iSets)

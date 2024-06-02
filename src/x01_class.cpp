@@ -2,9 +2,8 @@
 #include "x01_mainwindow.h"
 #include <cmath>
 
-CX01Class::CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings)
-  : QObject(iParent)
-  , mSettings(iSettings)
+CX01Class::CX01Class(uint32_t iPlayerNumber, const CSettings iSettings)
+  : mSettings(iSettings)
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mMarginLegs(std::ceil(mSettings.Legs / 2.0))
   , mMarginSets(std::ceil(mSettings.Sets / 2.0))
@@ -159,9 +158,9 @@ void CX01Class::compute_checkout()
   }
 }
 
-void CX01Class::update_checkout(uint32_t iCheckoutattempts, uint32_t iSuccess)
+void CX01Class::update_checkout(uint32_t iCheckoutAttempts, uint32_t iSuccess)
 {
-  mCheckoutAttempts += iCheckoutattempts;
+  mCheckoutAttempts += iCheckoutAttempts;
   mCheckoutHits += iSuccess;
 
   compute_checkout();

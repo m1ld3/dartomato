@@ -2,12 +2,12 @@
 #include "dartboard_segment.h"
 #include "cmath"
 
-CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & iSettings)
+#ifndef TESTING
+CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings iSettings)
   : mBustedSound(this)
   , mGameShotSound(this)
   , mSettings(iSettings)
 {
-#ifndef TESTING
   mScene = new QGraphicsScene(0, 0, 800, 800, iGraphicsViewDartBoard);
   mScene->setSceneRect(0, 0, 800, 800);
   iGraphicsViewDartBoard->setRenderHint(QPainter::SmoothPixmapTransform, true);
@@ -625,11 +625,12 @@ CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings 
   mLabels->setPos(10, 10);
   mBustedSound.setSource(QUrl("qrc:/resources/sounds/busted.wav"));
   mGameShotSound.setSource(QUrl("qrc:/resources/sounds/gameshot.wav"));
-#endif
 }
+#endif
 
 CDartBoard::~CDartBoard()
 {
+#ifndef TESTING
   delete mS20;
   delete mS19;
   delete mS18;
@@ -695,6 +696,7 @@ CDartBoard::~CDartBoard()
   delete mNoScore;
   delete mLabels;
   delete mScene;
+#endif
 }
 
 void CDartBoard::play_game_shot_sound()

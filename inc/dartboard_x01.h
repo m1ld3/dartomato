@@ -4,14 +4,14 @@
 #include "dartboard_base.h"
 #include "settings.h"
 #ifdef TESTING
-#include "fakes.h"
+#include "mocks.h"
 #include <sstream>
 #endif
 
 class IX01MainWindow;
 
 #ifdef TESTING
-class CDartBoardX01 : public CDartBoardFake
+class CDartBoardX01 : public CDartBoardMock
 {
   friend class CDartBoardX01Test;
 #else
@@ -24,17 +24,18 @@ public:
 #ifdef TESTING
   CDartBoardX01(IX01MainWindow * iMainWindow)
     : mGameWindow(iMainWindow)
+    , CDartBoardMock()
   {}
 #else
-  CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings & iSettings);
+  CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings iSettings);
   ~CDartBoardX01() override = default;
 #endif
 
-  void init_dartboard(uint32_t iScore);
-  void perform_undo();
-  void submit_score();
-  void set_finished();
-  void unset_finished();
+  void perform_undo() override;
+  void submit_score() override;
+  void set_finished() override;
+  void init_dartboard(uint32_t iScore) override;
+  void unset_finished() override;
   void handle_segment_pressed_event(uint32_t iVal, QChar iType) override;
   
 private:

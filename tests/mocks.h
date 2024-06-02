@@ -3,12 +3,13 @@
 #include <gmock/gmock.h>
 #include "x01_mainwindow_if.h"
 #include "mainwindow_if.h"
+#include "dartboard_base.h"
 
 class CX01MainWindowMock : public IX01MainWindow
 {
 public:
 
-  CX01MainWindowMock(QWidget * iParent = nullptr)
+  CX01MainWindowMock()
   {}
 
   MOCK_METHOD(void, display_dart1, (uint32_t), (override));
@@ -45,4 +46,22 @@ public:
 //  MOCK_METHOD(void, inactivate_all_players, (), (override));
 //  MOCK_METHOD(void, unset_leg_begin_for_all_players, (), (override));
 //  MOCK_METHOD(void, unset_set_begin_for_all_players, (), (override));
+};
+
+class CDartBoardMock : public CDartBoard
+{
+  friend class CDartBoardX01Test;
+
+public:
+
+  CDartBoardMock()
+    : CDartBoard(CSettings())
+  {}
+
+  MOCK_METHOD(void, handle_segment_pressed_event, (uint32_t, QChar), (override));
+  MOCK_METHOD(void, set_finished, (), (override));
+  MOCK_METHOD(void, unset_finished, (), (override));
+  MOCK_METHOD(void, perform_undo, (), (override));
+  MOCK_METHOD(void, submit_score, (), (override));
+  MOCK_METHOD(void, init_dartboard, (uint32_t), (override));
 };

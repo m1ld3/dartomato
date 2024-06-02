@@ -28,7 +28,6 @@ public:
   void set_active();
   void set_inactive();
   void set_finished();
-  void close_cricket_input();
   void set_set_begin();
   void unset_set_begin();
   void set_leg_begin();
@@ -37,26 +36,30 @@ public:
   bool has_begun_set() const;
   void reset_legs();
   void reset();
-  uint32_t get_slot(const ECricketSlots iSlot) const;
-  uint32_t get_extra_points(const ECricketSlots iSlot) const;  
-  uint32_t get_score() const;
-  void increase_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
-  void set_score();
-  void update_extra_points_labels();
-  void update_darts(QVector<QString> && iDarts);
   void set_lcd_legs();
-  void handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
   void create_snapshot();
   bool is_finished() const { return mFinished; }
   QVector<CCricketClass::CPlayerData> & get_game_data() { return mHistory; };
   void set_game_data(QVector<CCricketClass::CPlayerData> iGameData);
 
+  uint32_t get_slot(const ECricketSlots iSlot) const;
+  uint32_t get_extra_points(const ECricketSlots iSlot) const;
+  uint32_t get_score() const;
+  void increase_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
+  void set_score();
+  void update_extra_points_labels();
+  void update_darts(QVector<QString> && iDarts);
+  void handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
+  void close_cricket_input();
+
 private slots:
 
-  void push_button_score_clicked_slot();
   void player_active_button_pressed_slot();
   void push_button_undo_clicked_slot();
   void push_button_stats_clicked_slot();
+
+  void push_button_score_clicked_slot();
+
 
 private:
 

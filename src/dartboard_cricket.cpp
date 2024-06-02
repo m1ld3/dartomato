@@ -1,6 +1,7 @@
 #include "dartboard_cricket.h"
 #include "cricket_input.h"
 
+#ifndef TESTING
 CDartBoardCricket::CDartBoardCricket(CDartBoardView * iGraphicsViewDartBoard, const CSettings & iSettings, CCricketInput * iCricketInput)
   : CDartBoard(iGraphicsViewDartBoard, iSettings)
   , mCricketInput(iCricketInput)
@@ -48,6 +49,7 @@ CDartBoardCricket::CDartBoardCricket(CDartBoardView * iGraphicsViewDartBoard, co
   mT2->set_value(0);
   mT1->set_value(0);
 }
+#endif
 
 void CDartBoardCricket::handle_segment_pressed_event(uint32_t iVal, QChar iType)
 {

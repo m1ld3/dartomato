@@ -2,15 +2,12 @@
 #define X01_CLASS_H
 
 #include <QVector>
-#include <QObject>
 #include "settings.h"
 
 class CX01MainWindow;
 
-class CX01Class : public QObject
+class CX01Class
 {
-  Q_OBJECT
-
 public:
 
   class CPlayerData
@@ -23,6 +20,7 @@ public:
     friend class CGameResultsModel;
     friend class CAlltimePlayerStatsModel;
     friend class CAllTimeStatsDialog;
+    friend class CX01ClassTest;
 
   public:
 
@@ -99,7 +97,8 @@ public:
 
 public:
 
-  CX01Class(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings);
+  CX01Class(uint32_t iPlayerNumber, const CSettings iSettings);
+  CX01Class() = default;
   uint32_t set_score(uint32_t iScore);
   void set_darts(QVector<QString> iDarts);
   void compute_averages(uint32_t iNumberOfDarts);
@@ -123,7 +122,7 @@ private:
   void compute_checkout();
   void compute_first9_avg();
 
-  const CSettings & mSettings;
+  const CSettings mSettings;
   uint32_t mSetsWon = 0;
   uint32_t mLegsWonPerSet = 0;
   uint32_t mTotalLegsWon = 0;

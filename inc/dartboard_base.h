@@ -11,17 +11,31 @@
 
 class CDartBoardSegment;
 
+#ifdef TESTING
+class CDartBoard
+{
+#else
 class CDartBoard : public QWidget
 {
   Q_OBJECT
-
+#endif
 public:
 
   virtual void handle_segment_pressed_event(uint32_t iVal, QChar iType) = 0;
+  virtual void set_finished() = 0;
+  virtual void unset_finished() = 0;
+  virtual void perform_undo() = 0;
+  virtual void submit_score() = 0;
+  virtual void init_dartboard(uint32_t iScore) = 0;
 
 public:
 
-  CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings & iSettings);
+  CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings iSettings);
+#ifdef TESTING
+  CDartBoard(const CSettings iSettings)
+    : mSettings(iSettings)
+  {}
+#endif
   virtual ~CDartBoard();
   void play_game_shot_sound();
 
@@ -31,7 +45,11 @@ protected:
   QGraphicsScene * mScene;
   QSoundEffect mBustedSound;
   QSoundEffect mGameShotSound;
-  const CSettings & mSettings;
+#ifdef TESTING
+  CSettings mSettings;
+#else
+  const CSettings mSettings;
+#endif
 
   CDartBoardSegment * mS20;
   CDartBoardSegment * mS19;

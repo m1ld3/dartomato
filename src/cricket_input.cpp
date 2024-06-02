@@ -31,9 +31,11 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCr
     mCutThroatExtraPointsArray.at(i) = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), 0, mPlayer->get_player_number());
     mCutThroatExtraPointsHistory.at(i).append(mCutThroatExtraPointsArray.at(i));
   }
-
+#ifdef TESTING
+  mDartBoard = new CDartBoardCricket();
+#else
   mDartBoard = new CDartBoardCricket(mUi->graphicsViewDartBoard, mSettings, this);
-
+#endif
   connect(mUi->submitButton, &QPushButton::clicked, this, &CCricketInput::submit_button_clicked_slot);
   connect(mUi->undoButton, &QPushButton::clicked, this, &CCricketInput::undo_button_clicked_slot);
 }

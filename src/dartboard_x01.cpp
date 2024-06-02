@@ -13,7 +13,7 @@
 #endif
 
 #ifndef TESTING
-CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings & iSettings)
+CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings iSettings)
   : CDartBoard(iGraphicsViewDartBoard, iSettings)
   , mGameWindow(iX01MainWindow)
 {

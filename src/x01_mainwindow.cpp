@@ -64,12 +64,15 @@ void CX01MainWindow::add_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
+#ifdef TESTING
+    mPlayerBox.push_back(new CX01GroupBox(mSettings, i, mDartBoard));
+#else
     mPlayerBox.push_back(new CX01GroupBox(this, mSettings, i, mDartBoard));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
-    mPlayerBox[i]->set_inactive();
-
     if ((i % 2) == 0) mUi->gridForLeftHandPlayers->addWidget(mPlayerBox[i]);
     else              mUi->gridForRightHandPlayers->addWidget(mPlayerBox[i]);
+#endif
+    mPlayerBox[i]->set_inactive();
   }
 }
 

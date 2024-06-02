@@ -12,7 +12,7 @@ public:
   {
     SGameData(const QString iTimeStamp,
               const bool iFinished,
-              const CSettings & iSettings,
+              const CSettings iSettings,
               const uint32_t iWinnerIdx,
               QVector<QVector<CX01Class::CPlayerData>> iGameDataX01 = {},
               QVector<QVector<CCricketClass::CPlayerData>> iGameDataCricket = {}

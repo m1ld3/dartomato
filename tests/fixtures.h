@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
+#include <QPointer>
 #include "x01_mainwindow.h"
 #include "dartboard_x01.h"
 #include "mocks.h"
@@ -67,4 +68,20 @@ protected:
   std::unique_ptr<CX01MainWindowMock> mMockWindow;
   std::unique_ptr<CDartBoardX01> mDartBoard;
   SState mExpectedState;
+};
+
+class CX01GroupBoxTest : public ::testing::Test
+{
+protected:
+
+  CX01GroupBoxTest()
+  {
+    mSettings = CSettings();
+    mDb = std::make_unique<CDartBoardMock>();
+    mBox = std::make_unique<CX01GroupBox>(mSettings, 0, mDb.get());
+  }
+
+  std::unique_ptr<CDartBoardMock> mDb;
+  std::unique_ptr<CX01GroupBox> mBox;
+  CSettings mSettings;
 };

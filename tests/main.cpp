@@ -402,3 +402,8 @@ TEST_F(CDartBoardX01Test, SubmitScoreBustedTest)
   EXPECT_CALL(*mMockWindow.get(), submit_score_to_player(0, 3, 1, darts));
   mDartBoard->submit_score();
 }
+
+TEST_F(CX01GroupBoxTest, SubmitScoreTest)
+{
+  mBox->submit_score(26, 3, 0, {"s20", "s1", "s5"});
+}

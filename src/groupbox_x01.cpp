@@ -4,7 +4,9 @@
 #include "QPixmap"
 #include <sstream>
 #include <iomanip>
+#ifndef TESTING
 #include <QMessageBox>
+#endif
 #include <QString>
 #include <algorithm>
 #include <x01_mainwindow.h>
@@ -13,11 +15,12 @@
 #include <QPointer>
 #include "player_active_button.h"
 
-CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings & iSettings,
-                           uint32_t iPlayerNumber, CDartBoardX01 * iDartBoard)
+#ifndef TESTING
+CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings iSettings,
+                           uint32_t iPlayerNumber, CDartBoard * iDartBoard)
   : QGroupBox(iParent)
   , mUi(new Ui::CX01GroupBox)
-  , mPlayer(iParent, iPlayerNumber, iSettings)
+  , mPlayer(iPlayerNumber, iSettings)
   , mDartBoard(iDartBoard)
   , mSettings(iSettings)
   , mPlayerName(mSettings.PlayersList.at(iPlayerNumber))
@@ -47,10 +50,28 @@ void CX01GroupBox::connect_slots()
   connect(mUi->pushButtonStats, &QPushButton::clicked, this, &CX01GroupBox::push_button_stats_clicked_slot);
 }
 
+#else
+CX01GroupBox::CX01GroupBox(const CSettings iSettings,
+                           uint32_t iPlayerNumber, CDartBoard * iDartBoard)
+//  : mPlayer(iPlayerNumber, iSettings)
+//  , mDartBoard(iDartBoard)
+//  , mSettings(iSettings)
+//  , mPlayerNumber(iPlayerNumber)
+//  , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
+//  , mGameWindow()
+//  , mScoreSound()
+//  , mHistory({mPlayer.create_snapshot()})
+{
+//  display_stats_and_finishes();
+}
+#endif
+
 void CX01GroupBox::set_active()
 {
   mActive = true;
+#ifndef TESTING
   mUi->labelPic->setPixmap(mPixMapHand.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+#endif
 }
 
 void CX01GroupBox::set_inactive()
@@ -74,6 +95,7 @@ void CX01GroupBox::set_finished()
 void CX01GroupBox::unset_finished()
 {
   mFinished = false;
+  mDartBoard->unset_finished();
 }
 
 void CX01GroupBox::display_stats_and_finishes()
@@ -127,7 +149,9 @@ void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
 {
   mPlayer.update_checkout(iCheckoutAttempts, 0);
   play_score_sound();
+#ifndef TESTING
   mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
+#endif
   update_players(EUpdateType::DEFAULT);
 }
 
@@ -180,6 +204,7 @@ void CX01GroupBox::create_snapshots_of_all_players()
 
 void CX01GroupBox::player_active_button_pressed_slot()
 {
+#ifndef TESTING
   if (!mActive)
   {
     QMessageBox::StandardButton reply;
@@ -193,6 +218,7 @@ void CX01GroupBox::player_active_button_pressed_slot()
       mDartBoard->init_dartboard(mRemainingPoints);
     }
   }
+#endif
 }
 
 void CX01GroupBox::set_set_begin()
@@ -208,7 +234,9 @@ void CX01GroupBox::unset_set_begin()
 void CX01GroupBox::set_leg_begin()
 {
   mLegBegin = true;
+#ifndef TESTING
   mUi->labelLegBegin->setPixmap(mPixMapDot.scaled(20, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+#endif
 }
 
 void CX01GroupBox::unset_leg_begin()
@@ -323,7 +351,6 @@ void CX01GroupBox::perform_undo()
   if (mFinished)
   {
     unset_finished();
-    mDartBoard->unset_finished();
   }
 }
 
@@ -344,18 +371,22 @@ void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool i
 
 void CX01GroupBox::push_button_stats_clicked_slot()
 {
+#ifndef TESTING
   auto stats = IStatsWindow::create(mHistory.back(), this);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
   stats->show();
+#endif
 }
 
 void CX01GroupBox::push_button_undo_clicked_slot()
 {
+#ifndef TESTING
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
                                                              tr("Are you sure you want to undo your last score?\n"),
                                                              QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
   if (resBtn == QMessageBox::Yes) perform_undo();
+#endif
 }
 
 bool CX01GroupBox::mLegAlreadyStarted = false;
