@@ -32,7 +32,7 @@ class CX01GroupBox : public QGroupBox
 public:
 
 #ifdef TESTING
-  explicit CX01GroupBox(const CSettings iSettings, uint32_t iPlayerNumber = 0, CDartBoard * iDartBoard = nullptr);
+  explicit CX01GroupBox(IMainWindow * iMainWindow, const CSettings iSettings, uint32_t iPlayerNumber = 0, CDartBoard * iDartBoard = nullptr);
 #else
   explicit CX01GroupBox(QWidget * iParent, const CSettings iSettings,
                         uint32_t iPlayerNumber = 0, CDartBoard * iDartboard = nullptr);
@@ -105,7 +105,11 @@ private:
 #endif
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
+#ifdef TESTING
+  IMainWindow * mGameWindow;
+#else
   CX01MainWindow * mGameWindow;
+#endif
   QSoundEffect mScoreSound;
   QVector<CX01Class::CPlayerData> mHistory;
 };

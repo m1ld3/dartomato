@@ -51,19 +51,17 @@ void CX01GroupBox::connect_slots()
 }
 
 #else
-CX01GroupBox::CX01GroupBox(const CSettings iSettings,
+CX01GroupBox::CX01GroupBox(IMainWindow * iMainWindow, const CSettings iSettings,
                            uint32_t iPlayerNumber, CDartBoard * iDartBoard)
-//  : mPlayer(iPlayerNumber, iSettings)
-//  , mDartBoard(iDartBoard)
-//  , mSettings(iSettings)
-//  , mPlayerNumber(iPlayerNumber)
-//  , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
-//  , mGameWindow()
-//  , mScoreSound()
-//  , mHistory({mPlayer.create_snapshot()})
-{
-//  display_stats_and_finishes();
-}
+  : mPlayer(iPlayerNumber, iSettings)
+  , mDartBoard(iDartBoard)
+  , mSettings(iSettings)
+  , mPlayerNumber(iPlayerNumber)
+  , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
+  , mGameWindow(iMainWindow)
+  , mScoreSound()
+  , mHistory({mPlayer.create_snapshot()})
+{}
 #endif
 
 void CX01GroupBox::set_active()
@@ -173,7 +171,9 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
   {
     handle_default_score(iCheckoutAttempts);
     create_snapshot();
+#ifndef TESTING
     display_stats_and_finishes();
+#endif
   }
 }
 

@@ -75,13 +75,13 @@ class CX01GroupBoxTest : public ::testing::Test
 protected:
 
   CX01GroupBoxTest()
-  {
-    mSettings = CSettings();
-    mDb = std::make_unique<CDartBoardMock>();
-    mBox = std::make_unique<CX01GroupBox>(mSettings, 0, mDb.get());
-  }
+    : mDb(std::make_unique<CDartBoardMock>())
+    , mMockWindow(std::make_unique<CX01MainWindowMock>())
+    , mBox(std::make_unique<CX01GroupBox>(mMockWindow.get(), mSettings, 0, mDb.get()))
+  {}
 
-  std::unique_ptr<CDartBoardMock> mDb;
-  std::unique_ptr<CX01GroupBox> mBox;
   CSettings mSettings;
+  std::unique_ptr<CDartBoardMock> mDb;
+  std::unique_ptr<CX01MainWindowMock> mMockWindow;
+  std::unique_ptr<CX01GroupBox> mBox;
 };
