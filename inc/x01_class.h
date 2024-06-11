@@ -20,7 +20,6 @@ public:
     friend class CGameResultsModel;
     friend class CAlltimePlayerStatsModel;
     friend class CAllTimeStatsDialog;
-    friend class CX01ClassTest;
 
   public:
 
@@ -69,6 +68,36 @@ public:
       , Active(iActive)
     {}
 
+    double rnd2Decimals(double iNum)
+    {
+      double val = std::ceil(iNum * 100.0) / 100.0;
+      return val;
+    }
+
+    bool operator==(const CPlayerData & iOther)
+    {
+      return SetsWon == iOther.SetsWon &&
+             LegsWonPerSet == iOther.LegsWonPerSet &&
+             TotalLegsWon == iOther.TotalLegsWon &&
+             RemainingPoints == iOther.RemainingPoints &&
+             CheckoutAttempts == iOther.CheckoutAttempts &&
+             CheckoutHits == iOther.CheckoutHits &&
+             TotalDarts == iOther.TotalDarts &&
+             rnd2Decimals(Avg1Dart) == rnd2Decimals(iOther.Avg1Dart) &&
+             rnd2Decimals(Avg3Dart) == rnd2Decimals(iOther.Avg3Dart) &&
+             rnd2Decimals(CheckoutRate) == rnd2Decimals(iOther.CheckoutRate) &&
+             rnd2Decimals(First9Avg) == rnd2Decimals(iOther.First9Avg) &&
+             ScoresOfCurrentLeg == iOther.ScoresOfCurrentLeg &&
+             AllScoresOfAllLegs == iOther.AllScoresOfAllLegs &&
+             AllScoresFlat == iOther.AllScoresFlat &&
+             ThrownDartsOfCurrentLeg == iOther.ThrownDartsOfCurrentLeg &&
+             ThrownDartsOfAllLegsFlat == iOther.ThrownDartsOfAllLegsFlat &&
+             ThrownDartsOfAllLegs == iOther.ThrownDartsOfAllLegs &&
+             RemainingPointsOfCurrentLeg == iOther.RemainingPointsOfCurrentLeg &&
+             RemainingPointsOfAllLegs == iOther.RemainingPointsOfAllLegs &&
+             Active == iOther.Active;
+    }
+
     bool Active = false;
     bool Finished = false;
 
@@ -98,7 +127,6 @@ public:
 public:
 
   CX01Class(uint32_t iPlayerNumber, const CSettings iSettings);
-  CX01Class() = default;
   uint32_t set_score(uint32_t iScore);
   void set_darts(QVector<QString> iDarts);
   void compute_averages(uint32_t iNumberOfDarts);

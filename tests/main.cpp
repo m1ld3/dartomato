@@ -1,4 +1,5 @@
 #include "fixtures.h"
+#include <initializer_list>
 
 TEST_F(CDartBoardX01Test, InitTest)
 {
@@ -367,7 +368,7 @@ TEST_F(CDartBoardX01Test, SubmitScoreIncompleteTest)
   mDartBoard->init_dartboard(123);
   set_x01_mode(EGame::GAME_501);
   mDartBoard->submit_score();
-  verify_dartboard_x01_warning("Score incomplete: Please enter all darts.");
+  EXPECT_TRUE(verify_dartboard_x01_warning("Score incomplete: Please enter all darts."));
 }
 
 TEST_F(CDartBoardX01Test, SubmitScoreAlreadyFinishedTest)
@@ -376,7 +377,7 @@ TEST_F(CDartBoardX01Test, SubmitScoreAlreadyFinishedTest)
   set_x01_mode(EGame::GAME_501);
   mDartBoard->set_finished();
   mDartBoard->submit_score();
-  verify_dartboard_x01_warning(": Game already finished!");
+  EXPECT_TRUE(verify_dartboard_x01_warning(": Game already finished!"));
 }
 
 TEST_F(CDartBoardX01Test, SubmitScoreTest)
@@ -403,7 +404,11 @@ TEST_F(CDartBoardX01Test, SubmitScoreBustedTest)
   mDartBoard->submit_score();
 }
 
-TEST_F(CX01GroupBoxTest, SubmitScoreTest)
+TEST_F(CX01GroupBoxTest, SubmitScoreDefaultTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::DEFAULT));
+  CX01Class::CPlayerData expected = {0, 0, 0, 275, 0, 0, 3, 26.0 / 3.0, 26, 0, 26.0 / 3.0, {26}, {}, {26}, QVector<QVector<QString>>({{"s20", "s1", "s5"}}), QVector<QVector<QString>>({{"s20", "s1", "s5"}}), QVector<QVector<QVector<QString>>>({}), {301, 275}, {}, false};
   mBox->submit_score(26, 3, 0, {"s20", "s1", "s5"});
+  EXPECT_TRUE(verify_score_sound_path(26));
+  EXPECT_TRUE(verify_snapshot(expected));
 }

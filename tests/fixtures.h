@@ -80,6 +80,30 @@ protected:
     , mBox(std::make_unique<CX01GroupBox>(mMockWindow.get(), mSettings, 0, mDb.get()))
   {}
 
+  testing::AssertionResult verify_score_sound_path(const uint32_t iExpectedScore)
+  {
+    std::stringstream ss;
+    ss << std::setw(3) << std::setfill('0') << iExpectedScore;
+    std::string digits = ss.str();
+    std::string expectedPath = "qrc:/resources/sounds/" + digits + ".wav";
+
+    if (mBox->mScoreSound.source().toString().toStdString() == expectedPath)
+    {
+      return testing::AssertionSuccess();
+    }
+    return testing::AssertionFailure();
+  }
+
+  testing::AssertionResult verify_snapshot(const CX01Class::CPlayerData & iExpected)
+  {
+    auto & snap = mBox->mHistory.back();
+    if (snap == iExpected)
+    {
+      return testing::AssertionSuccess();
+    }
+    return testing::AssertionFailure();
+  }
+
   CSettings mSettings;
   std::unique_ptr<CDartBoardMock> mDb;
   std::unique_ptr<CX01MainWindowMock> mMockWindow;
