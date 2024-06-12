@@ -7,7 +7,7 @@
 #include <QSoundEffect>
 #include "settings.h"
 
-class CX01MainWindow;
+class IMainWindow;
 class CDartBoard;
 class CGameDataHandler;
 #ifdef TESTING
@@ -105,13 +105,12 @@ private:
 #endif
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
-#ifdef TESTING
   IMainWindow * mGameWindow;
-#else
-  CX01MainWindow * mGameWindow;
-#endif
+#ifndef TESTING
   QSoundEffect mScoreSound;
+#endif
   QVector<CX01Class::CPlayerData> mHistory;
+  QString mSoundPath;
 };
 
 #endif  // GROUPBOX_X01_H

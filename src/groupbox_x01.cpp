@@ -59,7 +59,6 @@ CX01GroupBox::CX01GroupBox(IMainWindow * iMainWindow, const CSettings iSettings,
   , mPlayerNumber(iPlayerNumber)
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(iMainWindow)
-  , mScoreSound()
   , mHistory({mPlayer.create_snapshot()})
 {}
 #endif
@@ -98,6 +97,7 @@ void CX01GroupBox::unset_finished()
 
 void CX01GroupBox::display_stats_and_finishes()
 {
+#ifndef TESTING
   QString avg1dart = QString::number(mPlayer.get_avg1dart(), 'f', 2);
   QString avg3dart = QString::number(mPlayer.get_avg3dart(), 'f', 2);
   QString checkout = QString::number(mPlayer.get_checkout(), 'f', 2) + "%";
@@ -105,11 +105,14 @@ void CX01GroupBox::display_stats_and_finishes()
   mUi->label3DartAvgInput->setText(avg3dart);
   mUi->labelCheckoutInput->setText(checkout);
   display_finishes(mRemainingPoints, 3);
+#endif
 }
 
 void CX01GroupBox::play_score_sound()
 {
+#ifndef TESTING
   mScoreSound.play();
+#endif
 }
 
 void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
@@ -171,9 +174,7 @@ void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32
   {
     handle_default_score(iCheckoutAttempts);
     create_snapshot();
-#ifndef TESTING
     display_stats_and_finishes();
-#endif
   }
 }
 
@@ -191,7 +192,9 @@ void CX01GroupBox::set_game_data(QVector<CX01Class::CPlayerData> iGameData)
   mActive = iGameData.back().Active;
   mPlayer.restore_state(mHistory.back());
   mRemainingPoints = mPlayer.get_remaining();
+#ifndef TESTING
   mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
+#endif
   if (mActive) mDartBoard->init_dartboard(mRemainingPoints);
   set_lcd_legs_and_sets();
   display_stats_and_finishes();
@@ -288,8 +291,10 @@ void CX01GroupBox::prepare_score_sound()
   ss << std::setw(3) << std::setfill('0') << mCurrentScore;
   std::string digits = ss.str();
   std::string strpath = "qrc:/resources/sounds/" + digits + ".wav";
-  QString filepath = QString::fromStdString(strpath);
-  mScoreSound.setSource(filepath);
+  mSoundPath = QString::fromStdString(strpath);
+#ifndef TESTING
+  mScoreSound.setSource(mSoundPath);
+#endif
 }
 
 void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts)
@@ -329,8 +334,10 @@ uint32_t CX01GroupBox::get_remaining_points() const
 
 void CX01GroupBox::set_lcd_legs_and_sets()
 {
+#ifndef TESTING
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
   mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
+#endif
 }
 
 void CX01GroupBox::perform_undo()

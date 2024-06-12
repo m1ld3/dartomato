@@ -87,7 +87,7 @@ protected:
     std::string digits = ss.str();
     std::string expectedPath = "qrc:/resources/sounds/" + digits + ".wav";
 
-    if (mBox->mScoreSound.source().toString().toStdString() == expectedPath)
+    if (mBox->mSoundPath.toStdString() == expectedPath)
     {
       return testing::AssertionSuccess();
     }

@@ -412,3 +412,29 @@ TEST_F(CX01GroupBoxTest, SubmitScoreDefaultTest)
   EXPECT_TRUE(verify_score_sound_path(26));
   EXPECT_TRUE(verify_snapshot(expected));
 }
+
+TEST_F(CX01GroupBoxTest, SubmitScoreTwiceTest)
+{
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::DEFAULT)).Times(2);
+  CX01Class::CPlayerData expected = {0, 0, 0, 144, 0, 0, 6, 157.0 / 6.0, 157.0 / 2.0, 0, 157.0 / 3.0, {100, 57}, {}, {100, 57}, QVector<QVector<QString>>({{"s20", "t20", "s20"}, {"s20", "s20", "s19"}}), QVector<QVector<QString>>({{"s20", "t20", "s20"}, {"s20", "s20", "s19"}}), QVector<QVector<QVector<QString>>>({}), {301, 201, 144}, {}, false};
+  mBox->submit_score(100, 3, 0, {"s20", "t20", "s20"});
+  EXPECT_TRUE(verify_score_sound_path(100));
+  mBox->submit_score(57, 3, 0, {"s20", "s20", "s19"});
+  EXPECT_TRUE(verify_score_sound_path(57));
+  EXPECT_TRUE(verify_snapshot(expected));
+}
+
+TEST_F(CX01GroupBoxTest, SubmitScoreCheckoutAttemptTest)
+{
+  QVector<CX01Class::CPlayerData> gameData;
+  CX01Class::CPlayerData snap1 = {0, 0, 0, 121, 0, 0, 3, 180.0 / 3.0, 180, 0, 180.0 / 3.0, {180}, {}, {180}, QVector<QVector<QString>>({{"t20", "t20", "t20"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}}), QVector<QVector<QVector<QString>>>({}), {301, 121}, {}, false};
+  CX01Class::CPlayerData snap2 = {0, 0, 0, 16, 0, 0, 6, 285.0 / 6.0, 285.0 / 2.0, 0, 285.0 / 3.0, {180, 105}, {}, {180, 105}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16}, {}, true};
+  CX01Class::CPlayerData expected = {0, 0, 0, 16, 3, 0, 9, 285.0 / 9.0, 285.0 / 3.0, 0, 285.0 / 3.0, {180, 105, 0}, {}, {180, 105, 0}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s0", "s0"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s0", "s0"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16, 16}, {}, true};
+  gameData = {snap1, snap2};
+  EXPECT_CALL(*mDb.get(), init_dartboard(16));
+  mBox->set_game_data(gameData);
+  mBox->submit_score(0, 3, 3, {"s0", "s0", "s0"});
+  EXPECT_TRUE(verify_snapshot(expected));
+}
+
+

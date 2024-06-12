@@ -114,7 +114,9 @@ protected:
   CDartBoardSegment * mT2;
   CDartBoardSegment * mT1;
   CDartBoardSegment * mNoScore;
+#ifndef TESTING
   QGraphicsSvgItem * const mLabels = new QGraphicsSvgItem(":/resources/img/dartboard.svg");
+#endif
 };
 
 #endif  // CDARTBOARD_H
