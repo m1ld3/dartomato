@@ -104,6 +104,8 @@ protected:
     return testing::AssertionFailure();
   }
 
+  void perform_undo() { mBox->perform_undo(); }
+
   CSettings mSettings;
   std::unique_ptr<CDartBoardMock> mDb;
   std::unique_ptr<CX01MainWindowMock> mMockWindow;

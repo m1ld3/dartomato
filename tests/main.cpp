@@ -429,12 +429,42 @@ TEST_F(CX01GroupBoxTest, SubmitScoreCheckoutAttemptTest)
   QVector<CX01Class::CPlayerData> gameData;
   CX01Class::CPlayerData snap1 = {0, 0, 0, 121, 0, 0, 3, 180.0 / 3.0, 180, 0, 180.0 / 3.0, {180}, {}, {180}, QVector<QVector<QString>>({{"t20", "t20", "t20"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}}), QVector<QVector<QVector<QString>>>({}), {301, 121}, {}, false};
   CX01Class::CPlayerData snap2 = {0, 0, 0, 16, 0, 0, 6, 285.0 / 6.0, 285.0 / 2.0, 0, 285.0 / 3.0, {180, 105}, {}, {180, 105}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16}, {}, true};
-  CX01Class::CPlayerData expected = {0, 0, 0, 16, 3, 0, 9, 285.0 / 9.0, 285.0 / 3.0, 0, 285.0 / 3.0, {180, 105, 0}, {}, {180, 105, 0}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s0", "s0"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s0", "s0"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16, 16}, {}, true};
+  CX01Class::CPlayerData expected = {0, 0, 0, 8, 3, 0, 9, 293.0 / 9.0, 293.0 / 3.0, 0, 293.0 / 3.0, {180, 105, 8}, {}, {180, 105, 8}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s8", "s0"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s8", "s0"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16, 8}, {}, true};
   gameData = {snap1, snap2};
   EXPECT_CALL(*mDb.get(), init_dartboard(16));
   mBox->set_game_data(gameData);
-  mBox->submit_score(0, 3, 3, {"s0", "s0", "s0"});
+  mBox->submit_score(8, 3, 3, {"s0", "s8", "s0"});
   EXPECT_TRUE(verify_snapshot(expected));
 }
 
+TEST_F(CX01GroupBoxTest, SubmitScoreCheckoutHitTest)
+{
+  QVector<CX01Class::CPlayerData> gameData;
+  CX01Class::CPlayerData snap1 = {0, 0, 0, 121, 0, 0, 3, 180.0 / 3.0, 180, 0, 180.0 / 3.0, {180}, {}, {180}, QVector<QVector<QString>>({{"t20", "t20", "t20"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}}), QVector<QVector<QVector<QString>>>({}), {301, 121}, {}, false};
+  CX01Class::CPlayerData snap2 = {0, 0, 0, 16, 0, 0, 6, 285.0 / 6.0, 285.0 / 2.0, 0, 285.0 / 3.0, {180, 105}, {}, {180, 105}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16}, {}, true};
+  CX01Class::CPlayerData expected = {1, 0, 1, 0, 3, 1, 9, 301.0 / 9.0, 301.0 / 3.0, (1.0 / 3.0) * 100, 301.0 / 3.0, {180, 105, 16}, {}, {180, 105, 16}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s0", "d8"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s0", "d8"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16, 0}, {}, true};
+  gameData = {snap1, snap2};
+  EXPECT_CALL(*mDb.get(), init_dartboard(16));
+  EXPECT_CALL(*mMockWindow.get(), reset_scores_of_all_players());
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::SET));
+  EXPECT_CALL(*mMockWindow.get(), handle_game_won(0));
+  mBox->set_game_data(gameData);
+  mBox->submit_score(16, 3, 3, {"s0", "s0", "d8"});
+  mBox->create_snapshot();
+  EXPECT_TRUE(verify_snapshot(expected));
+}
 
+TEST_F(CX01GroupBoxTest, PerformUndoAtStartTest)
+{
+  CX01Class::CPlayerData expected = {0, 0, 0, 301, 0, 0, 0, 0, 0, 0, 0, {}, {}, {}, QVector<QVector<QString>>({}), QVector<QVector<QString>>({}), QVector<QVector<QVector<QString>>>({}), {301}, {}, false};
+  perform_undo();
+  EXPECT_TRUE(verify_snapshot(expected));
+}
+
+TEST_F(CX01GroupBoxTest, PerformUndoNormalTest)
+{
+  CX01Class::CPlayerData expected = {0, 0, 0, 301, 0, 0, 0, 0, 0, 0, 0, {}, {}, {}, QVector<QVector<QString>>({}), QVector<QVector<QString>>({}), QVector<QVector<QVector<QString>>>({}), {301}, {}, false};
+  mBox->submit_score(57, 3, 0, {"s20", "s20", "s19"});
+  perform_undo();
+  EXPECT_TRUE(verify_snapshot(expected));
+}

@@ -348,8 +348,9 @@ void CX01GroupBox::perform_undo()
     mPlayer.restore_state(mHistory.back());
   }
   mRemainingPoints = mPlayer.get_remaining();
+#ifndef TESTING
   mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
-
+#endif
   if (mActive) mDartBoard->init_dartboard(mRemainingPoints);
 
   set_lcd_legs_and_sets();
