@@ -19,10 +19,16 @@ class CGlobalGameStatsX01Model;
 class CGlobalScoreStatsX01Model;
 class CGlobalSegmentStatsX01Model;
 
+#ifndef TESTING
 class CStatsWindowX01 : public QDialog, public IStatsWindow
 {
   Q_OBJECT
 //  Q_INTERFACES(CStatsWindow)
+#else
+class CStatsWindowX01 : public IStatsWindow
+{
+  friend class CStatsWindowX01Test;
+#endif
 
 public:
 
@@ -105,7 +111,11 @@ public:
   explicit CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidget * iParent = nullptr);
   ~CStatsWindowX01() override;
 
+#ifndef TESTING
 private slots:
+#else
+private:
+#endif
 
   void update_leg_history_slot(int iIndex) { update_leg_history(iIndex); }
 
@@ -120,6 +130,8 @@ private:
   std::map<uint32_t, uint32_t> calculate_score_counts();
   void compute_dart_count_and_checkouts();
   void compute_first9_leg_average(const QVector<uint32_t> & iScores);
+  void compute_dart_averages(const QVector<uint32_t> & iScores, const QVector<QVector<QString>> & iDarts);
+  void update_leg_scores_table_view(const QVector<uint32_t> & iScores, const QVector<QVector<QString>> & iDarts);
 
 private:
 
@@ -136,6 +148,7 @@ private:
   CGlobalScoreStatsX01Model * mGlobalScoreStatsModel = nullptr;
   CGlobalSegmentStatsX01Model * mGlobalSegmentStatsModel = nullptr;
   SGlobalGameStatsData mGlobalGameStatsData;
+  void update_leg_stats_table_view();
 };
 
 #endif  // STATS_WINDOW_X01_H

@@ -5,6 +5,7 @@
 #include "x01_mainwindow.h"
 #include "dartboard_x01.h"
 #include "mocks.h"
+#include "stats_window_x01.h"
 
 class CDartBoardX01Test : public testing::Test
 {
@@ -110,4 +111,10 @@ protected:
   std::unique_ptr<CDartBoardMock> mDb;
   std::unique_ptr<CX01MainWindowMock> mMockWindow;
   std::unique_ptr<CX01GroupBox> mBox;
+};
+
+class CStatsWindowX01Test : public ::testing::Test
+{
+protected:
+
 };

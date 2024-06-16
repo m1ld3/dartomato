@@ -90,9 +90,11 @@ void CGameHistoryDialog::show_stats()
     if (gameDataX01.size() > 0)
     {
       auto stats = IStatsWindow::create(gameDataX01.back(), this);
+#ifndef TESTING
       stats->setAttribute(Qt::WA_DeleteOnClose);
       stats->setModal(true);
       stats->show();
+#endif
     }
     else
     {
