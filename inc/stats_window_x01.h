@@ -94,6 +94,17 @@ public:
     uint32_t BestWonLegDartCount = 0;
     uint32_t WorstWonLegDartCount = 0;
     uint32_t DartCountOfCurrentLeg = 0;
+
+    bool operator==(const SLegStatsData & iOther)
+    {
+      return (Avg3Dart == iOther.Avg3Dart &&
+              Avg1Dart == iOther.Avg1Dart &&
+              AvgLegDartCount == iOther.AvgLegDartCount &&
+              First9Avg == iOther.First9Avg &&
+              BestWonLegDartCount == iOther.BestWonLegDartCount &&
+              WorstWonLegDartCount == iOther.WorstWonLegDartCount &&
+              DartCountOfCurrentLeg == iOther.DartCountOfCurrentLeg);
+    }
   };
 
   struct SGlobalGameStatsData
@@ -106,6 +117,18 @@ public:
     uint32_t HighestCheckout = 0;
     uint32_t CheckoutAttempts = 0;
     uint32_t CheckoutHits = 0;
+
+    bool operator==(const SGlobalGameStatsData & iOther)
+    {
+      return (Avg3Dart == iOther.Avg3Dart &&
+              Avg1Dart == iOther.Avg1Dart &&
+              First9Avg == iOther.First9Avg &&
+              LegsWon == iOther.LegsWon &&
+              NumLegs == iOther.NumLegs &&
+              HighestCheckout == iOther.HighestCheckout &&
+              CheckoutAttempts == iOther.CheckoutAttempts &&
+              CheckoutHits == iOther.CheckoutHits);
+    }
   };
 
   explicit CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidget * iParent = nullptr);
@@ -132,6 +155,7 @@ private:
   void compute_first9_leg_average(const QVector<uint32_t> & iScores);
   void compute_dart_averages(const QVector<uint32_t> & iScores, const QVector<QVector<QString>> & iDarts);
   void update_leg_scores_table_view(const QVector<uint32_t> & iScores, const QVector<QVector<QString>> & iDarts);
+  void update_leg_stats_table_view();
 
 private:
 
@@ -148,7 +172,6 @@ private:
   CGlobalScoreStatsX01Model * mGlobalScoreStatsModel = nullptr;
   CGlobalSegmentStatsX01Model * mGlobalSegmentStatsModel = nullptr;
   SGlobalGameStatsData mGlobalGameStatsData;
-  void update_leg_stats_table_view();
 };
 
 #endif  // STATS_WINDOW_X01_H

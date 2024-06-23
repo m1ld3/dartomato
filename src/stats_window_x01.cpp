@@ -23,12 +23,15 @@ CStatsWindowX01::CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidg
 }
 #else
 CStatsWindowX01::CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidget * iParent)
+  : mPlayerData(iPlayerData)
 {}
 #endif
 
 CStatsWindowX01::~CStatsWindowX01()
 {
+#ifndef TESTING
   delete mUi;
+#endif
   delete mLegStatsModel;
   delete mLegScoresModel;
   delete mGlobalGameStatsModel;
@@ -38,13 +41,6 @@ CStatsWindowX01::~CStatsWindowX01()
 
 void CStatsWindowX01::setup_table_views()
 {
-  mGlobalGameStatsData.Avg3Dart = mPlayerData.Avg3Dart;
-  mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
-  mGlobalGameStatsData.First9Avg = mPlayerData.First9Avg;
-  mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
-  mGlobalGameStatsData.NumLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
-  mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
-  mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;
 #ifndef TESTING
   mGlobalGameStatsModel = new CGlobalGameStatsX01Model(mGlobalGameStatsData, this);
   mGlobalScoreStatsModel = new CGlobalScoreStatsX01Model(mScoreCounts, this);
@@ -231,7 +227,13 @@ void CStatsWindowX01::calculate_segment_counts()
 
 void CStatsWindowX01::compute_dart_count_and_checkouts()
 {
-  QVector<QVector<QVector<QString>>> dartsOfAllLegs = mPlayerData.ThrownDartsOfAllLegs;
+  mGlobalGameStatsData.Avg3Dart = mPlayerData.Avg3Dart;
+  mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
+  mGlobalGameStatsData.First9Avg = mPlayerData.First9Avg;
+  mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
+  mGlobalGameStatsData.NumLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
+  mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
+  mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;  QVector<QVector<QVector<QString>>> dartsOfAllLegs = mPlayerData.ThrownDartsOfAllLegs;
   if (mPlayerData.ThrownDartsOfCurrentLeg.size()) dartsOfAllLegs.append(mPlayerData.ThrownDartsOfCurrentLeg);
   QVector<QVector<uint32_t>> remainingPointsOfAllLegs = mPlayerData.RemainingPointsOfAllLegs;
   if (mPlayerData.RemainingPointsOfCurrentLeg.size()) remainingPointsOfAllLegs.append(mPlayerData.RemainingPointsOfCurrentLeg);

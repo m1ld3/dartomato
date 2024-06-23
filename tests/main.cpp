@@ -468,3 +468,40 @@ TEST_F(CX01GroupBoxTest, PerformUndoNormalTest)
   perform_undo();
   EXPECT_TRUE(verify_snapshot(expected));
 }
+
+TEST_F(CStatsWindowX01Test, UpdateLegHistoryTest)
+{
+  update_leg_history(0);
+  CStatsWindowX01::SLegStatsData expected = {(501.0 / 35.0) * 3, 501.0 / 35.0, 0, 161.0 / 3.0, 0, 0, 35};
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+  update_leg_history(1);
+  expected = {(501.0 / 24.0) * 3, 501.0 / 24.0, 0, 161.0 / 3.0, 0, 0, 24};
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+  update_leg_history(2);
+  expected = {(501.0 / 31.0) * 3, 501.0 / 31.0, 0, 59.0 / 3.0, 0, 0, 31};
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+  update_leg_history(3);
+  expected = {(109.0 / 6.0) * 3, 109.0 / 6.0, 0, 109.0 / 3.0, 0, 0, 6};
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+}
+
+TEST_F(CStatsWindowX01Test, CountScoresTest)
+{
+  count_scores();
+  std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> expected = {0, 0, 0, 0, 2, 2, 7, 12, 5, 5, 0, 0, 2, 1, 0, 5, 2, 3, 1, 1};
+  EXPECT_TRUE(verify_score_counts(expected));
+}
+
+TEST_F(CStatsWindowX01Test, CalculateSegmentCountTest)
+{
+  calculate_segment_counts();
+  std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> expected = {2, 12, 0, 2, 0, 10, 2, 0, 0, 0, 1, 0, 3, 0, 0, 1, 3, 2, 4, 5, 48, 1, 5};
+  EXPECT_TRUE(verify_segment_counts(expected));
+}
+
+TEST_F(CStatsWindowX01Test, ComputeDartCountAndCheckoutsTest)
+{
+  CStatsWindowX01::SGlobalGameStatsData expected = {50.375, 50.375 / 3.0, 40.833333333333336, 3, 4, 56, 11, 3};
+  compute_dart_count_and_checkouts();
+  EXPECT_TRUE(verify_global_stats(expected));
+}

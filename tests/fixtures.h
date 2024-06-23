@@ -146,7 +146,38 @@ protected:
     QVector<QVector<QString>> thrownDartsOfCurrentLeg = {{"s20", "s20", "s20"}, {"s15", "s17", "s17"}};
 
     mData = {setsWon, legsWonPerset, totalLegsWon, remainingPoints, checkoutAttempts, checkoutHits, totalDarts, avg1Dart, avg3Dart, checkoutRate, first9Avg, scoresOfCurrentLeg, allScoresOfAllLegs, allScoresFlat, thrownDartsOfCurrentLeg, thrownDartsOfAllLegsFlat, thrownDartsOfAllLegs, remainingPointsOfCurrentLeg, remainingPointsOfAllLegs, active};
+    mStats = std::make_unique<CStatsWindowX01>(mData);
+  }
+
+  void update_leg_history(int iIndex) { mStats->update_leg_history(iIndex); }
+  void count_scores() { mStats->count_scores(); }
+  void calculate_segment_counts() { mStats->calculate_segment_counts(); }
+  void compute_dart_count_and_checkouts() { mStats->compute_dart_count_and_checkouts(); }
+
+  testing::AssertionResult verify_leg_stats_data(CStatsWindowX01::SLegStatsData iExpected)
+  {
+    if (mStats->mLegStatsData == iExpected) return testing::AssertionSuccess();
+    else return testing::AssertionFailure();
+  }
+
+  testing::AssertionResult verify_score_counts(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> & iExpected)
+  {
+    if (mStats->mScoreCounts == iExpected) return testing::AssertionSuccess();
+    else return testing::AssertionFailure();
+  }
+
+  testing::AssertionResult verify_segment_counts(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> & iExpected)
+  {
+    if (mStats->mSegmentCounts == iExpected) return testing::AssertionSuccess();
+    else return testing::AssertionFailure();
+  }
+
+  testing::AssertionResult verify_global_stats(CStatsWindowX01::SGlobalGameStatsData & iExpected)
+  {
+    if (mStats->mGlobalGameStatsData == iExpected) return testing::AssertionSuccess();
+    else return testing::AssertionFailure();
   }
 
   CX01Class::CPlayerData mData;
+  std::unique_ptr<CStatsWindowX01> mStats;
 };
