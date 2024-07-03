@@ -5,6 +5,7 @@
 #include "global_segment_stats_cricket_model.h"
 #include "ui_stats_window_cricket.h"
 
+#ifndef TESTING
 CStatsWindowCricket::CStatsWindowCricket(const CCricketClass::CPlayerData iPlayerData, QWidget * iParent)
  : QDialog(iParent)
  ,  mUi(new Ui::CStatsWindowCricket)
@@ -16,24 +17,37 @@ CStatsWindowCricket::CStatsWindowCricket(const CCricketClass::CPlayerData iPlaye
   compute_dart_count_of_won_legs();
   QObject::connect(mUi->legSelector, &QComboBox::currentIndexChanged, this, &CStatsWindowCricket::update_leg_history_slot);
   CStatsWindowCricket::init_leg_selector();
+  get_global_game_stats_data();
   CStatsWindowCricket::setup_table_views();
 }
+#else
+CStatsWindowCricket::CStatsWindowCricket(const CCricketClass::CPlayerData iPlayerData, QWidget * iParent)
+ :  mPlayerData(iPlayerData)
+{}
+#endif
 
 CStatsWindowCricket::~CStatsWindowCricket()
 {
+#ifndef TESTING
   delete mUi;
+#endif
   delete mLegStatsModel;
   delete mLegScoresModel;
   delete mGlobalGameStatsModel;
   delete mGlobalSegmentStatsModel;
 }
 
-void CStatsWindowCricket::setup_table_views()
+void CStatsWindowCricket::get_global_game_stats_data()
 {
   mGlobalGameStatsData.HitsPerRound = mPlayerData.HitsPerRound;
   mGlobalGameStatsData.TotalHits = mPlayerData.TotalHits;
   mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
   mGlobalGameStatsData.NumLegs = mPlayerData.LegWonVec.size() > 0 ? mPlayerData.LegWonHistory.size() + 1 : mPlayerData.LegWonHistory.size();
+}
+
+void CStatsWindowCricket::setup_table_views()
+{
+#ifndef TESTING
   mGlobalGameStatsModel = new CGlobalGameStatsCricketModel(mGlobalGameStatsData, this);
   mGlobalSegmentStatsModel = new CGlobalSegmentStatsCricketModel(mSegmentCounts, this);
   mUi->tableViewGlobalGameStats->setModel(mGlobalGameStatsModel);
@@ -50,6 +64,7 @@ void CStatsWindowCricket::setup_table_views()
   mUi->tableViewGlobalSegmentStats->setColumnWidth(3, 75);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(4, 50);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(5, 75);
+#endif
 }
 
 void CStatsWindowCricket::init_leg_selector()
@@ -70,39 +85,33 @@ void CStatsWindowCricket::init_leg_selector()
   }
 }
 
-void CStatsWindowCricket::update_leg_history(int iIndex)
+void CStatsWindowCricket::compute_hits_per_round(const QVector<QVector<QString>> & iTotalDarts, const QVector<uint32_t> & iTotalHits)
 {
-  QVector<QVector<QVector<QString>>> totalDarts = mPlayerData.ScoringHistory;
-  QVector<QVector<uint32_t>> totalHits = mPlayerData.HitsHistory;
-  if (mPlayerData.ScoresOfCurrentLeg.size()) totalDarts.append(mPlayerData.ScoresOfCurrentLeg);
-  if (mPlayerData.HitsOfCurrentLeg.size()) totalHits.append(mPlayerData.HitsOfCurrentLeg);
+  uint32_t numberOfDarts = (iTotalDarts.size() - 1) * 3 + iTotalDarts.back().size();
+  uint32_t hits = std::accumulate(iTotalHits.begin(), iTotalHits.end(), 0.0);
+  mLegStatsData.HitsPerRound = numberOfDarts > 0 ? 3 * static_cast<double>(hits) / static_cast<double>(numberOfDarts) : 0.0;
+}
 
-  if (totalDarts.size() >= iIndex + 1 && totalHits.size() >= iIndex + 1)
+void CStatsWindowCricket::update_leg_scores_table_view(const QVector<QVector<QString>> & iTotalDarts)
+{
+#ifndef TESTING
+  if (!mLegScoresModel)
   {
-    uint32_t numberOfDarts = (totalDarts.at(iIndex).size() - 1) * 3 + totalDarts.at(iIndex).back().size();
-    uint32_t hits = std::accumulate(totalHits.at(iIndex).begin(), totalHits.at(iIndex).end(), 0.0);
-    mLegStatsData.HitsPerRound = numberOfDarts > 0 ? 3 * static_cast<double>(hits) / static_cast<double>(numberOfDarts) : 0.0;
-
-    if (!mLegScoresModel)
-    {
-      mLegScoresModel = new CLegScoresCricketModel(totalDarts.at(iIndex), this);
-      mUi->tableViewLegScores->setModel(mLegScoresModel);
-      mUi->tableViewLegScores->setColumnWidth(0, 25);
-      mUi->tableViewLegScores->setColumnWidth(1, 100);
-    }
-    else
-    {
-      mLegScoresModel->update(totalDarts.at(iIndex));
-    }
-    mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / totalDarts.size();
+    mLegScoresModel = new CLegScoresCricketModel(iTotalDarts, this);
+    mUi->tableViewLegScores->setModel(mLegScoresModel);
+    mUi->tableViewLegScores->setColumnWidth(0, 25);
+    mUi->tableViewLegScores->setColumnWidth(1, 100);
   }
-
-  if (mDartCountOfWonLegs.size())
+  else
   {
-    mLegStatsData.BestWonLegDartCount = *std::min_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
-    mLegStatsData.WorstWonLegDartCount = *std::max_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
+    mLegScoresModel->update(iTotalDarts);
   }
-  mLegStatsData.DartCountOfCurrentLeg = compute_dart_count_of_indexed_leg(iIndex);
+#endif
+}
+
+void CStatsWindowCricket::update_leg_stats_table_view()
+{
+#ifndef TESTING
   if (!mLegStatsModel)
   {
     mLegStatsModel = new CLegStatsCricketModel(mLegStatsData, this);
@@ -114,6 +123,25 @@ void CStatsWindowCricket::update_leg_history(int iIndex)
   {
     mLegStatsModel->update(mLegStatsData);
   }
+#endif
+}
+
+void CStatsWindowCricket::update_leg_history(int iIndex)
+{
+  QVector<QVector<QVector<QString>>> totalDarts = mPlayerData.ScoringHistory;
+  QVector<QVector<uint32_t>> totalHits = mPlayerData.HitsHistory;
+  if (mPlayerData.ScoresOfCurrentLeg.size()) totalDarts.append(mPlayerData.ScoresOfCurrentLeg);
+  if (mPlayerData.HitsOfCurrentLeg.size()) totalHits.append(mPlayerData.HitsOfCurrentLeg);
+
+  if (totalDarts.size() >= iIndex + 1 && totalHits.size() >= iIndex + 1)
+  {
+    compute_hits_per_round(totalDarts.at(iIndex), totalHits.at(iIndex));
+    update_leg_scores_table_view(totalDarts.at(iIndex));
+    mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / totalDarts.size();
+  }
+
+  mLegStatsData.DartCountOfCurrentLeg = compute_dart_count_of_indexed_leg(iIndex);
+  update_leg_stats_table_view();
 }
 
 void CStatsWindowCricket::calculate_segment_counts()
@@ -147,6 +175,11 @@ void CStatsWindowCricket::compute_dart_count_of_won_legs()
     {
       mDartCountOfWonLegs.append((mPlayerData.ScoringHistory.at(idx).size() - 1) * 3 + mPlayerData.ScoringHistory.at(idx).back().size());
     }
+  }
+  if (mDartCountOfWonLegs.size())
+  {
+    mLegStatsData.BestWonLegDartCount = *std::min_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
+    mLegStatsData.WorstWonLegDartCount = *std::max_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
   }
 }
 

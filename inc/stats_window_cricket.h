@@ -18,10 +18,16 @@ class CLegScoresCricketModel;
 class CGlobalGameStatsCricketModel;
 class CGlobalSegmentStatsCricketModel;
 
+#ifndef TESTING
 class CStatsWindowCricket : public QDialog, public IStatsWindow
 {
   Q_OBJECT
 //  Q_INTERFACES(CStatsWindow)
+#else
+class CStatsWindowCricket : public IStatsWindow
+{
+  friend class CStatsWindowCricketTest;
+#endif
 
 public:
 
@@ -58,7 +64,11 @@ public:
   explicit CStatsWindowCricket(const CCricketClass::CPlayerData iPlayerData, QWidget * iParent = nullptr);
   ~CStatsWindowCricket() override;
 
+#ifndef TESTING
 private slots:
+#else
+private:
+#endif
 
   void update_leg_history_slot(int iIndex) { update_leg_history(iIndex); }
 
@@ -71,6 +81,10 @@ private:
   uint32_t compute_dart_count_of_indexed_leg(uint32_t iIndex) override;
   void setup_table_views() override;
   void compute_dart_count_of_won_legs();
+  void get_global_game_stats_data();
+  void compute_hits_per_round(const QVector<QVector<QString> > &iTotalDarts, const QVector<uint32_t> &iTotalHits);
+  void update_leg_scores_table_view(const QVector<QVector<QString> > &iTotalDarts);
+  void update_leg_stats_table_view();
 
 private:
 

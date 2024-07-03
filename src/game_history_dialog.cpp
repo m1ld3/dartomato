@@ -99,9 +99,11 @@ void CGameHistoryDialog::show_stats()
     else
     {
       auto stats = IStatsWindow::create(gameDataCricket.back(), this);
+#ifndef TESTING
       stats->setAttribute(Qt::WA_DeleteOnClose);
       stats->setModal(true);
       stats->show();
+#endif
     }
   }
   else

@@ -6,6 +6,7 @@
 #include "dartboard_x01.h"
 #include "mocks.h"
 #include "stats_window_x01.h"
+#include "stats_window_cricket.h"
 
 class CDartBoardX01Test : public testing::Test
 {
@@ -180,4 +181,17 @@ protected:
 
   CX01Class::CPlayerData mData;
   std::unique_ptr<CStatsWindowX01> mStats;
+};
+
+class CStatsWindowCricketTest : public ::testing::Test
+{
+protected:
+
+  CStatsWindowCricketTest()
+  {
+    mStats = std::make_unique<CStatsWindowCricket>(mData);
+  }
+
+  CCricketClass::CPlayerData mData;
+  std::unique_ptr<CStatsWindowCricket> mStats;
 };
