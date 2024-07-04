@@ -189,6 +189,27 @@ protected:
 
   CStatsWindowCricketTest()
   {
+    uint32_t setsWon = 1;
+    uint32_t legsWonPerSet = 1;
+    uint32_t totalLegsWon = 3;
+    uint32_t totalDarts = 105;
+    uint32_t score = 0;
+    uint32_t totalHits = 69;
+    double hitsPerRound = 1.9714285714285715;
+    QVector<QVector<QString>> scoresOfCurrentLeg = {{"s17", "s19", "s0"}, {"s0", "s18", "s18"}, {"s20", "s20", "s0"}};
+    QVector<QVector<QVector<QString>>> scoringHistory = {{{"s20", "s20", "s20"}, {"s0", "s0", "s18"}, {"s18", "s18", "s0"}, {"s15", "s0", "d15"}, {"t17", "s0", "s19"}, {"s16", "s16", "s0"}, {"s16", "s0", "s0"}, {"s19", "s0", "s19"}, {"s25", "s0", "s0"}, {"s0", "s0", "s0"}, {"d25", "", ""}},
+                                                         {{"s20", "s20", "s0"}, {"s18", "s0", "s20"}, {"s18", "s18", "s0"}, {"s19", "s19", "s19"}, {"t17", "s0", "s0"}, {"s15", "s15", "s0"}, {"s15", "s16", "s16"}, {"s16", "s0", "s0"}, {"s0", "s0", "d25"}, {"s0", "s0", "s0"}, {"s25", "", ""}},
+                                                         {{"s20", "s20", "s20"}, {"s18", "s18", "s0"}, {"s15", "s15", "s15"}, {"t17", "s0", "s0"}, {"s19", "s19", "s19"}, {"s18", "s0", "s0"}, {"s16", "s16", "s16"}, {"s25", "s0", "s0"}, {"s0", "s0", "s0"}, {"s0", "s0", "s0"}, {"s0", "s0", "s0"}, {"d25", "", ""}}};
+    QVector<uint32_t> hitsOfCurrentLeg = {2, 2, 2};
+    QVector<QVector<uint32_t>> hitsHistory = {{0, 3, 1, 2, 3, 4, 2, 1, 2, 1, 0, 2}, {2, 2, 2, 3, 3, 2, 3, 1, 2, 0, 1}, {3, 2, 3, 3, 3, 1, 3, 1, 0, 0, 0, 2}};
+    QVector<uint32_t> slotArray = {0, 0, 1, 2, 1, 2, 0};
+    QVector<uint32_t> extraPointsArray = {0, 0, 0, 0, 0, 0, 0};
+    QVector<bool> legWonVec = {false, false, false};
+    QVector<QVector<bool>> legWonHistory = {{false, false, false, false, false, false, false, false, false, false, true},
+                                            {false, false, false, false, false, false, false, false, false, false, true},
+                                            {false, false, false, false, false, false, false, false, false, false, false, true}};
+
+    mData = {setsWon, legsWonPerSet, totalLegsWon, totalDarts, score, totalHits, hitsPerRound, scoresOfCurrentLeg, scoringHistory, hitsOfCurrentLeg, hitsHistory, slotArray, extraPointsArray, legWonVec, legWonHistory, true};
     mStats = std::make_unique<CStatsWindowCricket>(mData);
   }
 

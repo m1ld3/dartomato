@@ -51,8 +51,8 @@ void CCricketInput::set_score_labels(uint32_t iVal, QChar iType)
   if (iType == 't') iVal = iVal / 3;
   else if (iType == 'd') iVal = iVal / 2;
 
-  mDarts[3-mCounter] = iType + QString::number(iVal);
-  QString temp = iType.toUpper()+QString::number(iVal);
+  mDarts[3 - mCounter] = iType + QString::number(iVal);
+  QString temp = iType.toUpper() + QString::number(iVal);
   if (mCounter == 3) mUi->labelScoreDart1->setText(iVal > 0 ? temp : "X");
   else if (mCounter == 2) mUi->labelScoreDart2->setText(iVal > 0 ? temp : "X");
   else if (mCounter == 1) mUi->labelScoreDart3->setText(iVal > 0 ? temp : "X");
@@ -235,7 +235,7 @@ void CCricketInput::undo_button_clicked_slot()
 {
   if (mCounter < 3)
   {
-    mDarts[2-mCounter] = "";
+    mDarts[2 - mCounter] = "";
     for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
     {
       mSlotHistory.at(i).pop_back();

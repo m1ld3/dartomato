@@ -171,8 +171,8 @@ void CCricketGroupBox::handle_slot_hits_overflow(uint32_t iSlotIdx, uint32_t iHi
   else
   {
     // fill up only the own slot without scoring extra points
-    std::array<QString, 2> prefixes {"S", "D"};
-    oDart = remainingSlots == 0 ? " X" : (prefixes.at(remainingSlots-1) + QString::number(iSlotVal));
+    std::array<QString, 2> prefixes {"s", "d"};
+    oDart = remainingSlots == 0 ? "s0" : (prefixes.at(remainingSlots - 1) + QString::number(iSlotVal));
     mTotalHits += remainingSlots;
   }
 }
