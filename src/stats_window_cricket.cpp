@@ -157,7 +157,8 @@ void CStatsWindowCricket::calculate_segment_counts()
     {
       if (dart == "") continue;
       int idx = dart.mid(1).toUInt() % 15;
-      if (idx == 10 || dart.mid(1).toUInt() == 0) idx = 6;
+      if (idx == 10) idx = 6;
+      if (dart.mid(1).toUInt() == 0) idx = 20;
       if (dart[0] == 'd')      mSegmentCounts.at(idx + 7) += 1;
       else if (dart[0] == 't') mSegmentCounts.at(idx + 14) += 1;
       else                     mSegmentCounts.at(idx) += 1;

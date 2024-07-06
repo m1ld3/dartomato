@@ -51,6 +51,16 @@ public:
     uint32_t BestWonLegDartCount = 0;
     uint32_t WorstWonLegDartCount = 0;
     uint32_t DartCountOfCurrentLeg = 0;
+
+
+    bool operator==(const SLegStatsData & iOther)
+    {
+      return (HitsPerRound == iOther.HitsPerRound &&
+              AvgLegDartCount == iOther.AvgLegDartCount &&
+              BestWonLegDartCount == iOther.BestWonLegDartCount &&
+              WorstWonLegDartCount == iOther.WorstWonLegDartCount &&
+              DartCountOfCurrentLeg == iOther.DartCountOfCurrentLeg);
+    }
   };
 
   struct SGlobalGameStatsData

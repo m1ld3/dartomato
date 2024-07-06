@@ -72,7 +72,9 @@ void CCricketGroupBox::unset_finished()
 
 void CCricketGroupBox::close_cricket_input()
 {
+#ifndef TESTING
   this->mScoreInput->close();
+#endif
 }
 
 void CCricketGroupBox::load_slot_arrays_from_player()
@@ -315,9 +317,13 @@ void CCricketGroupBox::push_button_score_clicked_slot()
 {
   if (mActive && !mFinished)
   {
+#ifndef TESTING
     mScoreInput = new CCricketInput(this, mSettings, &mPlayer, mGameWindow);
     mScoreInput->setAttribute(Qt::WA_DeleteOnClose);
     mScoreInput->show();
+#else
+    mScoreInput = std::make_shared<CCricketInput>(mSettings, &mPlayer, mGameWindow);
+#endif
   }
   else if (mFinished)
   {

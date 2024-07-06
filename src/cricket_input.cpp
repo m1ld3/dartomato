@@ -10,7 +10,17 @@
 #include "groupbox_cricket.h"
 #include "cricket_mainwindow.h"
 
-CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCricketClass * iPlayer, CCricketMainWindow * iGameWindow)
+#ifndef TESTING
+#define PUT_WARNING(TITLE, MESSAGE) \
+    QMessageBox::warning(this, (TITLE), (MESSAGE));
+#else
+#include <iostream>
+#define PUT_WARNING(TITLE, MESSAGE) \
+    mOutput << TITLE << ": " << MESSAGE;
+#endif
+
+#ifndef TESTING
+CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCricketClass * iPlayer, ICricketMainWindow * iGameWindow)
   : QDialog(iParent)
   , mUi(new Ui::CCricketInput)
   , mPlayer(iPlayer)
@@ -31,14 +41,11 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCr
     mCutThroatExtraPointsArray.at(i) = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), 0, mPlayer->get_player_number());
     mCutThroatExtraPointsHistory.at(i).append(mCutThroatExtraPointsArray.at(i));
   }
-#ifdef TESTING
-  mDartBoard = new CDartBoardCricket();
-#else
   mDartBoard = new CDartBoardCricket(mUi->graphicsViewDartBoard, mSettings, this);
-#endif
   connect(mUi->submitButton, &QPushButton::clicked, this, &CCricketInput::submit_button_clicked_slot);
   connect(mUi->undoButton, &QPushButton::clicked, this, &CCricketInput::undo_button_clicked_slot);
 }
+#endif
 
 CCricketInput::~CCricketInput()
 {
@@ -110,7 +117,7 @@ void CCricketInput::handle_input_stop()
 void CCricketInput::handle_warnings(bool iWarningCondition)
 {
   const char * warningMsg = iWarningCondition ? "You have already won this leg!" : "You only have three darts!";
-  QMessageBox::warning(this, "Warning", warningMsg);
+  PUT_WARNING("Warning", warningMsg);
 }
 
 void CCricketInput::process_segment_cutthroat()
@@ -227,7 +234,7 @@ void CCricketInput::submit_button_clicked_slot()
   }
   else
   {
-    QMessageBox::warning(this, "Score incomplete", "Please enter all darts.");
+    PUT_WARNING("Score incomplete", "Please enter all darts.");
   }
 }
 

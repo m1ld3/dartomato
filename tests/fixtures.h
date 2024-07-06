@@ -213,6 +213,22 @@ protected:
     mStats = std::make_unique<CStatsWindowCricket>(mData);
   }
 
+  testing::AssertionResult verify_leg_stats_data(CStatsWindowCricket::SLegStatsData iExpected)
+  {
+    if (mStats->mLegStatsData == iExpected) return testing::AssertionSuccess();
+    else return testing::AssertionFailure();
+  }
+
+  testing::AssertionResult verify_segment_counts(std::array<uint32_t, static_cast<int>(CStatsWindowCricket::EDartCountsIdx::SEG_MAX)> & iExpected)
+  {
+    if (mStats->mSegmentCounts == iExpected) return testing::AssertionSuccess();
+    else return testing::AssertionFailure();
+  }
+
+  void update_leg_history(int iIndex) { mStats->update_leg_history(iIndex); }
+  void calculate_segment_counts() { mStats->calculate_segment_counts(); }
+  void compute_dart_count_of_won_legs() { mStats->compute_dart_count_of_won_legs(); }
+
   CCricketClass::CPlayerData mData;
   std::unique_ptr<CStatsWindowCricket> mStats;
 };

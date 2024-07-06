@@ -100,7 +100,11 @@ private:
   void update_gui_elements();
 
   Ui::CCricketGroupBox * mUi;
+#ifdef TESTING
+  std::shared_ptr<CCricketInput> mScoreInput;
+#else
   QPointer<CCricketInput> mScoreInput;
+#endif
   CCricketClass mPlayer;
   uint32_t mPlayerNumber;
   CCricketMainWindow * mGameWindow;

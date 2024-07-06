@@ -471,8 +471,8 @@ TEST_F(CX01GroupBoxTest, PerformUndoNormalTest)
 
 TEST_F(CStatsWindowX01Test, UpdateLegHistoryTest)
 {
-  update_leg_history(0);
   CStatsWindowX01::SLegStatsData expected = {(501.0 / 35.0) * 3, 501.0 / 35.0, 0, 161.0 / 3.0, 0, 0, 35};
+  update_leg_history(0);
   EXPECT_TRUE(verify_leg_stats_data(expected));
   update_leg_history(1);
   expected = {(501.0 / 24.0) * 3, 501.0 / 24.0, 0, 161.0 / 3.0, 0, 0, 24};
@@ -492,7 +492,7 @@ TEST_F(CStatsWindowX01Test, CountScoresTest)
   EXPECT_TRUE(verify_score_counts(expected));
 }
 
-TEST_F(CStatsWindowX01Test, CalculateSegmentCountTest)
+TEST_F(CStatsWindowX01Test, CalculateSegmentCountsTest)
 {
   calculate_segment_counts();
   std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> expected = {2, 12, 0, 2, 0, 10, 2, 0, 0, 0, 1, 0, 3, 0, 0, 1, 3, 2, 4, 5, 48, 1, 5};
@@ -504,4 +504,34 @@ TEST_F(CStatsWindowX01Test, ComputeDartCountAndCheckoutsTest)
   CStatsWindowX01::SGlobalGameStatsData expected = {50.375, 50.375 / 3.0, 40.833333333333336, 3, 4, 56, 11, 3};
   compute_dart_count_and_checkouts();
   EXPECT_TRUE(verify_global_stats(expected));
+}
+
+TEST_F(CStatsWindowCricketTest, UpdateLegHistoryTest)
+{
+  CStatsWindowCricket::SLegStatsData expected = {21.0 / 11.0, 105.0 / 4.0, 0, 0, 33};
+  update_leg_history(0);
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+  update_leg_history(1);
+  expected = {21.0 / 11.0, 105.0 / 4.0, 0, 0, 33};
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+  update_leg_history(2);
+  expected = {21.0 / 12.0, 105.0 / 4.0, 0, 0, 36};
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+  update_leg_history(3);
+  expected = {6.0 / 3.0, 105.0 / 4.0, 0, 0, 9};
+  EXPECT_TRUE(verify_leg_stats_data(expected));
+}
+
+TEST_F(CStatsWindowCricketTest, CalculateSegmentCountsTest)
+{
+  calculate_segment_counts();
+  std::array<uint32_t, static_cast<int>(CStatsWindowCricket::EDartCountsIdx::SEG_MAX)> expected = {7, 9, 1, 11, 10, 11, 3, 1, 0, 0, 0, 0, 0, 3, 0, 0, 3, 0, 0, 0, 46};
+  EXPECT_TRUE(verify_segment_counts(expected));
+}
+
+TEST_F(CStatsWindowCricketTest, ComputeDartCountOfWonLegsTest)
+{
+  CStatsWindowCricket::SLegStatsData expected = {0, 0, 33, 36, 0};
+  compute_dart_count_of_won_legs();
+  EXPECT_TRUE(verify_leg_stats_data(expected));
 }

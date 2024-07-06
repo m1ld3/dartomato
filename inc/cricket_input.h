@@ -11,7 +11,7 @@
 #include "dartboard_cricket.h"
 #include "settings.h"
 
-class CCricketMainWindow;
+class ICricketMainWindow;
 class CCricketClass;
 class CCricketGroupBox;
 
@@ -31,20 +31,40 @@ inline std::unordered_map<uint32_t, ECricketSlots> Slot2IdxMap =
   {25, ECricketSlots::SLOT_25}
 };
 
+#ifndef TESTING
 class CCricketInput : public QDialog
 {
   Q_OBJECT
+#else
+class CCricketInput
+{
+#endif
 
 public:
 
+#ifdef TESTING
+  CCricketInput(const CSettings & iSettings, CCricketClass * iPlayer = nullptr, ICricketMainWindow * iMainWindow = nullptr)
+    : mPlayer(iPlayer)
+    , mGameWindow(iMainWindow)
+    , mScore(mPlayer->get_score())
+    , mSettings(iSettings)
+  {
+    mDartBoard = new CDartBoardCricket();
+  }
+#else
   CCricketInput(QWidget * iParent, const CSettings & iSettings,
-                CCricketClass * iPlayer = nullptr, CCricketMainWindow * iGameWindow = nullptr);
+                CCricketClass * iPlayer = nullptr, ICricketMainWindow * iGameWindow = nullptr);
+#endif
   ~CCricketInput();
   bool are_slots_full() const;
   void handle_segment_pressed_event(uint32_t iVal, QChar iType);
   void notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
 
+#ifndef TESTING
 private slots:
+#else
+private:
+#endif
 
   void submit_button_clicked_slot();
   void undo_button_clicked_slot();
@@ -75,7 +95,7 @@ private:
   QLCDNumber * mScoreDart3;
   QVector<QString> mDarts{"","",""};
   CCricketClass * mPlayer;
-  CCricketMainWindow * mGameWindow;
+  ICricketMainWindow * mGameWindow;
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
@@ -84,8 +104,15 @@ private:
   std::array<QVector<QVector<uint32_t>>, static_cast<int>(ECricketSlots::SLOT_MAX)> mCutThroatExtraPointsHistory;
   uint32_t mScore;
   CDartBoardCricket * mDartBoard;
+#ifdef TESTING
+  CSettings mSettings;
+#else
   const CSettings & mSettings;
+#endif
   CCricketGroupBox * mGroupBox;
+#ifdef TESTING
+  std::stringstream mOutput = std::stringstream("");
+#endif
 };
 
 #endif  // CRICKET_INPUT_H
