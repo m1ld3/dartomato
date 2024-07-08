@@ -50,7 +50,9 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCr
 CCricketInput::~CCricketInput()
 {
   delete mDartBoard;
+#ifndef TESTING
   delete mUi;
+#endif
 }
 
 void CCricketInput::set_score_labels(uint32_t iVal, QChar iType)

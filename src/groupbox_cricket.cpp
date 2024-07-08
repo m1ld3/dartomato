@@ -322,7 +322,7 @@ void CCricketGroupBox::push_button_score_clicked_slot()
     mScoreInput->setAttribute(Qt::WA_DeleteOnClose);
     mScoreInput->show();
 #else
-    mScoreInput = std::make_shared<CCricketInput>(mSettings, &mPlayer, mGameWindow);
+    mScoreInput = std::make_shared<CCricketInput>(mGameWindow);
 #endif
   }
   else if (mFinished)

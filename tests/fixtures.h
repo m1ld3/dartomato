@@ -7,6 +7,7 @@
 #include "mocks.h"
 #include "stats_window_x01.h"
 #include "stats_window_cricket.h"
+#include "cricket_input.h"
 
 class CDartBoardX01Test : public testing::Test
 {
@@ -231,4 +232,20 @@ protected:
 
   CCricketClass::CPlayerData mData;
   std::unique_ptr<CStatsWindowCricket> mStats;
+};
+
+class CCricketInputTest : public ::testing::Test
+{
+protected:
+
+  CCricketInputTest()
+    : mMockWindow(std::make_unique<CCricketMainWindowMock>())
+    , mScoreInput(std::make_unique<CCricketInput>(mMockWindow.get()))
+  {
+    mDb = mScoreInput->mDartBoard;
+  }
+
+  std::unique_ptr<CCricketMainWindowMock> mMockWindow;
+  std::unique_ptr<CCricketInput> mScoreInput;
+  CDartBoardMock * mDb;
 };

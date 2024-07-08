@@ -38,16 +38,14 @@ class CCricketInput : public QDialog
 #else
 class CCricketInput
 {
+  friend class CCricketInputTest;
 #endif
 
 public:
 
 #ifdef TESTING
-  CCricketInput(const CSettings & iSettings, CCricketClass * iPlayer = nullptr, ICricketMainWindow * iMainWindow = nullptr)
-    : mPlayer(iPlayer)
-    , mGameWindow(iMainWindow)
-    , mScore(mPlayer->get_score())
-    , mSettings(iSettings)
+  CCricketInput(ICricketMainWindow * iMainWindow = nullptr)
+    : mGameWindow(iMainWindow)
   {
     mDartBoard = new CDartBoardCricket();
   }
