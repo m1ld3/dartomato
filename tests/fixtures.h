@@ -30,7 +30,7 @@ protected:
     QVector<uint32_t> Undo = {0, 0, 0};
   };
 
-  testing::AssertionResult verify_dartboard_x01(const SState iExpectedState)
+  testing::AssertionResult verify_dartboard_x01(const SState iExpectedState) const
   {
     if (iExpectedState.Stop == mDartBoard->mStop &&
         iExpectedState.Busted == mDartBoard->mBusted &&
@@ -47,7 +47,7 @@ protected:
     return testing::AssertionFailure();
   }
 
-  testing::AssertionResult verify_dartboard_x01_warning(const std::string iExpectedStr)
+  testing::AssertionResult verify_dartboard_x01_warning(const std::string iExpectedStr) const
   {
     if (mDartBoard->mOutput.str() == iExpectedStr) return testing::AssertionSuccess();
     return testing::AssertionFailure();
@@ -83,7 +83,7 @@ protected:
     , mBox(std::make_unique<CX01GroupBox>(mMockWindow.get(), mSettings, 0, mDb.get()))
   {}
 
-  testing::AssertionResult verify_score_sound_path(const uint32_t iExpectedScore)
+  testing::AssertionResult verify_score_sound_path(const uint32_t iExpectedScore) const
   {
     std::stringstream ss;
     ss << std::setw(3) << std::setfill('0') << iExpectedScore;
@@ -97,7 +97,7 @@ protected:
     return testing::AssertionFailure();
   }
 
-  testing::AssertionResult verify_snapshot(const CX01Class::CPlayerData & iExpected)
+  testing::AssertionResult verify_snapshot(const CX01Class::CPlayerData & iExpected) const
   {
     auto & snap = mBox->mHistory.back();
     if (snap == iExpected)
@@ -156,25 +156,25 @@ protected:
   void calculate_segment_counts() { mStats->calculate_segment_counts(); }
   void compute_dart_count_and_checkouts() { mStats->compute_dart_count_and_checkouts(); }
 
-  testing::AssertionResult verify_leg_stats_data(CStatsWindowX01::SLegStatsData iExpected)
+  testing::AssertionResult verify_leg_stats_data(CStatsWindowX01::SLegStatsData iExpected) const
   {
     if (mStats->mLegStatsData == iExpected) return testing::AssertionSuccess();
     else return testing::AssertionFailure();
   }
 
-  testing::AssertionResult verify_score_counts(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> & iExpected)
+  testing::AssertionResult verify_score_counts(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> & iExpected) const
   {
     if (mStats->mScoreCounts == iExpected) return testing::AssertionSuccess();
     else return testing::AssertionFailure();
   }
 
-  testing::AssertionResult verify_segment_counts(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> & iExpected)
+  testing::AssertionResult verify_segment_counts(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> & iExpected) const
   {
     if (mStats->mSegmentCounts == iExpected) return testing::AssertionSuccess();
     else return testing::AssertionFailure();
   }
 
-  testing::AssertionResult verify_global_stats(CStatsWindowX01::SGlobalGameStatsData & iExpected)
+  testing::AssertionResult verify_global_stats(CStatsWindowX01::SGlobalGameStatsData & iExpected) const
   {
     if (mStats->mGlobalGameStatsData == iExpected) return testing::AssertionSuccess();
     else return testing::AssertionFailure();
@@ -214,13 +214,13 @@ protected:
     mStats = std::make_unique<CStatsWindowCricket>(mData);
   }
 
-  testing::AssertionResult verify_leg_stats_data(CStatsWindowCricket::SLegStatsData iExpected)
+  testing::AssertionResult verify_leg_stats_data(CStatsWindowCricket::SLegStatsData iExpected) const
   {
     if (mStats->mLegStatsData == iExpected) return testing::AssertionSuccess();
     else return testing::AssertionFailure();
   }
 
-  testing::AssertionResult verify_segment_counts(std::array<uint32_t, static_cast<int>(CStatsWindowCricket::EDartCountsIdx::SEG_MAX)> & iExpected)
+  testing::AssertionResult verify_segment_counts(std::array<uint32_t, static_cast<int>(CStatsWindowCricket::EDartCountsIdx::SEG_MAX)> & iExpected) const
   {
     if (mStats->mSegmentCounts == iExpected) return testing::AssertionSuccess();
     else return testing::AssertionFailure();
@@ -243,6 +243,49 @@ protected:
     , mScoreInput(std::make_unique<CCricketInput>(mMockWindow.get()))
   {
     mDb = mScoreInput->mDartBoard;
+  }
+
+  void set_settings(CSettings & iSettings)
+  {
+    mScoreInput->mSettings = iSettings;
+  }
+
+  void set_state(uint32_t iScore,
+                 const QVector<QString> & iDarts,
+                 const std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> & iSlots,
+                 const std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExtraPoints,
+                 const std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> & iCutThroatExtraPoints
+                 )
+  {
+    mScoreInput->mScore = iScore;
+    mScoreInput->mDarts = iDarts;
+    mScoreInput->mSlotArray = iSlots;
+    mScoreInput->mExtraPointsArray = iExtraPoints;
+    mScoreInput->mCutThroatExtraPointsArray = iCutThroatExtraPoints;
+  }
+
+  testing::AssertionResult verify_state(uint32_t iExpectedScore,
+                                        const QVector<QString> & iExpectedDarts,
+                                        const std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExpectedSlots,
+                                        const std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExpectedExtraPoints,
+                                        const std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExpectedCutThroatExtraPoints
+                                        ) const
+  {
+    if (mScoreInput->mScore == iExpectedScore &&
+        mScoreInput->mDarts == iExpectedDarts &&
+        mScoreInput->mSlotArray == iExpectedSlots &&
+        mScoreInput->mExtraPointsArray == iExpectedExtraPoints &&
+        mScoreInput->mCutThroatExtraPointsArray == iExpectedCutThroatExtraPoints)
+    {
+      return ::testing::AssertionSuccess();
+    }
+    else return testing::AssertionFailure();
+  }
+
+  testing::AssertionResult verify_warning(const std::string iExpectedStr) const
+  {
+    if (mScoreInput->mOutput.str() == iExpectedStr) return testing::AssertionSuccess();
+    return testing::AssertionFailure();
   }
 
   std::unique_ptr<CCricketMainWindowMock> mMockWindow;

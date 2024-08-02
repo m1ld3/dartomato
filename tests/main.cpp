@@ -535,3 +535,43 @@ TEST_F(CStatsWindowCricketTest, ComputeDartCountOfWonLegsTest)
   compute_dart_count_of_won_legs();
   EXPECT_TRUE(verify_leg_stats_data(expected));
 }
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventDefault1stDartTest)
+{
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  EXPECT_TRUE(verify_state(0, {"s20", "", ""}, {0, 0, 0, 0, 0, 1, 0}, {}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventDefault2ndDartFillsSlotTest)
+{
+  EXPECT_CALL(*mMockWindow.get(), is_slot_free(ECricketSlots::SLOT_19, 0));
+  mScoreInput->handle_segment_pressed_event(19, 's');
+  mScoreInput->handle_segment_pressed_event(57, 't');
+  EXPECT_TRUE(verify_state(0, {"s19", "t19", ""}, {0, 0, 0, 0, 3, 0, 0}, {}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventDefault2ndDartNoScoreTest)
+{
+  EXPECT_CALL(*mMockWindow.get(), is_slot_free(ECricketSlots::SLOT_15, 0));
+  mScoreInput->handle_segment_pressed_event(19, 's');
+  mScoreInput->handle_segment_pressed_event(0, 's');
+  EXPECT_TRUE(verify_state(0, {"s19", "s0", ""}, {0, 0, 0, 0, 1, 0, 0}, {}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventDefault3DartsTest)
+{
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  EXPECT_TRUE(verify_state(0, {"s20", "s20", "s20"}, {0, 0, 0, 0, 0, 3, 0}, {}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventDefaultTooManyDartsTest)
+{
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(0, 's');
+  EXPECT_TRUE(verify_state(0, {"s20", "s20", "s20"}, {0, 0, 0, 0, 0, 3, 0}, {}, {}));
+  EXPECT_TRUE(verify_warning("Warning: You only have three darts!"));
+}

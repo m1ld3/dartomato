@@ -26,6 +26,7 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCr
   , mPlayer(iPlayer)
   , mGameWindow(iGameWindow)
   , mScore(mPlayer->get_score())
+  , mPlayerNumber(mPlayer->get_player_number())
   , mSettings(iSettings)
   , mGroupBox(static_cast<CCricketGroupBox*>(iParent))
 {
@@ -38,7 +39,7 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCr
     mSlotHistory.at(i).push_back(mSlotArray.at(i));
     mExtraPointsArray.at(i) = mPlayer->get_extra_points(static_cast<ECricketSlots>(i));
     mExtraPointsHistory.at(i).push_back(mExtraPointsArray.at(i));
-    mCutThroatExtraPointsArray.at(i) = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), 0, mPlayer->get_player_number());
+    mCutThroatExtraPointsArray.at(i) = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), 0, mPlayerNumber);
     mCutThroatExtraPointsHistory.at(i).append(mCutThroatExtraPointsArray.at(i));
   }
   mDartBoard = new CDartBoardCricket(mUi->graphicsViewDartBoard, mSettings, this);
@@ -57,14 +58,16 @@ CCricketInput::~CCricketInput()
 
 void CCricketInput::set_score_labels(uint32_t iVal, QChar iType)
 {
-  if (iType == 't') iVal = iVal / 3;
-  else if (iType == 'd') iVal = iVal / 2;
+  if (iType == 't') iVal /= 3;
+  else if (iType == 'd') iVal /= 2;
 
   mDarts[3 - mCounter] = iType + QString::number(iVal);
   QString temp = iType.toUpper() + QString::number(iVal);
+#ifndef TESTING
   if (mCounter == 3) mUi->labelScoreDart1->setText(iVal > 0 ? temp : "X");
   else if (mCounter == 2) mUi->labelScoreDart2->setText(iVal > 0 ? temp : "X");
   else if (mCounter == 1) mUi->labelScoreDart3->setText(iVal > 0 ? temp : "X");
+#endif
 }
 
 void CCricketInput::compute_score()
@@ -94,6 +97,32 @@ void CCricketInput::handle_segment_pressed_event(uint32_t iVal, QChar iType)
   else process_segment_default();
 }
 
+void CCricketInput::process_segment_common(uint32_t iVal, QChar & iType)
+{
+  if (!mStop && mCounter > 0)
+  {
+    set_score_labels(iVal, iType);
+    handle_slots_and_extra_points(iVal, iType);
+    save_history();
+  }
+}
+
+void CCricketInput::process_segment_default()
+{
+  if (!mStop && mCounter > 0)
+  {
+    compute_score();
+    bool gameShotCondition = are_slots_full() && mGameWindow->is_score_bigger(mScore);
+    if (gameShotCondition) handle_game_shot();
+    mCounter--;
+    if (mCounter == 0 || gameShotCondition) handle_input_stop();
+  }
+  else
+  {
+    handle_warnings(are_slots_full() && mGameWindow->is_score_bigger(mScore));
+  }
+}
+
 void CCricketInput::notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> &iDarts)
 {
   mGroupBox->handle_submit_button_clicked(iNumberOfDarts, iDarts);
@@ -113,7 +142,9 @@ void CCricketInput::check_if_game_shot_cutthroat(QVector<uint32_t> & iScores)
 void CCricketInput::handle_input_stop()
 {
   mStop = true;
+#ifndef TESTING
   mUi->submitButton->setFocus();
+#endif
 }
 
 void CCricketInput::handle_warnings(bool iWarningCondition)
@@ -142,7 +173,7 @@ void CCricketInput::compute_cutthroat_scores_for_other_players(QVector<uint32_t>
 {
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
   {
-    QVector<uint32_t> temp = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), mExtraPointsArray.at(i), mPlayer->get_player_number());
+    QVector<uint32_t> temp = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), mExtraPointsArray.at(i), mPlayerNumber);
     for (uint32_t j = 0; j < temp.size(); j++)
     {
       mCutThroatExtraPointsArray.at(i)[j] += temp.at(j);
@@ -152,17 +183,18 @@ void CCricketInput::compute_cutthroat_scores_for_other_players(QVector<uint32_t>
   }
 }
 
-
 void CCricketInput::handle_game_shot()
 {
   mStop = true;
   mDartBoard->play_game_shot_sound();
+#ifndef TESTING
   mUi->submitButton->setFocus();
+#endif
 }
 
 void CCricketInput::increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits)
 {
-  if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayer->get_player_number()))
+  if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayerNumber))
   {
     mExtraPointsArray.at(iSlotIdx) += iHits * iSlotVal;
   }
@@ -192,32 +224,6 @@ void CCricketInput::handle_slots_and_extra_points(uint32_t iVal, QChar & iType)
   }
 }
 
-void CCricketInput::process_segment_common(uint32_t iVal, QChar & iType)
-{
-  if (!mStop && mCounter > 0)
-  {
-    set_score_labels(iVal, iType);
-    handle_slots_and_extra_points(iVal, iType);
-    save_history();
-  }
-}
-
-void CCricketInput::process_segment_default()
-{
-  if (!mStop && mCounter > 0)
-  {
-    compute_score();
-    bool gameShotCondition = are_slots_full() && mGameWindow->is_score_bigger(mScore);
-    if (gameShotCondition) handle_game_shot();
-    mCounter--;
-    if (mCounter == 0 || gameShotCondition) handle_input_stop();
-  }
-  else
-  {
-    handle_warnings(are_slots_full() && mGameWindow->is_score_bigger(mScore));
-  }
-}
-
 void CCricketInput::save_history()
 {
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
@@ -231,8 +237,8 @@ void CCricketInput::submit_button_clicked_slot()
 {
   if (mStop)
   {
-    uint32_t numberofdarts = 3 - mCounter;
-    notify_cricket_submit_button_clicked(numberofdarts, mDarts);
+    uint32_t numberOfDarts = 3 - mCounter;
+    notify_cricket_submit_button_clicked(numberOfDarts, mDarts);
   }
   else
   {
@@ -258,9 +264,11 @@ void CCricketInput::undo_button_clicked_slot()
       }
     }
 
+#ifndef TESTING
     if (mCounter == 2) mUi->labelScoreDart1->setText("---");
     else if (mCounter == 1) mUi->labelScoreDart2->setText("---");
     else if (mCounter == 0) mUi->labelScoreDart3->setText("---");
+#endif
     mCounter++;
     mStop = false;
   }
