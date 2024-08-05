@@ -575,3 +575,12 @@ TEST_F(CCricketInputTest, HandleSegmentPressedEventDefaultTooManyDartsTest)
   EXPECT_TRUE(verify_state(0, {"s20", "s20", "s20"}, {0, 0, 0, 0, 0, 3, 0}, {}, {}));
   EXPECT_TRUE(verify_warning("Warning: You only have three darts!"));
 }
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventDefaultGameShotTest)
+{
+  EXPECT_CALL(*mDb, play_game_shot_sound());
+  EXPECT_CALL(*mMockWindow.get(), is_score_bigger(0)).WillOnce(::testing::Return(true));
+  set_state(0, {"", "", ""}, {3, 3, 3, 3, 3, 3, 2}, {}, {});
+  mScoreInput->handle_segment_pressed_event(25, 's');
+  EXPECT_TRUE(verify_state(0, {"s25", "", ""}, {3, 3, 3, 3, 3, 3, 3}, {}, {}));
+}

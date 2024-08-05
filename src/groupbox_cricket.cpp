@@ -321,8 +321,6 @@ void CCricketGroupBox::push_button_score_clicked_slot()
     mScoreInput = new CCricketInput(this, mSettings, &mPlayer, mGameWindow);
     mScoreInput->setAttribute(Qt::WA_DeleteOnClose);
     mScoreInput->show();
-#else
-    mScoreInput = std::make_shared<CCricketInput>(mGameWindow);
 #endif
   }
   else if (mFinished)

@@ -44,11 +44,10 @@ class CCricketInput
 public:
 
 #ifdef TESTING
-  CCricketInput(ICricketMainWindow * iMainWindow = nullptr)
+  CCricketInput(CDartBoard * iDb, ICricketMainWindow * iMainWindow)
     : mGameWindow(iMainWindow)
-  {
-    mDartBoard = new CDartBoardCricket();
-  }
+    , mDartBoard(static_cast<CDartBoardCricket*>(iDb))
+  {}
 #else
   CCricketInput(QWidget * iParent, const CSettings & iSettings,
                 CCricketClass * iPlayer = nullptr, ICricketMainWindow * iGameWindow = nullptr);

@@ -240,9 +240,9 @@ protected:
 
   CCricketInputTest()
     : mMockWindow(std::make_unique<CCricketMainWindowMock>())
-    , mScoreInput(std::make_unique<CCricketInput>(mMockWindow.get()))
+    , mDb(std::make_unique<CDartBoardMock>())
   {
-    mDb = mScoreInput->mDartBoard;
+    mScoreInput = std::make_unique<CCricketInput>(mDb.get(), mMockWindow.get());
   }
 
   void set_settings(CSettings & iSettings)
@@ -290,5 +290,5 @@ protected:
 
   std::unique_ptr<CCricketMainWindowMock> mMockWindow;
   std::unique_ptr<CCricketInput> mScoreInput;
-  CDartBoardMock * mDb;
+  std::unique_ptr<CDartBoardMock> mDb;
 };

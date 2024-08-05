@@ -37,7 +37,7 @@ public:
   {}
 #endif
   virtual ~CDartBoard();
-  void play_game_shot_sound();
+  virtual void play_game_shot_sound();
 
 protected:
 

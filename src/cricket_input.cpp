@@ -50,8 +50,8 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCr
 
 CCricketInput::~CCricketInput()
 {
-  delete mDartBoard;
 #ifndef TESTING
+  delete mDartBoard;
   delete mUi;
 #endif
 }

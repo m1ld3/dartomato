@@ -103,4 +103,5 @@ public:
   MOCK_METHOD(void, perform_undo, (), (override));
   MOCK_METHOD(void, submit_score, (), (override));
   MOCK_METHOD(void, init_dartboard, (uint32_t), (override));
+  MOCK_METHOD(void, play_game_shot_sound, (), (override));
 };
