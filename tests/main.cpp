@@ -542,6 +542,14 @@ TEST_F(CCricketInputTest, HandleSegmentPressedEventDefault1stDartTest)
   EXPECT_TRUE(verify_state(0, {"s20", "", ""}, {0, 0, 0, 0, 0, 1, 0}, {}, {}));
 }
 
+TEST_F(CCricketInputTest, HandleSegmentPressedEventCutThroat1stDartTest)
+{
+  CSettings settings(EGame::GAME_CRICKET, {"Player"}, 1, 1, EX01InMode::SINGLE_IN, EX01OutMode::DOUBLE_OUT, true /*cutthroat*/);
+  set_settings(settings);
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  EXPECT_TRUE(verify_state(0, {"s20", "", ""}, {0, 0, 0, 0, 0, 1, 0}, {}, {}));
+}
+
 TEST_F(CCricketInputTest, HandleSegmentPressedEventDefault2ndDartFillsSlotTest)
 {
   EXPECT_CALL(*mMockWindow.get(), is_slot_free(ECricketSlots::SLOT_19, 0));
@@ -576,6 +584,18 @@ TEST_F(CCricketInputTest, HandleSegmentPressedEventDefaultTooManyDartsTest)
   EXPECT_TRUE(verify_warning("Warning: You only have three darts!"));
 }
 
+TEST_F(CCricketInputTest, HandleSegmentPressedEventCutThroatTooManyDartsTest)
+{
+  CSettings settings(EGame::GAME_CRICKET, {"Player"}, 1, 1, EX01InMode::SINGLE_IN, EX01OutMode::DOUBLE_OUT, true /*cutthroat*/);
+  set_settings(settings);
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(20, 's');
+  mScoreInput->handle_segment_pressed_event(0, 's');
+  EXPECT_TRUE(verify_state(0, {"s20", "s20", "s20"}, {0, 0, 0, 0, 0, 3, 0}, {}, {}));
+  EXPECT_TRUE(verify_warning("Warning: You only have three darts!"));
+}
+
 TEST_F(CCricketInputTest, HandleSegmentPressedEventDefaultGameShotTest)
 {
   EXPECT_CALL(*mDb, play_game_shot_sound());
@@ -583,4 +603,39 @@ TEST_F(CCricketInputTest, HandleSegmentPressedEventDefaultGameShotTest)
   set_state(0, {"", "", ""}, {3, 3, 3, 3, 3, 3, 2}, {}, {});
   mScoreInput->handle_segment_pressed_event(25, 's');
   EXPECT_TRUE(verify_state(0, {"s25", "", ""}, {3, 3, 3, 3, 3, 3, 3}, {}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventCutThroatGameShotTest)
+{
+  CSettings settings(EGame::GAME_CRICKET, {"Player"}, 1, 1, EX01InMode::SINGLE_IN, EX01OutMode::DOUBLE_OUT, true /*cutthroat*/);
+  set_settings(settings);
+  EXPECT_CALL(*mDb, play_game_shot_sound());
+  for (int i = 0; i < static_cast<int>(ECricketSlots::SLOT_MAX); i++)
+  {
+    EXPECT_CALL(*mMockWindow.get(), compute_extra_points(static_cast<ECricketSlots>(i), 0, 0));
+  }
+  set_state(0, {"", "", ""}, {3, 3, 3, 3, 3, 3, 2}, {}, {});
+  mScoreInput->handle_segment_pressed_event(25, 's');
+  EXPECT_TRUE(verify_state(0, {"s25", "", ""}, {3, 3, 3, 3, 3, 3, 3}, {}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventComputeScoreTest)
+{
+  set_state(0, {"", "", ""}, {3, 3, 3, 3, 3, 3, 0}, {15, 32, 0, 0, 57, 20, 0}, {});
+  mScoreInput->handle_segment_pressed_event(25, 's');
+  EXPECT_TRUE(verify_state(124, {"s25", "", ""}, {3, 3, 3, 3, 3, 3, 1}, {15, 32, 0, 0, 57, 20, 0}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventIncreaseDefaultExtraPointsTest)
+{
+  set_state(0, {"", "", ""}, {0, 0, 0, 0, 0, 1, 0}, {}, {});
+  EXPECT_CALL(*mMockWindow.get(), is_slot_free(ECricketSlots::SLOT_20, 0)).WillOnce(::testing::Return(true));
+  mScoreInput->handle_segment_pressed_event(60, 't');
+  EXPECT_TRUE(verify_state(20, {"t20", "", ""}, {0, 0, 0, 0, 0, 3, 0}, {0, 0, 0, 0, 0, 20, 0}, {}));
+}
+
+TEST_F(CCricketInputTest, HandleSegmentPressedEventUndoTest)
+{
+  mScoreInput->handle_segment_pressed_event(25, 's');
+  EXPECT_TRUE(verify_undo(0, {"", "", ""}, {0, 0, 0, 0, 0, 0, 0}, {}, {}));
 }

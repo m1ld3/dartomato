@@ -288,6 +288,17 @@ protected:
     return testing::AssertionFailure();
   }
 
+  testing::AssertionResult verify_undo(uint32_t iExpectedScore,
+                                       const QVector<QString> & iExpectedDarts,
+                                       const std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExpectedSlots,
+                                       const std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExpectedExtraPoints,
+                                       const std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExpectedCutThroatExtraPoints
+                                       ) const
+  {
+    mScoreInput->undo_button_clicked_slot();
+    return verify_state(iExpectedScore, iExpectedDarts, iExpectedSlots, iExpectedExtraPoints, iExpectedCutThroatExtraPoints);
+  }
+
   std::unique_ptr<CCricketMainWindowMock> mMockWindow;
   std::unique_ptr<CCricketInput> mScoreInput;
   std::unique_ptr<CDartBoardMock> mDb;

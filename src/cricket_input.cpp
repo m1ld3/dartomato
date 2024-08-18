@@ -107,99 +107,6 @@ void CCricketInput::process_segment_common(uint32_t iVal, QChar & iType)
   }
 }
 
-void CCricketInput::process_segment_default()
-{
-  if (!mStop && mCounter > 0)
-  {
-    compute_score();
-    bool gameShotCondition = are_slots_full() && mGameWindow->is_score_bigger(mScore);
-    if (gameShotCondition) handle_game_shot();
-    mCounter--;
-    if (mCounter == 0 || gameShotCondition) handle_input_stop();
-  }
-  else
-  {
-    handle_warnings(are_slots_full() && mGameWindow->is_score_bigger(mScore));
-  }
-}
-
-void CCricketInput::notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> &iDarts)
-{
-  mGroupBox->handle_submit_button_clicked(iNumberOfDarts, iDarts);
-}
-
-void CCricketInput::check_if_game_shot_cutthroat(QVector<uint32_t> & iScores)
-{
-  bool result = true;
-  for (uint32_t i = 0; i < iScores.size(); i++)
-  {
-    result = result && iScores[i] >= mScore;
-  }
-
-  if (are_slots_full() && result) handle_game_shot();
-}
-
-void CCricketInput::handle_input_stop()
-{
-  mStop = true;
-#ifndef TESTING
-  mUi->submitButton->setFocus();
-#endif
-}
-
-void CCricketInput::handle_warnings(bool iWarningCondition)
-{
-  const char * warningMsg = iWarningCondition ? "You have already won this leg!" : "You only have three darts!";
-  PUT_WARNING("Warning", warningMsg);
-}
-
-void CCricketInput::process_segment_cutthroat()
-{
-  if (!mStop && mCounter > 0)
-  {
-    QVector<uint32_t> scores(mSettings.PlayersList.size() - 1);
-    compute_cutthroat_scores_for_other_players(scores);
-    check_if_game_shot_cutthroat(scores);
-    mCounter--;
-    if (mCounter == 0) handle_input_stop();
-  }
-  else
-  {
-    handle_warnings(are_slots_full());
-  }
-}
-
-void CCricketInput::compute_cutthroat_scores_for_other_players(QVector<uint32_t> & iScores)
-{
-  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
-  {
-    QVector<uint32_t> temp = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), mExtraPointsArray.at(i), mPlayerNumber);
-    for (uint32_t j = 0; j < temp.size(); j++)
-    {
-      mCutThroatExtraPointsArray.at(i)[j] += temp.at(j);
-      iScores[j] += temp.at(j);
-    }
-    mCutThroatExtraPointsHistory.at(i).push_back(mCutThroatExtraPointsArray.at(i));
-  }
-}
-
-void CCricketInput::handle_game_shot()
-{
-  mStop = true;
-  mDartBoard->play_game_shot_sound();
-#ifndef TESTING
-  mUi->submitButton->setFocus();
-#endif
-}
-
-void CCricketInput::increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits)
-{
-  if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayerNumber))
-  {
-    mExtraPointsArray.at(iSlotIdx) += iHits * iSlotVal;
-  }
-}
-
 void CCricketInput::handle_slots_and_extra_points(uint32_t iVal, QChar & iType)
 {
   uint32_t hits = (iType == 't') ? 3 : ((iType == 'd') ? 2 : 1);
@@ -222,6 +129,99 @@ void CCricketInput::handle_slots_and_extra_points(uint32_t iVal, QChar & iType)
   {
     increase_extra_points(idx, val, hits);
   }
+}
+
+void CCricketInput::increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits)
+{
+  if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayerNumber))
+  {
+    mExtraPointsArray.at(iSlotIdx) += iHits * iSlotVal;
+  }
+}
+
+void CCricketInput::process_segment_default()
+{
+  if (!mStop && mCounter > 0)
+  {
+    compute_score();
+    bool gameShotCondition = are_slots_full() && mGameWindow->is_score_bigger(mScore);
+    if (gameShotCondition) handle_game_shot();
+    mCounter--;
+    if (mCounter == 0 || gameShotCondition) handle_input_stop();
+  }
+  else
+  {
+    handle_warnings(are_slots_full() && mGameWindow->is_score_bigger(mScore));
+  }
+}
+
+void CCricketInput::process_segment_cutthroat()
+{
+  if (!mStop && mCounter > 0)
+  {
+    QVector<uint32_t> scores(mSettings.PlayersList.size() - 1);
+    compute_cutthroat_scores_for_other_players(scores);
+    check_if_game_shot_cutthroat(scores);
+    mCounter--;
+    if (mCounter == 0) handle_input_stop();
+  }
+  else
+  {
+    handle_warnings(are_slots_full());
+  }
+}
+
+void CCricketInput::check_if_game_shot_cutthroat(QVector<uint32_t> & iScores)
+{
+  bool result = true;
+  for (uint32_t i = 0; i < iScores.size(); i++)
+  {
+    result = result && iScores[i] >= mScore;
+  }
+
+  if (are_slots_full() && result) handle_game_shot();
+}
+
+void CCricketInput::compute_cutthroat_scores_for_other_players(QVector<uint32_t> & iScores)
+{
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    QVector<uint32_t> temp = mGameWindow->compute_extra_points(static_cast<ECricketSlots>(i), mExtraPointsArray.at(i), mPlayerNumber);
+    for (uint32_t j = 0; j < temp.size(); j++)
+    {
+      mCutThroatExtraPointsArray.at(i)[j] += temp.at(j);
+      iScores[j] += temp.at(j);
+    }
+    mCutThroatExtraPointsHistory.at(i).push_back(mCutThroatExtraPointsArray.at(i));
+  }
+}
+
+void CCricketInput::notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> &iDarts)
+{
+  mGroupBox->handle_submit_button_clicked(iNumberOfDarts, iDarts);
+}
+
+void CCricketInput::handle_input_stop()
+{
+  mStop = true;
+#ifndef TESTING
+  mUi->submitButton->setFocus();
+#endif
+}
+
+void CCricketInput::handle_warnings(bool iWarningCondition)
+{
+  const char * warningMsg = iWarningCondition ? "You have already won this leg!" : "You only have three darts!";
+  PUT_WARNING("Warning", warningMsg);
+}
+
+void CCricketInput::handle_game_shot()
+{
+  mStop = true;
+  mDartBoard->play_game_shot_sound();
+#ifndef TESTING
+  mUi->submitButton->setFocus();
+#endif
 }
 
 void CCricketInput::save_history()
