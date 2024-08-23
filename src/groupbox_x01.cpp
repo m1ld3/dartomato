@@ -374,7 +374,7 @@ void CX01GroupBox::reset_scores_of_all_players()
 
 void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
 {
-  mGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
+  mGameWindow->activate_player_inactivate_other_players(iPlayer, iLegStarted, iSetStarted);
 }
 
 void CX01GroupBox::push_button_stats_clicked_slot()

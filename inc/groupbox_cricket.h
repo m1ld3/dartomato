@@ -57,9 +57,7 @@ private slots:
   void player_active_button_pressed_slot();
   void push_button_undo_clicked_slot();
   void push_button_stats_clicked_slot();
-
   void push_button_score_clicked_slot();
-
 
 private:
 
@@ -98,6 +96,7 @@ private:
   void fill_slot_hits(uint32_t iSlotIdx, uint32_t iHits);
   void create_snapshots_of_all_players();
   void update_gui_elements();
+  void init_labels();
 
   Ui::CCricketGroupBox * mUi;
 #ifdef TESTING

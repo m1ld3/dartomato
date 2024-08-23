@@ -21,17 +21,7 @@ CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
   , mHistory({mPlayer.create_snapshot()})
 {
   mUi->setupUi(this);
-  mUi->lcdNumber->setDigitCount(4);
-  mUi->lcdNumber->display(static_cast<int>(mScore));
-
-  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
-  {
-    set_extra_points_label(static_cast<ECricketSlots>(i), mPlayer.get_extra_points(static_cast<ECricketSlots>(i)));
-  }
-
-  mUi->labelPlayerName->setText(mPlayerName);
-  QString hitsPerRound = QString::number(mPlayer.get_hits_per_round(), 'f', 2);
-  mUi->labelHitsPerRoundInput->setText(hitsPerRound);
+  init_labels();
   connect_slots();
 }
 
@@ -289,6 +279,21 @@ void CCricketGroupBox::update_gui_elements()
   display_leg_history();
 }
 
+void CCricketGroupBox::init_labels()
+{
+  mUi->lcdNumber->setDigitCount(4);
+  mUi->lcdNumber->display(static_cast<int>(mScore));
+
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
+  {
+    set_extra_points_label(static_cast<ECricketSlots>(i), mPlayer.get_extra_points(static_cast<ECricketSlots>(i)));
+  }
+
+  mUi->labelPlayerName->setText(mPlayerName);
+  QString hitsPerRound = QString::number(mPlayer.get_hits_per_round(), 'f', 2);
+  mUi->labelHitsPerRoundInput->setText(hitsPerRound);
+}
+
 void CCricketGroupBox::set_game_data(QVector<CCricketClass::CPlayerData> iGameData)
 {
   mHistory = iGameData;
@@ -374,6 +379,8 @@ void CCricketGroupBox::reset()
 {
   mScore = 0;
   mPlayer.reset_score();
+
+#ifndef TESTING
   mUi->lcdNumber->display(static_cast<int>(mScore));
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
   mUi->lcdNumberSets->display(static_cast<int>(mPlayer.get_sets()));
@@ -383,6 +390,7 @@ void CCricketGroupBox::reset()
     set_slot_label(static_cast<ECricketSlots>(i), 0);
     set_extra_points_label(static_cast<ECricketSlots>(i), 0);
   }
+#endif
 }
 
 void CCricketGroupBox::set_leg_started()
@@ -456,8 +464,8 @@ void CCricketGroupBox::set_extra_points_label(const ECricketSlots iSlot, uint32_
 
 void CCricketGroupBox::set_slot_label(const ECricketSlots iSlot, uint32_t iHits)
 {
-  uint32_t w = 25;
-  uint32_t h = 25;
+  uint32_t w = 20;
+  uint32_t h = 20;
 
   for (uint32_t i = 0; i <= iHits; i++)
   {
@@ -646,7 +654,7 @@ void CCricketGroupBox::reset_scores_of_all_players()
 
 void CCricketGroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
 {
-  mGameWindow->inactivate_players(iPlayer, iLegStarted, iSetStarted);
+  mGameWindow->activate_player_inactivate_other_players(iPlayer, iLegStarted, iSetStarted);
 }
 
 void CCricketGroupBox::increase_extra_points(const ECricketSlots iSlot, uint32_t iPoints)
@@ -671,10 +679,6 @@ void CCricketGroupBox::update_extra_points_labels()
 void CCricketGroupBox::update_darts(QVector<QString> && iDarts)
 {
   mPlayer.update_darts(iDarts);
-  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)
-  {
-    mPlayer.set_slot(static_cast<ECricketSlots>(i), mPlayer.get_slot(static_cast<ECricketSlots>(i)));
-  }
 }
 
 void CCricketGroupBox::set_lcd_legs()

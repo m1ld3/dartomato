@@ -9,7 +9,6 @@
 #include "dartboard_x01.h"
 #include "settings.h"
 #include "game_data_handler.h"
-#include <QDateTime>
 
 namespace Ui
 {
@@ -19,8 +18,6 @@ namespace Ui
 class CX01MainWindow : public QMainWindow, public IX01MainWindow, public IMainWindow
 {
   Q_OBJECT
-//  Q_INTERFACES(IMainWindow)
-//  Q_INTERFACES(IX01MainWindow)
 
 public:
 
@@ -45,7 +42,7 @@ public:
   // CMainWindowIf
   void update_players(const EUpdateType iType) override;
   void reset_scores_of_all_players() override;
-  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) override;
+  void activate_player_inactivate_other_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) override;
   void create_snapshots_of_all_players() override;
   void handle_game_won(uint32_t iPlayerNumber) override;
 
@@ -87,14 +84,11 @@ private:
   void connect_main_window_slots() override;
 
   Ui::CX01MainWindow * mUi;
-  uint32_t mActivePlayer = 0;
   uint32_t mWinningPlayer = 0;
   QVector<CX01GroupBox*> mPlayerBox;
   CDartBoard * mDartBoard;
   const CSettings mSettings;
   CGameDataHandler mGameDataHandler;
-  const uint32_t mNumberOfPlayers = 1;
-  QDateTime mTimeStamp;
 };
 
 #endif  // X01MAINWINDOW_H

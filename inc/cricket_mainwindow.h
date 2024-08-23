@@ -8,7 +8,6 @@
 #include <QSoundEffect>
 #include <QGridLayout>
 #include "game_data_handler.h"
-#include <QDateTime>
 
 class CCricketGroupBox;
 
@@ -19,10 +18,6 @@ namespace Ui
 
 class CCricketMainWindow : public QMainWindow, public ICricketMainWindow, public IMainWindow
 {
-//  Q_OBJECT
-//  Q_INTERFACES(IMainWindow)
-//  Q_INTERFACES(ICricketMainWindow)
-
 public:
 
   explicit CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
@@ -41,7 +36,7 @@ public:
   // CMainWindowIf
   void update_players(const EUpdateType iType) override;
   void reset_scores_of_all_players() override;
-  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) override;
+  void activate_player_inactivate_other_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) override;
   void create_snapshots_of_all_players() override;
   void handle_game_won(uint32_t iPlayerNumber) override;
 
@@ -72,13 +67,10 @@ private:
   void unset_set_begin_for_all_players() override;
 
   Ui::CCricketMainWindow * mUi;
-  uint32_t mActivePlayer = 0;
   uint32_t mWinningPlayer = 0;
   QVector<CCricketGroupBox*> mPlayerBox;
   const CSettings mSettings;
   CGameDataHandler & mGameDataHandler;
-  const uint32_t mNumberOfPlayers = 1;
-  QDateTime mTimeStamp;
 };
 
 #endif  // CRICKET_MAINWINDOW_H

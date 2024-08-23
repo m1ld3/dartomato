@@ -29,7 +29,7 @@ public:
 
   MOCK_METHOD(void, update_players, (const EUpdateType), (override));
   MOCK_METHOD(void, reset_scores_of_all_players, (), (override));
-  MOCK_METHOD(void, inactivate_players, (uint32_t, bool, bool), (override));
+  MOCK_METHOD(void, activate_player_inactivate_other_players, (uint32_t, bool, bool), (override));
   MOCK_METHOD(void, create_snapshots_of_all_players, (), (override));
   MOCK_METHOD(void, handle_game_won, (uint32_t), (override));
   MOCK_METHOD(void, setAttribute, (Qt::WidgetAttribute, bool), (override));
@@ -67,7 +67,7 @@ public:
 
   MOCK_METHOD(void, update_players, (const EUpdateType), (override));
   MOCK_METHOD(void, reset_scores_of_all_players, (), (override));
-  MOCK_METHOD(void, inactivate_players, (uint32_t, bool, bool), (override));
+  MOCK_METHOD(void, activate_player_inactivate_other_players, (uint32_t, bool, bool), (override));
   MOCK_METHOD(void, create_snapshots_of_all_players, (), (override));
   MOCK_METHOD(void, handle_game_won, (uint32_t), (override));
   MOCK_METHOD(void, setAttribute, (Qt::WidgetAttribute, bool), (override));

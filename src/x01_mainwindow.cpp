@@ -11,12 +11,11 @@
 
 CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler)
   : QMainWindow(iParent)
+  , IMainWindow(iSettings.PlayersList.size())
   , mUi(new Ui::CX01MainWindow)
   , mDartBoard(nullptr)
   , mSettings(iSettings)
   , mGameDataHandler(iGameDataHandler)
-  , mNumberOfPlayers(mSettings.PlayersList.size())
-  , mTimeStamp(QDateTime::currentDateTime())
 {
   mUi->setupUi(this);
   QString text = QString::number(static_cast<uint32_t>(mSettings.Game));
@@ -175,6 +174,23 @@ void CX01MainWindow::inactivate_all_players()
   }
 }
 
+void CX01MainWindow::update_players(const EUpdateType iType)
+{
+  if (iType == EUpdateType::DEFAULT)
+  {
+    handle_update_default();
+  }
+  else if (iType == EUpdateType::LEG)
+  {
+    handle_update_leg();
+  }
+  else if (iType == EUpdateType::SET)
+  {
+    handle_update_set();
+  }
+  mDartBoard->init_dartboard(mPlayerBox[mActivePlayer]->get_remaining_points());
+}
+
 void CX01MainWindow::handle_update_default()
 {
   update_active_player();
@@ -225,23 +241,6 @@ void CX01MainWindow::handle_update_set()
   }
 }
 
-void CX01MainWindow::update_players(const EUpdateType iType)
-{
-  if (iType == EUpdateType::DEFAULT)
-  {
-    handle_update_default();
-  }
-  else if (iType == EUpdateType::LEG)
-  {
-    handle_update_leg();
-  }
-  else if (iType == EUpdateType::SET)
-  {
-    handle_update_set();
-  }
-  mDartBoard->init_dartboard(mPlayerBox[mActivePlayer]->get_remaining_points());
-}
-
 void CX01MainWindow::reset_scores_of_all_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
@@ -249,15 +248,6 @@ void CX01MainWindow::reset_scores_of_all_players()
     mPlayerBox[i]->reset();
     mPlayerBox[i]->display_finishes(mPlayerBox[i]->get_remaining_points(), 3);
   }
-}
-
-void CX01MainWindow::set_global_finished()
-{
-  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
-  {
-    mPlayerBox[i]->set_finished();
-  }
-  mDartBoard->set_finished();
 }
 
 void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
@@ -276,6 +266,15 @@ void CX01MainWindow::handle_game_won(uint32_t iPlayerNumber)
   }
 }
 
+void CX01MainWindow::set_global_finished()
+{
+  for (uint32_t i = 0; i < mNumberOfPlayers; i++)
+  {
+    mPlayerBox[i]->set_finished();
+  }
+  mDartBoard->set_finished();
+}
+
 void CX01MainWindow::unset_leg_begin_for_all_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
@@ -292,7 +291,7 @@ void CX01MainWindow::unset_set_begin_for_all_players()
   }
 }
 
-void CX01MainWindow::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
+void CX01MainWindow::activate_player_inactivate_other_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
 {
   inactivate_all_players();
   set_active_player(iPlayer);

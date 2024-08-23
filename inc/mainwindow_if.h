@@ -9,6 +9,17 @@ class IMainWindow
 {
 public:
 
+  IMainWindow(uint32_t iNumberOfPlayers)
+    : mNumberOfPlayers(iNumberOfPlayers)
+    , mTimeStamp(QDateTime::currentDateTime())
+  {}
+
+#ifdef TESTING
+  IMainWindow()
+    : mNumberOfPlayers(0)
+  {}
+#endif
+
   virtual ~IMainWindow() = default;
 
   static IMainWindow * create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
@@ -16,7 +27,7 @@ public:
 
   virtual void update_players(const EUpdateType iType) = 0;
   virtual void reset_scores_of_all_players() = 0;
-  virtual void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) = 0;
+  virtual void activate_player_inactivate_other_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) = 0;
   virtual void create_snapshots_of_all_players() = 0;
   virtual void handle_game_won(uint32_t iPlayerNumber) = 0;
 
@@ -56,7 +67,7 @@ protected:
   virtual void unset_set_begin_for_all_players() = 0;
 
   uint32_t mActivePlayer = 0;
-  const uint32_t mNumberOfPlayers = 1;
+  const uint32_t mNumberOfPlayers;
   QDateTime mTimeStamp;
 };
 

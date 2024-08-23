@@ -10,15 +10,14 @@
 
 CCricketMainWindow::CCricketMainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler)
   : QMainWindow(iParent)
+  , IMainWindow(iSettings.PlayersList.size())
   , mUi(new Ui::CCricketMainWindow)
   , mSettings(iSettings)
   , mGameDataHandler(iGameDataHandler)
-  , mNumberOfPlayers(mSettings.PlayersList.size())
-  , mTimeStamp(QDateTime::currentDateTime())
 {
   mUi->setupUi(this);
   QWidget::setWindowTitle("Cricket" + QString(mSettings.CutThroat ? " (CutThroat)" : ""));
-  add_players();
+  CCricketMainWindow::add_players();
   mPlayerBox[mActivePlayer]->set_set_begin();
   mPlayerBox[mActivePlayer]->set_leg_begin();
   mPlayerBox[mActivePlayer]->set_active();
@@ -250,7 +249,7 @@ void CCricketMainWindow::unset_set_begin_for_all_players()
   }
 }
 
-void CCricketMainWindow::inactivate_players(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
+void CCricketMainWindow::activate_player_inactivate_other_players(uint32_t iPlayerNumber, bool iLegStarted, bool iSetStarted)
 {
   inactivate_all_players();
   set_active_player(iPlayerNumber);
