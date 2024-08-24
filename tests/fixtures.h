@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 #include <QPointer>
 #include "x01_mainwindow.h"
+#include "cricket_mainwindow.h"
 #include "dartboard_x01.h"
 #include "mocks.h"
 #include "stats_window_x01.h"
@@ -113,6 +114,32 @@ protected:
   std::unique_ptr<CDartBoardMock> mDb;
   std::unique_ptr<CX01MainWindowMock> mMockWindow;
   std::unique_ptr<CX01GroupBox> mBox;
+};
+
+class CCricketGroupBoxTest : public ::testing::Test
+{
+protected:
+
+  CCricketGroupBoxTest()
+    : mMockWindow(std::make_unique<CCricketMainWindowMock>())
+    , mBox(std::make_unique<CCricketGroupBox>(mMockWindow.get(), mSettings, 0))
+  {}
+
+  testing::AssertionResult verify_snapshot(const CCricketClass::CPlayerData & iExpected) const
+  {
+    auto & snap = mBox->mHistory.back();
+    if (snap == iExpected)
+    {
+      return testing::AssertionSuccess();
+    }
+    return testing::AssertionFailure();
+  }
+
+  void perform_undo() { mBox->perform_undo(); }
+
+  CSettings mSettings;
+  std::unique_ptr<CCricketMainWindowMock> mMockWindow;
+  std::unique_ptr<CCricketGroupBox> mBox;
 };
 
 class CStatsWindowX01Test : public ::testing::Test

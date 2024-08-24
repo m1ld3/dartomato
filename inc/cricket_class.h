@@ -61,6 +61,32 @@ public:
       , Active(iActive)
     {}
 
+    double rnd2Decimals(double iNum)
+    {
+      double val = std::ceil(iNum * 100.0) / 100.0;
+      return val;
+    }
+
+    bool operator==(const CPlayerData & iOther)
+    {
+      return SetsWon == iOther.SetsWon &&
+             LegsWonPerSet == iOther.LegsWonPerSet &&
+             TotalLegsWon == iOther.TotalLegsWon &&
+             TotalDarts == iOther.TotalDarts &&
+             Score == iOther.Score &&
+             TotalHits == iOther.TotalHits &&
+             rnd2Decimals(HitsPerRound) == rnd2Decimals(iOther.HitsPerRound) &&
+             ScoresOfCurrentLeg == iOther.ScoresOfCurrentLeg &&
+             ScoringHistory == iOther.ScoringHistory &&
+             HitsOfCurrentLeg == iOther.HitsOfCurrentLeg &&
+             HitsHistory == iOther.HitsHistory &&
+             SlotArray == iOther.SlotArray &&
+             ExtraPointsArray == iOther.ExtraPointsArray &&
+             LegWonVec == iOther.LegWonVec &&
+             LegWonHistory == iOther.LegWonHistory &&
+             Active == iOther.Active;
+    }
+
     bool Active = false;
     bool Finished = false;
     bool GameWon = false;

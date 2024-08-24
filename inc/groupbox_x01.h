@@ -10,9 +10,6 @@
 class IMainWindow;
 class CDartBoard;
 class CGameDataHandler;
-#ifdef TESTING
-#include "mocks.h"
-#endif
 
 namespace Ui
 {
@@ -73,7 +70,6 @@ private slots:
 private:
 
   void unset_finished();
-
   void update_players(const EUpdateType iType);
   void reset_scores_of_all_players();
   void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
@@ -93,7 +89,8 @@ private:
   CDartBoard * mDartBoard;
   const CSettings mSettings;
   QString mPlayerName;
-  uint32_t mPlayerNumber, mRemainingPoints;
+  uint32_t mPlayerNumber;
+  uint32_t mRemainingPoints;
   uint32_t mCurrentScore = 0;
   bool mActive = false;
   bool mFinished = false;

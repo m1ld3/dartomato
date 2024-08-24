@@ -15,16 +15,27 @@ namespace Ui
   class CCricketGroupBox;
 }
 
+#ifdef TESTING
+class CCricketGroupBox
+{
+  friend class CCricketGroupBoxTest;
+#else
 class CCricketGroupBox : public QGroupBox
 {
   Q_OBJECT
+#endif
 
 public:
 
+#ifdef TESTING
+  explicit CCricketGroupBox(IMainWindow * iMainWindow, const CSettings iSettings, uint32_t iPlayerNumber = 0);
+#else
   explicit CCricketGroupBox(QWidget * iParent,
                             const CSettings & iSettings,
                             uint32_t iPlayerNumber = 1);
   ~CCricketGroupBox() override;
+#endif
+
   void set_active();
   void set_inactive();
   void set_finished();
@@ -52,7 +63,11 @@ public:
   void handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
   void close_cricket_input();
 
+#ifdef TESTING
+private:
+#else
 private slots:
+#endif
 
   void player_active_button_pressed_slot();
   void push_button_undo_clicked_slot();
@@ -119,8 +134,10 @@ private:
   bool mGameWon = false;
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
+#ifndef TESTING
   QPixmap mPixMapHand = QPixmap(":/resources/img/hand.svg");
   QPixmap mPixMapDot = QPixmap(":/resources/img/dot.png");
+#endif
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsArray = {0, 0, 0, 0, 0, 0, 0};
 };
