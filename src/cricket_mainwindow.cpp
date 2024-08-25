@@ -46,10 +46,14 @@ void CCricketMainWindow::add_players()
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {
+#ifdef TESTING
+    mPlayerBox.push_back(new CCricketGroupBox(nullptr, mSettings, i));
+#else
     mPlayerBox.push_back(new CCricketGroupBox(this, mSettings, i));
     mPlayerBox[i]->setAttribute(Qt::WA_DeleteOnClose);
     mPlayerBox[i]->set_inactive();
     mUi->gridLayoutCricket->addWidget(mPlayerBox[i], i < 4 ? 0 : 1, i % 4);
+#endif
   }
 }
 

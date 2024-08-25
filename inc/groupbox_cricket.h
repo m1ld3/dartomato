@@ -81,7 +81,7 @@ private:
   static void set_set_started();
   static void unset_leg_started();
   static void unset_set_started();
-  void set_slot(const ECricketSlots iSlot, uint32_t iHits);
+//  void set_slot(const ECricketSlots iSlot, uint32_t iHits);
   void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
   void set_extra_points_label(const ECricketSlots iSlot, uint32_t iPoints);
   void set_slot_label(const ECricketSlots iSlot, uint32_t iHits);
@@ -122,7 +122,7 @@ private:
   CCricketClass mPlayer;
   uint32_t mPlayerNumber;
   CCricketMainWindow * mGameWindow;
-  const CSettings & mSettings;
+  const CSettings mSettings;
   QString mPlayerName;
   QVector<CCricketClass::CPlayerData> mHistory;
   uint32_t mScore = 0;

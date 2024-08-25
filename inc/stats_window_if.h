@@ -6,6 +6,7 @@
 
 class CStatsWindowX01;
 class CStatsWindowCricket;
+class QWidget;
 
 class IStatsWindow
 {

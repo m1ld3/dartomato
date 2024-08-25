@@ -8,12 +8,13 @@
 #include "player_active_button.h"
 #include "stats_window_cricket.h"
 
+#ifndef TESTING
 CCricketGroupBox::CCricketGroupBox(QWidget * iParent,
                                    const CSettings & iSettings,
                                    uint32_t iPlayerNumber)
   : QGroupBox(iParent)
   , mUi(new Ui::CCricketGroupBox)
-  , mPlayer(iParent, iPlayerNumber, iSettings)
+  , mPlayer(iPlayerNumber, iSettings)
   , mPlayerNumber(iPlayerNumber)
   , mGameWindow(static_cast<CCricketMainWindow*>(iParent))
   , mSettings(iSettings)
@@ -38,10 +39,25 @@ void CCricketGroupBox::connect_slots()
   connect(mUi->pushButtonStats, &QPushButton::clicked, this, &CCricketGroupBox::push_button_stats_clicked_slot);
 }
 
+#else
+CCricketGroupBox::CCricketGroupBox(IMainWindow * iMainWindow,
+                                   const CSettings iSettings,
+                                   uint32_t iPlayerNumber)
+  : mPlayer(iPlayerNumber, iSettings)
+  , mPlayerNumber(iPlayerNumber)
+  , mGameWindow(static_cast<CCricketMainWindow*>(iMainWindow))
+  , mSettings(iSettings)
+  , mPlayerName(mSettings.PlayersList.at(mPlayerNumber))
+  , mHistory({mPlayer.create_snapshot()})
+{}
+#endif
+
 void CCricketGroupBox::set_active()
 {
   mActive = true;
+#ifndef TESTING
   mUi->labelPic->setPixmap(mPixMapHand.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+#endif
 }
 
 void CCricketGroupBox::set_inactive()
@@ -305,6 +321,7 @@ void CCricketGroupBox::set_game_data(QVector<CCricketClass::CPlayerData> iGameDa
 
 void CCricketGroupBox::player_active_button_pressed_slot()
 {
+#ifndef TESTING
   if (!mActive)
   {
     QMessageBox::StandardButton reply;
@@ -316,17 +333,17 @@ void CCricketGroupBox::player_active_button_pressed_slot()
       set_active();
     }
   }
+#endif
 }
 
 void CCricketGroupBox::push_button_score_clicked_slot()
 {
+#ifndef TESTING
   if (mActive && !mFinished)
   {
-#ifndef TESTING
     mScoreInput = new CCricketInput(this, mSettings, &mPlayer, mGameWindow);
     mScoreInput->setAttribute(Qt::WA_DeleteOnClose);
     mScoreInput->show();
-#endif
   }
   else if (mFinished)
   {
@@ -336,6 +353,7 @@ void CCricketGroupBox::push_button_score_clicked_slot()
   {
     QMessageBox::about(this, "Warning", "It's not your turn!");
   }
+#endif
 }
 
 void CCricketGroupBox::set_set_begin()
@@ -351,7 +369,9 @@ void CCricketGroupBox::unset_set_begin()
 void CCricketGroupBox::set_leg_begin()
 {
   mLegBegin = true;
+#ifndef TESTING
   mUi->labelLegBegin->setPixmap(mPixMapDot.scaled(20, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+#endif
 }
 
 void CCricketGroupBox::unset_leg_begin()
@@ -418,10 +438,10 @@ uint32_t CCricketGroupBox::get_slot(const ECricketSlots iSlot) const
   return mPlayer.get_slot(iSlot);
 }
 
-void CCricketGroupBox::set_slot(const ECricketSlots iSlot, uint32_t iHits)
-{
-  mPlayer.set_slot(iSlot, iHits);
-}
+//void CCricketGroupBox::set_slot(const ECricketSlots iSlot, uint32_t iHits)
+//{
+//  mPlayer.set_slot(iSlot, iHits);
+//}
 
 void CCricketGroupBox::set_extra_points(const ECricketSlots iSlot, uint32_t iPoints)
 {
@@ -464,6 +484,7 @@ void CCricketGroupBox::set_extra_points_label(const ECricketSlots iSlot, uint32_
 
 void CCricketGroupBox::set_slot_label(const ECricketSlots iSlot, uint32_t iHits)
 {
+#ifndef TESTING
   uint32_t w = 20;
   uint32_t h = 20;
 
@@ -537,6 +558,7 @@ void CCricketGroupBox::set_slot_label(const ECricketSlots iSlot, uint32_t iHits)
     default:;
     }
   }
+#endif
 }
 
 uint32_t CCricketGroupBox::get_score() const
@@ -609,6 +631,7 @@ void CCricketGroupBox::display_leg_history()
 
 void CCricketGroupBox::push_button_undo_clicked_slot()
 {
+#ifndef TESTING
   QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
                                                              tr("Are you sure you want to undo your last score?\n"),
                                                              QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
@@ -617,6 +640,7 @@ void CCricketGroupBox::push_button_undo_clicked_slot()
   {
     perform_undo();
   }
+#endif
 }
 
 void CCricketGroupBox::push_button_stats_clicked_slot()

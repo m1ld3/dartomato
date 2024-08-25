@@ -4,6 +4,9 @@
 #include "x01_class.h"
 #include "cricket_class.h"
 
+class QJsonArray;
+class QJsonObject;
+
 class CGameDataHandler
 {
 public:

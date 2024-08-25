@@ -2,9 +2,8 @@
 #include "cricket_mainwindow.h"
 #include <cmath>
 
-CCricketClass::CCricketClass(QWidget * iParent, uint32_t iPlayerNumber, const CSettings & iSettings)
-  : QObject(iParent)
-  , mPlayerNumber(iPlayerNumber)
+CCricketClass::CCricketClass(uint32_t iPlayerNumber, const CSettings & iSettings)
+  : mPlayerNumber(iPlayerNumber)
   , mSettings(iSettings)
 {
   mMarginLegs = std::ceil(mSettings.Legs / 2.0);
