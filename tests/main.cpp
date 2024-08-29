@@ -469,6 +469,33 @@ TEST_F(CX01GroupBoxTest, PerformUndoNormalTest)
   EXPECT_TRUE(verify_snapshot(expected));
 }
 
+TEST_F(CCricketGroupBoxTest, HandleSubmitButtonClicked3DartsTest)
+{
+  CCricketClass::CPlayerData expected = {0, 0, 0, 3, 0, 2, 2, {{"s20", "s20", "s0"}}, {}, {0, 2}, {}, {0, 0, 0, 0, 0, 2, 0}, {0, 0, 0, 0, 0, 0, 0}, {false}, {}, true};
+  QVector<QString> darts = {"s20", "s20", "s0"};
+  EXPECT_CALL(*mMockWindow.get(), is_score_bigger(0)).WillOnce(::testing::Return(false));
+  EXPECT_CALL(*mMockWindow.get(), is_score_smaller(0)).WillOnce(::testing::Return(false));
+  EXPECT_CALL(*mMockWindow.get(), update_extra_points_labels());
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::DEFAULT));
+  mBox->set_active();
+  mBox->handle_submit_button_clicked(3, darts);
+  EXPECT_TRUE(verify_snapshot(expected));
+}
+
+TEST_F(CCricketGroupBoxTest, HandleSubmitButtonClickedOverflowTest)
+{
+  CCricketClass::CPlayerData expected = {0, 0, 0, 3, 0, 3, 3, {{"s20", "s20", "s20"}}, {}, {0, 3}, {}, {0, 0, 0, 0, 0, 3, 0}, {0, 0, 0, 0, 0, 0, 0}, {false}, {}, true};
+  QVector<QString> darts = {"s20", "s20", "d20"};
+  EXPECT_CALL(*mMockWindow.get(), is_score_bigger(0)).WillOnce(::testing::Return(false));
+  EXPECT_CALL(*mMockWindow.get(), is_score_smaller(0)).WillOnce(::testing::Return(false));
+  EXPECT_CALL(*mMockWindow.get(), update_extra_points_labels());
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::DEFAULT));
+  EXPECT_CALL(*mMockWindow.get(), is_slot_free(ECricketSlots::SLOT_20, 0));
+  mBox->set_active();
+  mBox->handle_submit_button_clicked(3, darts);
+  EXPECT_TRUE(verify_snapshot(expected));
+}
+
 TEST_F(CStatsWindowX01Test, UpdateLegHistoryTest)
 {
   CStatsWindowX01::SLegStatsData expected = {(501.0 / 35.0) * 3, 501.0 / 35.0, 0, 161.0 / 3.0, 0, 0, 35};

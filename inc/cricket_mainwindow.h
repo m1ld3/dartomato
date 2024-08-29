@@ -44,7 +44,7 @@ public:
   bool is_slot_free(const ECricketSlots iSlot, uint32_t iPlayer) const override;
   bool is_score_bigger(uint32_t iScore) const override;
   bool is_score_smaller(uint32_t iScore) const override;
-  void increase_slot_score(const ECricketSlots iSlot, uint32_t iPoints) override;
+  void increase_extra_points_of_other_players(const ECricketSlots iSlot, uint32_t iPoints) override;
   QVector<uint32_t> compute_extra_points(const ECricketSlots iSlot, uint32_t iPoints, uint32_t iPlayer) override;
   void set_scores() override;
   void update_extra_points_labels() override;

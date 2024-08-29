@@ -20,3 +20,10 @@ public:
   QSoundEffect mBustedSound;
   QSoundEffect mGameShotSound;
 };
+
+class CCricketInputFake
+{
+public:
+
+  bool are_slots_full() { return true; };
+};

@@ -6,6 +6,10 @@
 #include "cricket_class.h"
 #include <QPixmap>
 #include <QPointer>
+#ifdef TESTING
+#include "fakes.h"
+#include "mocks.h"
+#endif
 
 class CCricketMainWindow;
 class CGameDataHandler;
@@ -81,7 +85,6 @@ private:
   static void set_set_started();
   static void unset_leg_started();
   static void unset_set_started();
-//  void set_slot(const ECricketSlots iSlot, uint32_t iHits);
   void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
   void set_extra_points_label(const ECricketSlots iSlot, uint32_t iPoints);
   void set_slot_label(const ECricketSlots iSlot, uint32_t iHits);
@@ -115,13 +118,17 @@ private:
 
   Ui::CCricketGroupBox * mUi;
 #ifdef TESTING
-  std::shared_ptr<CCricketInput> mScoreInput;
+  std::shared_ptr<CCricketInputFake> mScoreInput;
 #else
   QPointer<CCricketInput> mScoreInput;
 #endif
   CCricketClass mPlayer;
   uint32_t mPlayerNumber;
+#ifdef TESTING
+  CCricketMainWindowMock * mGameWindow;
+#else
   CCricketMainWindow * mGameWindow;
+#endif
   const CSettings mSettings;
   QString mPlayerName;
   QVector<CCricketClass::CPlayerData> mHistory;

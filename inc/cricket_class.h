@@ -120,7 +120,7 @@ public:
   void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
   uint32_t get_extra_points(const ECricketSlots iSlot) const;
   uint32_t get_total_hits() const;
-  void set_score();
+  void compute_score();
   uint32_t get_score() const;
   double get_hits_per_round() const;
   QVector<QVector<QString>> get_score_legs() const;

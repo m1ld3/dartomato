@@ -314,7 +314,7 @@ bool CCricketMainWindow::is_score_smaller(uint32_t iScore) const
   return result;
 }
 
-void CCricketMainWindow::increase_slot_score(const ECricketSlots iSlot, uint32_t iPoints)
+void CCricketMainWindow::increase_extra_points_of_other_players(const ECricketSlots iSlot, uint32_t iPoints)
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
   {

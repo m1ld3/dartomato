@@ -59,7 +59,7 @@ public:
   MOCK_METHOD(bool, is_slot_free, (const ECricketSlots, uint32_t), (const, override));
   MOCK_METHOD(bool, is_score_bigger, (uint32_t), (const, override));
   MOCK_METHOD(bool, is_score_smaller, (uint32_t), (const, override));
-  MOCK_METHOD(void, increase_slot_score, (const ECricketSlots, uint32_t), (override));
+  MOCK_METHOD(void, increase_extra_points_of_other_players, (const ECricketSlots, uint32_t), (override));
   MOCK_METHOD(QVector<uint32_t>, compute_extra_points, (const ECricketSlots, uint32_t, uint32_t), (override));
   MOCK_METHOD(void, set_scores, (), (override));
   MOCK_METHOD(void, update_extra_points_labels, (), (override));

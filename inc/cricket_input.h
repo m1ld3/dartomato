@@ -53,7 +53,7 @@ public:
                 CCricketClass * iPlayer = nullptr, ICricketMainWindow * iGameWindow = nullptr);
 #endif
   ~CCricketInput();
-  bool are_slots_full() const;
+  virtual bool are_slots_full() const;
   void handle_segment_pressed_event(uint32_t iVal, QChar iType);
   void notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
 

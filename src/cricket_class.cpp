@@ -118,7 +118,7 @@ uint32_t CCricketClass::get_total_hits() const
   return mTotalHits;
 }
 
-void CCricketClass::set_score()
+void CCricketClass::compute_score()
 {
   mScore = 0;
   for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++)

@@ -45,9 +45,8 @@ CCricketGroupBox::CCricketGroupBox(IMainWindow * iMainWindow,
                                    uint32_t iPlayerNumber)
   : mPlayer(iPlayerNumber, iSettings)
   , mPlayerNumber(iPlayerNumber)
-  , mGameWindow(static_cast<CCricketMainWindow*>(iMainWindow))
+  , mGameWindow(static_cast<CCricketMainWindowMock*>(iMainWindow))
   , mSettings(iSettings)
-  , mPlayerName(mSettings.PlayersList.at(mPlayerNumber))
   , mHistory({mPlayer.create_snapshot()})
 {}
 #endif
@@ -99,7 +98,7 @@ void CCricketGroupBox::write_slot_arrays_to_player(const std::array<uint32_t, st
     mPlayer.set_slot(static_cast<ECricketSlots>(i), mSlotArray.at(i));
     if (mSettings.CutThroat)
     {
-      mGameWindow->increase_slot_score(static_cast<ECricketSlots>(i), iExtraPointsCutThroat.at(i));
+      mGameWindow->increase_extra_points_of_other_players(static_cast<ECricketSlots>(i), iExtraPointsCutThroat.at(i));
     }
     else
     {
@@ -228,12 +227,14 @@ void CCricketGroupBox::submit_score_to_player(uint32_t iNumberOfDarts, const QVe
 {
   write_slot_arrays_to_player(iExtraPointsCutThroat);
   if (mSettings.CutThroat) mGameWindow->set_scores();
-  else mPlayer.set_score();
+  else mPlayer.compute_score();
   mScore = mPlayer.get_score();
   mPlayer.compute_hits_per_round(iNumberOfDarts, mTotalHits);
   mPlayer.update_darts(iDarts);
+#ifndef TESTING
   QString hpr = QString::number(mPlayer.get_hits_per_round(), 'f', 2);
   mUi->labelHitsPerRoundInput->setText(hpr);
+#endif
 }
 
 void CCricketGroupBox::handle_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts)
@@ -438,11 +439,6 @@ uint32_t CCricketGroupBox::get_slot(const ECricketSlots iSlot) const
   return mPlayer.get_slot(iSlot);
 }
 
-//void CCricketGroupBox::set_slot(const ECricketSlots iSlot, uint32_t iHits)
-//{
-//  mPlayer.set_slot(iSlot, iHits);
-//}
-
 void CCricketGroupBox::set_extra_points(const ECricketSlots iSlot, uint32_t iPoints)
 {
   mPlayer.set_extra_points(iSlot, iPoints);
@@ -455,6 +451,7 @@ uint32_t CCricketGroupBox::get_extra_points(const ECricketSlots iSlot) const
 
 void CCricketGroupBox::set_extra_points_label(const ECricketSlots iSlot, uint32_t iPoints)
 {
+#ifndef TESTING
   switch (iSlot)
   {
   case ECricketSlots::SLOT_15:
@@ -480,6 +477,7 @@ void CCricketGroupBox::set_extra_points_label(const ECricketSlots iSlot, uint32_
     break;
   default:;
   }
+#endif
 }
 
 void CCricketGroupBox::set_slot_label(const ECricketSlots iSlot, uint32_t iHits)
@@ -626,7 +624,9 @@ void CCricketGroupBox::display_leg_history()
   }
 
   filter_leg_scores_cutthroat(legscores);
+#ifndef TESTING
   display_leg_scores(legscores);
+#endif
 }
 
 void CCricketGroupBox::push_button_undo_clicked_slot()
@@ -688,7 +688,7 @@ void CCricketGroupBox::increase_extra_points(const ECricketSlots iSlot, uint32_t
 
 void CCricketGroupBox::set_score()
 {
-  mPlayer.set_score();
+  mPlayer.compute_score();
 }
 
 void CCricketGroupBox::update_extra_points_labels()
