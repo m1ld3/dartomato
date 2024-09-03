@@ -496,6 +496,20 @@ TEST_F(CCricketGroupBoxTest, HandleSubmitButtonClickedOverflowTest)
   EXPECT_TRUE(verify_snapshot(expected));
 }
 
+TEST_F(CCricketGroupBoxTest, HandleSubmitButtonClickedOverflowFillsExtraPointsTest)
+{
+  CCricketClass::CPlayerData expected = {0, 0, 0, 3, 20, 4, 4, {{"s20", "s20", "d20"}}, {}, {0, 4}, {}, {0, 0, 0, 0, 0, 3, 0}, {0, 0, 0, 0, 0, 20, 0}, {false}, {}, true};
+  QVector<QString> darts = {"s20", "s20", "d20"};
+  EXPECT_CALL(*mMockWindow.get(), is_score_bigger(20)).WillOnce(::testing::Return(false));
+  EXPECT_CALL(*mMockWindow.get(), is_score_smaller(20)).WillOnce(::testing::Return(false));
+  EXPECT_CALL(*mMockWindow.get(), update_extra_points_labels());
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::DEFAULT));
+  EXPECT_CALL(*mMockWindow.get(), is_slot_free(ECricketSlots::SLOT_20, 0)).WillOnce(::testing::Return(true));
+  mBox->set_active();
+  mBox->handle_submit_button_clicked(3, darts);
+  EXPECT_TRUE(verify_snapshot(expected));
+}
+
 TEST_F(CStatsWindowX01Test, UpdateLegHistoryTest)
 {
   CStatsWindowX01::SLegStatsData expected = {(501.0 / 35.0) * 3, 501.0 / 35.0, 0, 161.0 / 3.0, 0, 0, 35};
@@ -665,4 +679,23 @@ TEST_F(CCricketInputTest, HandleSegmentPressedEventUndoTest)
 {
   mScoreInput->handle_segment_pressed_event(25, 's');
   EXPECT_TRUE(verify_undo(0, {"", "", ""}, {0, 0, 0, 0, 0, 0, 0}, {}, {}));
+}
+
+TEST_F(CGameDataHandlerTest, AddNewPlayerTest)
+{
+  QString player = "TestPlayer";
+  CGameDataHandler handler;
+  handler.add_new_player(player);
+  EXPECT_TRUE(player_exists(player, handler));
+}
+
+TEST_F(CGameDataHandlerTest, GetPlayerNamesTest)
+{
+  QStringList players {"Player1, Player2, Player3"};
+  CGameDataHandler handler;
+  for (const auto & player : players)
+  {
+    handler.add_new_player(player);
+  }
+  EXPECT_TRUE(players == handler.get_player_names());
 }

@@ -5,11 +5,11 @@
 
 #ifndef TESTING
 #define PUT_WARNING(TITLE, MESSAGE) \
-    QMessageBox::warning(this, (TITLE), (MESSAGE));
+  QMessageBox::warning(this, (TITLE), (MESSAGE));
 #else
 #include <iostream>
 #define PUT_WARNING(TITLE, MESSAGE) \
-    mOutput << TITLE << ": " << MESSAGE;
+  mOutput << TITLE << ": " << MESSAGE;
 #endif
 
 #ifndef TESTING

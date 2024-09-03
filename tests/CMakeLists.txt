@@ -149,7 +149,13 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}../../bin/)
 install(CODE "
     file(GLOB_RECURSE QT_LIBS \${CMAKE_INSTALL_PREFIX}/*.dll)
     foreach(LIB \${QT_LIBS})
+      get_filename_component(LIB_NAME \${LIB} NAME)
+
+      if(LIB_NAME STREQUAL \"qsqlite.dll\")
+        file(INSTALL \${LIB} DESTINATION \${CMAKE_CURRENT_BINARY_DIR}/tests/sqldrivers)
+      else()
         file(INSTALL \${LIB} DESTINATION \${CMAKE_CURRENT_BINARY_DIR}/tests)
+      endif()
     endforeach()
 ")
 

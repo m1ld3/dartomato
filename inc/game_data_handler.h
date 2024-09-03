@@ -9,6 +9,8 @@ class QJsonObject;
 
 class CGameDataHandler
 {
+  friend class CGameDataHandlerTest;
+
 public:
 
   struct SGameData
@@ -83,7 +85,7 @@ private:
   int get_player_id(const QString & iPlayerName) const;
   QString get_player_name_from_id(int iPlayerId) const;
 
-  const QString mFileName = "game_data.sqlite";
+  static const QString mFileName;
 };
 
 #endif  // CGAMEDATAHANDLER_H

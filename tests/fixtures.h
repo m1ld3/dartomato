@@ -9,6 +9,10 @@
 #include "stats_window_x01.h"
 #include "stats_window_cricket.h"
 #include "cricket_input.h"
+#include "game_data_handler.h"
+#include <QtSql/QSqlDatabase>
+#include <qcoreapplication.h>
+#include <qfile.h>
 
 class CDartBoardX01Test : public testing::Test
 {
@@ -329,4 +333,32 @@ protected:
   std::unique_ptr<CCricketMainWindowMock> mMockWindow;
   std::unique_ptr<CCricketInput> mScoreInput;
   std::unique_ptr<CDartBoardMock> mDb;
+};
+
+class CGameDataHandlerTest : public ::testing::Test
+{
+protected:
+
+  void SetUp() override
+  {
+    int argc = 0;
+    char * argv[] = {nullptr};
+    app = new QCoreApplication(argc, argv);
+  }
+
+  void TearDown() override
+  {
+    delete app;
+    app = nullptr;
+    QFile::remove(CGameDataHandler::mFileName);
+  }
+
+  bool player_exists(const QString & iPlayerName, const CGameDataHandler & iHandler) { return iHandler.player_exists(iPlayerName); }
+
+  QCoreApplication * app;
+
+//  ~CGameDataHandlerTest()
+//  {
+////    QSqlDatabase::removeDatabase("game_data.sqlite");
+//  }
 };

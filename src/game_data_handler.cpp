@@ -5,6 +5,9 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QCoreApplication>
+
+const QString CGameDataHandler::mFileName = "game_data.sqlite";
 
 CGameDataHandler::CGameDataHandler()
 {
