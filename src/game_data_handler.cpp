@@ -408,17 +408,12 @@ QVector<CGameDataHandler::SStatsData> CGameDataHandler::get_stats_data()
     QSqlQuery selectQuery(QString("SELECT * FROM games WHERE player_id='%1'").arg(playerId));
     QVector<CX01Class::CPlayerData> x01Data {};
     QVector<CCricketClass::CPlayerData> cricketData {};
-    auto gameMode = EGame::GAME_501;
-    bool finished = false;
-    bool gameWon = false;
 
     while (selectQuery.next())
     {
       QVector<CX01Class::CPlayerData> singleX01Data {};
       QVector<CCricketClass::CPlayerData> singleCricketData {};
-      gameMode = static_cast<EGame>(selectQuery.value("game_mode").toInt());
-      finished = selectQuery.value("finished").toBool();
-
+      auto gameMode = static_cast<EGame>(selectQuery.value("game_mode").toInt());
       QString gameDataString = selectQuery.value("game_data").toString();
       QJsonDocument jsonDoc = QJsonDocument::fromJson(gameDataString.toUtf8());
       QJsonArray gameDataArray = jsonDoc.array();

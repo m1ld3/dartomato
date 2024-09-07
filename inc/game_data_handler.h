@@ -63,6 +63,13 @@ public:
 
     SStatsData() = default;
 
+    bool operator==(const SStatsData & iOther) const
+    {
+      return PlayerName == iOther.PlayerName &&
+             GameDataX01 == iOther.GameDataX01 &&
+             GameDataCricket == iOther.GameDataCricket;
+    }
+
     QString PlayerName = "";
     QVector<CX01Class::CPlayerData> GameDataX01 = {};
     QVector<CCricketClass::CPlayerData> GameDataCricket = {};
