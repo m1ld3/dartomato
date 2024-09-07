@@ -75,6 +75,17 @@ struct CSettings
 
   CSettings() = default;
 
+  bool operator==(const CSettings & iOther) const
+  {
+    return Game == iOther.Game &&
+           PlayersList == iOther.PlayersList &&
+           Sets == iOther.Sets &&
+           Legs == iOther.Legs &&
+           InMode == iOther.InMode &&
+           OutMode == iOther.OutMode &&
+           CutThroat == iOther.CutThroat;
+  }
+
   EGame Game = EGame::GAME_301;
   QStringList PlayersList = {};
   uint32_t Sets = 1;

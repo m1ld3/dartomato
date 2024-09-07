@@ -32,6 +32,16 @@ public:
 
     SGameData() = default;
 
+    bool operator==(const SGameData & iOther) const
+    {
+      return TimeStamp == iOther.TimeStamp &&
+             Finished == iOther.Finished &&
+             Settings == iOther.Settings &&
+             WinnerIdx == iOther.WinnerIdx &&
+             GameDataX01 == iOther.GameDataX01 &&
+             GameDataCricket == iOther.GameDataCricket;
+    }
+
     QString TimeStamp = "";
     bool Finished = false;
     CSettings Settings = CSettings();

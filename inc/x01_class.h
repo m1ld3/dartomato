@@ -68,13 +68,13 @@ public:
       , Active(iActive)
     {}
 
-    double rnd2Decimals(double iNum)
+    double rnd2Decimals(double iNum) const
     {
       double val = std::ceil(iNum * 100.0) / 100.0;
       return val;
     }
 
-    bool operator==(const CPlayerData & iOther)
+    bool operator==(const CPlayerData & iOther) const
     {
       return SetsWon == iOther.SetsWon &&
              LegsWonPerSet == iOther.LegsWonPerSet &&

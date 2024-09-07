@@ -341,6 +341,7 @@ protected:
 
   void SetUp() override
   {
+    if (QFile::exists(CGameDataHandler::mFileName)) QFile::remove(CGameDataHandler::mFileName);
     int argc = 0;
     char * argv[] = {nullptr};
     app = new QCoreApplication(argc, argv);
@@ -350,15 +351,10 @@ protected:
   {
     delete app;
     app = nullptr;
-    QFile::remove(CGameDataHandler::mFileName);
+    if (QFile::exists(CGameDataHandler::mFileName)) QFile::remove(CGameDataHandler::mFileName);
   }
 
   bool player_exists(const QString & iPlayerName, const CGameDataHandler & iHandler) { return iHandler.player_exists(iPlayerName); }
 
   QCoreApplication * app;
-
-//  ~CGameDataHandlerTest()
-//  {
-////    QSqlDatabase::removeDatabase("game_data.sqlite");
-//  }
 };
