@@ -55,6 +55,35 @@ void CDartomatMain::create_menu()
   QMenu * fileMenu = menuBar->addMenu("?");
   QAction * aboutAction = fileMenu->addAction("About");
   connect(aboutAction, &QAction::triggered, this, &CDartomatMain::show_about_dialog);
+
+  QIcon muteIcon(":/resources/img/mute.svg");
+  QIcon unmuteIcon(":/resources/img/unmute.svg");
+
+  QAction * muteAction = new QAction(unmuteIcon, "", this);
+  connect(muteAction, &QAction::triggered, this, &CDartomatMain::toggle_mute);
+  menuBar->addAction(muteAction);
+}
+
+void CDartomatMain::toggle_mute()
+{
+  static bool isMuted = false;
+
+  QAction *muteAction = qobject_cast<QAction*>(sender());
+
+  if (isMuted)
+  {
+    // Unmute the sound and change icon to unmute
+    muteAction->setIcon(QIcon(":/resources/img/unmute.svg"));
+    // (Add your code to unmute sound here)
+    isMuted = false;
+  }
+  else
+  {
+    // Mute the sound and change icon to mute
+    muteAction->setIcon(QIcon(":/resources/img/mute.svg"));
+    // (Add your code to mute sound here) -->> QSoundEffect::setMuted(bool muted)
+    isMuted = true;
+  }
 }
 
 void CDartomatMain::check_for_unfinished_game()
