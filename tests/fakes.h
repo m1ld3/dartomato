@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <QChar>
-#include <QSoundEffect>
 #include "settings.h"
 
 class CDartBoardFake
@@ -17,8 +16,6 @@ public:
   ~CDartBoardFake() = default;
 
   CSettings mSettings;
-  QSoundEffect mBustedSound;
-  QSoundEffect mGameShotSound;
 };
 
 class CCricketInputFake

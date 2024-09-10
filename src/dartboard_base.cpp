@@ -4,9 +4,8 @@
 
 #ifndef TESTING
 CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings iSettings)
-  : mBustedSound(this)
-  , mGameShotSound(this)
-  , mSettings(iSettings)
+  : mSettings(iSettings)
+  , mSoundHandler(CSoundHandler::instance())
 {
   mScene = new QGraphicsScene(0, 0, 800, 800, iGraphicsViewDartBoard);
   mScene->setSceneRect(0, 0, 800, 800);
@@ -623,8 +622,6 @@ CDartBoard::CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings 
   mLabels->setZValue(1);
   mLabels->setScale(0.98);
   mLabels->setPos(10, 10);
-  mBustedSound.setSource(QUrl("qrc:/resources/sounds/busted.wav"));
-  mGameShotSound.setSource(QUrl("qrc:/resources/sounds/gameshot.wav"));
 }
 #endif
 
@@ -701,5 +698,5 @@ CDartBoard::~CDartBoard()
 
 void CDartBoard::play_game_shot_sound()
 {
-  mGameShotSound.play();
+  mSoundHandler.play_game_shot_sound();
 }

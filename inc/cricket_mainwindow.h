@@ -5,7 +5,6 @@
 #include "cricket_mainwindow_if.h"
 #include "mainwindow_if.h"
 #include "groupbox_cricket.h"
-#include <QSoundEffect>
 #include <QGridLayout>
 #include "game_data_handler.h"
 

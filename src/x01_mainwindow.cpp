@@ -16,6 +16,7 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
   , mDartBoard(nullptr)
   , mSettings(iSettings)
   , mGameDataHandler(iGameDataHandler)
+  , mSoundHandler(CSoundHandler::instance())
 {
   mUi->setupUi(this);
   QString text = QString::number(static_cast<uint32_t>(mSettings.Game));

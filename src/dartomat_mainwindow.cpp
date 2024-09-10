@@ -4,7 +4,6 @@
 #include <QPushButton>
 #include <QVector>
 #include <QGridLayout>
-#include <QSoundEffect>
 #include <QJsonArray>
 #include <QMessageBox>
 #include "version.h"
@@ -16,9 +15,9 @@
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
   , mUi(new Ui::CDartomatMain)
-  , mGameOnSound(this)
   , mGameDataHandler(CGameDataHandler())
   , mPlayerListModel(CPlayerListModel(mGameDataHandler, this))
+  , mSoundHandler(CSoundHandler::instance())
 {
   mUi->setupUi(this);
   mUi->radioButtonSin->setChecked(true);
@@ -26,7 +25,6 @@ CDartomatMain::CDartomatMain(QWidget * iParent)
   mUi->comboBoxGame->setCurrentIndex(1);
   mUi->checkBoxCutThroat->setVisible(false);
   mUi->labelLogo->setPixmap(mLogo.scaled(180, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-  mGameOnSound.setSource(QUrl("qrc:/resources/sounds/gameon.wav"));
 
   create_menu();
 
@@ -56,9 +54,7 @@ void CDartomatMain::create_menu()
   QAction * aboutAction = fileMenu->addAction("About");
   connect(aboutAction, &QAction::triggered, this, &CDartomatMain::show_about_dialog);
 
-  QIcon muteIcon(":/resources/img/mute.svg");
   QIcon unmuteIcon(":/resources/img/unmute.svg");
-
   QAction * muteAction = new QAction(unmuteIcon, "", this);
   connect(muteAction, &QAction::triggered, this, &CDartomatMain::toggle_mute);
   menuBar->addAction(muteAction);
@@ -72,16 +68,14 @@ void CDartomatMain::toggle_mute()
 
   if (isMuted)
   {
-    // Unmute the sound and change icon to unmute
     muteAction->setIcon(QIcon(":/resources/img/unmute.svg"));
-    // (Add your code to unmute sound here)
+    mSoundHandler.set_muted(false);
     isMuted = false;
   }
   else
   {
-    // Mute the sound and change icon to mute
     muteAction->setIcon(QIcon(":/resources/img/mute.svg"));
-    // (Add your code to mute sound here) -->> QSoundEffect::setMuted(bool muted)
+    mSoundHandler.set_muted(true);
     isMuted = true;
   }
 }
@@ -218,5 +212,5 @@ void CDartomatMain::push_button_stats_clicked_slot()
 
 void CDartomatMain::play_game_on_sound()
 {
-  mGameOnSound.play();
+  mSoundHandler.play_game_on_sound();
 }

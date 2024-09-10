@@ -27,8 +27,8 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings iSettings,
   , mPlayerNumber(iPlayerNumber)
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(static_cast<CX01MainWindow*>(iParent))
-  , mScoreSound(this)
   , mHistory({mPlayer.create_snapshot()})
+  , mSoundHandler(CSoundHandler::instance())
 {
   mUi->setupUi(this);
   mUi->lcdNumber->setDigitCount(3);
@@ -60,6 +60,7 @@ CX01GroupBox::CX01GroupBox(IMainWindow * iMainWindow, const CSettings iSettings,
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(iMainWindow)
   , mHistory({mPlayer.create_snapshot()})
+  , mSoundHandler(CSoundHandler::instance())
 {}
 #endif
 
@@ -111,7 +112,7 @@ void CX01GroupBox::display_stats_and_finishes()
 void CX01GroupBox::play_score_sound()
 {
 #ifndef TESTING
-  mScoreSound.play();
+  mSoundHandler.play_score_sound();
 #endif
 }
 
@@ -293,7 +294,7 @@ void CX01GroupBox::prepare_score_sound()
   std::string strpath = "qrc:/resources/sounds/" + digits + ".wav";
   mSoundPath = QString::fromStdString(strpath);
 #ifndef TESTING
-  mScoreSound.setSource(mSoundPath);
+  mSoundHandler.set_score_sound_source(mSoundPath);
 #endif
 }
 

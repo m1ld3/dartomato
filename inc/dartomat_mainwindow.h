@@ -2,11 +2,11 @@
 #define DARTOMAT_MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSoundEffect>
 #include <QPointer>
 #include "mainwindow_if.h"
 #include "settings.h"
 #include "player_list_model.h"
+#include "sound_handler.h"
 
 class CGameDataHandler;
 
@@ -16,6 +16,7 @@ namespace Ui
   class CDartomatMain;
 }
 QT_END_NAMESPACE
+
 
 class CDartomatMain : public QMainWindow
 {
@@ -49,11 +50,11 @@ private:
 
   Ui::CDartomatMain * mUi;
   IMainWindow * mMainWindow;
-  QSoundEffect mGameOnSound;
   CGameDataHandler mGameDataHandler;
   CPlayerListModel mPlayerListModel;
   QStringList mSelectedPlayers = {};
   QPixmap mLogo = QPixmap(":/resources/img/dartomato.png");
+  CSoundHandler & mSoundHandler;
 };
 
 #endif  // DARTOMAT_MAINWINDOW_H

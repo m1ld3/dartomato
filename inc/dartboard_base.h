@@ -6,8 +6,8 @@
 #include <QGraphicsSvgItem>
 #include <QLabel>
 #include "dartboard_view.h"
-#include <QSoundEffect>
 #include "settings.h"
+#include "sound_handler.h"
 
 class CDartBoardSegment;
 
@@ -34,6 +34,7 @@ public:
 #ifdef TESTING
   CDartBoard(const CSettings iSettings)
     : mSettings(iSettings)
+    , mSoundHandler(CSoundHandler::instance())
   {}
 #endif
   virtual ~CDartBoard();
@@ -43,8 +44,6 @@ protected:
 
   QGraphicsView * mView;
   QGraphicsScene * mScene;
-  QSoundEffect mBustedSound;
-  QSoundEffect mGameShotSound;
 #ifdef TESTING
   CSettings mSettings;
 #else
@@ -117,6 +116,7 @@ protected:
 #ifndef TESTING
   QGraphicsSvgItem * const mLabels = new QGraphicsSvgItem(":/resources/img/dartboard.svg");
 #endif
+  CSoundHandler & mSoundHandler;
 };
 
 #endif  // CDARTBOARD_H

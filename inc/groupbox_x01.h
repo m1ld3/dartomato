@@ -4,8 +4,8 @@
 #include <QGroupBox>
 #include "x01_class.h"
 #include <QPixmap>
-#include <QSoundEffect>
 #include "settings.h"
+#include "sound_handler.h"
 
 class IMainWindow;
 class CDartBoard;
@@ -103,11 +103,9 @@ private:
   static bool mLegAlreadyStarted;
   static bool mSetAlreadyStarted;
   IMainWindow * mGameWindow;
-#ifndef TESTING
-  QSoundEffect mScoreSound;
-#endif
   QVector<CX01Class::CPlayerData> mHistory;
   QString mSoundPath;
+  CSoundHandler & mSoundHandler;
 };
 
 #endif  // GROUPBOX_X01_H

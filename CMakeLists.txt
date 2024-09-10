@@ -54,6 +54,7 @@ set(INCLUDES
     inc/mainwindow_if.h
     inc/x01_mainwindow_if.h
     inc/cricket_mainwindow_if.h
+    inc/sound_handler.h
     )
  
 set(SOURCES

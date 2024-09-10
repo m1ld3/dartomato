@@ -5,10 +5,10 @@
 #include "x01_mainwindow_if.h"
 #include "mainwindow_if.h"
 #include "groupbox_x01.h"
-#include <QSoundEffect>
 #include "dartboard_x01.h"
 #include "settings.h"
 #include "game_data_handler.h"
+
 
 namespace Ui
 {
@@ -27,6 +27,7 @@ public:
 #ifdef TESTING
   CX01MainWindow(QWidget * iParent = nullptr)
     : QMainWindow(iParent)
+    , mSoundHandler(CSoundHandler::instance())
   {}
 #endif
   void closeEvent(QCloseEvent * iEvent) override;
@@ -89,6 +90,7 @@ private:
   CDartBoard * mDartBoard;
   const CSettings mSettings;
   CGameDataHandler mGameDataHandler;
+  CSoundHandler & mSoundHandler;
 };
 
 #endif  // X01MAINWINDOW_H
