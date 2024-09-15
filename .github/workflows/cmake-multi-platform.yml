@@ -47,11 +47,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Qt6 dependencies
+    - name: Install Qt6 dependencies for Linux
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y qt6-base-dev
+        sudo apt-get install -y qt6-base-dev qt6-multimedia-dev qt6-svg-dev qt6-charts-dev libopengl-dev
+    
+    - name: Install Qt6 dependencies for Windows
+      if: runner.os == 'Windows'
+      uses: jurplel/install-qt-action@v4.0.0
+      with:
+        version: '6.2.2'
 
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
