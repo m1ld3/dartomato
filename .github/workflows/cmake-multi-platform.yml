@@ -67,8 +67,8 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake for Windows
+      if: runner.os == 'Windows'
       run: |
-        if: runner.os == 'Windows'
         CMAKE_PREFIX_PATH="${{ env.Qt6_DIR }}"          
         cmake -B ${{ steps.strings.outputs.build-output-dir }} 
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} 
@@ -78,8 +78,8 @@ jobs:
         -S ${{ github.workspace }}
 
     - name: Configure CMake for Linux
+      if: runner.os == 'Linux'
       run: |
-        if: runner.os == 'Linux'
         CMAKE_PREFIX_PATH="/usr/lib/qt6"
         cmake -B ${{ steps.strings.outputs.build-output-dir }} 
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} 
