@@ -45,7 +45,12 @@ jobs:
             c_compiler: cl
 
     steps:
-    - uses: actions/checkout@v4
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # complete history
+      
     
     - name: Install Qt6 dependencies for Windows
       if: runner.os == 'Windows'
@@ -55,7 +60,7 @@ jobs:
         version: '6.2.2'
         host: 'windows'
         target: 'desktop'
-        arch: 'win64_msvc2019_64'
+        arch: 'win64_mingw'
         modules: 'qtcharts qtmultimedia'
 
     - name: Install Qt6 dependencies for Linux
