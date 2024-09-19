@@ -27,7 +27,7 @@ include_directories(../inc)
 set(INCLUDES
     fakes.h
     mocks.h
-	fixtures.h
+    fixtures.h
     ../inc/player_list_model.h
     ../inc/game_data_handler.h
     ../inc/checkout_lists.h
@@ -144,8 +144,6 @@ target_link_libraries(dartomato_test
     Qt6::SvgWidgets
     Qt6::Sql
     Qt6::Charts)
-
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}../../bin/)
 
 install(CODE "
     file(GLOB_RECURSE QT_LIBS \${CMAKE_INSTALL_PREFIX}/*.dll)
