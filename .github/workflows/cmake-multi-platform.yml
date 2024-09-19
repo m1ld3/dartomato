@@ -25,11 +25,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         build_type: [Release]
-        c_compiler: [gcc, clang]
+        c_compiler: [gcc, clang, cl]
         include:
           - os: windows-latest
-            c_compiler: gcc
-            cpp_compiler: g++
+            c_compiler: cl
+            cpp_compiler: gcl
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
@@ -41,6 +41,9 @@ jobs:
             c_compiler: gcc
           - os: windows-latest
             c_compiler: clang
+          - os: ubuntu-latest
+            c_compiler: cl
+            cpp_compiler: cl
 
     steps:
 
@@ -48,12 +51,6 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0  # complete history
-
-    - name: Set up MinGW
-      if: runner.os == 'Windows'
-      uses: egor-tensin/setup-mingw@v2
-      with:
-        static: 0
     
     - name: Install Qt6 dependencies for Windows
       if: runner.os == 'Windows'
@@ -106,10 +103,10 @@ jobs:
         
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest --build-config Release
+      run: ctest --build-config ${{ matrix.build_type }}
