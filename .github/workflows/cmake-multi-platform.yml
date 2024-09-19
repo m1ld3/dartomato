@@ -59,7 +59,7 @@ jobs:
         version: '6.6.1'
         host: 'windows'
         target: 'desktop'
-        arch: 'win64_mingw'
+        arch: 'win64_msvc2019_64'
         modules: 'qtcharts qtmultimedia'
 
     - name: Install Qt6 dependencies for Linux
