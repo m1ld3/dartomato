@@ -51,7 +51,9 @@ jobs:
 
     - name: Set up MinGW
       if: runner.os == 'Windows'
-      uses: egor-tensin/setup-mingw@v2  
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        static: 0
     
     - name: Install Qt6 dependencies for Windows
       if: runner.os == 'Windows'
