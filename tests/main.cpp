@@ -13,16 +13,26 @@ TEST_F(CDartBoardX01Test, InitTest)
 
 TEST_F(CDartBoardX01Test, NoScoreAtBeginTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
   EXPECT_CALL(*mMockWindow.get(), display_score(501));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(501, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 501, 501, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, AlreadyFinishedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   mDartBoard->set_finished();
@@ -34,6 +44,10 @@ TEST_F(CDartBoardX01Test, AlreadyFinishedTest)
 
 TEST_F(CDartBoardX01Test, StartValSingleInTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
@@ -46,6 +60,10 @@ TEST_F(CDartBoardX01Test, StartValSingleInTest)
 
 TEST_F(CDartBoardX01Test, StartValDoubleInMissTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(301));
   mDartBoard->init_dartboard(301);
   set_x01_mode(EGame::GAME_301);
   set_in_mode(EX01InMode::DOUBLE_IN);
@@ -59,6 +77,10 @@ TEST_F(CDartBoardX01Test, StartValDoubleInMissTest)
 
 TEST_F(CDartBoardX01Test, StartValDoubleInHitTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(701));
   mDartBoard->init_dartboard(701);
   set_x01_mode(EGame::GAME_701);
   set_in_mode(EX01InMode::DOUBLE_IN);
@@ -72,6 +94,10 @@ TEST_F(CDartBoardX01Test, StartValDoubleInHitTest)
 
 TEST_F(CDartBoardX01Test, StartValMasterInMissTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   set_in_mode(EX01InMode::MASTER_IN);
@@ -85,6 +111,10 @@ TEST_F(CDartBoardX01Test, StartValMasterInMissTest)
 
 TEST_F(CDartBoardX01Test, StartValMasterInHitTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   set_in_mode(EX01InMode::MASTER_IN);
@@ -98,6 +128,10 @@ TEST_F(CDartBoardX01Test, StartValMasterInHitTest)
 
 TEST_F(CDartBoardX01Test, ScoreInRangeTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(355));
   mDartBoard->init_dartboard(355);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
@@ -110,6 +144,10 @@ TEST_F(CDartBoardX01Test, ScoreInRangeTest)
 
 TEST_F(CDartBoardX01Test, ScoreInRange3DartsTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(212));
   mDartBoard->init_dartboard(212);
   set_x01_mode(EGame::GAME_501);
   QChar type = 't';
@@ -133,6 +171,10 @@ TEST_F(CDartBoardX01Test, ScoreInRange3DartsTest)
 
 TEST_F(CDartBoardX01Test, SingleOutGameShotTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(11));
   mDartBoard->init_dartboard(11);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::SINGLE_OUT);
@@ -140,12 +182,18 @@ TEST_F(CDartBoardX01Test, SingleOutGameShotTest)
   EXPECT_CALL(*mMockWindow.get(), display_score(0));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(11));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(0, 2));
+  EXPECT_CALL(*mDartBoard.get(), play_game_shot_sound);
   mDartBoard->handle_segment_pressed_event(11, type);
   EXPECT_TRUE(verify_dartboard_x01({true, false, 0, 11, 2, {true, false, false}, {"s11"}, {11, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, DoubleOutCorrectScoreButNoDoubleTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(20));
   mDartBoard->init_dartboard(20);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::DOUBLE_OUT);
@@ -153,12 +201,17 @@ TEST_F(CDartBoardX01Test, DoubleOutCorrectScoreButNoDoubleTest)
   EXPECT_CALL(*mMockWindow.get(), display_score(20));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(20, 2));
   mDartBoard->handle_segment_pressed_event(20, type);
   EXPECT_TRUE(verify_dartboard_x01({true, true, 20, 20, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, DoubleOutGameShotTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(32));
   mDartBoard->init_dartboard(32);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::DOUBLE_OUT);
@@ -166,12 +219,18 @@ TEST_F(CDartBoardX01Test, DoubleOutGameShotTest)
   EXPECT_CALL(*mMockWindow.get(), display_score(0));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(32));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(0, 2));
+  EXPECT_CALL(*mDartBoard.get(), play_game_shot_sound);
   mDartBoard->handle_segment_pressed_event(32, type);
   EXPECT_TRUE(verify_dartboard_x01({true, false, 0, 32, 2, {true, false, false}, {"d32"}, {32, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, MasterOutCorrectScoreButNoTripleTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(60));
   mDartBoard->init_dartboard(60);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::MASTER_OUT);
@@ -179,12 +238,17 @@ TEST_F(CDartBoardX01Test, MasterOutCorrectScoreButNoTripleTest)
   EXPECT_CALL(*mMockWindow.get(), display_score(60));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(60, 2));
   mDartBoard->handle_segment_pressed_event(60, type);
   EXPECT_TRUE(verify_dartboard_x01({true, true, 60, 60, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, MasterOutGameShotTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(33));
   mDartBoard->init_dartboard(33);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::MASTER_OUT);
@@ -192,24 +256,35 @@ TEST_F(CDartBoardX01Test, MasterOutGameShotTest)
   EXPECT_CALL(*mMockWindow.get(), display_score(0));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(33));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(0, 2));
+  EXPECT_CALL(*mDartBoard.get(), play_game_shot_sound);
   mDartBoard->handle_segment_pressed_event(33, type);
   EXPECT_TRUE(verify_dartboard_x01({true, false, 0, 33, 2, {true, false, false}, {"t33"}, {33, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, NormalBustedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(7));
   mDartBoard->init_dartboard(7);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
   EXPECT_CALL(*mMockWindow.get(), display_score(7));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(7, 2));
   mDartBoard->handle_segment_pressed_event(19, type);
   EXPECT_TRUE(verify_dartboard_x01({true, true, 7, 7, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, DoubleOutBustedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(2));
   mDartBoard->init_dartboard(2);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::DOUBLE_OUT);
@@ -217,12 +292,17 @@ TEST_F(CDartBoardX01Test, DoubleOutBustedTest)
   EXPECT_CALL(*mMockWindow.get(), display_score(2));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(2, 2));
   mDartBoard->handle_segment_pressed_event(1, type);
   EXPECT_TRUE(verify_dartboard_x01({true, true, 2, 2, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, MasterOutBustedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(3));
   mDartBoard->init_dartboard(3);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::MASTER_OUT);
@@ -230,29 +310,52 @@ TEST_F(CDartBoardX01Test, MasterOutBustedTest)
   EXPECT_CALL(*mMockWindow.get(), display_score(3));
   EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(3, 2));
   mDartBoard->handle_segment_pressed_event(1, type);
   EXPECT_TRUE(verify_dartboard_x01({true, true, 3, 3, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, AlreadyBustedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(16));
   mDartBoard->init_dartboard(16);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(16, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_score(16));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
+  EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
   mDartBoard->handle_segment_pressed_event(17, type);
-  mDartBoard->handle_segment_pressed_event(15, type);
+  mDartBoard->handle_segment_pressed_event(16, type);
   EXPECT_TRUE(verify_dartboard_x01_warning("Warning: You are already busted!"));
   EXPECT_TRUE(verify_dartboard_x01({true, true, 16, 16, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, TooManyDartsTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::DOUBLE_OUT);
   QChar type = 's';
+  EXPECT_CALL(*mMockWindow.get(), display_score(481));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(481, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(20));
   mDartBoard->handle_segment_pressed_event(20, type);
+  EXPECT_CALL(*mMockWindow.get(), display_score(476));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(476, 1));
+  EXPECT_CALL(*mMockWindow.get(), display_dart2(5));
   mDartBoard->handle_segment_pressed_event(5, type);
+  EXPECT_CALL(*mMockWindow.get(), display_score(475));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(475, 0));
+  EXPECT_CALL(*mMockWindow.get(), display_dart3(1));
+  EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
   mDartBoard->handle_segment_pressed_event(1, type);
   mDartBoard->handle_segment_pressed_event(25, type);
   EXPECT_TRUE(verify_dartboard_x01_warning("Warning: You only have three darts!"));
@@ -265,19 +368,47 @@ TEST_F(CDartBoardX01Test, SingleOutCheckoutTests)
   set_out_mode(EX01OutMode::SINGLE_OUT);
   QChar type = 's';
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(1));
   mDartBoard->init_dartboard(1);
+  EXPECT_CALL(*mMockWindow.get(), display_score(1));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(1, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 1, 1, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(61));
   mDartBoard->init_dartboard(61);
+  EXPECT_CALL(*mMockWindow.get(), display_score(51));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(51, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(10));
   mDartBoard->handle_segment_pressed_event(10, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 51, 61, 2, {false, false, false}, {"s10"}, {10, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(52));
   mDartBoard->init_dartboard(52);
+  EXPECT_CALL(*mMockWindow.get(), display_score(52));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(52, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 52, 52, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(45));
   mDartBoard->init_dartboard(45);
+  EXPECT_CALL(*mMockWindow.get(), display_score(45));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(45, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 45, 45, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
@@ -288,19 +419,47 @@ TEST_F(CDartBoardX01Test, DoubleOutCheckoutTests)
   set_out_mode(EX01OutMode::DOUBLE_OUT);
   QChar type = 's';
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(2));
   mDartBoard->init_dartboard(2);
+  EXPECT_CALL(*mMockWindow.get(), display_score(2));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(2, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 2, 2, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(50));
   mDartBoard->init_dartboard(50);
+  EXPECT_CALL(*mMockWindow.get(), display_score(50));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(50, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 50, 50, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(42));
   mDartBoard->init_dartboard(42);
+  EXPECT_CALL(*mMockWindow.get(), display_score(42));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(42, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 42, 42, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(32));
   mDartBoard->init_dartboard(32);
+  EXPECT_CALL(*mMockWindow.get(), display_score(32));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(32, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 32, 32, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
@@ -311,26 +470,61 @@ TEST_F(CDartBoardX01Test, MasterOutCheckoutTests)
   set_out_mode(EX01OutMode::MASTER_OUT);
   QChar type = 's';
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(3));
   mDartBoard->init_dartboard(3);
+  EXPECT_CALL(*mMockWindow.get(), display_score(3));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(3, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 3, 3, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(61));
   mDartBoard->init_dartboard(61);
+  EXPECT_CALL(*mMockWindow.get(), display_score(61));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(61, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 61, 61, 2, {false, false, false}, {"s0"}, {0, 0, 0}}));
 
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(42));
   mDartBoard->init_dartboard(42);
+  EXPECT_CALL(*mMockWindow.get(), display_score(42));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(42, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(0, type);
   EXPECT_TRUE(verify_dartboard_x01({false, false, 42, 42, 2, {true, false, false}, {"s0"}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, UndoTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
+  EXPECT_CALL(*mMockWindow.get(), display_score(500));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(500, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(1));
   mDartBoard->handle_segment_pressed_event(1, type);
+  EXPECT_CALL(*mMockWindow.get(), display_score(498));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(498, 1));
+  EXPECT_CALL(*mMockWindow.get(), display_dart2(2));
   mDartBoard->handle_segment_pressed_event(2, type);
+  EXPECT_CALL(*mMockWindow.get(), display_score(495));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(495, 0));
+  EXPECT_CALL(*mMockWindow.get(), display_dart3(3));
+  EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
   mDartBoard->handle_segment_pressed_event(3, type);
 
   EXPECT_CALL(*mMockWindow.get(), display_score(498));
@@ -354,17 +548,32 @@ TEST_F(CDartBoardX01Test, UndoTest)
 
 TEST_F(CDartBoardX01Test, UndoBustedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(2));
   mDartBoard->init_dartboard(2);
   set_x01_mode(EGame::GAME_501);
   set_out_mode(EX01OutMode::DOUBLE_OUT);
   QChar type = 's';
+  EXPECT_CALL(*mMockWindow.get(), display_score(2));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(2, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
+  EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
   mDartBoard->handle_segment_pressed_event(1, type);
+  EXPECT_CALL(*mMockWindow.get(), display_score(2));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(2, 3));
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
   mDartBoard->perform_undo();
   EXPECT_TRUE(verify_dartboard_x01({false, false, 2, 2, 3, {false, false, false}, {}, {0, 0, 0}}));
 }
 
 TEST_F(CDartBoardX01Test, SubmitScoreIncompleteTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(123));
   mDartBoard->init_dartboard(123);
   set_x01_mode(EGame::GAME_501);
   mDartBoard->submit_score();
@@ -373,6 +582,10 @@ TEST_F(CDartBoardX01Test, SubmitScoreIncompleteTest)
 
 TEST_F(CDartBoardX01Test, SubmitScoreAlreadyFinishedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(0));
   mDartBoard->init_dartboard(0);
   set_x01_mode(EGame::GAME_501);
   mDartBoard->set_finished();
@@ -382,11 +595,25 @@ TEST_F(CDartBoardX01Test, SubmitScoreAlreadyFinishedTest)
 
 TEST_F(CDartBoardX01Test, SubmitScoreTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(501));
   mDartBoard->init_dartboard(501);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
+  EXPECT_CALL(*mMockWindow.get(), display_score(481));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(481, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(20));
   mDartBoard->handle_segment_pressed_event(20, type);
+  EXPECT_CALL(*mMockWindow.get(), display_score(462));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(462, 1));
+  EXPECT_CALL(*mMockWindow.get(), display_dart2(19));
   mDartBoard->handle_segment_pressed_event(19, type);
+  EXPECT_CALL(*mMockWindow.get(), display_score(444));
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(444, 0));
+  EXPECT_CALL(*mMockWindow.get(), display_dart3(18));
+  EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
   mDartBoard->handle_segment_pressed_event(18, type);
   QVector<QString> darts = {"s20", "s19", "s18"};
   EXPECT_CALL(*mMockWindow.get(), submit_score_to_player(57, 3, 0, darts));
@@ -395,9 +622,17 @@ TEST_F(CDartBoardX01Test, SubmitScoreTest)
 
 TEST_F(CDartBoardX01Test, SubmitScoreBustedTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), erase_dart1());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart2());
+  EXPECT_CALL(*mMockWindow.get(), erase_dart3());
+  EXPECT_CALL(*mMockWindow.get(), display_score(10));
   mDartBoard->init_dartboard(10);
   set_x01_mode(EGame::GAME_501);
   QChar type = 's';
+  EXPECT_CALL(*mMockWindow.get(), display_score(10));
+  EXPECT_CALL(*mMockWindow.get(), set_focus_to_submit_button);
+  EXPECT_CALL(*mMockWindow.get(), update_finishes(10, 2));
+  EXPECT_CALL(*mMockWindow.get(), display_dart1(0));
   mDartBoard->handle_segment_pressed_event(20, type);
   QVector<QString> darts = {"s0", "s0", "s0"};
   EXPECT_CALL(*mMockWindow.get(), submit_score_to_player(0, 3, 1, darts));
@@ -432,6 +667,7 @@ TEST_F(CX01GroupBoxTest, SubmitScoreCheckoutAttemptTest)
   CX01Class::CPlayerData expected = {0, 0, 0, 8, 3, 0, 9, 293.0 / 9.0, 293.0 / 3.0, 0, 293.0 / 3.0, {180, 105, 8}, {}, {180, 105, 8}, QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s8", "s0"}}), QVector<QVector<QString>>({{"t20", "t20", "t20"}, {"t20", "d20", "s5"}, {"s0", "s8", "s0"}}), QVector<QVector<QVector<QString>>>({}), {301, 121, 16, 8}, {}, true};
   gameData = {snap1, snap2};
   EXPECT_CALL(*mDb.get(), init_dartboard(16));
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::DEFAULT));
   mBox->set_game_data(gameData);
   mBox->submit_score(8, 3, 3, {"s0", "s8", "s0"});
   EXPECT_TRUE(verify_snapshot(expected));
@@ -463,6 +699,7 @@ TEST_F(CX01GroupBoxTest, PerformUndoAtStartTest)
 
 TEST_F(CX01GroupBoxTest, PerformUndoNormalTest)
 {
+  EXPECT_CALL(*mMockWindow.get(), update_players(EUpdateType::DEFAULT));
   CX01Class::CPlayerData expected = {0, 0, 0, 301, 0, 0, 0, 0, 0, 0, 0, {}, {}, {}, QVector<QVector<QString>>({}), QVector<QVector<QString>>({}), QVector<QVector<QVector<QString>>>({}), {301}, {}, false};
   mBox->submit_score(57, 3, 0, {"s20", "s20", "s19"});
   perform_undo();
@@ -587,6 +824,7 @@ TEST_F(CCricketInputTest, HandleSegmentPressedEventCutThroat1stDartTest)
 {
   CSettings settings(EGame::GAME_CRICKET, {"Player"}, 1, 1, EX01InMode::SINGLE_IN, EX01OutMode::DOUBLE_OUT, true /*cutthroat*/);
   set_settings(settings);
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++) EXPECT_CALL(*mMockWindow.get(), compute_extra_points(static_cast<ECricketSlots>(i), 0, 0));
   mScoreInput->handle_segment_pressed_event(20, 's');
   EXPECT_TRUE(verify_state(0, {"s20", "", ""}, {0, 0, 0, 0, 0, 1, 0}, {}, {}));
 }
@@ -629,8 +867,11 @@ TEST_F(CCricketInputTest, HandleSegmentPressedEventCutThroatTooManyDartsTest)
 {
   CSettings settings(EGame::GAME_CRICKET, {"Player"}, 1, 1, EX01InMode::SINGLE_IN, EX01OutMode::DOUBLE_OUT, true /*cutthroat*/);
   set_settings(settings);
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++) EXPECT_CALL(*mMockWindow.get(), compute_extra_points(static_cast<ECricketSlots>(i), 0, 0));
   mScoreInput->handle_segment_pressed_event(20, 's');
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++) EXPECT_CALL(*mMockWindow.get(), compute_extra_points(static_cast<ECricketSlots>(i), 0, 0));
   mScoreInput->handle_segment_pressed_event(20, 's');
+  for (uint32_t i = 0; i < static_cast<uint32_t>(ECricketSlots::SLOT_MAX); i++) EXPECT_CALL(*mMockWindow.get(), compute_extra_points(static_cast<ECricketSlots>(i), 0, 0));
   mScoreInput->handle_segment_pressed_event(20, 's');
   mScoreInput->handle_segment_pressed_event(0, 's');
   EXPECT_TRUE(verify_state(0, {"s20", "s20", "s20"}, {0, 0, 0, 0, 0, 3, 0}, {}, {}));

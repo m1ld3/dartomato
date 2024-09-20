@@ -145,8 +145,6 @@ target_link_libraries(dartomato_test
     Qt6::Sql
     Qt6::Charts)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}../../bin/)
-
 install(CODE "
     file(GLOB_RECURSE QT_LIBS \${CMAKE_INSTALL_PREFIX}/*.dll)
     foreach(LIB \${QT_LIBS})
