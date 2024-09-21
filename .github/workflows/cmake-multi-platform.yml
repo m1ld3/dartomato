@@ -5,9 +5,11 @@ name: CMake on multiple platforms
 on:
   push:
     branches: [ "main" ]
+    tags: 
+      - '([0-9]+)\\.([0-9]+)\\.([0-9]+)(-[0-9]+-g([0-9a-f]+))'
   pull_request:
     branches: [ "main" ]
-
+    
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -109,3 +111,43 @@ jobs:
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ctest -V --build-config ${{ matrix.build_type }}
+
+  deploy:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Compress Build Output
+        run: |
+          if [ "${{ runner.os }}" == "Linux" ]; then
+            tar -cvzf build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz artifacts/
+          else
+            Compress-Archive -Path artifacts/* -DestinationPath build-${{ matrix.os }}-${{ matrix.build_type }}.zip
+        shell: bash
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: "Release ${{ github.ref }}"
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz
+          asset_name: build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz
+          asset_content_type: application/gzip
+        
