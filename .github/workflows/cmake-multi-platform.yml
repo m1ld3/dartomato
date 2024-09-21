@@ -119,6 +119,7 @@ jobs:
             tar -cvzf build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz artifacts/
           else
             Compress-Archive -Path artifacts/* -DestinationPath build-${{ matrix.os }}-${{ matrix.build_type }}.zip
+          fi
         shell: bash
 
       - name: Create Release
