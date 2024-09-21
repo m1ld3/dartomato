@@ -98,7 +98,7 @@ private:
   std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mExtraPointsHistory = {{{0}, {0}, {0}, {0}, {0}, {0}, {0}}};
   std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> mCutThroatExtraPointsArray;
   std::array<QVector<QVector<uint32_t>>, static_cast<int>(ECricketSlots::SLOT_MAX)> mCutThroatExtraPointsHistory;
-  uint32_t mScore;
+  uint32_t mScore = 0;
   uint32_t mPlayerNumber = 0;
   CDartBoardCricket * mDartBoard;
 #ifdef TESTING

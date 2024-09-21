@@ -1,5 +1,15 @@
 #include "fixtures.h"
 #include <initializer_list>
+#include <qcoreapplication.h>
+
+int main(int argc, char **argv)
+{
+  QCoreApplication app(argc, argv);
+
+  ::testing::InitGoogleTest(&argc, argv);
+
+  return RUN_ALL_TESTS();
+}
 
 TEST_F(CDartBoardX01Test, InitTest)
 {

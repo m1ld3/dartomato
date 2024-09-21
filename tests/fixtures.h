@@ -11,7 +11,6 @@
 #include "cricket_input.h"
 #include "game_data_handler.h"
 #include <QtSql/QSqlDatabase>
-#include <qcoreapplication.h>
 #include <qfile.h>
 
 class CDartBoardX01Test : public testing::Test
@@ -302,15 +301,12 @@ protected:
                                         const std::array<QVector<uint32_t>, static_cast<int>(ECricketSlots::SLOT_MAX)> & iExpectedCutThroatExtraPoints
                                         ) const
   {
-    if (mScoreInput->mScore == iExpectedScore &&
-        mScoreInput->mDarts == iExpectedDarts &&
-        mScoreInput->mSlotArray == iExpectedSlots &&
-        mScoreInput->mExtraPointsArray == iExpectedExtraPoints &&
-        mScoreInput->mCutThroatExtraPointsArray == iExpectedCutThroatExtraPoints)
-    {
-      return ::testing::AssertionSuccess();
-    }
-    else return testing::AssertionFailure();
+    if (mScoreInput->mScore != iExpectedScore)                                    return ::testing::AssertionFailure() << "Unexpected Score: " << mScoreInput->mScore;
+    if (mScoreInput->mDarts != iExpectedDarts)                                    return ::testing::AssertionFailure() << "Unexpected Darts";
+    if (mScoreInput->mSlotArray != iExpectedSlots)                                return ::testing::AssertionFailure() << "Unexpected Slot Array";
+    if (mScoreInput->mExtraPointsArray != iExpectedExtraPoints)                   return ::testing::AssertionFailure() << "Unexpected Extra Points";
+    if (mScoreInput->mCutThroatExtraPointsArray != iExpectedCutThroatExtraPoints) return ::testing::AssertionFailure() << "Unexpected CutThroat Extra Points";
+    return ::testing::AssertionSuccess();
   }
 
   testing::AssertionResult verify_warning(const std::string iExpectedStr) const
@@ -342,9 +338,9 @@ protected:
   void SetUp() override
   {
     if (QFile::exists(CGameDataHandler::mFileName)) QFile::remove(CGameDataHandler::mFileName);
-    int argc = 0;
-    char * argv[] = {nullptr};
-    app = new QCoreApplication(argc, argv);
+//    int argc = 0;
+//    char * argv[] = {nullptr};
+//    app = new QCoreApplication(argc, argv);
     create_x01_test_data();
     create_cricket_test_data();
     create_stats_test_data();
@@ -421,9 +417,9 @@ protected:
 
   void TearDown() override
   {
-    delete app;
-    app = nullptr;
-    if (QFile::exists(CGameDataHandler::mFileName)) QFile::remove(CGameDataHandler::mFileName);
+    QSqlDatabase db = QSqlDatabase::database();
+    db.close();
+    QSqlDatabase::removeDatabase(QSqlDatabase::defaultConnection);
   }
 
   bool player_exists(const QString & iPlayerName, const CGameDataHandler & iHandler) { return iHandler.player_exists(iPlayerName); }
@@ -433,5 +429,5 @@ protected:
   CGameDataHandler::SGameData mX01Data;
   CGameDataHandler::SGameData mCricketData;
   QVector<CGameDataHandler::SStatsData> mStatsData;
-  QCoreApplication * app;
+//  QCoreApplication * app;
 };

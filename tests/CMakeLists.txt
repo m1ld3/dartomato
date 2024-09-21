@@ -134,7 +134,7 @@ set_target_properties(dartomato_test PROPERTIES
 
 target_link_libraries(dartomato_test
   PUBLIC
-    GTest::gtest_main
+    GTest::gtest
     gmock
   PRIVATE
     Qt6::Core

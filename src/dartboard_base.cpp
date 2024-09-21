@@ -698,5 +698,7 @@ CDartBoard::~CDartBoard()
 
 void CDartBoard::play_game_shot_sound()
 {
+#ifndef TESTING
   mSoundHandler.play_game_shot_sound();
+#endif
 }

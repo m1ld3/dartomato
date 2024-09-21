@@ -115,7 +115,9 @@ void CDartBoardX01::handle_busted_score(QChar & iType, bool iCheckoutAttempt)
   mBusted = true;
   set_focus_to_submit_button();
   set_score(0, iType, iCheckoutAttempt);
+#ifndef TESTING
   mSoundHandler.play_busted_sound();
+#endif
 }
 
 bool CDartBoardX01::is_score_in_range(uint32_t iVal)

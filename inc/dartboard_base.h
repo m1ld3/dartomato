@@ -34,7 +34,6 @@ public:
 #ifdef TESTING
   CDartBoard(const CSettings iSettings)
     : mSettings(iSettings)
-    , mSoundHandler(CSoundHandler::instance())
   {}
 #endif
   virtual ~CDartBoard();
@@ -42,14 +41,12 @@ public:
 
 protected:
 
-  QGraphicsView * mView;
-  QGraphicsScene * mScene;
 #ifdef TESTING
   CSettings mSettings;
 #else
   const CSettings mSettings;
-#endif
-
+  QGraphicsView * mView;
+  QGraphicsScene * mScene;
   CDartBoardSegment * mS20;
   CDartBoardSegment * mS19;
   CDartBoardSegment * mS18;
@@ -113,10 +110,9 @@ protected:
   CDartBoardSegment * mT2;
   CDartBoardSegment * mT1;
   CDartBoardSegment * mNoScore;
-#ifndef TESTING
   QGraphicsSvgItem * const mLabels = new QGraphicsSvgItem(":/resources/img/dartboard.svg");
-#endif
   CSoundHandler & mSoundHandler;
+#endif
 };
 
 #endif  // CDARTBOARD_H
