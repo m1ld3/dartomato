@@ -84,7 +84,9 @@ private:
   void prepare_score_sound();
   void create_snapshots_of_all_players();
 
+#ifndef TESTING
   Ui::CX01GroupBox * mUi;
+#endif
   CX01Class mPlayer;
   CDartBoard * mDartBoard;
   const CSettings mSettings;
@@ -105,7 +107,9 @@ private:
   IMainWindow * mGameWindow;
   QVector<CX01Class::CPlayerData> mHistory;
   QString mSoundPath;
+#ifndef TESTING
   CSoundHandler & mSoundHandler;
+#endif
 };
 
 #endif  // GROUPBOX_X01_H

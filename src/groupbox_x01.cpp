@@ -60,7 +60,6 @@ CX01GroupBox::CX01GroupBox(IMainWindow * iMainWindow, const CSettings iSettings,
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mGameWindow(iMainWindow)
   , mHistory({mPlayer.create_snapshot()})
-  , mSoundHandler(CSoundHandler::instance())
 {}
 #endif
 
@@ -75,13 +74,17 @@ void CX01GroupBox::set_active()
 void CX01GroupBox::set_inactive()
 {
   mActive = false;
+#ifndef TESTING
   mUi->labelPic->clear();
+#endif
 }
 
 void CX01GroupBox::reset()
 {
   mRemainingPoints = static_cast<uint32_t>(mSettings.Game);
+#ifndef TESTING
   mUi->lcdNumber->display(static_cast<int>(mRemainingPoints));
+#endif
   mPlayer.reset_score();
 }
 
@@ -246,7 +249,9 @@ void CX01GroupBox::set_leg_begin()
 void CX01GroupBox::unset_leg_begin()
 {
   mLegBegin = false;
+#ifndef TESTING
   mUi->labelLegBegin->clear();
+#endif
 }
 
 bool CX01GroupBox::has_begun_leg() const
@@ -300,6 +305,7 @@ void CX01GroupBox::prepare_score_sound()
 
 void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts)
 {
+#ifndef TESTING
   mUi->textBrowser->clear();
   mUi->textBrowser->setText("Checkouts:");
   if (iNumberOfDarts == 0) return;
@@ -321,11 +327,14 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
   QTextCursor cursor = mUi->textBrowser->textCursor();
   cursor.setPosition(0);
   mUi->textBrowser->setTextCursor(cursor);
+#endif
 }
 
 void CX01GroupBox::set_lcd_legs()
 {
+#ifndef TESTING
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
+#endif
 }
 
 uint32_t CX01GroupBox::get_remaining_points() const
