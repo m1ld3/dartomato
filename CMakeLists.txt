@@ -111,7 +111,7 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
- string(REPLACE "$<CONFIG>" ${CMAKE_BUILD_TYPE} NEW_NAME ${ORIGINAL_FILE})
+ string(REPLACE "\$<CONFIG>" "${CMAKE_BUILD_TYPE}" NEW_NAME "${deploy_script}")
  message("Deploy script: ${NEW_NAME}") 
 
 # workaround for Github for generating the deploy script
