@@ -36,3 +36,4 @@
 *.bak
 CMakeLists.txt.user
 CMakeFiles/
+*.autosave
