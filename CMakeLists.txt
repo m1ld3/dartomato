@@ -111,26 +111,22 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
-message(STATUS "(1) Deploy script generated at: ${deploy_script}")
-
 # workaround for Github for generating the deploy script
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
   string(REPLACE "<CONFIG>" "Release" NEW_FILE ${deploy_script})
-  file(RENAME "${deploy_script}" "${NEW_FILE}")
+  install(SCRIPT ${NEW_FILE})
 elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   string(REPLACE "<CONFIG>" "Debug" NEW_FILE ${deploy_script})
-  file(RENAME "${deploy_script}" "${NEW_FILE}")
+  install(SCRIPT ${NEW_FILE})
 elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
   string(REPLACE "<CONFIG>" "RelWithDebInfo" NEW_FILE ${deploy_script})
-  file(RENAME "${deploy_script}" "${NEW_FILE}")
+  install(SCRIPT ${NEW_FILE})
 elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
   string(REPLACE "<CONFIG>" "MinSizeRel" NEW_FILE ${deploy_script})
-  file(RENAME "${deploy_script}" "${NEW_FILE}")
+  install(SCRIPT ${NEW_FILE})
+else()
+  install(SCRIPT ${deploy_script})
 endif()
-
-message(STATUS "(2) Deploy script generated at: ${deploy_script}")
-
-install(SCRIPT ${deploy_script})
   
 # Enable testing
 add_subdirectory(tests)
