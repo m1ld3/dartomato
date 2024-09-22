@@ -105,18 +105,21 @@ install(
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if(NOT CMAKE_BUILD_TYPE AND WIN32)
-  set(CMAKE_BUILD_TYPE Release)
-endif()
-
 qt_generate_deploy_app_script(
   TARGET ${CMAKE_PROJECT_NAME}
   OUTPUT_SCRIPT deploy_script
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
-if(NOT CMAKE_BUILD_TYPE AND WIN32)
-  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$<CONFIG>.cmake")
+# workaround for Github for generating the deploy script
+if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
+  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$Release.cmake")
+elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$Debug.cmake")
+elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$RelWithDebInfo.cmake")
+elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
+  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$MinSizeRel.cmake")
 else()
   install(SCRIPT ${deploy_script})
 endif()
