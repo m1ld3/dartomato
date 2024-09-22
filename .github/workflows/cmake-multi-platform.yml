@@ -93,7 +93,10 @@ jobs:
         -S ${{ github.workspace }}
         
     - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+        mkdir -p artifacts
+        cp -r ${CMAKE_INSTALL_PREFIX}/* artifacts/
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
@@ -118,7 +121,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./artifacts
+          name: build-artifacts
 
       - name: Compress Build Output
         run: |
