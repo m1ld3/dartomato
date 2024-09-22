@@ -111,6 +111,8 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
+ message("Deploy script: ${deploy_script_temp}")
+
 # workaround for Github for generating the deploy script
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32)
   file(READ "${deploy_script_temp}" SCRIPT_CONTENTS)
