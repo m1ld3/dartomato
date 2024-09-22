@@ -105,13 +105,17 @@ install(
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
 qt_generate_deploy_app_script(
   TARGET ${CMAKE_PROJECT_NAME}
   OUTPUT_SCRIPT deploy_script
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
-install(SCRIPT ${deploy_script})
+install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$<CONFIG>.cmake")
 
 # Enable testing
 add_subdirectory(tests)
