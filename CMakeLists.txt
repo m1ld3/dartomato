@@ -111,18 +111,26 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
+message(STATUS "(1) Deploy script generated at: ${deploy_script}")
+
 # workaround for Github for generating the deploy script
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
-  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$Release.cmake")
+  string(REPLACE "<CONFIG>" "Release" NEW_FILE ${deploy_script})
+  file(RENAME "${deploy_script}" "${NEW_FILE}")
 elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$Debug.cmake")
+  string(REPLACE "<CONFIG>" "Debug" NEW_FILE ${deploy_script})
+  file(RENAME "${deploy_script}" "${NEW_FILE}")
 elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
-  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$RelWithDebInfo.cmake")
+  string(REPLACE "<CONFIG>" "RelWithDebInfo" NEW_FILE ${deploy_script})
+  file(RENAME "${deploy_script}" "${NEW_FILE}")
 elseif(CMAKE_IS_GITHUB_WORKFLOW AND WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
-  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$MinSizeRel.cmake")
-else()
-  install(SCRIPT ${deploy_script})
+  string(REPLACE "<CONFIG>" "MinSizeRel" NEW_FILE ${deploy_script})
+  file(RENAME "${deploy_script}" "${NEW_FILE}")
 endif()
+
+message(STATUS "(2) Deploy script generated at: ${deploy_script}")
+
+install(SCRIPT ${deploy_script})
   
 # Enable testing
 add_subdirectory(tests)
