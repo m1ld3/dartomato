@@ -115,11 +115,15 @@ qt_generate_deploy_app_script(
 
 # workaround for Github for generating the deploy script
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32)
-  file(READ "${deploy_script_temp}" SCRIPT_CONTENTS)
-  string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" MODIFIED_SCRIPT "${SCRIPT_CONTENTS}")
-  string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" FINAL_SCRIPT_NAME "${deploy_script_temp}")
-  file(WRITE "${FINAL_SCRIPT_NAME}" "${MODIFIED_SCRIPT}")
-  install(SCRIPT "${FINAL_SCRIPT_NAME}")
+  add_custom_command(
+    OUTPUT "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_$<CONFIG>.cmake"
+    "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake"
+    DEPENDS "${deploy_script_temp}"
+    COMMENT "Replacing <CONFIG> with ${CMAKE_BUILD_TYPE} in deploy script"
+  )
+  install(SCRIPT "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake")
 else()
   install(SCRIPT "${deploy_script_temp}")
 endif()
