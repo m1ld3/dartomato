@@ -111,14 +111,17 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
+if(EXISTS "${deploy_script}")
+  file(READ "${deploy_script}" SCRIPT_CONTENT)
+  message(STATUS "Deploy script content:\n${SCRIPT_CONTENT}")
+
 # workaround for Github for generating the deploy script
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32)
-  set(NEW_FILE "${CMAKE_CURRENT_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake")
-  string(REPLACE "<CONFIG>" ${CMAKE_BUILD_TYPE} MODIFIED_SCRIPT ${deploy_script})
-  file(WRITE "${NEW_FILE}" "${MODIFIED_SCRIPT}")
-  install(SCRIPT "${NEW_FILE}")
+  string(REPLACE "<CONFIG>" ${CMAKE_BUILD_TYPE} MODIFIED_SCRIPT "${deploy_script}")
+  file(WRITE "${deploy_script}" "${MODIFIED_SCRIPT}")
+  install(SCRIPT "${deploy_script}")
 else()
-  install(SCRIPT ${deploy_script})
+  install(SCRIPT "${deploy_script}")
 endif()
   
 # Enable testing
