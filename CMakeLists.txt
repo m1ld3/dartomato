@@ -111,6 +111,8 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
+message(STATUS "Deploy script: ${deploy_script}")
+
 install(SCRIPT ${deploy_script})
 
 # Enable testing
