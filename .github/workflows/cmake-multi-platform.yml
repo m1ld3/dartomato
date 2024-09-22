@@ -100,7 +100,7 @@ jobs:
       run: ctest --build-config ${{ matrix.build_type }}
 
     - name: Install Build Output
-      run: cmake --install build --strip
+      run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --strip
 
     - name: Compress Build Output
       if: startsWith(github.ref, 'refs/tags/')
