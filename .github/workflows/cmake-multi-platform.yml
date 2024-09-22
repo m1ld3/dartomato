@@ -91,6 +91,10 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
         -DCMAKE_PREFIX_PATH=/usr/lib/qt6 \
         -S ${{ github.workspace }}
+
+    - name: Check Deployment Script
+      if: runner.os == 'Windows'
+      run: ls -R D:/a/dartomato/dartomato/build/.qt    
         
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
