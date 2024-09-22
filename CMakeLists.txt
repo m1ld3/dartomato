@@ -113,7 +113,6 @@ if (CMAKE_CONFIGURATION_TYPES)
       OUTPUT_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CONFIG_TYPE}.cmake"
       NO_UNSUPPORTED_PLATFORM_ERROR
     )
-    install(SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CONFIG_TYPE}.cmake")
   endforeach()
 else()
   # For single-configuration generators
