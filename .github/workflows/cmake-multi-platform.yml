@@ -99,6 +99,9 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
       run: ctest -V --build-config ${{ matrix.build_type }}
 
+    - name: Install Build Output
+      run: ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake --install build --prefix bin --strip
+
     - name: Compress Build Output
       if: startsWith(github.ref, 'refs/tags/')
       run: |
