@@ -95,8 +95,6 @@ jobs:
     - name: Build
       run: |
         cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-        mkdir -p artifacts
-        cp -r ${CMAKE_INSTALL_PREFIX}/* artifacts/
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
