@@ -97,12 +97,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
   Qt6::Charts
 )
 
-# Install rules for both Windows and Linux
-if(WIN32)
-  set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/../bin)
-else()
-  set(CMAKE_INSTALL_PREFIX /usr/local/${CMAKE_PROJECT_NAME})  # Standard for Linux
-endif()
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 install(
   TARGETS ${CMAKE_PROJECT_NAME}
