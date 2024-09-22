@@ -102,13 +102,23 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
       run: ctest -V --build-config ${{ matrix.build_type }}
 
+    - name: Compress Build Output
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        if [ "${{ runner.os }}" == "Linux" ]; then
+          tar -cvzf build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz bin/
+        else
+          Compress-Archive -Path bin/* -DestinationPath build-${{ matrix.os }}-${{ matrix.build_type }}.zip
+        fi
+      shell: bash
+
     - name: Upload Artifacts
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
-        path: artifacts/
-
+        path: build-${{ matrix.os }}-${{ matrix.build_type }}.${{ runner.os == 'Linux' && 'tar.gz' || 'zip' }}
+        
   deploy:
     if: startsWith(github.ref, 'refs/tags/')
     needs: build
@@ -122,15 +132,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
-
-      - name: Compress Build Output
-        run: |
-          if [ "${{ runner.os }}" == "Linux" ]; then
-            tar -cvzf build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz artifacts/
-          else
-            Compress-Archive -Path artifacts/* -DestinationPath build-${{ matrix.os }}-${{ matrix.build_type }}.zip
-          fi
-        shell: bash
 
       - name: Create Release
         id: create_release
