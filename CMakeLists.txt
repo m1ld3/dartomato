@@ -115,7 +115,11 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
-install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$<CONFIG>.cmake")
-
+if(NOT CMAKE_BUILD_TYPE AND WIN32)
+  install(SCRIPT "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/.qt/deploy_${CMAKE_PROJECT_NAME}_$<CONFIG>.cmake")
+else()
+  install(SCRIPT ${deploy_script})
+endif()
+  
 # Enable testing
 add_subdirectory(tests)
