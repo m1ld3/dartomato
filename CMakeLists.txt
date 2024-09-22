@@ -111,8 +111,6 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
- message("Deploy script: ${NEW_NAME}") 
-
 # workaround for Github for generating the deploy script (only for Release)
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32)
   string(REPLACE "\$<CONFIG>" "Release" new_script "${deploy_script}")
