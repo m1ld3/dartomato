@@ -113,7 +113,7 @@ jobs:
         if [ "${{ runner.os }}" == "Linux" ]; then
           tar -cvzf build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz ${{ steps.strings.outputs.build-output-dir }}/bin/
         else
-          Compress-Archive -Path ${{ steps.strings.outputs.build-output-dir }}/bin/* -DestinationPath build-${{ matrix.os }}-${{ matrix.build_type }}.zip
+          pwsh -Command "Compress-Archive -Path '${{ steps.strings.outputs.build-output-dir }}/bin/*' -DestinationPath 'build-${{ matrix.os }}-${{ matrix.build_type }}.zip'"
         fi
       shell: bash
 
