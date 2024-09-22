@@ -114,6 +114,7 @@ qt_generate_deploy_app_script(
 if(EXISTS "${deploy_script}")
   file(READ "${deploy_script}" SCRIPT_CONTENT)
   message(STATUS "Deploy script content:\n${SCRIPT_CONTENT}")
+endif()
 
 # workaround for Github for generating the deploy script
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32)
