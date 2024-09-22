@@ -101,7 +101,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 if(WIN32)
   set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/../bin)
 else()
-  set(CMAKE_INSTALL_PREFIX /usr/local)  # Standard for Linux
+  set(CMAKE_INSTALL_PREFIX /usr/local/${CMAKE_PROJECT_NAME})  # Standard for Linux
 endif()
 
 install(
