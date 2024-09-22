@@ -97,10 +97,10 @@ jobs:
       
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
-      run: ctest -V --build-config ${{ matrix.build_type }}
+      run: ctest --build-config ${{ matrix.build_type }}
 
     - name: Install Build Output
-      run: ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake --install build --prefix bin --strip
+      run: cmake --install build --prefix bin --strip
 
     - name: Compress Build Output
       if: startsWith(github.ref, 'refs/tags/')
@@ -143,14 +143,15 @@ jobs:
           release_name: "Release ${{ github.ref }}"
           draft: false
           prerelease: false
-
+  
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz
-          asset_name: build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz
-          asset_content_type: application/gzip
+          asset_path: ./build-${{ matrix.os }}-${{ matrix.build_type }}.${{ runner.os == 'Linux' && 'tar.gz' || 'zip' }}
+          asset_name: build-${{ matrix.os }}-${{ matrix.build_type }}.${{ runner.os == 'Linux' && 'tar.gz' || 'zip' }}
+          asset_content_type: ${{ runner.os == 'Linux' && 'application/gzip' || 'application/zip' }}
+
         
