@@ -107,7 +107,7 @@ install(
 
 qt_generate_deploy_app_script(
   TARGET ${CMAKE_PROJECT_NAME}
-  OUTPUT_SCRIPT deploy_script_temp
+  OUTPUT_SCRIPT deploy_script
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
@@ -115,17 +115,9 @@ qt_generate_deploy_app_script(
 
 # workaround for Github for generating the deploy script
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32)
-  add_custom_command(
-    OUTPUT "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_$<CONFIG>.cmake"
-    "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake"
-    DEPENDS "${deploy_script_temp}"
-    COMMENT "Replacing <CONFIG> with ${CMAKE_BUILD_TYPE} in deploy script"
-  )
-  install(SCRIPT "${CMAKE_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake")
+  install(SCRIPT "D:/a/dartomato/dartomato/build/.qt/deploy_Dartomato_42df217dcb-Release.cmake")
 else()
-  install(SCRIPT "${deploy_script_temp}")
+  install(SCRIPT "${deploy_script}")
 endif()
   
 # Enable testing
