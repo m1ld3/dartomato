@@ -105,17 +105,7 @@ install(
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-if (CMAKE_CONFIGURATION_TYPES)
-  # For multi-configuration generators (like Visual Studio)
-  foreach(CONFIG_TYPE ${CMAKE_CONFIGURATION_TYPES})
-    qt_generate_deploy_app_script(
-      TARGET ${CMAKE_PROJECT_NAME}
-      OUTPUT_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CONFIG_TYPE}.cmake"
-      NO_UNSUPPORTED_PLATFORM_ERROR
-    )
-  endforeach()
-else()
-  # For single-configuration generators
+if (NOT CMAKE_CONFIGURATION_TYPES)
   qt_generate_deploy_app_script(
     TARGET ${CMAKE_PROJECT_NAME}
     OUTPUT_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/.qt/deploy_${CMAKE_PROJECT_NAME}_${CMAKE_BUILD_TYPE}.cmake"
