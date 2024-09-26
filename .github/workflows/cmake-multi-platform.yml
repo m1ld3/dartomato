@@ -106,7 +106,7 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       run: |
         if [ "${{ runner.os }}" == "Linux" ]; then
-          tar -cvzf build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz ${{ steps.strings.outputs.build-output-dir }}/bin/
+          cd ${{ steps.strings.outputs.build-output-dir }}/install && tar -cvzf ../../build-${{ matrix.os }}-${{ matrix.build_type }}.tar.gz .
         else
           pwsh -Command "Compress-Archive -Path '${{ steps.strings.outputs.build-output-dir }}/bin/*' -DestinationPath 'build-${{ matrix.os }}-${{ matrix.build_type }}.zip'"
         fi
