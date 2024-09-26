@@ -8,6 +8,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if (UNIX AND NOT APPLE)
+  include( GNUInstallDirs )
+endif()
+
 if (MSVC)
   add_compile_options(/Zc:__cplusplus)
 endif()
@@ -98,6 +102,10 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/bin)
+
+if (UNIX AND NOT APPLE)
+  list(APPEND CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_LIBDIR})
+endif()
 
 install(
   TARGETS ${CMAKE_PROJECT_NAME}
