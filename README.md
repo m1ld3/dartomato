@@ -1,5 +1,4 @@
-# Dartomato
----
+<img src="resources/img/dartomato.png" width="150" height="150">
 
 Dartomato is a small desktop Darts Scoring App running on Windows and Ubuntu.
 
@@ -10,6 +9,8 @@ Download the latest Release for Windows or Ubuntu and run the **Dartomato** exec
 
 ### Supported Games
 The game supports X01 (301, 501, 701) and Cricket - for up to eight players. 
+
+<img src="resources/img/start_window.png" width="309" height="413">
 
 
 ### Selecting Players
@@ -24,11 +25,12 @@ Select at least one player. Select the Game and the desired number of Sets and L
 
 ### Playing X01
 Click on the Dartboard to enter each Dart individually. In case of 0 (No Score), click on the ring of the board. Hit the **Submit** button afterwards.
+<img src="resources/img/x01_ingame.png">
 
 
 ### Playing Cricket
 Click on **Enter Score** to open the Dartboard. Enter your score on the Dartboard like before. Clicking on **Submit** will close the Dartboard again.
-
+<img src="resources/img/cricket_ingame.png">
 
 ### Undo
 There are two kinds of **Undo** buttons.
