@@ -34,6 +34,9 @@ jobs:
 
     steps:
 
+    - name: Fetch Git Tags
+      run: git fetch --tags
+
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
