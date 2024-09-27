@@ -52,6 +52,11 @@ There is **Game History** button on the Start Menu which lists all saved games. 
 
 It is also possible to delete games. **CAUTION!!** Deleting a game cannot be undone!
 
+### Miscellaneous
+The red dot next to the player's name means that he or she started the leg.
+The rectangle next to the player's name is either empty or shows the red "dart throwing hand" icon. The icon shows which player's turn it is.
+You can change the player order by clicking on this icon rectangle.
+
 
 
 
