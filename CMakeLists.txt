@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.14)
 project(Dartomato)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -108,7 +108,7 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/install)
 endif()
 
 if(UNIX AND NOT APPLE)
-  list(APPEND CMAKE_INSTALL_RPATH $ORIGIN/lib)
+  list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
@@ -121,13 +121,11 @@ install(
 
 if(UNIX AND NOT APPLE)
   set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
-	INSTALL_RPATH $ORIGIN/lib
+	INSTALL_RPATH "$ORIGIN/../lib"
 	BUILD_WITH_INSTALL_RPATH TRUE
 	INSTALL_RPATH_USE_LINK_PATH TRUE
   )
 endif()
-
-message("RPATH: $ORIGIN/lib")
 
 qt_generate_deploy_app_script(
   TARGET ${CMAKE_PROJECT_NAME}
