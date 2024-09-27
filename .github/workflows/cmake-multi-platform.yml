@@ -34,13 +34,13 @@ jobs:
 
     steps:
 
-    - name: Fetch Git Tags
-      run: git fetch --tags
-
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0  # complete history
+
+    - name: Fetch Git Tags
+      run: git fetch --tags
     
     - name: Install Qt6 dependencies for Windows
       if: runner.os == 'Windows'
