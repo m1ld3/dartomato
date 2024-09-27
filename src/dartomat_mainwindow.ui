@@ -68,7 +68,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>782</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -362,8 +362,8 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>75</width>
-            <height>75</height>
+            <width>16777215</width>
+            <height>16777215</height>
            </size>
           </property>
           <property name="text">
@@ -547,7 +547,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>21</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>
@@ -563,7 +563,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

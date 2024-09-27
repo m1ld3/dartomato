@@ -39,6 +39,8 @@ if(GIT_FOUND)
     OUTPUT_VARIABLE GIT_TAG_VERSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
+  
+  message("Using Git Tag: " "${GIT_TAG_VERSION}")
 
   string(REGEX MATCH "([0-9]+)\\.([0-9]+)\\.([0-9]+)(-[0-9]+-g([0-9a-f]+))?" VERSION_REGEX ${GIT_TAG_VERSION})
   if(VERSION_REGEX)
