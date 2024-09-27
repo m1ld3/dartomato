@@ -179,7 +179,17 @@ void CDartomatMain::push_button_select_players_clicked_slot()
 
 void CDartomatMain::show_about_dialog()
 {
-  QMessageBox::about(this, "About", QString("Version: ") + VER_FILEVERSION_STR);
+//  QMessageBox::about(this, "About", QString("Version: ") + VER_FILEVERSION_STR);
+  QMessageBox::about(this, "About",
+      QString("Dartomato \n") + "Version: " + VER_FILEVERSION_STR + "\n" +
+      "License: LGPL-3.0\n" +
+      "Built with Qt " + QT_VERSION_STR + "\n" +
+      "\n" + "\n" +
+      "For more information, visit: \n" +
+      "https://github.com/m1ld3/dartomato\n" +
+      "\n"+
+      "© 2024 Michael Mildner."
+  );
 }
 
 void CDartomatMain::push_button_game_history_clicked_slot()
