@@ -127,6 +127,22 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Get Tag Name
+      id: get_tag
+      run: |
+        TAG_NAME=$(git describe --tags --abbrev=0)
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+    - name: Debug Tag
+      run: echo "Using tag $TAG_NAME"
+          
     - name: Download Linux Artifacts
       uses: actions/download-artifact@v4
       with:
