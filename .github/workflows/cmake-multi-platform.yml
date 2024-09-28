@@ -118,8 +118,8 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}
-        path: build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}.${{ runner.os == 'Linux' && 'tar.gz' || 'zip' }}  
+        name: dartomat-build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}
+        path: dartomat-build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}.${{ runner.os == 'Linux' && 'tar.gz' || 'zip' }}  
         
   deploy:
     if: startsWith(github.ref, 'refs/tags/')
