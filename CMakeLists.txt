@@ -35,7 +35,7 @@ find_package(Git QUIET)
 if(GIT_FOUND)
 
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} fetch --tags
+    COMMAND ${GIT_EXECUTABLE} fetch --tags --force
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
   
