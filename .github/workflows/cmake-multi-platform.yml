@@ -108,9 +108,9 @@ jobs:
       run: |
         TAG_NAME=${GITHUB_REF#refs/tags/}
         if [ "${{ runner.os }}" == "Linux" ]; then
-          cd ${{ steps.strings.outputs.build-output-dir }}/install && tar -cvzf ../../dartomato-build-${{ matrix.os }}-${{ matrix.build_type }}-${TAG_NAME}.tar.gz *
+          cd ${{ steps.strings.outputs.build-output-dir }}/install && tar -cvzf ../../dartomato-build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}.tar.gz *
         else
-          pwsh -Command "Compress-Archive -Path '${{ steps.strings.outputs.build-output-dir }}/bin/*' -DestinationPath 'dartomato-build-${{ matrix.os }}-${{ matrix.build_type }}-${TAG_NAME}.zip'"
+          pwsh -Command "Compress-Archive -Path '${{ steps.strings.outputs.build-output-dir }}/bin/*' -DestinationPath 'dartomato-build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}.zip'"
         fi
       shell: bash
 
@@ -118,8 +118,8 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       uses: actions/upload-artifact@v4
       with:
-        name: build-${{ matrix.os }}-${{ matrix.build_type }}-${TAG_NAME}
-        path: build-${{ matrix.os }}-${{ matrix.build_type }}-${TAG_NAME}.${{ runner.os == 'Linux' && 'tar.gz' || 'zip' }}  
+        name: build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}
+        path: build-${{ matrix.os }}-${{ matrix.build_type }}-${{ TAG_NAME }}.${{ runner.os == 'Linux' && 'tar.gz' || 'zip' }}  
         
   deploy:
     if: startsWith(github.ref, 'refs/tags/')
