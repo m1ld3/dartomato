@@ -33,6 +33,12 @@ set(COMMIT_HASH 0)
 find_package(Git QUIET)
 
 if(GIT_FOUND)
+
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} fetch --tags
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+  
   execute_process(
     COMMAND ${GIT_EXECUTABLE} describe
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
