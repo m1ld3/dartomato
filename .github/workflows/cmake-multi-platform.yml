@@ -46,7 +46,9 @@ jobs:
 
     - name: Get Git Tag Windows
       id: tags_win
-      run: echo $tag = $env:GITHUB_REF -replace 'refs/tags/', ''  
+      run: |
+        $tag = $env:GITHUB_REF -replace 'refs/tags/', ''
+        echo "::set-output name=tag::$tag" 
       shell: pwsh
     
     - name: Install Qt6 dependencies for Windows
@@ -144,7 +146,9 @@ jobs:
 
     - name: Get Git Tag Windows
       id: tags_win
-      run: echo $tag = $env:GITHUB_REF -replace 'refs/tags/', ''  
+      run: |
+        $tag = $env:GITHUB_REF -replace 'refs/tags/', ''
+        echo "::set-output name=tag::$tag" 
       shell: pwsh
           
     - name: Download Linux Artifacts
