@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Dartomato
+Exec=Dartomato
+Icon=dartomato
+Type=Application
+Categories=Game;
+Terminal=false

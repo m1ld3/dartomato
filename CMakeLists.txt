@@ -109,10 +109,12 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
   Qt6::Charts
 )
 
+option(BUILD_APPIMAGE "Build AppImage" OFF)
+
 if(WIN32)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/bin)
 else()
-  if(NOT APPIMAGE_BUILD)
+  if(NOT BUILD_APPIMAGE)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/install)
   else()
     set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/AppDir/usr)
@@ -139,12 +141,20 @@ if(UNIX AND NOT APPLE)
   )
 endif()
 
-option(BUILD_APPIMAGE "Build AppImage" OFF)
-
 if(BUILD_APPIMAGE)
-  set(APPIMAGE_BUILD ON)
-  add_custom_target(AppImage ALL
-    COMMAND ../linuxdeployqt-continuous-x86_64.AppImage AppDir/usr/bin/${CMAKE_PROJECT_NAME} -appimage
+
+  # Create the AppDir structure
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/AppDir)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/AppDir/usr)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/AppDir/usr/bin)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/AppDir/usr/lib)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/AppDir/usr/share)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/AppDir/usr/share/applications)
+
+  # Create a custom target for building the AppImage
+  add_custom_target(AppImage
+    COMMAND ../linuxdeploy-x86_64.AppImage --appdir=${CMAKE_BINARY_DIR}/AppDir --output appimage
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     DEPENDS ${CMAKE_PROJECT_NAME}
   )
 endif()
@@ -155,14 +165,18 @@ qt_generate_deploy_app_script(
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
 
+qt_finalize_target(${CMAKE_PROJECT_NAME})
+
 if(BUILD_APPIMAGE)
   # Install the desktop file
-  install(FILES ${CMAKE_SOURCE_DIR}/resources/.desktop
+  install(FILES ${CMAKE_SOURCE_DIR}/resources/${CMAKE_PROJECT_NAME}.desktop
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 
   # Install the icon
-  install(FILES ${CMAKE_SOURCE_DIR}/resources/img/dartomato_scalable_icon.svg
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/symbolic/apps)
+  install(FILES ${CMAKE_SOURCE_DIR}/resources/img/dartomato.svg
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps)
+  install(FILES ${CMAKE_SOURCE_DIR}/resources/img/dartomato.png
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/256x256/apps)
 endif()
 
 # workaround for Github for generating the deploy script (only for Release)
