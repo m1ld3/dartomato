@@ -48,7 +48,7 @@ You can select more than one player for better comparison!
 
 
 ### Game History
-There is **Game History** button on the Start Menu which lists all saved games. You can resume unfinished games, restart finished games with the same configuration, and you can look at the statistics of each game. 
+There is a **Game History** button on the Start Menu which lists all saved games. You can resume unfinished games, restart finished games with the same configuration, and you can look at the statistics of each game. 
 
 It is also possible to delete games. **CAUTION!!** Deleting a game cannot be undone!
 
