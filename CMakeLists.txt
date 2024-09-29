@@ -144,7 +144,7 @@ option(BUILD_APPIMAGE "Build AppImage" OFF)
 if(BUILD_APPIMAGE)
   set(APPIMAGE_BUILD ON)
   add_custom_target(AppImage ALL
-    COMMAND linuxdeploy-x86_64.AppImage --appdir=${CMAKE_CURRENT_BINARY_DIR}/AppDir --output appimage
+    COMMAND ../linuxdeployqt-continuous-x86_64.AppImage AppDir/usr/bin/${CMAKE_PROJECT_NAME} -appimage
     DEPENDS ${CMAKE_PROJECT_NAME}
   )
 endif()
