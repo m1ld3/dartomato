@@ -112,7 +112,11 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
 if(WIN32)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/bin)
 else()
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/install)
+  if(NOT APPIMAGE_BUILD)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/install)
+  else()
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/AppDir/usr)
+  endif()
 endif()
 
 if(UNIX AND NOT APPLE)
@@ -135,11 +139,31 @@ if(UNIX AND NOT APPLE)
   )
 endif()
 
+option(BUILD_APPIMAGE "Build AppImage" OFF)
+
+if(BUILD_APPIMAGE)
+  set(APPIMAGE_BUILD ON)
+  add_custom_target(AppImage ALL
+    COMMAND linuxdeploy-x86_64.AppImage --appdir=${CMAKE_CURRENT_BINARY_DIR}/AppDir --output appimage
+    DEPENDS ${CMAKE_PROJECT_NAME}
+  )
+endif()
+
 qt_generate_deploy_app_script(
   TARGET ${CMAKE_PROJECT_NAME}
   OUTPUT_SCRIPT deploy_script
   NO_UNSUPPORTED_PLATFORM_ERROR
 )
+
+if(BUILD_APPIMAGE)
+  # Install the desktop file
+  install(FILES ${CMAKE_SOURCE_DIR}/resources/.desktop
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+
+  # Install the icon
+  install(FILES ${CMAKE_SOURCE_DIR}/resources/img/dartomato_scalable_icon.svg
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/symbolic/apps)
+endif()
 
 # workaround for Github for generating the deploy script (only for Release)
 if(CMAKE_IS_GITHUB_WORKFLOW AND WIN32)

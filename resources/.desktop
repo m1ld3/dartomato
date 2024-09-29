@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Dartomato
+Exec=dartomato
+Icon=dartomato_scalable_icon
+Type=Application
+Categories=Game;Utility;
+Terminal=false
