@@ -40,7 +40,8 @@ public:
   
 private:
 
-  void set_score(uint32_t iVal, QChar iType, bool iCheckoutAttempt);
+  void set_scores(uint32_t iVal, QChar iType, bool iCheckoutAttempt);
+  void display_remaining(uint32_t iRemaining);
   void display_score(uint32_t iScore);
   void display_dart1(uint32_t iVal);
   void display_dart2(uint32_t iVal);
@@ -61,8 +62,9 @@ private:
   bool is_score_in_range(uint32_t iVal);
 
   IX01MainWindow * mGameWindow = nullptr;
-  uint32_t mScore = 0;
+  uint32_t mRemaining = 0;
   uint32_t mCounter = 3;
+  uint32_t mOldRemaining = 0;
   uint32_t mOldScore = 0;
   bool mStop = false;
   bool mBusted = false;

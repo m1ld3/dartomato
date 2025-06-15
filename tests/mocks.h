@@ -22,6 +22,7 @@ public:
   MOCK_METHOD(void, submit_score_to_player, (uint32_t, uint32_t, uint32_t, const QVector<QString>&), (override));
   MOCK_METHOD(void, update_finishes, (uint32_t, uint32_t), (override));
   MOCK_METHOD(void, set_focus_to_submit_button, (), (override));
+  MOCK_METHOD(void, display_remaining, (uint32_t), (override));
   MOCK_METHOD(void, display_score, (uint32_t), (override));
   MOCK_METHOD(void, connect_main_window_slots, (), (override));
   MOCK_METHOD(void, submit_button_clicked_slot, (), (override));

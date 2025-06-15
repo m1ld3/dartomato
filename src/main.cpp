@@ -1,7 +1,5 @@
 #include "dartomat_mainwindow.h"
-
 #include <QApplication>
-//#include <QStyleFactory>
 
 #ifndef TESTING
 int main(int argc, char *argv[])

@@ -40,7 +40,7 @@
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>90</height>
+       <height>70</height>
       </size>
      </property>
      <property name="focusPolicy">
@@ -169,6 +169,12 @@
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="frameShape">
             <enum>QFrame::NoFrame</enum>
            </property>
@@ -199,16 +205,12 @@
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>false</bool>
+           </attribute>
            <attribute name="verticalHeaderHighlightSections">
             <bool>false</bool>
            </attribute>
-          </widget>
-         </item>
-         <item>
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
           </widget>
          </item>
          <item>
@@ -276,6 +278,13 @@
            <attribute name="verticalHeaderHighlightSections">
             <bool>false</bool>
            </attribute>
+          </widget>
+         </item>
+         <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
           </widget>
          </item>
         </layout>

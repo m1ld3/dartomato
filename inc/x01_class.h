@@ -144,6 +144,8 @@ public:
   void restore_state(CPlayerData iData);
   CPlayerData create_snapshot() const;
   bool has_won_game() const;
+  const QVector<uint32_t> & get_scores_of_current_leg() const { return mScoresOfCurrentLeg; }
+  const QVector<QVector<QString>> & get_thrown_darts_of_current_leg() const { return mThrownDartsOfCurrentLeg; }
 
 private:
 

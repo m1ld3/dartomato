@@ -18,7 +18,8 @@ public:
   virtual void submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts) = 0;
   virtual void update_finishes(uint32_t iScore, uint32_t iNumberOfDarts) = 0;
   virtual void set_focus_to_submit_button() = 0;
-  virtual void display_score(uint32_t iScore) = 0;
+  virtual void display_remaining(uint32_t iScore) = 0;
+  virtual void display_score(uint32_t iRemaining) = 0;
 
 protected:
 

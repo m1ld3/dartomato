@@ -14,6 +14,7 @@
 #include <string>
 #include <QPointer>
 #include "player_active_button.h"
+#include "leg_scores_x01_model.h"
 
 #ifndef TESTING
 CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings iSettings,
@@ -75,7 +76,7 @@ void CX01GroupBox::set_inactive()
 {
   mActive = false;
 #ifndef TESTING
-  mUi->labelPic->clear();
+  mUi->labelPic->setPixmap(mPixMapHandOff.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 #endif
 }
 
@@ -108,6 +109,7 @@ void CX01GroupBox::display_stats_and_finishes()
   mUi->label1DartAvgInput->setText(avg1dart);
   mUi->label3DartAvgInput->setText(avg3dart);
   mUi->labelCheckoutInput->setText(checkout);
+  display_scores();
   display_finishes(mRemainingPoints, 3);
 #endif
 }
@@ -306,11 +308,11 @@ void CX01GroupBox::prepare_score_sound()
 void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts)
 {
 #ifndef TESTING
-  mUi->textBrowser->clear();
-  mUi->textBrowser->setText("Checkouts:");
+  mUi->textBrowser_checkouts->clear();
+  mUi->textBrowser_checkouts->setText("Checkouts:");
   if (iNumberOfDarts == 0) return;
 
-  for (uint32_t darts = 1; darts <= iNumberOfDarts; darts++)
+  for (uint32_t darts = 1; darts <= 3; darts++)
   {
     const QMap<uint32_t, QVector<QString>> checkoutMap = get_checkout_map(darts);
 
@@ -319,14 +321,35 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
       QVector<QString> checkouts = checkoutMap.find(iRemaining).value();
       for (auto & checkout : checkouts)
       {
-        mUi->textBrowser->append(checkout);
+        mUi->textBrowser_checkouts->append(checkout);
       }
     }
   }
 
-  QTextCursor cursor = mUi->textBrowser->textCursor();
+  QTextCursor cursor = mUi->textBrowser_checkouts->textCursor();
   cursor.setPosition(0);
-  mUi->textBrowser->setTextCursor(cursor);
+  mUi->textBrowser_checkouts->setTextCursor(cursor);
+#endif
+}
+
+void CX01GroupBox::display_scores()
+{
+#ifndef TESTING
+  const auto & scores = mPlayer.get_scores_of_current_leg();
+  const auto & darts = mPlayer.get_thrown_darts_of_current_leg();
+  if (!mLegScoresModel)
+  {
+    mLegScoresModel = new CLegScoresX01Model(scores, darts, this);
+    mUi->tableViewScores->setModel(mLegScoresModel);
+    mUi->tableViewScores->setColumnWidth(0, 25);
+    mUi->tableViewScores->setColumnWidth(1, 40);
+    mUi->tableViewScores->setColumnWidth(2, 100);
+  }
+  else
+  {
+    mLegScoresModel->update(scores, darts);
+  }
+  mUi->tableViewScores->resizeRowsToContents();
 #endif
 }
 

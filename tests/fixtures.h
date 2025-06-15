@@ -38,8 +38,8 @@ protected:
   {
     if (iExpectedState.Stop == mDartBoard->mStop &&
         iExpectedState.Busted == mDartBoard->mBusted &&
-        iExpectedState.Score == mDartBoard->mScore &&
-        iExpectedState.OldScore == mDartBoard->mOldScore &&
+        iExpectedState.Score == mDartBoard->mRemaining &&
+        iExpectedState.OldScore == mDartBoard->mOldRemaining &&
         iExpectedState.Counter == mDartBoard->mCounter &&
         iExpectedState.CheckoutAttempts == mDartBoard->mCheckoutAttempts &&
         iExpectedState.Darts == mDartBoard->mDarts &&

@@ -143,6 +143,7 @@ private:
   static bool mSetAlreadyStarted;
 #ifndef TESTING
   QPixmap mPixMapHand = QPixmap(":/resources/img/hand.svg");
+  QPixmap mPixMapHandOff = QPixmap(":/resources/img/hand_off.svg");
   QPixmap mPixMapDot = QPixmap(":/resources/img/dot.png");
 #endif
   std::array<uint32_t, static_cast<int>(ECricketSlots::SLOT_MAX)> mSlotArray = {0, 0, 0, 0, 0, 0, 0};

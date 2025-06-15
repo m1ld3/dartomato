@@ -62,7 +62,9 @@ void CCricketGroupBox::set_active()
 void CCricketGroupBox::set_inactive()
 {
   mActive = false;
-  mUi->labelPic->clear();
+#ifndef TESTING
+  mUi->labelPic->setPixmap(mPixMapHandOff.scaled(90, 90, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+#endif
 }
 
 void CCricketGroupBox::set_finished()

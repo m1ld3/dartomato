@@ -57,7 +57,8 @@ public:
   void submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts) override;
   void update_finishes(uint32_t iScore, uint32_t iNumberOfDarts) override;
   void set_focus_to_submit_button() override;
-  void display_score(uint32_t iScore) override;
+  void display_remaining(uint32_t iRemaining) override;
+  void display_score(uint32_t iRemaining) override;
 
 private slots:
 

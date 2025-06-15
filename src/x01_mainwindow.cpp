@@ -32,7 +32,8 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
   mPlayerBox[mActivePlayer]->set_set_begin();
   mPlayerBox[mActivePlayer]->set_leg_begin();
   mPlayerBox[mActivePlayer]->set_active();
-  CX01MainWindow::display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
+  CX01MainWindow::display_remaining(mPlayerBox[mActivePlayer]->get_remaining_points());
+  CX01MainWindow::display_score(0);
   CX01MainWindow::erase_dart1();
   CX01MainWindow::erase_dart2();
   CX01MainWindow::erase_dart3();
@@ -47,7 +48,8 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
     mPlayerBox[i]->set_game_data(iGameData.GameDataX01.at(i));
     if (iGameData.GameDataX01.at(i).back().Active) mActivePlayer = i;
   }
-  display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
+  CX01MainWindow::display_remaining(mPlayerBox[mActivePlayer]->get_remaining_points());
+  CX01MainWindow::display_score(0);
 }
 
 CX01MainWindow::~CX01MainWindow()
@@ -143,7 +145,8 @@ void CX01MainWindow::start_new_game_with_same_settings()
   mPlayerBox[mActivePlayer]->set_set_begin();
   mPlayerBox[mActivePlayer]->set_leg_begin();
   mPlayerBox[mActivePlayer]->set_active();
-  display_score(mPlayerBox[mActivePlayer]->get_remaining_points());
+  display_remaining(mPlayerBox[mActivePlayer]->get_remaining_points());
+  display_score(0);
   erase_dart1();
   erase_dart2();
   erase_dart3();
@@ -248,6 +251,7 @@ void CX01MainWindow::reset_scores_of_all_players()
   {
     mPlayerBox[i]->reset();
     mPlayerBox[i]->display_finishes(mPlayerBox[i]->get_remaining_points(), 3);
+    mPlayerBox[i]->display_scores();
   }
 }
 
@@ -335,9 +339,14 @@ void CX01MainWindow::undo_button_clicked_slot()
   mDartBoard->perform_undo();
 }
 
+void CX01MainWindow::display_remaining(uint32_t iRemaining)
+{
+  mUi->currentRemainingLCD->display(static_cast<int>(iRemaining));
+}
+
 void CX01MainWindow::display_score(uint32_t iScore)
 {
-  mUi->currentRemainingLCD->display(static_cast<int>(iScore));
+  mUi->currentScoreLCD->display(static_cast<int>(iScore));
 }
 
 void CX01MainWindow::display_dart1(uint32_t iVal)

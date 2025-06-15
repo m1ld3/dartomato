@@ -64,6 +64,8 @@ void CStatsWindowCricket::setup_table_views()
   mUi->tableViewGlobalSegmentStats->setColumnWidth(3, 75);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(4, 50);
   mUi->tableViewGlobalSegmentStats->setColumnWidth(5, 75);
+  mUi->tableViewGlobalGameStats->resizeRowsToContents();
+  mUi->tableViewGlobalSegmentStats->resizeRowsToContents();
 #endif
 }
 
@@ -106,6 +108,7 @@ void CStatsWindowCricket::update_leg_scores_table_view(const QVector<QVector<QSt
   {
     mLegScoresModel->update(iTotalDarts);
   }
+  mUi->tableViewLegScores->resizeRowsToContents();
 #endif
 }
 
@@ -123,6 +126,7 @@ void CStatsWindowCricket::update_leg_stats_table_view()
   {
     mLegStatsModel->update(mLegStatsData);
   }
+  mUi->tableViewLegStats->resizeRowsToContents();
 #endif
 }
 

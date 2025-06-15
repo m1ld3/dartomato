@@ -10,6 +10,7 @@
 class IMainWindow;
 class CDartBoard;
 class CGameDataHandler;
+class CLegScoresX01Model;
 
 namespace Ui
 {
@@ -56,6 +57,7 @@ public:
   uint32_t get_remaining_points() const;
   void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
   void display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts);
+  void display_scores();
 
 #ifdef TESTING
 private:
@@ -100,6 +102,7 @@ private:
   bool mLegBegin = false;
 #ifndef TESTING
   QPixmap mPixMapHand = QPixmap(":/resources/img/hand.svg");
+  QPixmap mPixMapHandOff = QPixmap(":/resources/img/hand_off.svg");
   QPixmap mPixMapDot = QPixmap(":/resources/img/dot.png");
 #endif
   static bool mLegAlreadyStarted;
@@ -110,6 +113,7 @@ private:
 #ifndef TESTING
   CSoundHandler & mSoundHandler;
 #endif
+  CLegScoresX01Model * mLegScoresModel = nullptr;
 };
 
 #endif  // GROUPBOX_X01_H
