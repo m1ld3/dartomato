@@ -14,8 +14,8 @@ class IStatsWindow
 public:
 
   virtual ~IStatsWindow() = default;
-  static CStatsWindowX01 * const create(const CX01Class::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
-  static CStatsWindowCricket * const create(const CCricketClass::CPlayerData & iPlayerData, QWidget * iParent = nullptr);
+  static CStatsWindowX01* create(const CX01Class::CPlayerData& iPlayerData, QWidget* iParent = nullptr);
+  static CStatsWindowCricket* create(const CCricketClass::CPlayerData& iPlayerData, QWidget* iParent = nullptr);
 
 private:
 

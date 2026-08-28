@@ -7,7 +7,7 @@ CPlayerActiveButton::CPlayerActiveButton(QWidget * iParent)
 void CPlayerActiveButton::mouseReleaseEvent(QMouseEvent * iEvent)
 {
   Q_UNUSED(iEvent);
-  CPlayerActiveButton::player_active_button_pressed();
+  player_active_button_pressed();
 }
 
 void CPlayerActiveButton::player_active_button_pressed()

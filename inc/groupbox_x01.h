@@ -32,8 +32,8 @@ public:
 #ifdef TESTING
   explicit CX01GroupBox(IMainWindow * iMainWindow, const CSettings iSettings, uint32_t iPlayerNumber = 0, CDartBoard * iDartBoard = nullptr);
 #else
-  explicit CX01GroupBox(QWidget * iParent, const CSettings iSettings,
-                        uint32_t iPlayerNumber = 0, CDartBoard * iDartboard = nullptr);
+  explicit CX01GroupBox(QWidget * iParent, const CSettings& iSettings,
+                        uint32_t iPlayerNumber = 0, CDartBoard * iDartBoard = nullptr);
   ~CX01GroupBox() override;
 #endif
 
@@ -44,19 +44,19 @@ public:
   void unset_set_begin();
   void set_leg_begin();
   void unset_leg_begin();
-  bool has_begun_leg() const;
-  bool has_begun_set() const;
+  [[nodiscard]] bool has_begun_leg() const;
+  [[nodiscard]] bool has_begun_set() const;
   void reset_legs();
   void reset();
-  void set_lcd_legs();
+  void set_lcd_legs() const;
   void create_snapshot();
-  bool is_finished() const { return mFinished; }
+  [[nodiscard]] bool is_finished() const { return mFinished; }
   QVector<CX01Class::CPlayerData> & get_game_data() { return mHistory; };
   void set_game_data(QVector<CX01Class::CPlayerData> iGameData);
 
-  uint32_t get_remaining_points() const;
+  [[nodiscard]] uint32_t get_remaining_points() const;
   void submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts);
-  void display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts);
+  void display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts) const;
   void display_scores();
 
 #ifdef TESTING
@@ -72,19 +72,19 @@ private slots:
 private:
 
   void unset_finished();
-  void update_players(const EUpdateType iType);
-  void reset_scores_of_all_players();
-  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted);
+  void update_players(EUpdateType iType) const;
+  void reset_scores_of_all_players() const;
+  void inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) const;
   void perform_undo();
   void connect_slots();
   void display_stats_and_finishes();
-  void set_lcd_legs_and_sets();
-  void play_score_sound();
+  void set_lcd_legs_and_sets() const;
+  void play_score_sound() const;
   void handle_game_shot(uint32_t iCheckoutAttempts);
   void handle_default_score(uint32_t iCheckoutAttempts);
-  const QMap<uint32_t, QVector<QString>> & get_checkout_map(uint32_t iNumberOfDarts);
+  const QMap<uint32_t, QVector<QString>> & get_checkout_map(uint32_t iNumberOfDarts) const;
   void prepare_score_sound();
-  void create_snapshots_of_all_players();
+  void create_snapshots_of_all_players() const;
 
 #ifndef TESTING
   Ui::CX01GroupBox * mUi;

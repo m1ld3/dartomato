@@ -1,14 +1,11 @@
 #ifndef CRICKET_INPUT_H
 #define CRICKET_INPUT_H
 
-#include <QDialog>
-#include <QGraphicsView>
 #include "dartboard_segment.h"
-#include <QLCDNumber>
-#include <QLabel>
-#include <QGraphicsSvgItem>
 #include "dartboard_cricket.h"
 #include "settings.h"
+#include <qdialog.h>
+#include <qlcdnumber.h>
 
 class ICricketMainWindow;
 class CCricketClass;
@@ -51,10 +48,10 @@ public:
   CCricketInput(QWidget * iParent, const CSettings & iSettings,
                 CCricketClass * iPlayer = nullptr, ICricketMainWindow * iGameWindow = nullptr);
 #endif
-  ~CCricketInput();
-  virtual bool are_slots_full() const;
+  ~CCricketInput() override;
+  [[nodiscard]] virtual bool are_slots_full() const;
   void handle_segment_pressed_event(uint32_t iVal, QChar iType);
-  void notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts);
+  void notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts) const;
 
 #ifndef TESTING
 private slots:
@@ -72,23 +69,23 @@ private:
   void process_segment_cutthroat();
   void process_segment_default();
   void compute_cutthroat_scores_for_other_players(QVector<uint32_t> & iScores);
-  void process_segment_common(uint32_t iVal, QChar & iType);
+  void process_segment_common(uint32_t iVal, const QChar & iType);
   void save_history();
   void handle_game_shot();
   void check_if_game_shot_cutthroat(QVector<uint32_t> & iScores);
   void handle_input_stop();
   void handle_warnings(bool iWarningCondition);
-  void handle_slots_and_extra_points(uint32_t iVal, QChar & iType);
+  void handle_slots_and_extra_points(uint32_t iVal, const QChar & iType);
   void increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits);
 
   Ui::CCricketInput * mUi;
-  QGraphicsView * mView;
-  QGraphicsScene * mScene;
+  QGraphicsView * mView{};
+  QGraphicsScene * mScene{};
   uint32_t mCounter = 3;
   bool mStop = false;
-  QLCDNumber * mScoreDart1;
-  QLCDNumber * mScoreDart2;
-  QLCDNumber * mScoreDart3;
+  QLCDNumber * mScoreDart1{};
+  QLCDNumber * mScoreDart2{};
+  QLCDNumber * mScoreDart3{};
   QVector<QString> mDarts{"","",""};
   CCricketClass * mPlayer;
   ICricketMainWindow * mGameWindow;

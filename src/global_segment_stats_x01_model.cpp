@@ -1,6 +1,6 @@
 #include "global_segment_stats_x01_model.h"
 
-CGlobalSegmentStatsX01Model::CGlobalSegmentStatsX01Model(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> iSegments, QObject * iParent)
+CGlobalSegmentStatsX01Model::CGlobalSegmentStatsX01Model(const std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)>& iSegments, QObject * iParent)
   : QAbstractTableModel(iParent)
   , mSegments(iSegments)
 {}
@@ -17,11 +17,11 @@ int CGlobalSegmentStatsX01Model::columnCount(const QModelIndex &iParent) const
   return 6;
 }
 
-QVariant CGlobalSegmentStatsX01Model::data(const QModelIndex &iIndex, int iRole) const
+QVariant CGlobalSegmentStatsX01Model::data(const QModelIndex &iIndex, const int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
+  if (!iIndex.isValid() || iIndex.row() >= rowCount({}) || iIndex.column() >= columnCount({}))
   {
-    return QVariant();
+    return {};
   }
 
   if (iRole == Qt::DisplayRole)
@@ -30,30 +30,24 @@ QVariant CGlobalSegmentStatsX01Model::data(const QModelIndex &iIndex, int iRole)
     {
       return mCol0Labels.at(iIndex.row());
     }
-    else if (iIndex.column() == 1)
+    if (iIndex.column() == 1)
     {
       return QString::number(mSegments.at(iIndex.row()));
     }
-    else if (iIndex.column() == 2)
+    if (iIndex.column() == 2)
     {
       return mCol2Labels.at(iIndex.row());
     }
-    else if (iIndex.column() == 3)
+    if (iIndex.column() == 3)
     {
       return QString::number(mSegments.at(iIndex.row() + 10));
     }
-    else if (iIndex.column() == 4)
+    if (iIndex.column() == 4)
     {
       return (iIndex.row() < 3) ? mCol4Labels.at(iIndex.row()) : QVariant();
     }
-    else
-    {
-      return (iIndex.row() < 3) ? QString::number(mSegments.at(iIndex.row() + 20)) : QVariant();
-    }
+    return (iIndex.row() < 3) ? QString::number(mSegments.at(iIndex.row() + 20)) : QVariant();
   }
-  else
-  {
-    return QVariant();
-  }
+  return {};
 }
 

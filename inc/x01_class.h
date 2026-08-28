@@ -2,6 +2,7 @@
 #define X01_CLASS_H
 
 #include <QVector>
+#include <utility>
 #include "settings.h"
 
 class CX01MainWindow;
@@ -46,7 +47,8 @@ public:
                 QVector<QVector<uint32_t>> iRemainingPointsOfAllLegs,
                 bool iActive = false
                 )
-      : SetsWon(iSetsWon)
+      : Active(iActive)
+      , SetsWon(iSetsWon)
       , LegsWonPerSet(iLegsWonPerSet)
       , TotalLegsWon(iTotalLegsWon)
       , RemainingPoints(iRemainingPoints)
@@ -57,21 +59,19 @@ public:
       , Avg3Dart(iAvg3Dart)
       , CheckoutRate(iCheckoutRate)
       , First9Avg(iFirst9Avg)
-      , ScoresOfCurrentLeg(iScoresOfCurrentLeg)
-      , AllScoresOfAllLegs(iAllScoresOfAllLegs)
-      , AllScoresFlat(iAllScoresFlat)
-      , ThrownDartsOfCurrentLeg(iThrownDartsOfCurrentLeg)
-      , ThrownDartsOfAllLegsFlat(iThrownDartsOfAllLegsFlat)
-      , ThrownDartsOfAllLegs(iThrownDartsOfAllLegs)
-      , RemainingPointsOfCurrentLeg(iRemainingPointsOfCurrentLeg)
-      , RemainingPointsOfAllLegs(iRemainingPointsOfAllLegs)
-      , Active(iActive)
+      , ScoresOfCurrentLeg(std::move(iScoresOfCurrentLeg))
+      , AllScoresOfAllLegs(std::move(iAllScoresOfAllLegs))
+      , AllScoresFlat(std::move(iAllScoresFlat))
+      , ThrownDartsOfCurrentLeg(std::move(iThrownDartsOfCurrentLeg))
+      , ThrownDartsOfAllLegsFlat(std::move(iThrownDartsOfAllLegsFlat))
+      , ThrownDartsOfAllLegs(std::move(iThrownDartsOfAllLegs))
+      , RemainingPointsOfCurrentLeg(std::move(iRemainingPointsOfCurrentLeg))
+      , RemainingPointsOfAllLegs(std::move(iRemainingPointsOfAllLegs))
     {}
 
-    double rnd2Decimals(double iNum) const
+    static double rnd2Decimals(const double iNum)
     {
-      double val = std::ceil(iNum * 100.0) / 100.0;
-      return val;
+      return std::ceil(iNum * 100.0) / 100.0;
     }
 
     bool operator==(const CPlayerData & iOther) const
@@ -124,28 +124,26 @@ public:
     QVector<QVector<uint32_t>> RemainingPointsOfAllLegs     = {};
   };
 
-public:
-
-  CX01Class(uint32_t iPlayerNumber, const CSettings iSettings);
+  CX01Class(uint32_t iPlayerNumber, CSettings  iSettings);
   uint32_t set_score(uint32_t iScore);
-  void set_darts(QVector<QString> iDarts);
+  void set_darts(const QVector<QString>& iDarts);
   void compute_averages(uint32_t iNumberOfDarts);
   void update_checkout(uint32_t iCheckoutAttempts, uint32_t iSuccess);
-  double get_avg1dart() const;
-  double get_avg3dart() const;
-  double get_checkout() const;
-  uint32_t get_remaining() const;
-  uint32_t get_legs() const;
-  uint32_t get_sets() const;
+  [[nodiscard]] double get_avg1dart() const;
+  [[nodiscard]] double get_avg3dart() const;
+  [[nodiscard]] double get_checkout() const;
+  [[nodiscard]] uint32_t get_remaining() const;
+  [[nodiscard]] uint32_t get_legs() const;
+  [[nodiscard]] uint32_t get_sets() const;
   void reset_score();
   void reset_legs();
-  uint32_t get_player_number() const;
+  [[nodiscard]] uint32_t get_player_number() const;
   bool increment_won_legs_and_check_if_set_won();
-  void restore_state(CPlayerData iData);
-  CPlayerData create_snapshot() const;
-  bool has_won_game() const;
-  const QVector<uint32_t> & get_scores_of_current_leg() const { return mScoresOfCurrentLeg; }
-  const QVector<QVector<QString>> & get_thrown_darts_of_current_leg() const { return mThrownDartsOfCurrentLeg; }
+  void restore_state(const CPlayerData& iData);
+  [[nodiscard]] CPlayerData create_snapshot() const;
+  [[nodiscard]] bool has_won_game() const;
+  [[nodiscard]] const QVector<uint32_t> & get_scores_of_current_leg() const { return mScoresOfCurrentLeg; }
+  [[nodiscard]] const QVector<QVector<QString>> & get_thrown_darts_of_current_leg() const { return mThrownDartsOfCurrentLeg; }
 
 private:
 

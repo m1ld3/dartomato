@@ -1,10 +1,7 @@
 #ifndef CDARTBOARD_H
 #define CDARTBOARD_H
 
-#include <QDialog>
-#include <QLCDNumber>
 #include <QGraphicsSvgItem>
-#include <QLabel>
 #include "dartboard_view.h"
 #include "settings.h"
 #include "sound_handler.h"
@@ -30,13 +27,13 @@ public:
 
 public:
 
-  CDartBoard(CDartBoardView * iGraphicsViewDartBoard, const CSettings iSettings);
+  CDartBoard(CDartBoardView * iGraphicsViewDartBoard, CSettings iSettings);
 #ifdef TESTING
   CDartBoard(const CSettings iSettings)
     : mSettings(iSettings)
   {}
 #endif
-  virtual ~CDartBoard();
+  ~CDartBoard() override;
   virtual void play_game_shot_sound();
 
 protected:
@@ -45,7 +42,7 @@ protected:
   CSettings mSettings;
 #else
   const CSettings mSettings;
-  QGraphicsView * mView;
+  QGraphicsView * mView{};
   QGraphicsScene * mScene;
   CDartBoardSegment * mS20;
   CDartBoardSegment * mS19;

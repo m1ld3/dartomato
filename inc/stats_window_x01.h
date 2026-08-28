@@ -1,7 +1,6 @@
 #ifndef STATS_WINDOW_X01_H
 #define STATS_WINDOW_X01_H
 
-#include <QString>
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QProxyStyle>
@@ -95,7 +94,7 @@ public:
     uint32_t WorstWonLegDartCount = 0;
     uint32_t DartCountOfCurrentLeg = 0;
 
-    bool operator==(const SLegStatsData & iOther)
+    bool operator==(const SLegStatsData & iOther) const
     {
       return (Avg3Dart == iOther.Avg3Dart &&
               Avg1Dart == iOther.Avg1Dart &&
@@ -118,7 +117,7 @@ public:
     uint32_t CheckoutAttempts = 0;
     uint32_t CheckoutHits = 0;
 
-    bool operator==(const SGlobalGameStatsData & iOther)
+    bool operator==(const SGlobalGameStatsData & iOther) const
     {
       return (Avg3Dart == iOther.Avg3Dart &&
               Avg1Dart == iOther.Avg1Dart &&
@@ -131,7 +130,7 @@ public:
     }
   };
 
-  explicit CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidget * iParent = nullptr);
+  explicit CStatsWindowX01(CX01Class::CPlayerData  iPlayerData, QWidget * iParent = nullptr);
   ~CStatsWindowX01() override;
 
 #ifndef TESTING
@@ -140,7 +139,7 @@ private slots:
 private:
 #endif
 
-  void update_leg_history_slot(int iIndex) { update_leg_history(iIndex); }
+  void update_leg_history_slot(const int iIndex) { update_leg_history(iIndex); }
 
 private:
 
@@ -150,14 +149,12 @@ private:
   uint32_t compute_dart_count_of_indexed_leg(uint32_t iIndex) override;
   void setup_table_views() override;
   void count_scores();
-  std::map<uint32_t, uint32_t> calculate_score_counts();
+  [[nodiscard]] std::map<uint32_t, uint32_t> calculate_score_counts() const;
   void compute_dart_count_and_checkouts();
   void compute_first9_leg_average(const QVector<uint32_t> & iScores);
   void compute_dart_averages(const QVector<uint32_t> & iScores, const QVector<QVector<QString>> & iDarts);
   void update_leg_scores_table_view(const QVector<uint32_t> & iScores, const QVector<QVector<QString>> & iDarts);
   void update_leg_stats_table_view();
-
-private:
 
   Ui::CStatsWindowX01 * mUi;
   const CX01Class::CPlayerData mPlayerData;

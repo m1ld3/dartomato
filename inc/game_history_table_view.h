@@ -2,7 +2,6 @@
 #define CGAMEHISTORYTABLEVIEW_H
 
 #include <QTableView>
-#include <QMouseEvent>
 #include <QKeyEvent>
 
 class CGameHistoryTableView : public QTableView
@@ -10,15 +9,14 @@ class CGameHistoryTableView : public QTableView
   Q_OBJECT
 
 public:
-
-  CGameHistoryTableView(QWidget * iParent)
+  explicit CGameHistoryTableView(QWidget * iParent)
     : QTableView(iParent)
   {}
 
+protected:
   void mouseDoubleClickEvent(QMouseEvent * iEvent) override
   {
-    QModelIndex index = indexAt(iEvent->pos());
-    if (index.isValid())
+    if (const QModelIndex index = indexAt(iEvent->pos()); index.isValid())
     {
       emit signal_row_double_clicked_or_pressed(index.row());
     }
@@ -29,8 +27,7 @@ public:
   {
     if (iEvent->key() == Qt::Key_Enter || iEvent->key() == Qt::Key_Return)
     {
-      QModelIndex index = currentIndex();
-      if (index.isValid())
+      if (const QModelIndex index = currentIndex(); index.isValid())
       {
         emit signal_row_double_clicked_or_pressed(index.row());
       }

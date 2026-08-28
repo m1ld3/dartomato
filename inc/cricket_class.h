@@ -1,6 +1,8 @@
 #ifndef CRICKET_CLASS_H
 #define CRICKET_CLASS_H
 
+#include <utility>
+
 #include "settings.h"
 
 class CCricketMainWindow;
@@ -47,21 +49,20 @@ public:
       , Score(iScore)
       , TotalHits(iTotalHits)
       , HitsPerRound(iHitsPerRound)
-      , ScoresOfCurrentLeg(iScoresOfCurrentLeg)
-      , ScoringHistory(iScoringHistory)
-      , HitsOfCurrentLeg(iHitsOfCurrentLeg)
-      , HitsHistory(iHitsHistory)
-      , SlotArray(iSlotArray)
-      , ExtraPointsArray(iExtraPointsArray)
-      , LegWonVec(iLegWonVec)
-      , LegWonHistory(iLegWonHistory)
+      , ScoresOfCurrentLeg(std::move(iScoresOfCurrentLeg))
+      , ScoringHistory(std::move(iScoringHistory))
+      , HitsOfCurrentLeg(std::move(iHitsOfCurrentLeg))
+      , HitsHistory(std::move(iHitsHistory))
+      , SlotArray(std::move(iSlotArray))
+      , ExtraPointsArray(std::move(iExtraPointsArray))
+      , LegWonVec(std::move(iLegWonVec))
+      , LegWonHistory(std::move(iLegWonHistory))
       , Active(iActive)
     {}
 
-    double rnd2Decimals(double iNum) const
+    static double rnd2Decimals(const double iNum)
     {
-      double val = std::ceil(iNum * 100.0) / 100.0;
-      return val;
+      return std::ceil(iNum * 100.0) / 100.0;
     }
 
     bool operator==(const CPlayerData & iOther) const
@@ -108,28 +109,28 @@ public:
   };
 
   CCricketClass(uint32_t iPlayerNumber, const CSettings & iSettings);
-  double compute_hits_per_round(uint32_t iNumberofdarts, uint32_t iTotalhits);
-  uint32_t get_legs() const;
-  uint32_t get_sets() const;
-  void update_darts(QVector<QString> iDarts);
+  double compute_hits_per_round(uint32_t iNumberOfDarts, uint32_t iTotalHits);
+  [[nodiscard]] uint32_t get_legs() const;
+  [[nodiscard]] uint32_t get_sets() const;
+  void update_darts(const QVector<QString>& iDarts);
   void reset_score();
   void reset_legs();
-  uint32_t get_player_number() const;
-  uint32_t get_slot(const ECricketSlots iSlot) const;
-  void set_slot(const ECricketSlots iSlot, uint32_t iHits);
-  void set_extra_points(const ECricketSlots iSlot, uint32_t iPoints);
-  uint32_t get_extra_points(const ECricketSlots iSlot) const;
-  uint32_t get_total_hits() const;
+  [[nodiscard]] uint32_t get_player_number() const;
+  [[nodiscard]] uint32_t get_slot(ECricketSlots iSlot) const;
+  void set_slot(ECricketSlots iSlot, uint32_t iHits);
+  void set_extra_points(ECricketSlots iSlot, uint32_t iPoints);
+  [[nodiscard]] uint32_t get_extra_points(ECricketSlots iSlot) const;
+  [[nodiscard]] uint32_t get_total_hits() const;
   void compute_score();
-  uint32_t get_score() const;
-  double get_hits_per_round() const;
-  QVector<QVector<QString>> get_score_legs() const;
-  QVector<QVector<QVector<QString>>> get_scoring_history() const;
+  [[nodiscard]] uint32_t get_score() const;
+  [[nodiscard]] double get_hits_per_round() const;
+  [[nodiscard]] QVector<QVector<QString>> get_score_legs() const;
+  [[nodiscard]] QVector<QVector<QVector<QString>>> get_scoring_history() const;
   bool increment_won_legs_and_check_if_set_won();
-  void restore_state(CPlayerData iData);
-  CPlayerData create_snapshot() const;
-  void set_leg_won(bool iHasWon) { mLegWonVec.append(iHasWon); }
-  bool has_won_game() const;
+  void restore_state(const CPlayerData& iData);
+  [[nodiscard]] CPlayerData create_snapshot() const;
+  void set_leg_won(const bool iHasWon) { mLegWonVec.append(iHasWon); }
+  [[nodiscard]] bool has_won_game() const;
 
 private:
 

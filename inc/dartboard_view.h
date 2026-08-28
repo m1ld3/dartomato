@@ -9,9 +9,10 @@ class CDartBoardView : public QGraphicsView
   Q_OBJECT
 
 public:
-
-  CDartBoardView(QWidget * iParent = 0);
+  explicit CDartBoardView(QWidget * iParent = nullptr);
   ~CDartBoardView() override = default;
+
+protected:
   void resizeEvent(QResizeEvent * iEvent) override;
 };
 

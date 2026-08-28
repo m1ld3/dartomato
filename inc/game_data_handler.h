@@ -1,6 +1,8 @@
 #ifndef CGAMEDATAHANDLER_H
 #define CGAMEDATAHANDLER_H
 
+#include <utility>
+
 #include "x01_class.h"
 #include "cricket_class.h"
 
@@ -15,19 +17,19 @@ public:
 
   struct SGameData
   {
-    SGameData(const QString iTimeStamp,
+    SGameData(QString  iTimeStamp,
               const bool iFinished,
-              const CSettings iSettings,
+              CSettings  iSettings,
               const uint32_t iWinnerIdx,
               QVector<QVector<CX01Class::CPlayerData>> iGameDataX01 = {},
               QVector<QVector<CCricketClass::CPlayerData>> iGameDataCricket = {}
               )
-      : TimeStamp(iTimeStamp)
+      : TimeStamp(std::move(iTimeStamp))
       , Finished(iFinished)
-      , Settings(iSettings)
+      , Settings(std::move(iSettings))
       , WinnerIdx(iWinnerIdx)
-      , GameDataX01(iGameDataX01)
-      , GameDataCricket(iGameDataCricket)
+      , GameDataX01(std::move(iGameDataX01))
+      , GameDataCricket(std::move(iGameDataCricket))
     {}
 
     SGameData() = default;
@@ -52,13 +54,13 @@ public:
 
   struct SStatsData
   {
-    SStatsData(const QString iPlayerName,
+    SStatsData(QString  iPlayerName,
               QVector<CX01Class::CPlayerData> iGameDataX01 = {},
               QVector<CCricketClass::CPlayerData> iGameDataCricket = {}
               )
-      : PlayerName(iPlayerName)
-      , GameDataX01(iGameDataX01)
-      , GameDataCricket(iGameDataCricket)
+      : PlayerName(std::move(iPlayerName))
+      , GameDataX01(std::move(iGameDataX01))
+      , GameDataCricket(std::move(iGameDataCricket))
     {}
 
     SStatsData() = default;
@@ -77,13 +79,13 @@ public:
 
   CGameDataHandler();
   ~CGameDataHandler() = default;
-  bool add_new_player(const QString & iPlayerName);
-  QStringList get_player_names() const;
+  static bool add_new_player(const QString & iPlayerName);
+  [[nodiscard]] static QStringList get_player_names();
   bool save_game_to_db(const SGameData & iGameData);
   QVector<SGameData> get_game_data(bool iAscending = false);
   QVector<SStatsData> get_stats_data();
-  bool delete_game_from_db(const QString & iTimeStamp);
-  bool delete_player_from_db(const QString & iPlayerName);
+  static bool delete_game_from_db(const QString & iTimeStamp);
+  static bool delete_player_from_db(const QString & iPlayerName);
 
 private:
 
@@ -95,12 +97,12 @@ private:
   void fill_vec(const T & iData, QJsonObject & oGameDataObject, const QString & iKey);
   template<typename T>
   void extract_vec(T & oData, QJsonObject & iGameDataObject, const QString & iKey);
-  bool create_connection();
-  bool create_players_table();
-  bool create_games_tables();
-  bool player_exists(const QString & iPlayerName) const;
-  int get_player_id(const QString & iPlayerName) const;
-  QString get_player_name_from_id(int iPlayerId) const;
+  static bool create_connection();
+  static bool create_players_table();
+  static bool create_games_tables();
+  [[nodiscard]] static bool player_exists(const QString & iPlayerName);
+  [[nodiscard]] static int get_player_id(const QString & iPlayerName) ;
+  [[nodiscard]] static QString get_player_name_from_id(int iPlayerId) ;
 
   static const QString mFileName;
 };

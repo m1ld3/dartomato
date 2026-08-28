@@ -1,9 +1,11 @@
 #include "game_results_model.h"
 
-CGameResultsModel::CGameResultsModel(const CGameDataHandler::SGameData & iGameData, QObject * iParent)
+#include <utility>
+
+CGameResultsModel::CGameResultsModel(CGameDataHandler::SGameData  iGameData, QObject * iParent)
   : QAbstractTableModel{iParent}
-  , mGameData(iGameData)
-  , mIsX01(mGameData.GameDataX01.at(0).size() > 0)
+  , mGameData(std::move(iGameData))
+  , mIsX01(!mGameData.GameDataX01.at(0).empty())
 {
   if (mIsX01)
   {
@@ -34,7 +36,7 @@ void CGameResultsModel::find_player_ranking_cricket()
   for (uint32_t idx = 0; idx < mGameData.Settings.PlayersList.size(); idx++)
   {
     const auto & playerData = mGameData.GameDataCricket.at(idx).back();
-    mScores.append({playerData.SetsWon, playerData.LegsWonPerSet, idx});
+    mScores.append({.Sets = playerData.SetsWon, .Legs = playerData.LegsWonPerSet, .PlayerId = idx});
   }
 
   std::sort(mScores.begin(), mScores.end(), SPlayerScore::compare);
@@ -43,16 +45,16 @@ void CGameResultsModel::find_player_ranking_cricket()
 int CGameResultsModel::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return mGameData.Settings.PlayersList.size();
+  return static_cast<int>(mGameData.Settings.PlayersList.size());
 }
 
 int CGameResultsModel::columnCount(const QModelIndex &iParent) const
 {
   Q_UNUSED(iParent);
-  return mColumnHeaders.size();
+  return static_cast<int>(mColumnHeaders.size());
 }
 
-QVariant CGameResultsModel::headerData(int iSection, Qt::Orientation iOrientation, int iRole) const
+QVariant CGameResultsModel::headerData(const int iSection, const Qt::Orientation iOrientation, const int iRole) const
 {
   if (iRole == Qt::DisplayRole)
   {
@@ -64,54 +66,44 @@ QVariant CGameResultsModel::headerData(int iSection, Qt::Orientation iOrientatio
       }
     }
   }
-  return QVariant();
+  return {};
 }
 
-QVariant CGameResultsModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CGameResultsModel::data(const QModelIndex & iIndex, const int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
+  if (!iIndex.isValid() || iIndex.row() >= rowCount({}) || iIndex.column() >= columnCount({}))
   {
-    return QVariant();
+    return {};
   }
 
   if (iRole == Qt::DisplayRole)
   {
     if (iIndex.column() == 0)      return mRankLabels.at(iIndex.row());
-    else if (iIndex.column() == 1) return mGameData.Settings.PlayersList.at(mScores.at(iIndex.row()).PlayerId);
-    else if (iIndex.column() == 2) return "Sets: " + QString::number(mScores.at(iIndex.row()).Sets) + " / Legs: " + QString::number(mScores.at(iIndex.row()).Legs);
-    else if (iIndex.column() == 3)
+    if (iIndex.column() == 1) return mGameData.Settings.PlayersList.at(mScores.at(iIndex.row()).PlayerId);
+    if (iIndex.column() == 2) return "Sets: " + QString::number(mScores.at(iIndex.row()).Sets) + " / Legs: " + QString::number(mScores.at(iIndex.row()).Legs);
+    if (iIndex.column() == 3)
     {
       if (mIsX01)
       {
         return QString::number(mGameData.GameDataX01.at(mScores.at(iIndex.row()).PlayerId).back().TotalLegsWon);
       }
-      else
-      {
-        return QString::number(mGameData.GameDataCricket.at(mScores.at(iIndex.row()).PlayerId).back().TotalLegsWon);
-      }
+      return QString::number(mGameData.GameDataCricket.at(mScores.at(iIndex.row()).PlayerId).back().TotalLegsWon);
     }
-    else if (iIndex.column() == 4)
+    if (iIndex.column() == 4)
     {
       if (mIsX01)
       {
         return QString::number(mGameData.GameDataX01.at(mScores.at(iIndex.row()).PlayerId).back().Avg3Dart, 'f', 2);
       }
-      else
-      {
-        return QString::number(mGameData.GameDataCricket.at(mScores.at(iIndex.row()).PlayerId).back().HitsPerRound, 'f', 2);
-      }
+      return QString::number(mGameData.GameDataCricket.at(mScores.at(iIndex.row()).PlayerId).back().HitsPerRound, 'f', 2);
     }
-    else if (iIndex.column() == 5 && mIsX01)
+    if (iIndex.column() == 5 && mIsX01)
     {
       return QString::number(mGameData.GameDataX01.at(mScores.at(iIndex.row()).PlayerId).back().CheckoutRate, 'f', 2);
     }
-
-    return QVariant();
+    return {};
   }
-  else
-  {
-    return QVariant();
-  }
+  return {};
 }
 
 

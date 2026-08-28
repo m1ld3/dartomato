@@ -1,8 +1,5 @@
 #pragma once
 
-//#include <QObject>
-#include "settings.h"
-
 class IX01MainWindow
 {
 public:

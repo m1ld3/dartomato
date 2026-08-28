@@ -21,8 +21,8 @@ class CX01MainWindow : public QMainWindow, public IX01MainWindow, public IMainWi
 
 public:
 
-  explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
-  explicit CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData);
+  explicit CX01MainWindow(QWidget * iParent, const CSettings& iSettings, const CGameDataHandler & iGameDataHandler);
+  explicit CX01MainWindow(QWidget * iParent, const CSettings& iSettings, const CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData& iGameData);
   ~CX01MainWindow() override;
 #ifdef TESTING
   CX01MainWindow(QWidget * iParent = nullptr)
@@ -30,8 +30,8 @@ public:
     , mSoundHandler(CSoundHandler::instance())
   {}
 #endif
-  void closeEvent(QCloseEvent * iEvent) override;
-  void setAttribute(Qt::WidgetAttribute iAttribute, bool iOn = true) override
+
+  void setAttribute(const Qt::WidgetAttribute iAttribute, const bool iOn) override
   {
     QMainWindow::setAttribute(iAttribute, iOn);
   }
@@ -41,7 +41,7 @@ public:
   }
 
   // CMainWindowIf
-  void update_players(const EUpdateType iType) override;
+  void update_players(EUpdateType iType) override;
   void reset_scores_of_all_players() override;
   void activate_player_inactivate_other_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) override;
   void create_snapshots_of_all_players() override;
@@ -60,18 +60,14 @@ public:
   void display_remaining(uint32_t iRemaining) override;
   void display_score(uint32_t iRemaining) override;
 
-private slots:
-
-  void submit_button_clicked_slot() override;
-  void undo_button_clicked_slot() override;
-
-private:
+protected:
+  void closeEvent(QCloseEvent * iEvent) override;
 
   // CMainWindowIf
   void set_active_player(uint32_t iPlayer) override;
   void add_players() override;
   void save_current_game() override;
-  bool game_finished() const override;
+  [[nodiscard]] bool game_finished() const override;
   void start_new_game_with_same_settings() override;
   void clear_group_box_widgets() override;
   void set_global_finished() override;
@@ -85,6 +81,11 @@ private:
   // CX01MainWindowIf
   void connect_main_window_slots() override;
 
+protected slots:
+  void submit_button_clicked_slot() override;
+  void undo_button_clicked_slot() override;
+
+private:
   Ui::CX01MainWindow * mUi;
   uint32_t mWinningPlayer = 0;
   QVector<CX01GroupBox*> mPlayerBox;

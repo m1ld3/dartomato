@@ -1,7 +1,6 @@
 #ifndef CGLOBALSEGMENTSTATSX01MODEL_H
 #define CGLOBALSEGMENTSTATSX01MODEL_H
 
-#include <QAbstractTableModel>
 #include "stats_window_x01.h"
 
 class CGlobalSegmentStatsX01Model : public QAbstractTableModel
@@ -10,10 +9,10 @@ class CGlobalSegmentStatsX01Model : public QAbstractTableModel
 
 public:
 
-  explicit CGlobalSegmentStatsX01Model(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)> iSegments, QObject * iParent = nullptr);
-  int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
-  int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
-  QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
+  explicit CGlobalSegmentStatsX01Model(const std::array<uint32_t, static_cast<int>(CStatsWindowX01::EDartCountsIdx::SEG_MAX)>& iSegments, QObject * iParent = nullptr);
+  [[nodiscard]] int rowCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] int columnCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] QVariant data(const QModelIndex & iIndex, int iRole) const override;
 
 private:
 

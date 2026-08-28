@@ -24,7 +24,7 @@ bool CCricketClass::increment_won_legs_and_check_if_set_won()
   return hasWonSet;
 }
 
-void CCricketClass::restore_state(CPlayerData iData)
+void CCricketClass::restore_state(const CPlayerData& iData)
 {
   mSetsWon = iData.SetsWon;
   mLegsWonPerSet = iData.LegsWonPerSet;
@@ -45,9 +45,9 @@ void CCricketClass::restore_state(CPlayerData iData)
 
 CCricketClass::CPlayerData CCricketClass::create_snapshot() const
 {
-  return CPlayerData(mSetsWon, mLegsWonPerSet, mTotalLegsWon, mTotalDarts,
+  return {mSetsWon, mLegsWonPerSet, mTotalLegsWon, mTotalDarts,
                      mScore, mTotalHits, mHitsPerRound, mScoresOfCurrentLeg,
-                     mScoringHistory, mHitsOfCurrentLeg, mHitsHistory, mSlotArray, mExtraPointsArray, mLegWonVec, mLegWonHistory);
+                     mScoringHistory, mHitsOfCurrentLeg, mHitsHistory, mSlotArray, mExtraPointsArray, mLegWonVec, mLegWonHistory};
 }
 
 bool CCricketClass::has_won_game() const
@@ -55,7 +55,7 @@ bool CCricketClass::has_won_game() const
   return mSetsWon == mMarginSets;
 }
 
-void CCricketClass::update_darts(QVector<QString> iDarts)
+void CCricketClass::update_darts(const QVector<QString>& iDarts)
 {
   mScoresOfCurrentLeg.push_back(iDarts);
 }

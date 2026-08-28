@@ -10,21 +10,21 @@ CPlayerListModel::CPlayerListModel(const CGameDataHandler & iGameDataHandler, QO
 int CPlayerListModel::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return mPlayerNames.count();
+  return static_cast<int>(mPlayerNames.count());
 }
 
-QVariant CPlayerListModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CPlayerListModel::data(const QModelIndex & iIndex, const int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() > mPlayerNames.count()) return QVariant();
+  if (!iIndex.isValid() || iIndex.row() > mPlayerNames.count()) return {};
   if (iRole == Qt::DisplayRole) return mPlayerNames.at(iIndex.row());
-  return QVariant();
+  return {};
 }
 
 bool CPlayerListModel::add_player(const QString & iPlayerName)
 {
   if (!mPlayerNames.contains(iPlayerName))
   {
-    int row = rowCount();
+    const int row = rowCount({});
     beginInsertRows(QModelIndex(), row, row);
     mPlayerNames.append(iPlayerName);
     endInsertRows();
@@ -36,14 +36,11 @@ bool CPlayerListModel::add_player(const QString & iPlayerName)
 
 void CPlayerListModel::remove_players(const QStringList & iPlayerNames)
 {
-  bool changed = false;
-
   for (const auto & player : iPlayerNames)
   {
-    int index = mPlayerNames.indexOf(player);
-    if (index != -1)
+    if (const auto index = mPlayerNames.indexOf(player); index != -1)
     {
-      beginRemoveRows(QModelIndex(), index, index);
+      beginRemoveRows(QModelIndex(), static_cast<int>(index), static_cast<int>(index));
       mPlayerNames.removeAt(index);
       endRemoveRows();
     }

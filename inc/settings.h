@@ -1,9 +1,10 @@
 #ifndef CSETTINGS_H
 #define CSETTINGS_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <QStringList>
 #include <map>
+#include <utility>
 
 enum class EGame
 {
@@ -62,10 +63,10 @@ static std::map<EX01OutMode, QString> MapX01OutMode2Str
 
 struct CSettings
 {
-  CSettings(EGame iGame, QStringList iPlayers, uint32_t iSets, uint32_t iLegs,
-            EX01InMode iInMode, EX01OutMode iOutMode, bool iCutThroat)
+  CSettings(const EGame iGame, QStringList iPlayers, const uint32_t iSets, const uint32_t iLegs,
+            const EX01InMode iInMode, const EX01OutMode iOutMode, const bool iCutThroat)
   : Game(iGame)
-  , PlayersList(iPlayers)
+  , PlayersList(std::move(iPlayers))
   , Sets(iSets)
   , Legs(iLegs)
   , InMode(iInMode)

@@ -8,17 +8,15 @@
 #include <QMessageBox>
 #endif
 #include <QString>
-#include <algorithm>
 #include <x01_mainwindow.h>
 #include <checkout_lists.h>
 #include <string>
-#include <QPointer>
 #include "player_active_button.h"
 #include "leg_scores_x01_model.h"
 
 #ifndef TESTING
-CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings iSettings,
-                           uint32_t iPlayerNumber, CDartBoard * iDartBoard)
+CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings& iSettings,
+                           const uint32_t iPlayerNumber, CDartBoard * iDartBoard)
   : QGroupBox(iParent)
   , mUi(new Ui::CX01GroupBox)
   , mPlayer(iPlayerNumber, iSettings)
@@ -27,7 +25,7 @@ CX01GroupBox::CX01GroupBox(QWidget * iParent, const CSettings iSettings,
   , mPlayerName(mSettings.PlayersList.at(iPlayerNumber))
   , mPlayerNumber(iPlayerNumber)
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
-  , mGameWindow(static_cast<CX01MainWindow*>(iParent))
+  , mGameWindow(qobject_cast<CX01MainWindow*>(iParent))
   , mHistory({mPlayer.create_snapshot()})
   , mSoundHandler(CSoundHandler::instance())
 {
@@ -114,26 +112,26 @@ void CX01GroupBox::display_stats_and_finishes()
 #endif
 }
 
-void CX01GroupBox::play_score_sound()
+void CX01GroupBox::play_score_sound() const
 {
 #ifndef TESTING
   mSoundHandler.play_score_sound();
 #endif
 }
 
-void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
+void CX01GroupBox::handle_game_shot(const uint32_t iCheckoutAttempts)
 {
   bool newSet = false;
   mPlayer.update_checkout(iCheckoutAttempts, 1);
   newSet = mPlayer.increment_won_legs_and_check_if_set_won();
   play_score_sound();
   reset_scores_of_all_players();
-  CX01GroupBox::mLegAlreadyStarted = false;
+  mLegAlreadyStarted = false;
 
   if (newSet)
   {
     update_players(EUpdateType::SET);
-    CX01GroupBox::mSetAlreadyStarted = false;
+    mSetAlreadyStarted = false;
   }
   else
   {
@@ -152,7 +150,7 @@ void CX01GroupBox::handle_game_shot(uint32_t iCheckoutAttempts)
   }
 }
 
-void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
+void CX01GroupBox::handle_default_score(const uint32_t iCheckoutAttempts)
 {
   mPlayer.update_checkout(iCheckoutAttempts, 0);
   play_score_sound();
@@ -162,12 +160,12 @@ void CX01GroupBox::handle_default_score(uint32_t iCheckoutAttempts)
   update_players(EUpdateType::DEFAULT);
 }
 
-void CX01GroupBox::submit_score(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
+void CX01GroupBox::submit_score(const uint32_t iScore, const uint32_t iNumberOfDarts, const uint32_t iCheckoutAttempts, const QVector<QString> & iDarts)
 {
   mCurrentScore = iScore;
   prepare_score_sound();
-  CX01GroupBox::mLegAlreadyStarted = true;
-  CX01GroupBox::mSetAlreadyStarted = true;
+  mLegAlreadyStarted = true;
+  mSetAlreadyStarted = true;
   mRemainingPoints = mPlayer.set_score(mCurrentScore);
   mPlayer.set_darts(iDarts);
   mPlayer.compute_averages(iNumberOfDarts);
@@ -206,7 +204,7 @@ void CX01GroupBox::set_game_data(QVector<CX01Class::CPlayerData> iGameData)
   display_stats_and_finishes();
 }
 
-void CX01GroupBox::create_snapshots_of_all_players()
+void CX01GroupBox::create_snapshots_of_all_players() const
 {
   mGameWindow->create_snapshots_of_all_players();
 }
@@ -216,9 +214,9 @@ void CX01GroupBox::player_active_button_pressed_slot()
 #ifndef TESTING
   if (!mActive)
   {
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Change player order", "Do you really want to change the player order?",
-                                  QMessageBox::Yes|QMessageBox::No);
+    const QMessageBox::StandardButton reply = QMessageBox::question(this, "Change player order",
+                                                              "Do you really want to change the player order?",
+                                                              QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes)
     {
@@ -271,41 +269,38 @@ void CX01GroupBox::reset_legs()
   mPlayer.reset_legs();
 }
 
-const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(uint32_t iNumberOfDarts)
+const QMap<uint32_t, QVector<QString>> & CX01GroupBox::get_checkout_map(const uint32_t iNumberOfDarts) const
 {
   if (mSettings.OutMode == EX01OutMode::SINGLE_OUT)
   {
     if (iNumberOfDarts == 1)      return singleOutSingleDartCheckoutList;
-    else if (iNumberOfDarts == 2) return singleOutTwoDartCheckoutList;
-    else                          return singleOutThreeDartCheckoutList;
+    if (iNumberOfDarts == 2) return singleOutTwoDartCheckoutList;
+    return singleOutThreeDartCheckoutList;
   }
-  else if (mSettings.OutMode == EX01OutMode::DOUBLE_OUT)
+  if (mSettings.OutMode == EX01OutMode::DOUBLE_OUT)
   {
     if (iNumberOfDarts == 1)      return doubleOutSingleDartCheckoutList;
-    else if (iNumberOfDarts == 2) return doubleOutTwoDartCheckoutList;
-    else                          return doubleOutThreeDartCheckoutList;
+    if (iNumberOfDarts == 2) return doubleOutTwoDartCheckoutList;
+    return doubleOutThreeDartCheckoutList;
   }
-  else
-  {
-    if (iNumberOfDarts == 1)      return masterOutSingleDartCheckoutList;
-    else if (iNumberOfDarts == 2) return masterOutTwoDartCheckoutList;
-    else                          return masterOutThreeDartCheckoutList;
-  }
+  if (iNumberOfDarts == 1)      return masterOutSingleDartCheckoutList;
+  if (iNumberOfDarts == 2) return masterOutTwoDartCheckoutList;
+  return masterOutThreeDartCheckoutList;
 }
 
 void CX01GroupBox::prepare_score_sound()
 {
   std::stringstream ss;
   ss << std::setw(3) << std::setfill('0') << mCurrentScore;
-  std::string digits = ss.str();
-  std::string strpath = "qrc:/resources/sounds/" + digits + ".mp3";
+  const std::string digits = ss.str();
+  const std::string strpath = "qrc:/resources/sounds/" + digits + ".mp3";
   mSoundPath = QString::fromStdString(strpath);
 #ifndef TESTING
   mSoundHandler.set_score_sound_source(mSoundPath);
 #endif
 }
 
-void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts)
+void CX01GroupBox::display_finishes(const uint32_t iRemaining, const uint32_t iNumberOfDarts) const
 {
 #ifndef TESTING
   mUi->textBrowser_checkouts->clear();
@@ -314,9 +309,7 @@ void CX01GroupBox::display_finishes(uint32_t iRemaining, uint32_t iNumberOfDarts
 
   for (uint32_t darts = 1; darts <= 3; darts++)
   {
-    const QMap<uint32_t, QVector<QString>> checkoutMap = get_checkout_map(darts);
-
-    if (checkoutMap.find(iRemaining) != checkoutMap.end())
+    if (const QMap<uint32_t, QVector<QString>> checkoutMap = get_checkout_map(darts); checkoutMap.find(iRemaining) != checkoutMap.end())
     {
       QVector<QString> checkouts = checkoutMap.find(iRemaining).value();
       for (auto & checkout : checkouts)
@@ -353,7 +346,7 @@ void CX01GroupBox::display_scores()
 #endif
 }
 
-void CX01GroupBox::set_lcd_legs()
+void CX01GroupBox::set_lcd_legs() const
 {
 #ifndef TESTING
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
@@ -365,7 +358,7 @@ uint32_t CX01GroupBox::get_remaining_points() const
   return mPlayer.get_remaining();
 }
 
-void CX01GroupBox::set_lcd_legs_and_sets()
+void CX01GroupBox::set_lcd_legs_and_sets() const
 {
 #ifndef TESTING
   mUi->lcdNumberLegs->display(static_cast<int>(mPlayer.get_legs()));
@@ -395,17 +388,17 @@ void CX01GroupBox::perform_undo()
   }
 }
 
-void CX01GroupBox::update_players(const EUpdateType iType)
+void CX01GroupBox::update_players(const EUpdateType iType) const
 {
   mGameWindow->update_players(iType);
 }
 
-void CX01GroupBox::reset_scores_of_all_players()
+void CX01GroupBox::reset_scores_of_all_players() const
 {
   mGameWindow->reset_scores_of_all_players();
 }
 
-void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted)
+void CX01GroupBox::inactivate_players(const uint32_t iPlayer, const bool iLegStarted, const bool iSetStarted) const
 {
   mGameWindow->activate_player_inactivate_other_players(iPlayer, iLegStarted, iSetStarted);
 }
@@ -413,7 +406,7 @@ void CX01GroupBox::inactivate_players(uint32_t iPlayer, bool iLegStarted, bool i
 void CX01GroupBox::push_button_stats_clicked_slot()
 {
 #ifndef TESTING
-  auto stats = IStatsWindow::create(mHistory.back(), this);
+  const auto stats = IStatsWindow::create(mHistory.back(), this);
   stats->setAttribute(Qt::WA_DeleteOnClose);
   stats->setModal(true);
   stats->show();
@@ -423,7 +416,7 @@ void CX01GroupBox::push_button_stats_clicked_slot()
 void CX01GroupBox::push_button_undo_clicked_slot()
 {
 #ifndef TESTING
-  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
+  const QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Undo",
                                                              tr("Are you sure you want to undo your last score?\n"),
                                                              QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
   if (resBtn == QMessageBox::Yes) perform_undo();

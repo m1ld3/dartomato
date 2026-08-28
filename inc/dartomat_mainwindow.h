@@ -2,7 +2,6 @@
 #define DARTOMAT_MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QPointer>
 #include "mainwindow_if.h"
 #include "settings.h"
 #include "player_list_model.h"
@@ -25,31 +24,31 @@ class CDartomatMain : public QMainWindow
 public:
 
   CDartomatMain(QWidget * iParent = nullptr);
-  ~CDartomatMain();
+  ~CDartomatMain() override;
   void handle_selected_players(const QStringList & iSelectedPlayers);
-  void start_game(CSettings iSettings);
-  void resume_game(const CGameDataHandler::SGameData iGameData);
+  void start_game(const CSettings& iSettings);
+  void resume_game(const CGameDataHandler::SGameData& iGameData);
   bool delete_player_data(const QStringList & iSelectedPlayers);
 
 private slots:
 
   void push_button_startgame_clicked_slot();
-  void combo_box_game_current_index_changed_slot(const QString & iGame);
+  void combo_box_game_current_index_changed_slot(const QString & iGame) const;
   void push_button_select_players_clicked_slot();
   void show_about_dialog();
   void push_button_game_history_clicked_slot();
   void show_unfinished_game_popup(const QString & iTimeStamp);
   void push_button_stats_clicked_slot();
-  void toggle_mute();
+  void toggle_mute() const;
 
 private:
 
-  void play_game_on_sound();
+  void play_game_on_sound() const;
   void create_menu();
   void check_for_unfinished_game();
 
   Ui::CDartomatMain * mUi;
-  IMainWindow * mMainWindow;
+  IMainWindow * mMainWindow{};
   CGameDataHandler mGameDataHandler;
   CPlayerListModel mPlayerListModel;
   QStringList mSelectedPlayers = {};

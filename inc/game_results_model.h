@@ -10,11 +10,11 @@ class CGameResultsModel : public QAbstractTableModel
 
 public:
 
-  explicit CGameResultsModel(const CGameDataHandler::SGameData & iGameData, QObject * iParent);
-  int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
-  int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
-  QVariant headerData(int iSection, Qt::Orientation iOrientation, int iRole) const override;
-  QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
+  explicit CGameResultsModel(CGameDataHandler::SGameData  iGameData, QObject * iParent);
+  [[nodiscard]] int rowCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] int columnCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] QVariant headerData(int iSection, Qt::Orientation iOrientation, int iRole) const override;
+  [[nodiscard]] QVariant data(const QModelIndex & iIndex, int iRole) const override;
 
 private:
 
@@ -34,7 +34,7 @@ private:
     static bool compare(const SPlayerScore & iPlayer1, const SPlayerScore & iPlayer2)
     {
       if (iPlayer1.Sets == iPlayer2.Sets) return iPlayer1.Legs > iPlayer2.Legs;
-      else return iPlayer1.Sets > iPlayer2.Sets;
+      return iPlayer1.Sets > iPlayer2.Sets;
     }
   };
 

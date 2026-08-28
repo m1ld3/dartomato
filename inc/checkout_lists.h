@@ -2,7 +2,6 @@
 #define CHECKOUT_LISTS_H
 
 #include <QMap>
-#include <QVector>
 
 const QMap<uint32_t, QVector<QString>> singleOutSingleDartCheckoutList =
 {

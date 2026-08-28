@@ -8,7 +8,7 @@
 CAddPlayersDialog::CAddPlayersDialog(CPlayerListModel & iPlayerListModel, QWidget * iParent)
   : QDialog(iParent)
   , mUi(new Ui::CAddPlayersDialog)
-  , mMainWindow(static_cast<CDartomatMain*>(iParent))
+  , mMainWindow(qobject_cast<CDartomatMain*>(iParent))
   , mPlayerListModel(iPlayerListModel)
 {
   mUi->setupUi(this);

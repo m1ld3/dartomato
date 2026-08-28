@@ -8,8 +8,7 @@ class CPlayerActiveButton : public QLabel
   Q_OBJECT
 
 public:
-
-  CPlayerActiveButton(QWidget * iParent = nullptr);
+  explicit CPlayerActiveButton(QWidget * iParent = nullptr);
 
 private:
 

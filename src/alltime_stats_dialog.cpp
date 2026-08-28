@@ -62,7 +62,7 @@ void CAllTimeStatsDialog::prepare_plot_data()
           const CCricketClass::CPlayerData & cricketGame = game.GameDataCricket.at(localIdx).back();
           mPlotData[idx].HitsPerRound->append(gameIdx, cricketGame.HitsPerRound);
           mPlotData[idx].HitsPerRound->setName(mPlayerList.at(idx));
-          mPlotData[idx].DartsPerLegAvgCricket->append(gameIdx, (cricketGame.ScoringHistory.size()) ? static_cast<double>(cricketGame.TotalDarts) / cricketGame.ScoringHistory.size() : 0.0);
+          mPlotData[idx].DartsPerLegAvgCricket->append(gameIdx, (!cricketGame.ScoringHistory.empty()) ? static_cast<double>(cricketGame.TotalDarts) / static_cast<double>(cricketGame.ScoringHistory.size()) : 0.0);
           mPlotData[idx].DartsPerLegAvgCricket->setName(mPlayerList.at(idx));
         }
       }
@@ -81,7 +81,7 @@ void CAllTimeStatsDialog::prepare_plot_data()
           mPlotData[idx].First9Avg->setName(mPlayerList.at(idx));
           mPlotData[idx].CheckoutRate->append(gameIdx, x01Game.CheckoutRate);
           mPlotData[idx].CheckoutRate->setName(mPlayerList.at(idx));
-          mPlotData[idx].DartsPerLegAvgX01->append(gameIdx, (x01Game.AllScoresOfAllLegs.size()) ? static_cast<double>(x01Game.TotalDarts) / x01Game.AllScoresOfAllLegs.size() : 0.0);
+          mPlotData[idx].DartsPerLegAvgX01->append(gameIdx, (!x01Game.AllScoresOfAllLegs.empty()) ? static_cast<double>(x01Game.TotalDarts) / static_cast<double>(x01Game.AllScoresOfAllLegs.size()) : 0.0);
           mPlotData[idx].DartsPerLegAvgX01->setName(mPlayerList.at(idx));
         }
       }
@@ -90,7 +90,7 @@ void CAllTimeStatsDialog::prepare_plot_data()
   }
 }
 
-void CAllTimeStatsDialog::update_stats_combobox(bool iIsCricket)
+void CAllTimeStatsDialog::update_stats_combobox(const bool iIsCricket) const
 {
   if (iIsCricket)
   {
@@ -114,14 +114,14 @@ void CAllTimeStatsDialog::get_min_max(SPlotRange & oPlotRange, const QLineSeries
 {
   for (auto & point : iSeries->points())
   {
-    if (point.x() < oPlotRange.MinX) oPlotRange.MinX = point.x();
-    if (point.x() > oPlotRange.MaxX) oPlotRange.MaxX = point.x();
-    if (point.y() < oPlotRange.MinY) oPlotRange.MinY = point.y();
-    if (point.y() > oPlotRange.MaxY) oPlotRange.MaxY = point.y();
+    if (point.x() < oPlotRange.MinX) oPlotRange.MinX = static_cast<int>(point.x());
+    if (point.x() > oPlotRange.MaxX) oPlotRange.MaxX = static_cast<int>(point.x());
+    if (point.y() < oPlotRange.MinY) oPlotRange.MinY = static_cast<float>(point.y());
+    if (point.y() > oPlotRange.MaxY) oPlotRange.MaxY = static_cast<float>(point.y());
   }
 }
 
-void CAllTimeStatsDialog::plot_data()
+void CAllTimeStatsDialog::plot_data() const
 {
   for (auto * series : mChart->series()) mChart->removeSeries(series);
   SPlotRange range;
@@ -141,6 +141,7 @@ void CAllTimeStatsDialog::plot_data()
           mChart->addSeries(mPlotData.at(idx).DartsPerLegAvgCricket);
           get_min_max(range, mPlotData.at(idx).DartsPerLegAvgCricket);
           break;
+        default:;
         }
       }
       else
@@ -163,14 +164,15 @@ void CAllTimeStatsDialog::plot_data()
           mChart->addSeries(mPlotData.at(idx).DartsPerLegAvgX01);
           get_min_max(range, mPlotData.at(idx).DartsPerLegAvgX01);
           break;
+        default:;
         }
       }
     }
   }
 
-  for (auto & axis : mChart->axes()) mChart->removeAxis(axis);
-  auto axisX = new QValueAxis();
-  auto axisY = new QValueAxis();
+  for (const auto & axis : mChart->axes()) mChart->removeAxis(axis);
+  const auto axisX = new QValueAxis();
+  const auto axisY = new QValueAxis();
   axisX->setTitleText("Game");
   axisX->setLabelFormat("%d");
 
@@ -202,7 +204,7 @@ void CAllTimeStatsDialog::plot_data()
 void CAllTimeStatsDialog::player_selected_slot()
 {
   mSelectedPlayers = {};
-  for (auto * action : mUi->pushButtonSelectPlayers->menu()->actions())
+  for (const auto * action : mUi->pushButtonSelectPlayers->menu()->actions())
   {
     if (action->isChecked()) mSelectedPlayers.append(action->text());
   }
@@ -219,16 +221,16 @@ void CAllTimeStatsDialog::player_selected_slot()
   plot_data();
 }
 
-void CAllTimeStatsDialog::game_selected_slot()
+void CAllTimeStatsDialog::game_selected_slot() const
 {
-  bool isCricket = mUi->comboBoxGame->currentIndex() == 1;
+  const bool isCricket = mUi->comboBoxGame->currentIndex() == 1;
   mStatsModel->update_selected_game(isCricket);
   mUi->tableView->resizeColumnsToContents();
   update_stats_combobox(isCricket);
   plot_data();
 }
 
-void CAllTimeStatsDialog::stat_selected_slot()
+void CAllTimeStatsDialog::stat_selected_slot() const
 {
   plot_data();
 }

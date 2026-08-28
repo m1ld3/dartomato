@@ -8,7 +8,7 @@ CGameHistoryModel::CGameHistoryModel(QVector<CGameDataHandler::SGameData> & iGam
 int CGameHistoryModel::rowCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return mGameData.size();
+  return static_cast<int>(mGameData.size());
 }
 
 int CGameHistoryModel::columnCount(const QModelIndex &iParent) const
@@ -17,7 +17,7 @@ int CGameHistoryModel::columnCount(const QModelIndex &iParent) const
   return 6;
 }
 
-QVariant CGameHistoryModel::headerData(int iSection, Qt::Orientation iOrientation, int iRole) const
+QVariant CGameHistoryModel::headerData(const int iSection, const Qt::Orientation iOrientation, const int iRole) const
 {
   if (iRole == Qt::DisplayRole)
   {
@@ -34,53 +34,44 @@ QVariant CGameHistoryModel::headerData(int iSection, Qt::Orientation iOrientatio
       return gameDataRow.Finished ? "Finished" : "Open";
     }
   }
-  return QVariant();
+  return {};
 }
 
-QVariant CGameHistoryModel::data(const QModelIndex & iIndex, int iRole) const
+QVariant CGameHistoryModel::data(const QModelIndex & iIndex, const int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
+  if (!iIndex.isValid() || iIndex.row() >= rowCount({}) || iIndex.column() >= columnCount({}))
   {
-    return QVariant();
+    return {};
   }
 
   if (iRole == Qt::DisplayRole)
   {
     const CGameDataHandler::SGameData & gameDataRow = mGameData.at(iIndex.row());
     if (iIndex.column() == 0) return gameDataRow.TimeStamp;
-    else if (iIndex.column() == 1)
+    if (iIndex.column() == 1)
     {
       int type = static_cast<int>(mGameData.at(iIndex.row()).Settings.Game);
       return type == 0 ? "Cricket" : QString::number(type);
     }
-    else if (iIndex.column() == 2)
+    if (iIndex.column() == 2)
     {
       if (gameDataRow.Finished)
       {
         return gameDataRow.Settings.PlayersList.at(gameDataRow.WinnerIdx);
       }
-      else
-      {
-        return "--";
-      }
+      return "--";
     }
-    else if (iIndex.column() == 3) return QString::number(gameDataRow.Settings.Sets);
-    else if (iIndex.column() == 4) return QString::number(gameDataRow.Settings.Legs);
-    else
-    {
-      QString mode;
-      if (gameDataRow.Settings.Game == EGame::GAME_CRICKET) mode += gameDataRow.Settings.CutThroat ? "Cut Throat" : "Default";
-      else mode += MapX01InMode2Str[gameDataRow.Settings.InMode] + " / " + MapX01OutMode2Str[gameDataRow.Settings.OutMode];
-      return mode;
-    }
+    if (iIndex.column() == 3) return QString::number(gameDataRow.Settings.Sets);
+    if (iIndex.column() == 4) return QString::number(gameDataRow.Settings.Legs);
+    QString mode;
+    if (gameDataRow.Settings.Game == EGame::GAME_CRICKET) mode += gameDataRow.Settings.CutThroat ? "Cut Throat" : "Default";
+    else mode += MapX01InMode2Str[gameDataRow.Settings.InMode] + " / " + MapX01OutMode2Str[gameDataRow.Settings.OutMode];
+    return mode;
   }
-  else
-  {
-    return QVariant();
-  }
+  return {};
 }
 
-void CGameHistoryModel::delete_row(int iRowIdx)
+void CGameHistoryModel::delete_row(const int iRowIdx)
 {
   beginRemoveRows(QModelIndex(), iRowIdx, iRowIdx);
   mGameData.removeAt(iRowIdx);

@@ -2,8 +2,6 @@
 #include "ui_dartomat_mainwindow.h"
 #include "add_players_dialog.h"
 #include <QPushButton>
-#include <QVector>
-#include <QGridLayout>
 #include <QJsonArray>
 #include <QMessageBox>
 #include "version.h"
@@ -11,6 +9,7 @@
 #include "alltime_stats_dialog.h"
 #include <QFile>
 #include <QTimer>
+#include <utility>
 
 CDartomatMain::CDartomatMain(QWidget * iParent)
   : QMainWindow(iParent)
@@ -47,24 +46,24 @@ CDartomatMain::~CDartomatMain()
 
 void CDartomatMain::create_menu()
 {
-  QMenuBar * menuBar = new QMenuBar(this);
+  auto * menuBar = new QMenuBar(this);
   setMenuBar(menuBar);
 
   QMenu * fileMenu = menuBar->addMenu("?");
-  QAction * aboutAction = fileMenu->addAction("About");
+  const QAction * aboutAction = fileMenu->addAction("About");
   connect(aboutAction, &QAction::triggered, this, &CDartomatMain::show_about_dialog);
 
-  QIcon unmuteIcon(":/resources/img/unmute.svg");
-  QAction * muteAction = new QAction(unmuteIcon, "", this);
+  const QIcon unmuteIcon(":/resources/img/unmute.svg");
+  auto * muteAction = new QAction(unmuteIcon, "", this);
   connect(muteAction, &QAction::triggered, this, &CDartomatMain::toggle_mute);
   menuBar->addAction(muteAction);
 }
 
-void CDartomatMain::toggle_mute()
+void CDartomatMain::toggle_mute() const
 {
   static bool isMuted = false;
 
-  QAction *muteAction = qobject_cast<QAction*>(sender());
+  auto *muteAction = qobject_cast<QAction*>(sender());
 
   if (isMuted)
   {
@@ -86,7 +85,7 @@ void CDartomatMain::check_for_unfinished_game()
   if (file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream in(&file);
-    auto timeStamp = in.readLine().toStdString();
+    const auto timeStamp = in.readLine().toStdString();
     show_unfinished_game_popup(QString::fromStdString(timeStamp));
     file.remove();
   }
@@ -104,19 +103,19 @@ void CDartomatMain::handle_selected_players(const QStringList & iSelectedPlayers
   mSelectedPlayers = iSelectedPlayers;
 }
 
-void CDartomatMain::start_game(CSettings iSettings)
+void CDartomatMain::start_game(const CSettings& iSettings)
 {
   mMainWindow = IMainWindow::create(this, iSettings, mGameDataHandler);
-  mMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+  mMainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
   mMainWindow->show();
 
   play_game_on_sound();
 }
 
-void CDartomatMain::resume_game(const CGameDataHandler::SGameData iGameData)
+void CDartomatMain::resume_game(const CGameDataHandler::SGameData& iGameData)
 {
   mMainWindow = IMainWindow::create(this, iGameData.Settings, mGameDataHandler, iGameData);
-  mMainWindow->setAttribute(Qt::WA_DeleteOnClose);
+  mMainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
   mMainWindow->show();
   mGameDataHandler.delete_game_from_db(iGameData.TimeStamp);
 }
@@ -129,9 +128,9 @@ void CDartomatMain::push_button_startgame_clicked_slot()
     return;
   }
   uint32_t game = (mUi->comboBoxGame->itemText(mUi->comboBoxGame->currentIndex())).toInt();
-  uint32_t sets = mUi->spinBoxSets->value();
-  uint32_t legs = mUi->spinBoxLegs->value();
-  bool cutThroat = mUi->checkBoxCutThroat->isChecked();
+  const uint32_t sets = mUi->spinBoxSets->value();
+  const uint32_t legs = mUi->spinBoxLegs->value();
+  const bool cutThroat = mUi->checkBoxCutThroat->isChecked();
   EX01InMode inMode;
   EX01OutMode outMode;
   if (mUi->radioButtonSin->isChecked()) inMode = EX01InMode::SINGLE_IN;
@@ -141,13 +140,13 @@ void CDartomatMain::push_button_startgame_clicked_slot()
   else if (mUi->radioButtonDout->isChecked()) outMode = EX01OutMode::DOUBLE_OUT;
   else outMode = EX01OutMode::MASTER_OUT;
 
-  auto settings = CSettings(static_cast<EGame>(game), mSelectedPlayers,
+  const auto settings = CSettings(static_cast<EGame>(game), mSelectedPlayers,
                         sets, legs, inMode, outMode, cutThroat);
 
   start_game(settings);
 }
 
-void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iGame)
+void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iGame) const
 {
   if (iGame == "Cricket")
   {
@@ -173,7 +172,7 @@ void CDartomatMain::combo_box_game_current_index_changed_slot(const QString & iG
 
 void CDartomatMain::push_button_select_players_clicked_slot()
 {
-  QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(mPlayerListModel, this);
+  const QPointer<CAddPlayersDialog> dialog = new CAddPlayersDialog(mPlayerListModel, this);
   dialog->show();
 }
 
@@ -194,13 +193,13 @@ void CDartomatMain::show_about_dialog()
 
 void CDartomatMain::push_button_game_history_clicked_slot()
 {
-  QPointer<CGameHistoryDialog> dialog = new CGameHistoryDialog(mGameDataHandler, this);
+  const QPointer dialog = new CGameHistoryDialog(mGameDataHandler, this);
   dialog->show();
 }
 
 void CDartomatMain::show_unfinished_game_popup(const QString & iTimeStamp)
 {
-  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Resume Game.",
+  const QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Resume Game.",
                                                              "Do you want to resume the last unfinished game?",
                                                              QMessageBox::Yes | QMessageBox::No);
   if (resBtn == QMessageBox::Yes)
@@ -216,11 +215,11 @@ void CDartomatMain::show_unfinished_game_popup(const QString & iTimeStamp)
 
 void CDartomatMain::push_button_stats_clicked_slot()
 {
-  QPointer<CAllTimeStatsDialog> dialog = new CAllTimeStatsDialog(mGameDataHandler);
+  const QPointer dialog = new CAllTimeStatsDialog(mGameDataHandler);
   dialog->show();
 }
 
-void CDartomatMain::play_game_on_sound()
+void CDartomatMain::play_game_on_sound() const
 {
   mSoundHandler.play_game_on_sound();
 }

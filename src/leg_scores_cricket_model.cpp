@@ -1,13 +1,13 @@
 #include "leg_scores_cricket_model.h"
 
-CLegScoresCricketModel::CLegScoresCricketModel(QVector<QVector<QString>> iLegDarts, QObject * iParent)
+CLegScoresCricketModel::CLegScoresCricketModel(const QVector<QVector<QString>>& iLegDarts, QObject * iParent)
   : mLegDarts(iLegDarts)
 {}
 
 int CLegScoresCricketModel::rowCount(const QModelIndex & iParent) const
 {
   if (iParent.isValid()) return 0;
-  return mLegDarts.count();
+  return static_cast<int>(mLegDarts.count());
 }
 
 int CLegScoresCricketModel::columnCount(const QModelIndex & iParent) const
@@ -18,9 +18,9 @@ int CLegScoresCricketModel::columnCount(const QModelIndex & iParent) const
 
 QVariant CLegScoresCricketModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= mLegDarts.size() || iIndex.column() >= columnCount())
+  if (!iIndex.isValid() || iIndex.row() >= mLegDarts.size() || iIndex.column() >= columnCount({}))
   {
-    return QVariant();
+    return {};
   }
 
   if (iRole == Qt::DisplayRole)
@@ -29,23 +29,20 @@ QVariant CLegScoresCricketModel::data(const QModelIndex & iIndex, int iRole) con
     {
       return QString::number(iIndex.row() + 1) + ":";
     }
-    else
+    QString row;
+    for (const auto & dart : mLegDarts.at(iIndex.row()))
     {
-      QString row;
-      for (const auto & dart : mLegDarts.at(iIndex.row()))
-      {
-        if (dart.mid(1).toInt() == 0) row.append("0      ");
-        else row.append(QString("%1  ").arg(dart.toUpper()));
-      }
-      return row;
+      if (dart.mid(1).toInt() == 0) row.append("0      ");
+      else row.append(QString("%1  ").arg(dart.toUpper()));
     }
+    return row;
   }
-  return QVariant();
+  return {};
 }
 
-void CLegScoresCricketModel::update(QVector<QVector<QString>> iLegDarts)
+void CLegScoresCricketModel::update(const QVector<QVector<QString>>& iLegDarts)
 {
   mLegDarts = iLegDarts;
-  emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, 0));
+  emit dataChanged(createIndex(0, 0), createIndex(rowCount({}) - 1, 0));
   emit layoutChanged();
 }

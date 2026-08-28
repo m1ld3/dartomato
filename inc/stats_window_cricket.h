@@ -1,7 +1,6 @@
 #ifndef STATS_WINDOW_CRICKET_H
 #define STATS_WINDOW_CRICKET_H
 
-#include <QString>
 #include <QStyledItemDelegate>
 #include <QPainter>
 #include <QProxyStyle>
@@ -22,7 +21,6 @@ class CGlobalSegmentStatsCricketModel;
 class CStatsWindowCricket : public QDialog, public IStatsWindow
 {
   Q_OBJECT
-//  Q_INTERFACES(CStatsWindow)
 #else
 class CStatsWindowCricket : public IStatsWindow
 {
@@ -53,7 +51,7 @@ public:
     uint32_t DartCountOfCurrentLeg = 0;
 
 
-    bool operator==(const SLegStatsData & iOther)
+    bool operator==(const SLegStatsData & iOther) const
     {
       return (HitsPerRound == iOther.HitsPerRound &&
               AvgLegDartCount == iOther.AvgLegDartCount &&
@@ -71,7 +69,7 @@ public:
     uint32_t NumLegs = 0;
   };
 
-  explicit CStatsWindowCricket(const CCricketClass::CPlayerData iPlayerData, QWidget * iParent = nullptr);
+  explicit CStatsWindowCricket(CCricketClass::CPlayerData  iPlayerData, QWidget * iParent = nullptr);
   ~CStatsWindowCricket() override;
 
 #ifndef TESTING
@@ -80,7 +78,7 @@ private slots:
 private:
 #endif
 
-  void update_leg_history_slot(int iIndex) { update_leg_history(iIndex); }
+  void update_leg_history_slot(const int iIndex) { update_leg_history(iIndex); }
 
 
 private:
@@ -95,8 +93,6 @@ private:
   void compute_hits_per_round(const QVector<QVector<QString> > &iTotalDarts, const QVector<uint32_t> &iTotalHits);
   void update_leg_scores_table_view(const QVector<QVector<QString> > &iTotalDarts);
   void update_leg_stats_table_view();
-
-private:
 
   Ui::CStatsWindowCricket * mUi;
   const CCricketClass::CPlayerData mPlayerData;

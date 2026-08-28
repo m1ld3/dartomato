@@ -35,10 +35,10 @@ CGameHistoryDialog::~CGameHistoryDialog()
   delete mGameHistoryModel;
 }
 
-void CGameHistoryDialog::switch_to_game_results_page(int iRowIdx)
+void CGameHistoryDialog::switch_to_game_results_page(const int iRowIdx)
 {
   mGameResultsIdx = iRowIdx;
-  QPointer<CGameResultsModel> gameResultsModel = new CGameResultsModel(mGameData.at(mGameResultsIdx), this);
+  const QPointer gameResultsModel = new CGameResultsModel(mGameData.at(mGameResultsIdx), this);
   mUi->tableViewRanking->setModel(gameResultsModel);
   if (!mGameData.at(mGameResultsIdx).Finished) mUi->pushButtonPlayGame->setText("Resume Game");
   else                                         mUi->pushButtonPlayGame->setText("Play again");
@@ -47,23 +47,21 @@ void CGameHistoryDialog::switch_to_game_results_page(int iRowIdx)
 
 void CGameHistoryDialog::delete_current_row()
 {
-  if (mGameData.size() == 0)
+  if (mGameData.empty())
   {
     QMessageBox::warning(this, "No game data.", "Nothing to delete.");
     return;
   }
 
-  QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Delete Game",
+  const QMessageBox::StandardButton resBtn = QMessageBox::question(this, "Delete Game",
                                                              "Do you want to delete this game?",
                                                              QMessageBox::Yes | QMessageBox::No);
   if (resBtn == QMessageBox::Yes)
   {
-    QItemSelectionModel * model = mUi->tableViewGameHistory->selectionModel();
-
-    if (model->hasSelection())
+    if (const QItemSelectionModel * model = mUi->tableViewGameHistory->selectionModel(); model->hasSelection())
     {
-      int rowIdx = model->currentIndex().row();
-      if (!mGameDataHandler.delete_game_from_db(mGameData.at(rowIdx).TimeStamp))
+      const int rowIdx = model->currentIndex().row();
+      if (!CGameDataHandler::delete_game_from_db(mGameData.at(rowIdx).TimeStamp))
       {
         auto error = QErrorMessage(this);
         error.showMessage("Game could not be deleted!");
@@ -80,16 +78,14 @@ void CGameHistoryDialog::delete_current_row()
 
 void CGameHistoryDialog::show_stats()
 {
-  QItemSelectionModel * model = mUi->tableViewRanking->selectionModel();
-
-  if (model->hasSelection())
+  if (const QItemSelectionModel * model = mUi->tableViewRanking->selectionModel(); model->hasSelection())
   {
-    int rowIdx = model->currentIndex().row();
+    const int rowIdx = model->currentIndex().row();
     auto gameDataX01 = mGameData.at(mGameResultsIdx).GameDataX01.at(rowIdx);
     auto gameDataCricket = mGameData.at(mGameResultsIdx).GameDataCricket.at(rowIdx);
-    if (gameDataX01.size() > 0)
+    if (!gameDataX01.empty())
     {
-      auto stats = IStatsWindow::create(gameDataX01.back(), this);
+      const auto stats = IStatsWindow::create(gameDataX01.back(), this);
 #ifndef TESTING
       stats->setAttribute(Qt::WA_DeleteOnClose);
       stats->setModal(true);
@@ -98,7 +94,7 @@ void CGameHistoryDialog::show_stats()
     }
     else
     {
-      auto stats = IStatsWindow::create(gameDataCricket.back(), this);
+      const auto stats = IStatsWindow::create(gameDataCricket.back(), this);
 #ifndef TESTING
       stats->setAttribute(Qt::WA_DeleteOnClose);
       stats->setModal(true);
@@ -109,8 +105,7 @@ void CGameHistoryDialog::show_stats()
   else
   {
     QMessageBox::warning(this, "No player selected.", "Please select a player.");
-    return;
-    }
+  }
 }
 
 void CGameHistoryDialog::start_game()

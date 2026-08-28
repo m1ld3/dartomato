@@ -11,7 +11,7 @@ void CSpinBox::keyPressEvent(QKeyEvent * iEvent)
   iEvent->ignore();
 }
 
-void CSpinBox::stepBy(int iSteps)
+void CSpinBox::stepBy(const int iSteps)
 {
   QSpinBox::stepBy(iSteps);
   lineEdit()->deselect();

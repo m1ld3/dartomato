@@ -1,6 +1,5 @@
 #include "dartboard_x01.h"
 #include "x01_mainwindow.h"
-#include <cmath>
 #include <QMessageBox>
 
 #ifndef TESTING
@@ -13,7 +12,7 @@
 #endif
 
 #ifndef TESTING
-CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings iSettings)
+CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWindow * iX01MainWindow, const CSettings & iSettings)
   : CDartBoard(iGraphicsViewDartBoard, iSettings)
   , mGameWindow(iX01MainWindow)
 {
@@ -23,7 +22,7 @@ CDartBoardX01::CDartBoardX01(CDartBoardView * iGraphicsViewDartBoard, IX01MainWi
 }
 #endif
 
-void CDartBoardX01::set_scores(uint32_t iVal, QChar iType, bool iCheckoutAttempt)
+void CDartBoardX01::set_scores(const uint32_t iVal, const QChar iType, const bool iCheckoutAttempt)
 {
   mRemaining -= iVal;
   display_remaining(mRemaining);
@@ -38,10 +37,10 @@ void CDartBoardX01::set_scores(uint32_t iVal, QChar iType, bool iCheckoutAttempt
   if      (mCounter == 3) display_dart1(iVal);
   else if (mCounter == 2) display_dart2(iVal);
   else if (mCounter == 1) display_dart3(iVal);
-  display_score(std::accumulate(mUndo.begin(), mUndo.end(), 0));
+  display_score(std::accumulate(mUndo.begin(), mUndo.end(), 0u));
 }
 
-void CDartBoardX01::init_dartboard(uint32_t iStartVal)
+void CDartBoardX01::init_dartboard(const uint32_t iStartVal)
 {
   mStop = false;
   mBusted = false;
@@ -54,10 +53,10 @@ void CDartBoardX01::init_dartboard(uint32_t iStartVal)
   mCounter = 3;
   mDarts = {};
   mUndo = {0, 0, 0};
-  display_score(std::accumulate(mUndo.begin(), mUndo.end(), 0));
+  display_score(std::accumulate(mUndo.begin(), mUndo.end(), 0u));
 }
 
-void CDartBoardX01::handle_start_val(uint32_t iVal, QChar & iType)
+void CDartBoardX01::handle_start_val(const uint32_t iVal, const QChar & iType)
 {
   switch(mSettings.InMode)
   {
@@ -74,19 +73,19 @@ void CDartBoardX01::handle_start_val(uint32_t iVal, QChar & iType)
   }
 }
 
-void CDartBoardX01::handle_score_in_range(uint32_t iVal, QChar & iType)
+void CDartBoardX01::handle_score_in_range(const uint32_t iVal, const QChar & iType)
 {
   set_scores(iVal, iType, checkout_attempt_happened());
 }
 
-bool CDartBoardX01::checkout_attempt_happened()
+bool CDartBoardX01::checkout_attempt_happened() const
 {
   return ((mSettings.OutMode == EX01OutMode::SINGLE_OUT && mRemaining <= 60 && !mBoogieNumbers.contains(mRemaining)) ||
           (mSettings.OutMode == EX01OutMode::DOUBLE_OUT && ((mRemaining <= 40 && mRemaining % 2 == 0 && mRemaining > 1) || mRemaining == 50)) ||
           (mSettings.OutMode == EX01OutMode::MASTER_OUT && mRemaining <= 60 && mRemaining % 3 == 0 && mRemaining > 2));
 }
 
-void CDartBoardX01::handle_game_shot_score(uint32_t iVal, QChar & iType)
+void CDartBoardX01::handle_game_shot_score(const uint32_t iVal, const QChar & iType)
 {
   mStop = true;  // Game shot
   set_focus_to_submit_button();
@@ -94,7 +93,7 @@ void CDartBoardX01::handle_game_shot_score(uint32_t iVal, QChar & iType)
   set_scores(iVal, iType, true);
 }
 
-void CDartBoardX01::handle_score_equals_remaining(uint32_t iVal, QChar & iType)
+void CDartBoardX01::handle_score_equals_remaining(const uint32_t iVal, QChar & iType)
 {
   switch(mSettings.OutMode)
   {
@@ -113,7 +112,7 @@ void CDartBoardX01::handle_score_equals_remaining(uint32_t iVal, QChar & iType)
   }
 }
 
-void CDartBoardX01::handle_busted_score(QChar & iType, bool iCheckoutAttempt)
+void CDartBoardX01::handle_busted_score(const QChar & iType, const bool iCheckoutAttempt)
 {
   mStop = true;
   mBusted = true;
@@ -124,14 +123,14 @@ void CDartBoardX01::handle_busted_score(QChar & iType, bool iCheckoutAttempt)
 #endif
 }
 
-bool CDartBoardX01::is_score_in_range(uint32_t iVal)
+bool CDartBoardX01::is_score_in_range(const uint32_t iVal) const
 {
   if (mSettings.OutMode == EX01OutMode::DOUBLE_OUT) return mRemaining  > (iVal + 1);
-  else if (mSettings.OutMode == EX01OutMode::MASTER_OUT) return mRemaining > (iVal + 2);
-  else return mRemaining > iVal;
+  if (mSettings.OutMode == EX01OutMode::MASTER_OUT) return mRemaining > (iVal + 2);
+  return mRemaining > iVal;
 }
 
-void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar iType)
+void CDartBoardX01::handle_segment_pressed_event(const uint32_t iVal, QChar iType)
 {
   if (mFinished)
   {
@@ -141,8 +140,7 @@ void CDartBoardX01::handle_segment_pressed_event(uint32_t iVal, QChar iType)
 
   if (!mStop && mCounter > 0)
   {
-    uint32_t startVal = static_cast<uint32_t>(mSettings.Game);
-    if (mRemaining == startVal)
+    if (const auto startVal = static_cast<uint32_t>(mSettings.Game); mRemaining == startVal)
     {
       handle_start_val(iVal, iType);
     }
@@ -180,7 +178,7 @@ void CDartBoardX01::perform_undo()
   mDarts.pop_back();
   mCheckoutAttempts[2 - mCounter] = false;
   display_remaining(mRemaining);
-  display_score(std::accumulate(mUndo.begin(), mUndo.end(), 0));
+  display_score(std::accumulate(mUndo.begin(), mUndo.end(), 0u));
 
   if (mCounter == 2)      erase_dart1();
   else if (mCounter == 1) erase_dart2();
@@ -208,8 +206,8 @@ void CDartBoardX01::submit_score()
       numberOfDarts = 3;
     }
 
-    uint32_t checkoutattempts = static_cast<uint32_t>(std::count(mCheckoutAttempts.begin(), mCheckoutAttempts.end(), true));
-    submit_score_to_player(score, numberOfDarts, checkoutattempts, darts);
+    const uint32_t checkoutAttempts = static_cast<uint32_t>(std::count(mCheckoutAttempts.begin(), mCheckoutAttempts.end(), true));
+    submit_score_to_player(score, numberOfDarts, checkoutAttempts, darts);
   }
   else if (!mFinished)
   {
@@ -221,27 +219,27 @@ void CDartBoardX01::submit_score()
   }
 }
 
-void CDartBoardX01::display_remaining(uint32_t iRemaining)
+void CDartBoardX01::display_remaining(const uint32_t iRemaining) const
 {
   mGameWindow->display_remaining(iRemaining);
 }
 
-void CDartBoardX01::display_score(uint32_t iScore)
+void CDartBoardX01::display_score(const uint32_t iScore) const
 {
   mGameWindow->display_score(iScore);
 }
 
-void CDartBoardX01::display_dart1(uint32_t iVal)
+void CDartBoardX01::display_dart1(const uint32_t iVal) const
 {
   mGameWindow->display_dart1(iVal);
 }
 
-void CDartBoardX01::display_dart2(uint32_t iVal)
+void CDartBoardX01::display_dart2(const uint32_t iVal) const
 {
   mGameWindow->display_dart2(iVal);
 }
 
-void CDartBoardX01::display_dart3(uint32_t iVal)
+void CDartBoardX01::display_dart3(const uint32_t iVal) const
 {
   mGameWindow->display_dart3(iVal);
 }
@@ -253,17 +251,17 @@ void CDartBoardX01::erase_all_darts()
   erase_dart3();
 }
 
-void CDartBoardX01::erase_dart1()
+void CDartBoardX01::erase_dart1() const
 {
   mGameWindow->erase_dart1();
 }
 
-void CDartBoardX01::erase_dart2()
+void CDartBoardX01::erase_dart2() const
 {
   mGameWindow->erase_dart2();
 }
 
-void CDartBoardX01::erase_dart3()
+void CDartBoardX01::erase_dart3() const
 {
   mGameWindow->erase_dart3();
 }
@@ -278,17 +276,17 @@ void CDartBoardX01::unset_finished()
   mFinished = false;
 }
 
-void CDartBoardX01::submit_score_to_player(uint32_t iScore, uint32_t iNumberOfDarts, uint32_t iCheckoutAttempts, const QVector<QString> &iDarts)
+void CDartBoardX01::submit_score_to_player(const uint32_t iScore, const uint32_t iNumberOfDarts, const uint32_t iCheckoutAttempts, const QVector<QString> &iDarts) const
 {
   mGameWindow->submit_score_to_player(iScore, iNumberOfDarts, iCheckoutAttempts, iDarts);
 }
 
-void CDartBoardX01::update_finishes(uint32_t iScore, uint32_t iNumberOfDarts)
+void CDartBoardX01::update_finishes(const uint32_t iScore, const uint32_t iNumberOfDarts) const
 {
   mGameWindow->update_finishes(iScore, iNumberOfDarts);
 }
 
-void CDartBoardX01::set_focus_to_submit_button()
+void CDartBoardX01::set_focus_to_submit_button() const
 {
   mGameWindow->set_focus_to_submit_button();
 }

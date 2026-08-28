@@ -4,7 +4,6 @@
 #include <QDialog>
 #include "game_data_handler.h"
 #include "alltime_player_stats_model.h"
-#include <QChart>
 #include <QLineSeries>
 #include <QChartView>
 #include <QPointer>
@@ -21,13 +20,13 @@ class CAllTimeStatsDialog : public QDialog
 public:
 
   explicit CAllTimeStatsDialog(CGameDataHandler & iGameDataHandler, QWidget * iParent = nullptr);
-  ~CAllTimeStatsDialog();
+  ~CAllTimeStatsDialog() override;
 
 private slots:
 
   void player_selected_slot();
-  void game_selected_slot();
-  void stat_selected_slot();
+  void game_selected_slot() const;
+  void stat_selected_slot() const;
 
 private:
 
@@ -51,9 +50,9 @@ private:
 
   void setup_drop_down_menu();
   void prepare_plot_data();
-  void update_stats_combobox(bool iIsCricket);
-  void plot_data();
-  void get_min_max(SPlotRange & oPlotRange, const QLineSeries * const iSeries);
+  void update_stats_combobox(bool iIsCricket) const;
+  void plot_data() const;
+  static void get_min_max(SPlotRange & oPlotRange, const QLineSeries * iSeries);
 
   Ui::CAllTimeStatsDialog * mUi;
   CGameDataHandler & mGameDataHandler;

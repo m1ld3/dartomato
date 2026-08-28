@@ -3,14 +3,13 @@
 #include <QString>
 #include "dartboard_base.h"
 
-CDartBoardSegment::CDartBoardSegment(CDartBoard * iDartBoard, const QPainterPath & iPath, const uint32_t iVal, QString && iColor, QChar iType, QGraphicsPathItem * iParent)
-  : QObject()
-  , QGraphicsPathItem(iPath, iParent)
-  , mValue(iVal)
-  , mColor(iColor)
-  , mPath(iPath)
-  , mType(iType)
-  , mDartBoard(iDartBoard)
+CDartBoardSegment::CDartBoardSegment(CDartBoard * iDartBoard, const QPainterPath & iPath, const uint32_t iVal, QString && iColor, const QChar iType, QGraphicsPathItem * iParent)
+  : QGraphicsPathItem(iPath, iParent)
+    , mValue(iVal)
+    , mColor(iColor)
+    , mPath(iPath)
+    , mType(iType)
+    , mDartBoard(iDartBoard)
 {
   setAcceptHoverEvents(true);
 }
@@ -98,7 +97,7 @@ void CDartBoardSegment::paint(QPainter * iPainter, const QStyleOptionGraphicsIte
   {
     if (mColor == "black")       brush.setColor(Qt::black);
     else if (mColor == "beige")  brush.setColor(QColor::fromRgb(215, 215, 190));
-    else if (mColor == "red")    brush.setColor(QColor::fromRgb(180, 50, 0));
+    else if (mColor == "red")    brush.setColor(QColor::fromRgb(160, 0, 0));
     else if (mColor == "green")  brush.setColor(Qt::darkGreen);
     else                         brush.setColor(Qt::white);
   }

@@ -1,7 +1,6 @@
 #ifndef CGLOBALGAMESTATSX01MODEL_H
 #define CGLOBALGAMESTATSX01MODEL_H
 
-#include <QAbstractTableModel>
 #include "stats_window_x01.h"
 
 class CGlobalGameStatsX01Model : public QAbstractTableModel
@@ -11,9 +10,9 @@ class CGlobalGameStatsX01Model : public QAbstractTableModel
 public:
 
   explicit CGlobalGameStatsX01Model(const CStatsWindowX01::SGlobalGameStatsData & iData, QObject * iParent = nullptr);
-  int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
-  int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
-  QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
+  [[nodiscard]] int rowCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] int columnCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] QVariant data(const QModelIndex & iIndex, int iRole) const override;
 
 private:
 

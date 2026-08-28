@@ -1,9 +1,10 @@
 #include "x01_class.h"
 #include "x01_mainwindow.h"
 #include <cmath>
+#include <utility>
 
-CX01Class::CX01Class(uint32_t iPlayerNumber, const CSettings iSettings)
-  : mSettings(iSettings)
+CX01Class::CX01Class(uint32_t iPlayerNumber, CSettings iSettings)
+  : mSettings(std::move(iSettings))
   , mRemainingPoints(static_cast<uint32_t>(mSettings.Game))
   , mMarginLegs(std::ceil(mSettings.Legs / 2.0))
   , mMarginSets(std::ceil(mSettings.Sets / 2.0))
@@ -27,7 +28,7 @@ bool CX01Class::increment_won_legs_and_check_if_set_won()
   return hasWonSet;
 }
 
-void CX01Class::restore_state(CPlayerData iData)
+void CX01Class::restore_state(const CPlayerData& iData)
 {
   mSetsWon = iData.SetsWon;
   mLegsWonPerSet = iData.LegsWonPerSet;
@@ -52,14 +53,14 @@ void CX01Class::restore_state(CPlayerData iData)
 
 CX01Class::CPlayerData CX01Class::create_snapshot() const
 {
-  return CPlayerData(mSetsWon, mLegsWonPerSet,
+  return {mSetsWon, mLegsWonPerSet,
                      mTotalLegsWon, mRemainingPoints,
                      mCheckoutAttempts, mCheckoutHits,
                      mTotalDarts, mAvg1Dart, mAvg3Dart, mCheckoutRate,
                      mFirst9Avg, mScoresOfCurrentLeg, mAllScoresOfAllLegs,
                      mAllScoresFlat, mThrownDartsOfCurrentLeg,
                      mThrownDartsOfAllLegsFlat, mThrownDartsOfAllLegs,
-                     mRemainingPointsOfCurrentLeg, mRemainingPointsOfAllLegs);
+                     mRemainingPointsOfCurrentLeg, mRemainingPointsOfAllLegs};
 }
 
 bool CX01Class::has_won_game() const
@@ -67,19 +68,19 @@ bool CX01Class::has_won_game() const
   return mSetsWon == mMarginSets;
 }
 
-uint32_t CX01Class::set_score(uint32_t score)
+uint32_t CX01Class::set_score(const uint32_t iScore)
 {
-  mScoresOfCurrentLeg.push_back(score);
-  mAllScoresFlat.push_back(score);
-  mRemainingPoints -= score;
+  mScoresOfCurrentLeg.push_back(iScore);
+  mAllScoresFlat.push_back(iScore);
+  mRemainingPoints -= iScore;
   mRemainingPointsOfCurrentLeg.push_back(mRemainingPoints);
   return mRemainingPoints;
 }
 
-void CX01Class::set_darts(QVector<QString> darts)
+void CX01Class::set_darts(const QVector<QString>& iDarts)
 {
-  mThrownDartsOfCurrentLeg.append(darts);
-  mThrownDartsOfAllLegsFlat.append(darts);
+  mThrownDartsOfCurrentLeg.append(iDarts);
+  mThrownDartsOfAllLegsFlat.append(iDarts);
 }
 
 void CX01Class::reset_score()
@@ -103,10 +104,10 @@ uint32_t CX01Class::get_player_number() const
   return mPlayerNumber;
 }
 
-void CX01Class::compute_averages(uint32_t numberofdarts)
+void CX01Class::compute_averages(const uint32_t iNumberOfDarts)
 {
-  mTotalDarts += numberofdarts;
-  double n = static_cast<double>(mTotalDarts);
+  mTotalDarts += iNumberOfDarts;
+  const auto n = static_cast<double>(mTotalDarts);
 
   if (mTotalDarts > 0)
   {
@@ -125,7 +126,7 @@ void CX01Class::compute_first9_avg()
   uint32_t points = 0;
   for (const auto & scores : mAllScoresOfAllLegs)
   {
-    for (size_t i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
       if (i < scores.size())
       {
@@ -141,9 +142,14 @@ void CX01Class::compute_first9_avg()
     idx++;
   }
 
-  auto legs = mScoresOfCurrentLeg.size() > 0 ? mAllScoresOfAllLegs.size() + 1 : mAllScoresOfAllLegs.size();
-  if (legs == 0) mFirst9Avg = 0.0;
-  else mFirst9Avg = static_cast<double>(points) / (legs * 3);
+  if (const auto legs = !mScoresOfCurrentLeg.empty() > 0 ? mAllScoresOfAllLegs.size() + 1 : mAllScoresOfAllLegs.size(); legs == 0)
+  {
+    mFirst9Avg = 0.0;
+  }
+  else
+  {
+    mFirst9Avg = static_cast<double>(points) / (static_cast<double>(legs * 3));
+  };
 }
 
 void CX01Class::compute_checkout()

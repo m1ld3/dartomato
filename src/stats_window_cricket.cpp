@@ -1,4 +1,6 @@
 #include "stats_window_cricket.h"
+
+#include <utility>
 #include "leg_stats_cricket_model.h"
 #include "leg_scores_cricket_model.h"
 #include "global_game_stats_cricket_model.h"
@@ -6,10 +8,10 @@
 #include "ui_stats_window_cricket.h"
 
 #ifndef TESTING
-CStatsWindowCricket::CStatsWindowCricket(const CCricketClass::CPlayerData iPlayerData, QWidget * iParent)
+CStatsWindowCricket::CStatsWindowCricket(CCricketClass::CPlayerData  iPlayerData, QWidget * iParent)
  : QDialog(iParent)
  ,  mUi(new Ui::CStatsWindowCricket)
- ,  mPlayerData(iPlayerData)
+ ,  mPlayerData(std::move(iPlayerData))
 {
   mUi->setupUi(this);
   setAttribute(Qt::WA_DeleteOnClose);
@@ -42,7 +44,7 @@ void CStatsWindowCricket::get_global_game_stats_data()
   mGlobalGameStatsData.HitsPerRound = mPlayerData.HitsPerRound;
   mGlobalGameStatsData.TotalHits = mPlayerData.TotalHits;
   mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
-  mGlobalGameStatsData.NumLegs = mPlayerData.LegWonVec.size() > 0 ? mPlayerData.LegWonHistory.size() + 1 : mPlayerData.LegWonHistory.size();
+  mGlobalGameStatsData.NumLegs = !mPlayerData.LegWonVec.empty() ? mPlayerData.LegWonHistory.size() + 1 : mPlayerData.LegWonHistory.size();
 }
 
 void CStatsWindowCricket::setup_table_views()
@@ -71,7 +73,7 @@ void CStatsWindowCricket::setup_table_views()
 
 void CStatsWindowCricket::init_leg_selector()
 {
-  uint32_t numberOfLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.ScoringHistory.size() + 1 : mPlayerData.ScoringHistory.size();
+  uint32_t numberOfLegs = !mPlayerData.ScoresOfCurrentLeg.empty() ? mPlayerData.ScoringHistory.size() + 1 : mPlayerData.ScoringHistory.size();
   if (numberOfLegs == 0)
   {
     mUi->legSelector->addItem("1");
@@ -83,14 +85,14 @@ void CStatsWindowCricket::init_leg_selector()
     {
       mUi->legSelector->addItem(QString::number(i));
     }
-    mUi->legSelector->setCurrentIndex(numberOfLegs - 1);
+    mUi->legSelector->setCurrentIndex(static_cast<int>(numberOfLegs) - 1);
   }
 }
 
 void CStatsWindowCricket::compute_hits_per_round(const QVector<QVector<QString>> & iTotalDarts, const QVector<uint32_t> & iTotalHits)
 {
-  uint32_t numberOfDarts = (iTotalDarts.size() - 1) * 3 + iTotalDarts.back().size();
-  uint32_t hits = std::accumulate(iTotalHits.begin(), iTotalHits.end(), 0.0);
+  const uint32_t numberOfDarts = (iTotalDarts.size() - 1) * 3 + iTotalDarts.back().size();
+  const uint32_t hits = std::accumulate(iTotalHits.begin(), iTotalHits.end(), 0u);
   mLegStatsData.HitsPerRound = numberOfDarts > 0 ? 3 * static_cast<double>(hits) / static_cast<double>(numberOfDarts) : 0.0;
 }
 
@@ -130,18 +132,18 @@ void CStatsWindowCricket::update_leg_stats_table_view()
 #endif
 }
 
-void CStatsWindowCricket::update_leg_history(int iIndex)
+void CStatsWindowCricket::update_leg_history(const int iIndex)
 {
   QVector<QVector<QVector<QString>>> totalDarts = mPlayerData.ScoringHistory;
   QVector<QVector<uint32_t>> totalHits = mPlayerData.HitsHistory;
-  if (mPlayerData.ScoresOfCurrentLeg.size()) totalDarts.append(mPlayerData.ScoresOfCurrentLeg);
-  if (mPlayerData.HitsOfCurrentLeg.size()) totalHits.append(mPlayerData.HitsOfCurrentLeg);
+  if (!mPlayerData.ScoresOfCurrentLeg.empty()) totalDarts.append(mPlayerData.ScoresOfCurrentLeg);
+  if (!mPlayerData.HitsOfCurrentLeg.empty()) totalHits.append(mPlayerData.HitsOfCurrentLeg);
 
   if (totalDarts.size() >= iIndex + 1 && totalHits.size() >= iIndex + 1)
   {
     compute_hits_per_round(totalDarts.at(iIndex), totalHits.at(iIndex));
     update_leg_scores_table_view(totalDarts.at(iIndex));
-    mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / totalDarts.size();
+    mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / static_cast<double>(totalDarts.size());
   }
 
   mLegStatsData.DartCountOfCurrentLeg = compute_dart_count_of_indexed_leg(iIndex);
@@ -151,7 +153,7 @@ void CStatsWindowCricket::update_leg_history(int iIndex)
 void CStatsWindowCricket::calculate_segment_counts()
 {
   QVector<QVector<QVector<QString>>> totalDarts = mPlayerData.ScoringHistory;
-  if (mPlayerData.ScoresOfCurrentLeg.size()) totalDarts.append(mPlayerData.ScoresOfCurrentLeg);
+  if (!mPlayerData.ScoresOfCurrentLeg.empty()) totalDarts.append(mPlayerData.ScoresOfCurrentLeg);
   QVector<QVector<QString>> totalDartsFlat = {};
   for (const auto & darts : totalDarts) totalDartsFlat.append(darts);
 
@@ -160,7 +162,7 @@ void CStatsWindowCricket::calculate_segment_counts()
     for (const auto & dart : darts)
     {
       if (dart == "") continue;
-      int idx = dart.mid(1).toUInt() % 15;
+      uint idx = dart.mid(1).toUInt() % 15;
       if (idx == 10) idx = 6;
       if (dart.mid(1).toUInt() == 0) idx = 20;
       if (dart[0] == 'd')      mSegmentCounts.at(idx + 7) += 1;
@@ -181,7 +183,7 @@ void CStatsWindowCricket::compute_dart_count_of_won_legs()
       mDartCountOfWonLegs.append((mPlayerData.ScoringHistory.at(idx).size() - 1) * 3 + mPlayerData.ScoringHistory.at(idx).back().size());
     }
   }
-  if (mDartCountOfWonLegs.size())
+  if (!mDartCountOfWonLegs.empty())
   {
     mLegStatsData.BestWonLegDartCount = *std::min_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
     mLegStatsData.WorstWonLegDartCount = *std::max_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
@@ -192,8 +194,8 @@ uint32_t CStatsWindowCricket::compute_dart_count_of_indexed_leg(uint32_t iIndex)
 {
   QVector<QVector<QString>> dartsOfIndexedLeg;
   QVector<QVector<QVector<QString>>> dartsOfAllLegs = mPlayerData.ScoringHistory;
-  if (mPlayerData.ScoresOfCurrentLeg.size()) dartsOfAllLegs.append(mPlayerData.ScoresOfCurrentLeg);
-  if (dartsOfAllLegs.size()) dartsOfIndexedLeg = dartsOfAllLegs.at(iIndex);
-  if (dartsOfIndexedLeg.size()) return (dartsOfIndexedLeg.size() - 1) * 3 + dartsOfIndexedLeg.last().size();
+  if (!mPlayerData.ScoresOfCurrentLeg.empty()) dartsOfAllLegs.append(mPlayerData.ScoresOfCurrentLeg);
+  if (!dartsOfAllLegs.empty()) dartsOfIndexedLeg = dartsOfAllLegs.at(iIndex);
+  if (!dartsOfIndexedLeg.empty()) return (dartsOfIndexedLeg.size() - 1) * 3 + dartsOfIndexedLeg.last().size();
   return 0;
 }

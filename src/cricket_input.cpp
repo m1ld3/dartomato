@@ -1,11 +1,8 @@
 #include "cricket_input.h"
 #include "ui_cricket_input.h"
-#include <QGraphicsPathItem>
 #include <QPushButton>
 #include <QLineEdit>
-#include <cmath>
 #include <QMessageBox>
-#include <QVector>
 #include "cricket_class.h"
 #include "groupbox_cricket.h"
 #include "cricket_mainwindow.h"
@@ -28,7 +25,7 @@ CCricketInput::CCricketInput(QWidget * iParent, const CSettings & iSettings, CCr
   , mScore(mPlayer->get_score())
   , mPlayerNumber(mPlayer->get_player_number())
   , mSettings(iSettings)
-  , mGroupBox(static_cast<CCricketGroupBox*>(iParent))
+  , mGroupBox(qobject_cast<CCricketGroupBox*>(iParent))
 {
   mUi->setupUi(this);
   mUi->submitButton->setAutoDefault(true);
@@ -56,17 +53,17 @@ CCricketInput::~CCricketInput()
 #endif
 }
 
-void CCricketInput::set_score_labels(uint32_t iVal, QChar iType)
+void CCricketInput::set_score_labels(uint32_t iValue, const QChar iType)
 {
-  if (iType == 't') iVal /= 3;
-  else if (iType == 'd') iVal /= 2;
+  if (iType == 't') iValue /= 3;
+  else if (iType == 'd') iValue /= 2;
 
-  mDarts[3 - mCounter] = iType + QString::number(iVal);
-  QString temp = iType.toUpper() + QString::number(iVal);
+  mDarts[3 - mCounter] = iType + QString::number(iValue);
+  QString temp = iType.toUpper() + QString::number(iValue);
 #ifndef TESTING
-  if (mCounter == 3) mUi->labelScoreDart1->setText(iVal > 0 ? temp : "X");
-  else if (mCounter == 2) mUi->labelScoreDart2->setText(iVal > 0 ? temp : "X");
-  else if (mCounter == 1) mUi->labelScoreDart3->setText(iVal > 0 ? temp : "X");
+  if (mCounter == 3) mUi->labelScoreDart1->setText(iValue > 0 ? temp : "X");
+  else if (mCounter == 2) mUi->labelScoreDart2->setText(iValue > 0 ? temp : "X");
+  else if (mCounter == 1) mUi->labelScoreDart3->setText(iValue > 0 ? temp : "X");
 #endif
 }
 
@@ -90,14 +87,14 @@ bool CCricketInput::are_slots_full() const
   return temp;
 }
 
-void CCricketInput::handle_segment_pressed_event(uint32_t iVal, QChar iType)
+void CCricketInput::handle_segment_pressed_event(const uint32_t iVal, const QChar iType)
 {
   process_segment_common(iVal, iType);
   if (mSettings.CutThroat) process_segment_cutthroat();
   else process_segment_default();
 }
 
-void CCricketInput::process_segment_common(uint32_t iVal, QChar & iType)
+void CCricketInput::process_segment_common(const uint32_t iVal, const QChar & iType)
 {
   if (!mStop && mCounter > 0)
   {
@@ -107,12 +104,11 @@ void CCricketInput::process_segment_common(uint32_t iVal, QChar & iType)
   }
 }
 
-void CCricketInput::handle_slots_and_extra_points(uint32_t iVal, QChar & iType)
+void CCricketInput::handle_slots_and_extra_points(const uint32_t iVal, const QChar & iType)
 {
   uint32_t hits = (iType == 't') ? 3 : ((iType == 'd') ? 2 : 1);
-  uint32_t val = iVal / hits;
-  uint32_t idx = static_cast<uint32_t>(Slot2IdxMap[val]);
-  if (mSlotArray.at(idx) < 3 && val != 0)
+  const uint32_t val = iVal / hits;
+  if (const auto idx = static_cast<uint32_t>(Slot2IdxMap[val]); mSlotArray.at(idx) < 3 && val != 0)
   {
     if (mSlotArray.at(idx) + hits <= 3)
     {
@@ -131,7 +127,7 @@ void CCricketInput::handle_slots_and_extra_points(uint32_t iVal, QChar & iType)
   }
 }
 
-void CCricketInput::increase_extra_points(uint32_t iSlotIdx, uint32_t iSlotVal, uint32_t iHits)
+void CCricketInput::increase_extra_points(const uint32_t iSlotIdx, const uint32_t iSlotVal, const uint32_t iHits)
 {
   if (mGameWindow->is_slot_free(static_cast<ECricketSlots>(iSlotIdx), mPlayerNumber))
   {
@@ -174,9 +170,9 @@ void CCricketInput::process_segment_cutthroat()
 void CCricketInput::check_if_game_shot_cutthroat(QVector<uint32_t> & iScores)
 {
   bool result = true;
-  for (uint32_t i = 0; i < iScores.size(); i++)
+  for (const unsigned int iScore : iScores)
   {
-    result = result && iScores[i] >= mScore;
+    result = result && iScore >= mScore;
   }
 
   if (are_slots_full() && result) handle_game_shot();
@@ -196,7 +192,7 @@ void CCricketInput::compute_cutthroat_scores_for_other_players(QVector<uint32_t>
   }
 }
 
-void CCricketInput::notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> &iDarts)
+void CCricketInput::notify_cricket_submit_button_clicked(const uint32_t iNumberOfDarts, QVector<QString> &iDarts) const
 {
   mGroupBox->handle_submit_button_clicked(iNumberOfDarts, iDarts);
 }
@@ -209,7 +205,7 @@ void CCricketInput::handle_input_stop()
 #endif
 }
 
-void CCricketInput::handle_warnings(bool iWarningCondition)
+void CCricketInput::handle_warnings(const bool iWarningCondition)
 {
   const char * warningMsg = iWarningCondition ? "You have already won this leg!" : "You only have three darts!";
   PUT_WARNING("Warning", warningMsg);

@@ -1,5 +1,4 @@
 #include "game_data_handler.h"
-#include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 #include <QJsonArray>
@@ -54,9 +53,7 @@ bool CGameDataHandler::add_new_player(const QString & iPlayerName)
 
 bool CGameDataHandler::create_players_table()
 {
-  QSqlQuery query;
-
-  if (!query.exec("CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE)"))
+  if (QSqlQuery query; !query.exec("CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE)"))
   {
     qWarning() << "Error: Unable to create players table" << query.lastError();
     return false;
@@ -67,9 +64,7 @@ bool CGameDataHandler::create_players_table()
 
 bool CGameDataHandler::create_games_tables()
 {
-  QSqlQuery query;
-
-  if (!query.exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, winner_id INTEGER, game_mode INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, in_mode INTEGER, out_mode INTEGER, cutthroat INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (winner_id) REFERENCES players(id))"))
+  if (QSqlQuery query; !query.exec("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, player_id INTEGER, winner_id INTEGER, game_mode INTEGER, time_stamp TEXT, finished INTEGER, best_of_legs INTEGER, best_of_sets INTEGER, in_mode INTEGER, out_mode INTEGER, cutthroat INTEGER, game_data TEXT, FOREIGN KEY (player_id) REFERENCES players(id), FOREIGN KEY (winner_id) REFERENCES players(id))"))
   {
     qWarning() << "Error: Unable to create games table" << query.lastError();
     return false;
@@ -78,7 +73,7 @@ bool CGameDataHandler::create_games_tables()
   return true;
 }
 
-bool CGameDataHandler::player_exists(const QString & iPlayerName) const
+bool CGameDataHandler::player_exists(const QString & iPlayerName)
 {
   QSqlQuery query;
   query.prepare("SELECT COUNT(*) FROM players WHERE name = :name");
@@ -96,12 +91,11 @@ bool CGameDataHandler::player_exists(const QString & iPlayerName) const
   return playerCount > 0;
 }
 
-QStringList CGameDataHandler::get_player_names() const
+QStringList CGameDataHandler::get_player_names()
 {
   QStringList playerNames;
-  QSqlDatabase db = QSqlDatabase::database();
 
-  if (!db.tables().contains("players"))
+  if (const QSqlDatabase db = QSqlDatabase::database(); !db.tables().contains("players"))
   {
     return playerNames;
   }
@@ -123,7 +117,7 @@ QStringList CGameDataHandler::get_player_names() const
   return playerNames;
 }
 
-int CGameDataHandler::get_player_id(const QString & iPlayerName) const
+int CGameDataHandler::get_player_id(const QString & iPlayerName)
 {
   QSqlQuery query;
   query.prepare("SELECT id FROM players WHERE name = :name");
@@ -138,7 +132,7 @@ int CGameDataHandler::get_player_id(const QString & iPlayerName) const
   return query.value(0).toInt();
 }
 
-QString CGameDataHandler::get_player_name_from_id(int iPlayerId) const
+QString CGameDataHandler::get_player_name_from_id(const int iPlayerId)
 {
   QSqlQuery query;
   query.prepare("SELECT name FROM players WHERE id = :playerId");
@@ -296,9 +290,9 @@ bool CGameDataHandler::save_game_to_db(const SGameData & iGameData)
   for (uint32_t i = 0; i < iGameData.Settings.PlayersList.size(); i++)
   {
     QJsonArray gameDataArray;
-    if (iGameData.GameDataX01.size() > 0) fill_game_data_array(iGameData.GameDataX01.at(i), gameDataArray);
+    if (!iGameData.GameDataX01.empty()) fill_game_data_array(iGameData.GameDataX01.at(i), gameDataArray);
     else fill_game_data_array(iGameData.GameDataCricket.at(i), gameDataArray);
-    int playerId = get_player_id(iGameData.Settings.PlayersList.at(i));
+    const int playerId = get_player_id(iGameData.Settings.PlayersList.at(i));
 
     if (playerId == -1)
     {
@@ -430,7 +424,7 @@ QVector<CGameDataHandler::SStatsData> CGameDataHandler::get_stats_data()
       }
     }
 
-    if (x01Data.size() || cricketData.size())
+    if (!x01Data.empty() || !cricketData.empty())
     {
       auto singlePlayerData = SStatsData(player, x01Data, cricketData);
       gameData.append(singlePlayerData);
@@ -442,9 +436,7 @@ QVector<CGameDataHandler::SStatsData> CGameDataHandler::get_stats_data()
 
 bool CGameDataHandler::delete_game_from_db(const QString &iTimeStamp)
 {
-  QSqlQuery query(QString("DELETE FROM games WHERE time_stamp = '%1'").arg(iTimeStamp));
-
-  if (!query.exec())
+  if (QSqlQuery query(QString("DELETE FROM games WHERE time_stamp = '%1'").arg(iTimeStamp)); !query.exec())
   {
     qWarning() << "Error deleting games at timestamp " << iTimeStamp << query.lastError().text();
     return false;
@@ -454,10 +446,9 @@ bool CGameDataHandler::delete_game_from_db(const QString &iTimeStamp)
 
 bool CGameDataHandler::delete_player_from_db(const QString &iPlayerName)
 {
-  int playerId = get_player_id(iPlayerName);
+  const int playerId = get_player_id(iPlayerName);
   QSqlQuery query(QString("DELETE FROM games WHERE player_id = '%1'").arg(playerId));
-  QSqlQuery query2(QString("DELETE FROM players WHERE name = '%1'").arg(iPlayerName));
-  if (!query.exec() || !query2.exec())
+  if (QSqlQuery query2(QString("DELETE FROM players WHERE name = '%1'").arg(iPlayerName)); !query.exec() || !query2.exec())
   {
     qWarning() << "Error deleting data for player " << iPlayerName << query.lastError().text();
     return false;
@@ -500,11 +491,10 @@ template void CGameDataHandler::fill_vec<QVector<QVector<QVector<QString>>>>(con
 template<typename T>
 void CGameDataHandler::extract_vec(T & oData, QJsonObject & iGameDataObject, const QString & iKey)
 {
-  const QJsonValue jsonValue = iGameDataObject.value(iKey);
-  if (jsonValue.isArray())
+  if (const QJsonValue jsonValue = iGameDataObject.value(iKey); jsonValue.isArray())
   {
     const QJsonArray jsonArray = jsonValue.toArray();
-    for (const QJsonValue & data : jsonArray)
+    for (const auto & data : jsonArray)
     {
       if constexpr (std::is_same_v<T, QVector<QVector<uint32_t>>> ||
                     std::is_same_v<T, QVector<QVector<QString>>> ||

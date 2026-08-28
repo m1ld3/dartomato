@@ -6,10 +6,8 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QPushButton>
-#include <QFile>
 
-
-CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler)
+CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings& iSettings, const CGameDataHandler & iGameDataHandler)
   : QMainWindow(iParent)
   , IMainWindow(iSettings.PlayersList.size())
   , mUi(new Ui::CX01MainWindow)
@@ -19,8 +17,8 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
   , mSoundHandler(CSoundHandler::instance())
 {
   mUi->setupUi(this);
-  QString text = QString::number(static_cast<uint32_t>(mSettings.Game));
-  QWidget::setWindowTitle(text);
+  const QString text = QString::number(static_cast<uint32_t>(mSettings.Game));
+  setWindowTitle(text);
 #ifndef TESTING
   mDartBoard = new CDartBoardX01(mUi->graphicsViewDartBoard, this, mSettings);
 #else
@@ -40,7 +38,7 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
   mUi->submitButton->setAutoDefault(true);
 }
 
-CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData)
+CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings& iSettings, const CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData& iGameData)
   : CX01MainWindow(iParent, iSettings, iGameDataHandler)
 {
   for (uint32_t i = 0; i < mNumberOfPlayers; i++)
@@ -55,8 +53,8 @@ CX01MainWindow::CX01MainWindow(QWidget * iParent, const CSettings iSettings, CGa
 CX01MainWindow::~CX01MainWindow()
 {
   delete mUi;
-  if (mDartBoard) delete mDartBoard;
-  for (auto box : mPlayerBox)
+  delete mDartBoard;
+  for (const auto box : mPlayerBox)
   {
     delete box;
   }

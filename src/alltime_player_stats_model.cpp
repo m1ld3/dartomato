@@ -1,6 +1,6 @@
 #include "alltime_player_stats_model.h"
 
-CAlltimePlayerStatsModel::CAlltimePlayerStatsModel(CGameDataHandler & iGameDataHandler, const QVector<QString> iSelectedPlayers, bool iIsCricket, QObject * iParent)
+CAlltimePlayerStatsModel::CAlltimePlayerStatsModel(CGameDataHandler & iGameDataHandler, const QVector<QString>& iSelectedPlayers, const bool iIsCricket, QObject * iParent)
   : QAbstractTableModel{iParent}
   , mIsCricket(iIsCricket)
   , mGameDataHandler(iGameDataHandler)
@@ -12,16 +12,16 @@ CAlltimePlayerStatsModel::CAlltimePlayerStatsModel(CGameDataHandler & iGameDataH
 
 int CAlltimePlayerStatsModel::rowCount(const QModelIndex & iParent) const
 {
-  return mIsCricket ? mStatLabelsCricket.size() : mStatLabelsX01.size();
+  return static_cast<int>(mIsCricket ? mStatLabelsCricket.size() : mStatLabelsX01.size());
 }
 
 int CAlltimePlayerStatsModel::columnCount(const QModelIndex & iParent) const
 {
   Q_UNUSED(iParent);
-  return mSelectedPlayers.size();
+  return static_cast<int>(mSelectedPlayers.size());
 }
 
-QVariant CAlltimePlayerStatsModel::headerData(int iSection, Qt::Orientation iOrientation, int iRole) const
+QVariant CAlltimePlayerStatsModel::headerData(const int iSection, const Qt::Orientation iOrientation, const int iRole) const
 {
   if (iRole == Qt::DisplayRole)
   {
@@ -37,19 +37,19 @@ QVariant CAlltimePlayerStatsModel::headerData(int iSection, Qt::Orientation iOri
       return mIsCricket? mStatLabelsCricket.at(iSection) : mStatLabelsX01.at(iSection);
     }
   }
-  return QVariant();
+  return {};
 }
 
 QVariant CAlltimePlayerStatsModel::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount() || iIndex.column() >= mSelectedStats.size())
+  if (!iIndex.isValid() || iIndex.row() >= rowCount({}) || iIndex.column() >= columnCount({}) || iIndex.column() >= mSelectedStats.size())
   {
-    return QVariant();
+    return {};
   }
 
   if (iRole == Qt::DisplayRole)
   {
-    size_t playerIdx = iIndex.column();
+    const auto playerIdx = iIndex.column();
     switch (iIndex.row())
     {
     case  0: return QString::number(mSelectedStats.at(playerIdx).GamesPlayed);
@@ -72,16 +72,16 @@ QVariant CAlltimePlayerStatsModel::data(const QModelIndex & iIndex, int iRole) c
     case 13: return QString::number(mSelectedStats.at(playerIdx).BestLegAvg, 'f', 2);
     case 14: return QString::number(mSelectedStats.at(playerIdx).CheckoutRate, 'f', 2) + "  (" + QString::number(mSelectedStats.at(playerIdx).CheckoutHits) + " / " + QString::number(mSelectedStats.at(playerIdx).CheckoutAttempts) + ")";
     case 15: return QString::number(mSelectedStats.at(playerIdx).HighestCheckout);
-    default: return QVariant();
+    default: return {};
     }
   }
   else
   {
-    return QVariant();
+    return {};
   }
 }
 
-void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString> iSelectedPlayers)
+void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString>& iSelectedPlayers)
 {
   mSelectedPlayers = iSelectedPlayers;
   mSelectedStats = {};
@@ -89,7 +89,7 @@ void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString
   for (const auto & data : mGameStats)
   {
     if (!mSelectedPlayers.contains(data.PlayerName)) continue;
-    if (data.GameDataX01.size() == 0) continue;
+    if (data.GameDataX01.empty()) continue;
     SPlayerStats stats;
 
     double avg3 = 0.0;
@@ -101,7 +101,6 @@ void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString
     uint32_t checkoutHits = 0;
     uint32_t checkoutAttempts = 0;
     uint32_t highestCheckout = 0;
-    uint32_t totalDarts = 0;
 
     for (const auto & gameData : data.GameDataX01)
     {
@@ -116,17 +115,19 @@ void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString
       avg3 += gameData.Avg3Dart;
       avg1 += gameData.Avg1Dart;
       first9Avg += gameData.First9Avg;
-      QVector<QVector<uint32_t>> totalScores = gameData.AllScoresOfAllLegs;
-      QVector<QVector<QVector<QString>>> totalDarts = gameData.ThrownDartsOfAllLegs;
-      QVector<QVector<uint32_t>> remainingPointsOfAllLegs = gameData.RemainingPointsOfAllLegs;
-      if (gameData.ScoresOfCurrentLeg.size()) totalScores.append(gameData.ScoresOfCurrentLeg);
-      if (gameData.ThrownDartsOfCurrentLeg.size()) totalDarts.append(gameData.ThrownDartsOfCurrentLeg);
+      auto totalScores = gameData.AllScoresOfAllLegs;
+      auto totalDarts = gameData.ThrownDartsOfAllLegs;
+      auto remainingPointsOfAllLegs = gameData.RemainingPointsOfAllLegs;
+      if (!gameData.ScoresOfCurrentLeg.empty()) totalScores.append(gameData.ScoresOfCurrentLeg);
+      if (!gameData.ThrownDartsOfCurrentLeg.empty()) totalDarts.append(gameData.ThrownDartsOfCurrentLeg);
 
       for (auto idx = 0; idx < totalScores.size(); idx++)
       {
-        uint32_t numberOfDarts = (totalDarts.at(idx).size() - 1) * 3 + totalDarts.at(idx).back().size();
-        double avg = std::accumulate(totalScores.at(idx).begin(), totalScores.at(idx).end(), 0.0) / numberOfDarts;
-        if (avg > bestLegAvg) bestLegAvg = avg;
+        const uint32_t numberOfDarts = (totalDarts.at(idx).size() - 1) * 3 + totalDarts.at(idx).back().size();
+        if (const double avg = std::accumulate(totalScores.at(idx).begin(), totalScores.at(idx).end(), 0.0) / static_cast<double>(numberOfDarts); avg > bestLegAvg)
+        {
+          bestLegAvg = avg;
+        }
         if (remainingPointsOfAllLegs.at(idx).back() == 0)
         {
           if (numberOfDarts < bestWonLegDartCount) bestWonLegDartCount = numberOfDarts;
@@ -143,9 +144,9 @@ void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString
     stats.PlayerName = data.PlayerName;
     stats.WinRate = stats.GamesPlayed > 0 ? static_cast<double>(stats.GamesWon) / stats.GamesPlayed * 100 : 0.0;
     stats.LegWinRate = stats.LegsPlayed > 0 ? static_cast<double>(stats.LegsWon) / stats.LegsPlayed * 100 : 0.0;
-    stats.Avg3Dart = avg3 / data.GameDataX01.size();
-    stats.Avg1Dart = avg1 / data.GameDataX01.size();
-    stats.First9Avg = first9Avg / data.GameDataX01.size();
+    stats.Avg3Dart = avg3 / static_cast<double>(data.GameDataX01.size());
+    stats.Avg1Dart = avg1 / static_cast<double>(data.GameDataX01.size());
+    stats.First9Avg = first9Avg / static_cast<double>(data.GameDataX01.size());
     stats.BestLegAvg = 3 * bestLegAvg;
     stats.BestWonLegDartCount = bestWonLegDartCount;
     stats.WorstWonLegDartCount = worstWonLegDartCount;
@@ -156,11 +157,11 @@ void CAlltimePlayerStatsModel::update_selected_players_x01(const QVector<QString
     stats.DartsPerLegAvg = stats.LegsPlayed > 0 ? static_cast<double>(stats.ThrownDarts) / stats.LegsPlayed : 0.0;
     mSelectedStats.append(stats);
   }
-  emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, 0));
+  emit dataChanged(createIndex(0, 0), createIndex(rowCount({}) - 1, 0));
   emit layoutChanged();
 }
 
-void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QString> iSelectedPlayers)
+void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QString>& iSelectedPlayers)
 {
   mSelectedPlayers = iSelectedPlayers;
   mSelectedStats = {};
@@ -168,14 +169,12 @@ void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QSt
   for (const auto & data : mGameStats)
   {
     if (!mSelectedPlayers.contains(data.PlayerName)) continue;
-    if (data.GameDataCricket.size() == 0) continue;
+    if (data.GameDataCricket.empty()) continue;
 
     SPlayerStats stats;
 
     uint32_t bestWonLegDartCount = UINT32_MAX;
     uint32_t worstWonLegDartCount = 0;
-    uint32_t totalDarts = 0;
-    uint32_t totalHits = 0;
 
     for (const auto & gameData : data.GameDataCricket)
     {
@@ -188,14 +187,14 @@ void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QSt
       stats.LegsPlayed += gameData.ScoringHistory.size();
       stats.ThrownDarts += gameData.TotalDarts;
       stats.TotalHits += gameData.TotalHits;
-      QVector<QVector<QVector<QString>>> totalDarts = gameData.ScoringHistory;
-      QVector<QVector<bool>> wonLegs = gameData.LegWonHistory;
-      if (gameData.LegWonVec.size()) wonLegs.append(gameData.LegWonVec);
-      if (gameData.ScoresOfCurrentLeg.size()) totalDarts.append(gameData.ScoresOfCurrentLeg);
+      auto totalDarts = gameData.ScoringHistory;
+      auto wonLegs = gameData.LegWonHistory;
+      if (!gameData.LegWonVec.empty()) wonLegs.append(gameData.LegWonVec);
+      if (!gameData.ScoresOfCurrentLeg.empty()) totalDarts.append(gameData.ScoresOfCurrentLeg);
 
       for (auto idx = 0; idx < totalDarts.size(); idx++)
       {
-        uint32_t numberOfDarts = (totalDarts.at(idx).size() - 1) * 3 + totalDarts.at(idx).back().size();
+        const uint32_t numberOfDarts = (totalDarts.at(idx).size() - 1) * 3 + totalDarts.at(idx).back().size();
         if (wonLegs.at(idx).back())
         {
           if (numberOfDarts < bestWonLegDartCount) bestWonLegDartCount = numberOfDarts;
@@ -215,7 +214,7 @@ void CAlltimePlayerStatsModel::update_selected_players_cricket(const QVector<QSt
     stats.HitsPerRound = stats.ThrownDarts > 0 ? 3 * static_cast<double>(stats.TotalHits) / stats.ThrownDarts : 0.0;
     mSelectedStats.append(stats);
   }
-  emit dataChanged(createIndex(0, 0), createIndex(rowCount() - 1, 0));
+  emit dataChanged(createIndex(0, 0), createIndex(rowCount({}) - 1, 0));
   emit layoutChanged();
 }
 

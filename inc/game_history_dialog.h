@@ -19,7 +19,7 @@ class CGameHistoryDialog : public QDialog
 public:
 
   explicit CGameHistoryDialog(CGameDataHandler & iGameDataHandler, CDartomatMain * iParent);
-  ~CGameHistoryDialog();
+  ~CGameHistoryDialog() override;
 
 private slots:
 

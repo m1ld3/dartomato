@@ -8,8 +8,7 @@
 class IMainWindow
 {
 public:
-
-  IMainWindow(uint32_t iNumberOfPlayers)
+  explicit IMainWindow(const uint32_t iNumberOfPlayers)
     : mNumberOfPlayers(iNumberOfPlayers)
     , mTimeStamp(QDateTime::currentDateTime())
   {}
@@ -22,16 +21,16 @@ public:
 
   virtual ~IMainWindow() = default;
 
-  static IMainWindow * create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler);
-  static IMainWindow * create(QWidget * iParent, const CSettings iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData iGameData);
+  static IMainWindow * create(QWidget * iParent, const CSettings& iSettings, CGameDataHandler & iGameDataHandler);
+  static IMainWindow * create(QWidget * iParent, const CSettings& iSettings, CGameDataHandler & iGameDataHandler, const CGameDataHandler::SGameData& iGameData);
 
-  virtual void update_players(const EUpdateType iType) = 0;
+  virtual void update_players(EUpdateType iType) = 0;
   virtual void reset_scores_of_all_players() = 0;
   virtual void activate_player_inactivate_other_players(uint32_t iPlayer, bool iLegStarted, bool iSetStarted) = 0;
   virtual void create_snapshots_of_all_players() = 0;
   virtual void handle_game_won(uint32_t iPlayerNumber) = 0;
 
-  virtual void setAttribute(Qt::WidgetAttribute iAttribute, bool iOn = true) = 0;
+  virtual void setAttribute(Qt::WidgetAttribute iAttribute, bool iOn) = 0;
   virtual void show() = 0;
 
 protected:
@@ -55,7 +54,7 @@ protected:
   virtual void set_active_player(uint32_t iPlayer) { mActivePlayer = iPlayer; }
   virtual void add_players() = 0;
   virtual void save_current_game() = 0;
-  virtual bool game_finished() const = 0;
+  [[nodiscard]] virtual bool game_finished() const = 0;
   virtual void start_new_game_with_same_settings() = 0;
   virtual void clear_group_box_widgets() = 0;
   virtual void set_global_finished() = 0;

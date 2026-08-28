@@ -20,9 +20,9 @@ int CGlobalGameStatsX01Model::columnCount(const QModelIndex & iParent) const
 
 QVariant CGlobalGameStatsX01Model::data(const QModelIndex & iIndex, int iRole) const
 {
-  if (!iIndex.isValid() || iIndex.row() >= rowCount() || iIndex.column() >= columnCount())
+  if (!iIndex.isValid() || iIndex.row() >= rowCount({}) || iIndex.column() >= columnCount({}))
   {
-    return QVariant();
+    return {};
   }
 
   if (iRole == Qt::DisplayRole)
@@ -31,36 +31,33 @@ QVariant CGlobalGameStatsX01Model::data(const QModelIndex & iIndex, int iRole) c
     {
       return mCol0Labels.at(iIndex.row());
     }
-    else if (iIndex.column() == 1)
+    if (iIndex.column() == 1)
     {
       return QString::number(mCol1Data.at(iIndex.row()), 'f', 2);
     }
-    else if (iIndex.column() == 2)
+    if (iIndex.column() == 2)
     {
       return mCol2Labels.at(iIndex.row());
     }
-    else if (iIndex.column() == 3 && iIndex.row() == 0)
+    if (iIndex.column() == 3 && iIndex.row() == 0)
     {
       return QString::number(mData.LegsWon) + " of " + QString::number(mData.NumLegs);
     }
-    else if (iIndex.column() == 3 && iIndex.row() == 1)
+    if (iIndex.column() == 3 && iIndex.row() == 1)
     {
       QString checkoutRateStr = "--";
       if (mData.CheckoutAttempts > 0)
       {
-        double checkoutRate = static_cast<double>(mData.CheckoutHits) / mData.CheckoutAttempts * 100;
+        const double checkoutRate = static_cast<double>(mData.CheckoutHits) / mData.CheckoutAttempts * 100;
         checkoutRateStr = QString::number(checkoutRate, 'f', 2) + " %";
       }
       return checkoutRateStr + "    (" + QString::number(mData.CheckoutHits) + " / " + QString::number(mData.CheckoutAttempts) + ")";
     }
-    else if (iIndex.column() == 3 && iIndex.row() == 2)
+    if (iIndex.column() == 3 && iIndex.row() == 2)
     {
       return QString::number(mData.HighestCheckout);
     }
-    else return QVariant();
+    return {};
   }
-  else
-  {
-    return QVariant();
-  }
+  return {};
 }

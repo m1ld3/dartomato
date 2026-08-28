@@ -19,7 +19,7 @@ class CAddPlayersDialog : public QDialog
 public:
 
   explicit CAddPlayersDialog(CPlayerListModel & iGameDataModel, QWidget * iParent = nullptr);
-  ~CAddPlayersDialog();
+  ~CAddPlayersDialog() override;
 
 private slots:
 

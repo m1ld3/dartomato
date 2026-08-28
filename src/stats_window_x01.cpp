@@ -1,4 +1,6 @@
 #include "stats_window_x01.h"
+
+#include <utility>
 #include "leg_stats_x01_model.h"
 #include "leg_scores_x01_model.h"
 #include "global_game_stats_x01_model.h"
@@ -7,10 +9,10 @@
 #include "ui_stats_window_x01.h"
 
 #ifndef TESTING
-CStatsWindowX01::CStatsWindowX01(const CX01Class::CPlayerData iPlayerData, QWidget * iParent)
+CStatsWindowX01::CStatsWindowX01(CX01Class::CPlayerData  iPlayerData, QWidget * iParent)
  : QDialog(iParent)
  , mUi(new Ui::CStatsWindowX01)
- , mPlayerData(iPlayerData)
+ , mPlayerData(std::move(iPlayerData))
 {
   mUi->setupUi(this);
   setAttribute(Qt::WA_DeleteOnClose);
@@ -71,8 +73,7 @@ void CStatsWindowX01::setup_table_views()
 
 void CStatsWindowX01::init_leg_selector()
 {
-  uint32_t numberOfLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
-  if (numberOfLegs == 0)
+  if (const uint32_t numberOfLegs = !mPlayerData.ScoresOfCurrentLeg.empty() ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size(); numberOfLegs == 0)
   {
     mUi->legSelector->addItem("1");
     mUi->legSelector->setCurrentIndex(0);
@@ -83,7 +84,7 @@ void CStatsWindowX01::init_leg_selector()
     {
       mUi->legSelector->addItem(QString::number(i));
     }
-    mUi->legSelector->setCurrentIndex(numberOfLegs - 1);
+    mUi->legSelector->setCurrentIndex(static_cast<int>(numberOfLegs) - 1);
   }
 }
 
@@ -124,12 +125,12 @@ void CStatsWindowX01::update_leg_stats_table_view()
 #endif
 }
 
-void CStatsWindowX01::update_leg_history(int iIndex)
+void CStatsWindowX01::update_leg_history(const int iIndex)
 {
   QVector<QVector<uint32_t>> totalScores = mPlayerData.AllScoresOfAllLegs;
   QVector<QVector<QVector<QString>>> totalDarts = mPlayerData.ThrownDartsOfAllLegs;
-  if (mPlayerData.ScoresOfCurrentLeg.size()) totalScores.append(mPlayerData.ScoresOfCurrentLeg);
-  if (mPlayerData.ThrownDartsOfCurrentLeg.size()) totalDarts.append(mPlayerData.ThrownDartsOfCurrentLeg);
+  if (!mPlayerData.ScoresOfCurrentLeg.empty()) totalScores.append(mPlayerData.ScoresOfCurrentLeg);
+  if (!mPlayerData.ThrownDartsOfCurrentLeg.empty()) totalDarts.append(mPlayerData.ThrownDartsOfCurrentLeg);
 
   if (totalScores.size() >= iIndex + 1 && totalDarts.size() >= iIndex + 1)
   {
@@ -167,36 +168,35 @@ void CStatsWindowX01::count_scores()
 {
   std::map<uint32_t, uint32_t> scoreCounts = calculate_score_counts();
 
-  if (mPlayerData.AllScoresFlat.size() > 0)
+  if (!mPlayerData.AllScoresFlat.empty())
   {
-    std::map<uint32_t, uint32_t>::iterator it;
-    for (it = scoreCounts.begin(); it != scoreCounts.end(); it++)
+    for (auto & [score, count] : scoreCounts)
     {
-      if (it->first <  20)                     mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))   += it->second;
-      if (it->first >= 20  && it->first < 40)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))  += it->second;
-      if (it->first >= 40  && it->first < 60)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))  += it->second;
-      if (it->first >= 60  && it->first < 80)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60))  += it->second;
-      if (it->first >= 80  && it->first < 100) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_80))  += it->second;
-      if (it->first >= 100 && it->first < 120) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_100)) += it->second;
-      if (it->first >= 120 && it->first < 140) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_120)) += it->second;
-      if (it->first >= 140 && it->first < 160) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_140)) += it->second;
-      if (it->first >= 160 && it->first < 180) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_160)) += it->second;
-      if (it->first == 180)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_180))  += it->second;
-      if (it->first == 140)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_140))  += it->second;
-      if (it->first == 120)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_120))  += it->second;
-      if (it->first == 100)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_100))  += it->second;
-      if (it->first ==  85)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_85))   += it->second;
-      if (it->first ==  81)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_81))   += it->second;
-      if (it->first ==  60)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_60))   += it->second;
-      if (it->first ==  45)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_45))   += it->second;
-      if (it->first ==  41)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_41))   += it->second;
-      if (it->first ==  30)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_30))   += it->second;
-      if (it->first ==  26)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_26))   += it->second;
+      if (score <  20)                     mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_0))   += count;
+      if (score >= 20  && score < 40)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_20))  += count;
+      if (score >= 40  && score < 60)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_40))  += count;
+      if (score >= 60  && score < 80)  mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_60))  += count;
+      if (score >= 80  && score < 100) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_80))  += count;
+      if (score >= 100 && score < 120) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_100)) += count;
+      if (score >= 120 && score < 140) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_120)) += count;
+      if (score >= 140 && score < 160) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_140)) += count;
+      if (score >= 160 && score < 180) mScoreCounts.at(static_cast<int>(EScoreCountsIdx::PLUS_160)) += count;
+      if (score == 180)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_180))  += count;
+      if (score == 140)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_140))  += count;
+      if (score == 120)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_120))  += count;
+      if (score == 100)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_100))  += count;
+      if (score ==  85)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_85))   += count;
+      if (score ==  81)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_81))   += count;
+      if (score ==  60)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_60))   += count;
+      if (score ==  45)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_45))   += count;
+      if (score ==  41)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_41))   += count;
+      if (score ==  30)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_30))   += count;
+      if (score ==  26)                    mScoreCounts.at(static_cast<int>(EScoreCountsIdx::THE_26))   += count;
     }
   }
 }
 
-std::map<uint32_t, uint32_t> CStatsWindowX01::calculate_score_counts()
+std::map<uint32_t, uint32_t> CStatsWindowX01::calculate_score_counts() const
 {
   std::map<uint32_t, uint32_t> scoreCounts;
   for (auto & score : mPlayerData.AllScoresFlat) ++scoreCounts[score];
@@ -210,7 +210,7 @@ void CStatsWindowX01::calculate_segment_counts()
   {
     for (const auto & dart : darts)
     {
-      int idx = 0;
+      uint idx = 0;
       if (dart[0] == 'd')
       {
         idx = dart.mid(1).toUInt() / 2;
@@ -237,14 +237,14 @@ void CStatsWindowX01::compute_dart_count_and_checkouts()
   mGlobalGameStatsData.Avg1Dart = mPlayerData.Avg1Dart;
   mGlobalGameStatsData.First9Avg = mPlayerData.First9Avg;
   mGlobalGameStatsData.LegsWon = mPlayerData.TotalLegsWon;
-  mGlobalGameStatsData.NumLegs = mPlayerData.ScoresOfCurrentLeg.size() > 0 ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
+  mGlobalGameStatsData.NumLegs = !mPlayerData.ScoresOfCurrentLeg.empty() ? mPlayerData.AllScoresOfAllLegs.size() + 1 : mPlayerData.AllScoresOfAllLegs.size();
   mGlobalGameStatsData.CheckoutAttempts = mPlayerData.CheckoutAttempts;
   mGlobalGameStatsData.CheckoutHits = mPlayerData.CheckoutHits;  QVector<QVector<QVector<QString>>> dartsOfAllLegs = mPlayerData.ThrownDartsOfAllLegs;
-  if (mPlayerData.ThrownDartsOfCurrentLeg.size()) dartsOfAllLegs.append(mPlayerData.ThrownDartsOfCurrentLeg);
+  if (!mPlayerData.ThrownDartsOfCurrentLeg.empty()) dartsOfAllLegs.append(mPlayerData.ThrownDartsOfCurrentLeg);
   QVector<QVector<uint32_t>> remainingPointsOfAllLegs = mPlayerData.RemainingPointsOfAllLegs;
-  if (mPlayerData.RemainingPointsOfCurrentLeg.size()) remainingPointsOfAllLegs.append(mPlayerData.RemainingPointsOfCurrentLeg);
+  if (!mPlayerData.RemainingPointsOfCurrentLeg.empty()) remainingPointsOfAllLegs.append(mPlayerData.RemainingPointsOfCurrentLeg);
   QVector<QVector<uint32_t>> allScoresOfAllLegs = mPlayerData.AllScoresOfAllLegs;
-  if (mPlayerData.ScoresOfCurrentLeg.size()) allScoresOfAllLegs.append(mPlayerData.ScoresOfCurrentLeg);
+  if (!mPlayerData.ScoresOfCurrentLeg.empty()) allScoresOfAllLegs.append(mPlayerData.ScoresOfCurrentLeg);
   mDartCountOfWonLegs = {};
   mAllCheckouts = {};
 
@@ -257,22 +257,22 @@ void CStatsWindowX01::compute_dart_count_and_checkouts()
     }
   }
 
-  if (mDartCountOfWonLegs.size())
+  if (!mDartCountOfWonLegs.empty())
   {
     mLegStatsData.BestWonLegDartCount = *std::min_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
     mLegStatsData.WorstWonLegDartCount = *std::max_element(mDartCountOfWonLegs.begin(), mDartCountOfWonLegs.end());
   }
 
-  if (dartsOfAllLegs.size()) mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / dartsOfAllLegs.size();
-  if (mAllCheckouts.size() > 0) mGlobalGameStatsData.HighestCheckout = *std::max_element(mAllCheckouts.begin(), mAllCheckouts.end());
+  if (!dartsOfAllLegs.empty()) mLegStatsData.AvgLegDartCount = static_cast<double>(mPlayerData.TotalDarts) / static_cast<double>(dartsOfAllLegs.size());
+  if (!mAllCheckouts.empty()) mGlobalGameStatsData.HighestCheckout = *std::max_element(mAllCheckouts.begin(), mAllCheckouts.end());
 }
 
 uint32_t CStatsWindowX01::compute_dart_count_of_indexed_leg(uint32_t iIndex)
 {
   QVector<QVector<QString>> dartsOfIndexedLeg;
   QVector<QVector<QVector<QString>>> dartsOfAllLegs = mPlayerData.ThrownDartsOfAllLegs;
-  if (mPlayerData.ThrownDartsOfCurrentLeg.size()) dartsOfAllLegs.append(mPlayerData.ThrownDartsOfCurrentLeg);
-  if (dartsOfAllLegs.size()) dartsOfIndexedLeg = dartsOfAllLegs.at(iIndex);
-  if (dartsOfIndexedLeg.size()) return (dartsOfIndexedLeg.size() - 1) * 3 + dartsOfIndexedLeg.last().size();
+  if (!mPlayerData.ThrownDartsOfCurrentLeg.empty()) dartsOfAllLegs.append(mPlayerData.ThrownDartsOfCurrentLeg);
+  if (!dartsOfAllLegs.empty()) dartsOfIndexedLeg = dartsOfAllLegs.at(iIndex);
+  if (!dartsOfIndexedLeg.empty()) return (dartsOfIndexedLeg.size() - 1) * 3 + dartsOfIndexedLeg.last().size();
   return 0;
 }

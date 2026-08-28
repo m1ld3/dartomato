@@ -11,8 +11,8 @@ class CPlayerListModel : public QAbstractListModel
 public:
 
   explicit CPlayerListModel(const CGameDataHandler & iGameDataHandler, QObject * iParent = nullptr);
-  int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
-  QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
+  [[nodiscard]] int rowCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] QVariant data(const QModelIndex & iIndex, int iRole) const override;
   bool add_player(const QString & iPlayerName);
   void remove_players(const QStringList & iPlayerNames);
 

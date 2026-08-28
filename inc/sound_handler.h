@@ -17,7 +17,7 @@ public:
     return instance;
   }
 
-  void set_muted(bool iMuted)
+  void set_muted(const bool iMuted) const
   {
     mBustedSound.audioOutput()->setMuted(iMuted);
     mGameShotSound.audioOutput()->setMuted(iMuted);

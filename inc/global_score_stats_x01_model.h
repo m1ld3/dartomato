@@ -1,7 +1,6 @@
 #ifndef CGLOBALSCORESTATSMODEL_H
 #define CGLOBALSCORESTATSMODEL_H
 
-#include <QAbstractTableModel>
 #include "stats_window_x01.h"
 
 class CGlobalScoreStatsX01Model : public QAbstractTableModel
@@ -10,10 +9,10 @@ class CGlobalScoreStatsX01Model : public QAbstractTableModel
 
 public:
 
-  explicit CGlobalScoreStatsX01Model(std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)> iScores, QObject * iParent = nullptr);
-  int rowCount(const QModelIndex & iParent = QModelIndex()) const override;
-  int columnCount(const QModelIndex & iParent = QModelIndex()) const override;
-  QVariant data(const QModelIndex & iIndex, int iRole = Qt::DisplayRole) const override;
+  explicit CGlobalScoreStatsX01Model(const std::array<uint32_t, static_cast<int>(CStatsWindowX01::EScoreCountsIdx::SCORE_COUNT_MAX)>& iScores, QObject * iParent = nullptr);
+  [[nodiscard]] int rowCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] int columnCount(const QModelIndex & iParent) const override;
+  [[nodiscard]] QVariant data(const QModelIndex & iIndex, int iRole) const override;
 
 private:
 

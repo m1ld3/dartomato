@@ -87,6 +87,34 @@ if(WIN32)
   # Windows-specific: Set executable properties
   set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES WIN32_EXECUTABLE ON)
   set(app_icon_resource_windows ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+
+  # Keep the build output runnable directly from IDEs such as CLion.
+  get_filename_component(QT6_INSTALL_PREFIX "${Qt6_DIR}/../../.." ABSOLUTE)
+  find_program(WINDEPLOYQT_EXECUTABLE
+    NAMES windeployqt windeployqt6
+    HINTS "${QT6_INSTALL_PREFIX}/bin"
+  )
+  if(NOT WINDEPLOYQT_EXECUTABLE)
+    message(FATAL_ERROR "Could not find windeployqt in ${QT6_INSTALL_PREFIX}/bin")
+  endif()
+  add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND "${WINDEPLOYQT_EXECUTABLE}"
+      --no-translations
+      "$<TARGET_FILE:${CMAKE_PROJECT_NAME}>"
+    VERBATIM
+  )
+
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    get_filename_component(MINGW_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    foreach(MINGW_RUNTIME_DLL libstdc++-6.dll libgcc_s_seh-1.dll libwinpthread-1.dll)
+      add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+          "${MINGW_BIN_DIR}/${MINGW_RUNTIME_DLL}"
+          "$<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/${MINGW_RUNTIME_DLL}"
+        VERBATIM
+      )
+    endforeach()
+  endif()
 endif()
 
 # Linux-specific settings

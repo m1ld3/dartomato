@@ -12,22 +12,23 @@ class CDartBoardSegment : public QObject, public QGraphicsPathItem
 
 public:
 
-  CDartBoardSegment(CDartBoard * iDartBoard, const QPainterPath & iPath, const uint32_t iVal = 0,
+  CDartBoardSegment(CDartBoard * iDartBoard, const QPainterPath & iPath, uint32_t iVal = 0,
                     QString && iColor = "black", QChar iType = 's',
                     QGraphicsPathItem * iParent = nullptr);
   ~CDartBoardSegment() override = default;
-  void set_value(const uint32_t iVal);
+  void set_value(uint32_t iVal);
+
+  void paint(QPainter * iPainter, const QStyleOptionGraphicsItem * iOption, QWidget * iWidget) override;
+  [[nodiscard]] QPainterPath shape() const override;
+  [[nodiscard]] QRectF boundingRect() const override;
 
 protected:
 
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent * iEvent) override;
-  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * iEvent) override;
-  virtual void hoverEnterEvent(QGraphicsSceneHoverEvent * iEvent) override;
-  virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent * iEvent) override;
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * iEvent) override;
-  virtual void paint(QPainter * iPainter, const QStyleOptionGraphicsItem * iOption, QWidget * iWidget = nullptr) override;
-  virtual QPainterPath shape() const override;
-  QRectF boundingRect() const override;
+  void mousePressEvent(QGraphicsSceneMouseEvent * iEvent) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent * iEvent) override;
+  void hoverEnterEvent(QGraphicsSceneHoverEvent * iEvent) override;
+  void hoverLeaveEvent(QGraphicsSceneHoverEvent * iEvent) override;
+  void mouseMoveEvent(QGraphicsSceneMouseEvent * iEvent) override;
 
 private:
 

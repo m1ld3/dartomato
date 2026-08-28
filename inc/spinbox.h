@@ -10,8 +10,10 @@ class CSpinBox : public QSpinBox
 public:
 
   explicit CSpinBox(QWidget * iParent = nullptr);
-  void keyPressEvent(QKeyEvent * iEvent) override;
   void stepBy(int iSteps) override;
+
+protected:
+  void keyPressEvent(QKeyEvent * iEvent) override;
 };
 
 #endif  // SPINBOX_H
