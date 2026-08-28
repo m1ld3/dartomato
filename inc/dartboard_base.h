@@ -32,8 +32,11 @@ public:
   CDartBoard(const CSettings iSettings)
     : mSettings(iSettings)
   {}
+  virtual ~CDartBoard();
 #endif
+#ifndef TESTING
   ~CDartBoard() override;
+#endif
   virtual void play_game_shot_sound();
 
 protected:

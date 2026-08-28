@@ -44,11 +44,12 @@ public:
     : mGameWindow(iMainWindow)
     , mDartBoard(static_cast<CDartBoardCricket*>(iDb))
   {}
+  virtual ~CCricketInput();
 #else
   CCricketInput(QWidget * iParent, const CSettings & iSettings,
                 CCricketClass * iPlayer = nullptr, ICricketMainWindow * iGameWindow = nullptr);
-#endif
   ~CCricketInput() override;
+#endif
   [[nodiscard]] virtual bool are_slots_full() const;
   void handle_segment_pressed_event(uint32_t iVal, QChar iType);
   void notify_cricket_submit_button_clicked(uint32_t iNumberOfDarts, QVector<QString> & iDarts) const;
