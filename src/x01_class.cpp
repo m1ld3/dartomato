@@ -142,7 +142,7 @@ void CX01Class::compute_first9_avg()
     idx++;
   }
 
-  if (const auto legs = !mScoresOfCurrentLeg.empty() > 0 ? mAllScoresOfAllLegs.size() + 1 : mAllScoresOfAllLegs.size(); legs == 0)
+  if (const auto legs = !mScoresOfCurrentLeg.empty() ? mAllScoresOfAllLegs.size() + 1 : mAllScoresOfAllLegs.size(); legs == 0)
   {
     mFirst9Avg = 0.0;
   }
